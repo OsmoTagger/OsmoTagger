@@ -248,7 +248,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         <osm>
             <changeset>
                 <tag k="created_by" v="OpenStreetEditor"/>
-                <tag k="contact" v="https://t.me/OpenStreetEditor"/>
+                <tag k="contact:telegram" v="https://t.me/OpenStreetEditor"/>
             </changeset>
         </osm>
         """.data(using: .utf8)
