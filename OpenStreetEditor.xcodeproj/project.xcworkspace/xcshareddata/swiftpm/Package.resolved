@@ -1,41 +1,43 @@
 {
-  "pins" : [
-    {
-      "identity" : "anycodable",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/flight-school/AnyCodable.git",
-      "state" : {
-        "revision" : "56901f2af3625b38924d488b612e95fe8846ee9b",
-        "version" : "0.6.6"
+  "object": {
+    "pins": [
+      {
+        "package": "AnyCodable",
+        "repositoryURL": "https://github.com/flight-school/AnyCodable.git",
+        "state": {
+          "branch": null,
+          "revision": "862808b2070cd908cb04f9aafe7de83d35f81b05",
+          "version": "0.6.7"
+        }
+      },
+      {
+        "package": "GeoJSON",
+        "repositoryURL": "https://github.com/kiliankoe/GeoJSON",
+        "state": {
+          "branch": "main",
+          "revision": "86fcb9c78d4c452a347d8dee64cc5deac35d451e",
+          "version": null
+        }
+      },
+      {
+        "package": "GLMap",
+        "repositoryURL": "https://github.com/GLMap/GLMapSwift",
+        "state": {
+          "branch": "master",
+          "revision": "83ea5ef2ae2d617dca323707593f2f84efc0bf10",
+          "version": null
+        }
+      },
+      {
+        "package": "XMLCoder",
+        "repositoryURL": "https://github.com/CoreOffice/XMLCoder",
+        "state": {
+          "branch": null,
+          "revision": "b1e944cbd0ef33787b13f639a5418d55b3bed501",
+          "version": "0.17.1"
+        }
       }
-    },
-    {
-      "identity" : "geojson",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/kiliankoe/GeoJSON",
-      "state" : {
-        "branch" : "main",
-        "revision" : "f1549a42febf8de2de5d7178610f9551f4fcd927"
-      }
-    },
-    {
-      "identity" : "glmapswift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/GLMap/GLMapSwift",
-      "state" : {
-        "branch" : "master",
-        "revision" : "8461ee43db6d18d4f46ad444cf9fd1a94d5112a2"
-      }
-    },
-    {
-      "identity" : "xmlcoder",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/CoreOffice/XMLCoder",
-      "state" : {
-        "revision" : "ca932442d7481700f5434a7b138c47dd42d9902b",
-        "version" : "0.14.0"
-      }
-    }
-  ],
-  "version" : 2
+    ]
+  },
+  "version": 1
 }

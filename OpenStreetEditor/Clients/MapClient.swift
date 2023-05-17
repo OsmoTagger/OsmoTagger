@@ -15,7 +15,7 @@ class MapClient: NSObject {
     var objectsLength = UInt(0)
     
     //  Load data and write to files
-    func getSourceData(longitudeDisplayMin: Double, latitudeDisplayMin: Double, longitudeDisplayMax: Double, latitudeDisplayMax: Double) async throws {
+    func getSourceData(longitudeDisplayMin: Double,latitudeDisplayMin: Double,longitudeDisplayMax: Double,latitudeDisplayMax: Double) async throws {
         let data = try await OsmClient.client.downloadOSMData(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMax)
         do {
             let fileManager = FileManager.default

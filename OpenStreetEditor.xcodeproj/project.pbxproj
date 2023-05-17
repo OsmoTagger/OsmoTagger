@@ -32,7 +32,6 @@
 		2C5146C929D6F35F0007D468 /* Table EditVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5146C829D6F35F0007D468 /* Table EditVC.swift */; };
 		2C5662BD291275FA00E5B4D5 /* OsmClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5662BC291275FA00E5B4D5 /* OsmClient.swift */; };
 		2C5662C12912788600E5B4D5 /* OSM structures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5662C02912788600E5B4D5 /* OSM structures.swift */; };
-		2C64164C2A06EAD60080FB04 /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = 2C64164B2A06EAD60080FB04 /* XMLCoder */; };
 		2C6F1CC429DD40380091784B /* InfoObjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6F1CC329DD40370091784B /* InfoObjectViewController.swift */; };
 		2C9DEBD429B526980058CCC2 /* JSOM presets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9DEBD329B526980058CCC2 /* JSOM presets.swift */; };
 		2CA6A3F429CAB640004233E2 /* defaultPresets.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2CA6A3F329CAB63F004233E2 /* defaultPresets.xml */; };
@@ -46,6 +45,7 @@
 		2CA6A40A29CAC87D004233E2 /* defaultPresets.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2CA6A3F329CAB63F004233E2 /* defaultPresets.xml */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2CA74E96291EE1BD00413930 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA74E95291EE1BD00413930 /* AppSettings.swift */; };
 		2CB58A6329ECF01800FD0E59 /* QuickGuideViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB58A6229ECF01800FD0E59 /* QuickGuideViewController.swift */; };
+		2CBA844E2A1492E500CE687F /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = 2CBA844D2A1492E500CE687F /* XMLCoder */; };
 		2CCB304229D4553100C8E5E7 /* SelectObjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB304129D4553100C8E5E7 /* SelectObjectViewController.swift */; };
 		2CD2E7AC29D30D150042D36E /* MultiSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2E7AB29D30D150042D36E /* MultiSelectViewController.swift */; };
 		2CD4B48429C6DC2B00040018 /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD4B48329C6DC2B00040018 /* CategoryViewController.swift */; };
@@ -105,9 +105,7 @@
 		2C5146C829D6F35F0007D468 /* Table EditVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Table EditVC.swift"; sourceTree = "<group>"; };
 		2C5662BC291275FA00E5B4D5 /* OsmClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OsmClient.swift; sourceTree = "<group>"; };
 		2C5662C02912788600E5B4D5 /* OSM structures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OSM structures.swift"; sourceTree = "<group>"; };
-		2C56AED22975517600B74ED1 /* work_plan.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = work_plan.md; sourceTree = "<group>"; };
 		2C6F1CC329DD40370091784B /* InfoObjectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoObjectViewController.swift; sourceTree = "<group>"; };
-		2C98E58A297A4FF600E0CF78 /* road map.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "road map.md"; sourceTree = "<group>"; };
 		2C9DEBD329B526980058CCC2 /* JSOM presets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSOM presets.swift"; sourceTree = "<group>"; };
 		2CA6A3E829CAB373004233E2 /* LineTool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LineTool; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CA6A3F329CAB63F004233E2 /* defaultPresets.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = defaultPresets.xml; sourceTree = "<group>"; };
@@ -161,7 +159,7 @@
 			files = (
 				6CF514DF28FB4C14001D2758 /* libexpat.tbd in Frameworks */,
 				6CF514DB28FB4B1F001D2758 /* libz.tbd in Frameworks */,
-				2C64164C2A06EAD60080FB04 /* XMLCoder in Frameworks */,
+				2CBA844E2A1492E500CE687F /* XMLCoder in Frameworks */,
 				2C1707092A06E784003ECB39 /* GLMap in Frameworks */,
 				6CF514D928FB4B05001D2758 /* libbz2.tbd in Frameworks */,
 			);
@@ -182,8 +180,6 @@
 			isa = PBXGroup;
 			children = (
 				2CA6A3F529CAB964004233E2 /* josm parse */,
-				2C56AED22975517600B74ED1 /* work_plan.md */,
-				2C98E58A297A4FF600E0CF78 /* road map.md */,
 				2CAEF13D29FAD50B00894DED /* README.md */,
 				2C27010B2A01AB6000A65363 /* Terms of service.md */,
 				2042BCE9289C696E0026514E /* OpenStreetEditor */,
@@ -402,7 +398,7 @@
 			name = OpenStreetEditor;
 			packageProductDependencies = (
 				2C1707082A06E784003ECB39 /* GLMap */,
-				2C64164B2A06EAD60080FB04 /* XMLCoder */,
+				2CBA844D2A1492E500CE687F /* XMLCoder */,
 			);
 			productName = "OSM editor";
 			productReference = 2042BCE7289C696E0026514E /* OpenStreetEditor.app */;
@@ -690,7 +686,8 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = AS56W2YHKU;
+				DEVELOPMENT_TEAM = H3H3AR5L6H;
+				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/OpenStreetEditor/third_party";
 				INFOPLIST_FILE = OpenStreetEditor/Info.plist;
@@ -707,7 +704,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.openstreet.editor;
+				PRODUCT_BUNDLE_IDENTIFIER = com.openstreettest.editor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -728,7 +725,8 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = AS56W2YHKU;
+				DEVELOPMENT_TEAM = H3H3AR5L6H;
+				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/OpenStreetEditor/third_party";
 				INFOPLIST_FILE = OpenStreetEditor/Info.plist;
@@ -745,7 +743,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.openstreet.editor;
+				PRODUCT_BUNDLE_IDENTIFIER = com.openstreettest.editor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -848,12 +846,12 @@
 			package = 6C76E73F28EC0E5A0048C378 /* XCRemoteSwiftPackageReference "GLMapSwift" */;
 			productName = GLMap;
 		};
-		2C64164B2A06EAD60080FB04 /* XMLCoder */ = {
+		2CA6A40429CABBC6004233E2 /* XMLCoder */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2C529E3629102F8400F46972 /* XCRemoteSwiftPackageReference "XMLCoder" */;
 			productName = XMLCoder;
 		};
-		2CA6A40429CABBC6004233E2 /* XMLCoder */ = {
+		2CBA844D2A1492E500CE687F /* XMLCoder */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2C529E3629102F8400F46972 /* XCRemoteSwiftPackageReference "XMLCoder" */;
 			productName = XMLCoder;

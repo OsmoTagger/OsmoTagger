@@ -163,17 +163,43 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
     }
     
     @objc func tapDownloadButton() {
-        let latitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: UIScreen.main.bounds.height)).lat
-        let latitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: 0)).lat
-        let longitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: 0)).lon
-        let longitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: 0)).lon
+        var latitudeDisplayMin = 0.0
+        var latitudeDisplayMax = 0.0
+        var longitudeDisplayMin = 0.0
+        var longitudeDisplayMax = 0.0
+        switch mapView.mapAngle {
+        case 0...90:
+            longitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: UIScreen.main.bounds.height)).lon
+            latitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height)).lat
+            longitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: 0)).lon
+            latitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: 0)).lat
+        case 90...180:
+            longitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height)).lon
+            latitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: 0)).lat
+            longitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: 0)).lon
+            latitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: UIScreen.main.bounds.height)).lat
+        case 180...270:
+            longitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: 0)).lon
+            latitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: 0)).lat
+            longitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: UIScreen.main.bounds.height)).lon
+            latitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height)).lat
+        default:
+            longitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: 0)).lon
+            latitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: UIScreen.main.bounds.height)).lat
+            longitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height)).lon
+            latitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: 0)).lat
+        }
+        let capturedLatitudeDisplayMin = latitudeDisplayMin
+        let capturedLatitudeDisplayMax = latitudeDisplayMax
+        let capturedLongitudeDisplayMin = longitudeDisplayMin
+        let capturedLongitudeDisplayMax = longitudeDisplayMax
 //      0.007 and 0.025 are experimentally selected values of the maximum size of the bbox of map. If you do the above, with a high density of points, the application slows down and the OSM server may not allow you to download data.
         if latitudeDisplayMax - latitudeDisplayMin < 0.007 && longitudeDisplayMax - longitudeDisplayMin < 0.025 {
             setLoadIndicator()
             Task {
                 do {
 //                  We download the data from the server, convert it to GeoJSON and write it to files.
-                    try await mapClient.getSourceData(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMax)
+                    try await mapClient.getSourceData(longitudeDisplayMin: capturedLongitudeDisplayMin, latitudeDisplayMin: capturedLatitudeDisplayMin, longitudeDisplayMax: capturedLongitudeDisplayMax, latitudeDisplayMax: capturedLatitudeDisplayMax)
 //                  Displaying data on the map.
                     showGeoJSON()
                     showSavedObjects()
