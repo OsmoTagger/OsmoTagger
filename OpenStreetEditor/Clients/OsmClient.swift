@@ -121,7 +121,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
     var lastLatitudeDisplayMin: Double?
     var lasltLongitudeDisplayMax: Double?
     var lastLatitudeDisplayMax: Double?
-    func downloadOSMData(longitudeDisplayMin: Double,latitudeDisplayMin: Double,longitudeDisplayMax: Double,latitudeDisplayMax: Double) async throws -> (Data) {
+    func downloadOSMData(longitudeDisplayMin: Double, latitudeDisplayMin: Double, longitudeDisplayMax: Double, latitudeDisplayMax: Double) async throws -> (Data) {
         guard let url = URL(string: "\(AppSettings.settings.server)/api/0.6/map?bbox=\(longitudeDisplayMin),\(latitudeDisplayMin),\(longitudeDisplayMax),\(latitudeDisplayMax)") else {
             throw "Error generate URL for download data. Server: \(AppSettings.settings.server), Bbox: \(longitudeDisplayMin),\(latitudeDisplayMin),\(longitudeDisplayMax),\(latitudeDisplayMax)"
         }

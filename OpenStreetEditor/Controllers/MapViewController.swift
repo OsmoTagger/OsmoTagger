@@ -167,18 +167,19 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         var latitudeDisplayMax = 0.0
         var longitudeDisplayMin = 0.0
         var longitudeDisplayMax = 0.0
+//      Depending on the rotation angle of the map, different screen angles are used from loading the bbox data.
         switch mapView.mapAngle {
-        case 0...90:
+        case 0 ... 90:
             longitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: UIScreen.main.bounds.height)).lon
             latitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height)).lat
             longitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: 0)).lon
             latitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: 0)).lat
-        case 90...180:
+        case 90 ... 180:
             longitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height)).lon
             latitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: 0)).lat
             longitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: 0)).lon
             latitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: UIScreen.main.bounds.height)).lat
-        case 180...270:
+        case 180 ... 270:
             longitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: 0)).lon
             latitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: 0)).lat
             longitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: UIScreen.main.bounds.height)).lon
