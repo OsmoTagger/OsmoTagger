@@ -366,7 +366,6 @@ class ItemCell: UITableViewCell {
             optionsArray.append(action)
         }
         optionsArray.append(nilAction)
-        print(optionsArray.count)
         let optionsMenu = UIMenu(title: "", image: nil, identifier: nil, options: .singleSelection, children: optionsArray)
         selectValueButton.menu = optionsMenu
         selectValueButton.setImage(UIImage(systemName: "chevron.down"), for: .normal)

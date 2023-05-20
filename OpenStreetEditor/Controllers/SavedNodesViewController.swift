@@ -19,8 +19,22 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
     var tableData: [SaveNodeCellData] = []
     //  An array in which the IDs of the selected objects are stored.
     var selectedIDs: [Int] = []
+    // View for enter comment to chageset
+    var enterCommentView = EnterChangesetComment()
+    var enterCommentViewConstrains = [NSLayoutConstraint]()
+    
+    deinit {
+        AppSettings.settings.changeSetComment = nil
+        enterCommentView.closeClosure = nil
+        enterCommentView.autoClosure = nil
+        enterCommentView.enterClosure = nil
+    }
     
     override func viewDidLoad() {
+        // Notifications about calling and hiding the keyboard.
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
         setToolBar()
         fillData()
         setTableView()
@@ -215,10 +229,14 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
     
     //  The method of sending data to the server.
     @objc func tapSendButton() {
-        if selectedIDs.count == 0 {
+        guard selectedIDs.count > 0 else {
             showAction(message: "Select objects!", addAlerts: [])
             return
         }
+        setEnterCommentView()
+    }
+    
+    func sendObjects() {
         let indicator = showIndicator()
         var objects: [OSMAnyObject] = []
         for id in selectedIDs {
@@ -232,7 +250,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
                 for id in self.selectedIDs {
                     AppSettings.settings.savedObjects.removeValue(forKey: id)
                 }
-//              After successfully sending the changes, we update the downloaded data from the server, delete objects from memory.
+                // After successfully sending the changes, we update the downloaded data from the server, delete objects from memory.
                 delegate?.updateSourceData()
                 selectedIDs = []
                 fillData()
@@ -250,5 +268,82 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
                 showAction(message: message, addAlerts: [])
             }
         }
+    }
+    
+    // The method automatically generates a comment for changeset.
+    func generateComment() -> String {
+        var comment = ""
+        var newObjects: [Int] = []
+        var editObjects: [Int] = []
+        for id in selectedIDs {
+            if id < 0 {
+                newObjects.append(id)
+            } else {
+                editObjects.append(id)
+            }
+        }
+        if newObjects.count > 0 {
+            comment += "\(newObjects.count) objects created."
+        }
+        if editObjects.count > 0 {
+            comment += " \(editObjects.count) objects have tags edited."
+        }
+        return comment
+    }
+    
+    // Method displays a comment input field of changeset
+    func setEnterCommentView() {
+        navigationController?.setToolbarHidden(true, animated: false)
+        enterCommentView.closeClosure = { [weak self] in
+            guard let self = self else { return }
+            self.navigationController?.setToolbarHidden(false, animated: false)
+        }
+        enterCommentView.enterClosure = { [weak self] in
+            guard let self = self else { return }
+            self.navigationController?.setToolbarHidden(false, animated: false)
+            self.sendObjects()
+        }
+        enterCommentView.autoClosure = { [weak self] in
+            guard let self = self else { return }
+            let comment = self.generateComment()
+            self.enterCommentView.field.text = comment
+        }
+        enterCommentView.backgroundColor = .backColor0
+        enterCommentView.layer.borderColor = UIColor.systemGray.cgColor
+        enterCommentView.layer.borderWidth = 2
+        enterCommentView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(enterCommentView)
+        NSLayoutConstraint.deactivate(enterCommentViewConstrains)
+        enterCommentViewConstrains = [
+            enterCommentView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            enterCommentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            enterCommentView.leftAnchor.constraint(equalTo: view.leftAnchor),
+        ]
+        NSLayoutConstraint.activate(enterCommentViewConstrains)
+    }
+    
+    //  Updating the view when the keyboard appears.
+    @objc func keyboardWillShow(notification: NSNotification) {
+        guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
+        if keyboardSize.height > 0 {
+            NSLayoutConstraint.deactivate(enterCommentViewConstrains)
+            enterCommentViewConstrains = [
+                enterCommentView.rightAnchor.constraint(equalTo: view.rightAnchor),
+                enterCommentView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -keyboardSize.height),
+                enterCommentView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            ]
+            NSLayoutConstraint.activate(enterCommentViewConstrains)
+        }
+    }
+    
+    //  Updating the view when hiding the keyboard.
+    @objc func keyboardWillHide(notification _: NSNotification) {
+        NSLayoutConstraint.deactivate(enterCommentViewConstrains)
+        enterCommentViewConstrains = [
+            enterCommentView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            enterCommentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            enterCommentView.leftAnchor.constraint(equalTo: view.leftAnchor),
+        ]
+        NSLayoutConstraint.activate(enterCommentViewConstrains)
     }
 }

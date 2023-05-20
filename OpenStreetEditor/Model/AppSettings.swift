@@ -150,6 +150,9 @@ final class AppSettings: NSObject {
         }
     }
     
+    // the variable in which the comment is written, which the user assigns to changeset. Used on EditVC, SavedNodesVC and OsmClient
+    var changeSetComment: String?
+    
 //    MARK: MAP STYLES
 
     //  Displays the loaded OSM data.

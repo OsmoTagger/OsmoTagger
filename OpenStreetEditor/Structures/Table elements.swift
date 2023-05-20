@@ -256,6 +256,98 @@ class AddTagManuallyView: UIView {
     }
 }
 
+// View for enter comment to chageset. Use on EditVC and SavedNodesVC.
+class EnterChangesetComment: UIView {
+    var field: UITextField = {
+        let field = UITextField()
+        field.translatesAutoresizingMaskIntoConstraints = false
+        field.text = AppSettings.settings.changeSetComment
+        field.borderStyle = .roundedRect
+        field.clearButtonMode = .always
+        field.placeholder = "Enter comment for changeset"
+        return field
+    }()
+
+    lazy var toolbar: UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        
+        let doneButton = UIButton()
+        doneButton.setTitle("Enter", for: .normal)
+        doneButton.setTitleColor(.systemBlue, for: .normal)
+        doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        doneButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        let autoButton = UIButton()
+        autoButton.setTitle("Automatically", for: .normal)
+        autoButton.setTitleColor(.systemBlue, for: .normal)
+        autoButton.addTarget(self, action: #selector(tapAuto), for: .touchUpInside)
+        autoButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        let cancelButton = UIButton()
+        cancelButton.setTitle("Cancel", for: .normal)
+        cancelButton.setTitleColor(.systemBlue, for: .normal)
+        cancelButton.addTarget(self, action: #selector(tapCancel), for: .touchUpInside)
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+
+        stack.addArrangedSubview(cancelButton)
+        stack.addArrangedSubview(autoButton)
+        stack.addArrangedSubview(doneButton)
+        stack.distribution = .fillEqually
+        stack.backgroundColor = .systemGray5
+        return stack
+    }()
+    
+    var closeClosure: (() -> Void)?
+    var autoClosure: (() -> Void)?
+    var enterClosure: (() -> Void)?
+    
+    @objc func tapCancel() {
+        if let clouser = closeClosure {
+            clouser()
+        }
+        removeFromSuperview()
+    }
+    
+    @objc func tapAuto() {
+        if let clouser = autoClosure {
+            clouser()
+        }
+    }
+    
+    @objc func doneButtonTapped() {
+        if field.text == "" {
+            AppSettings.settings.changeSetComment = nil
+        } else {
+            AppSettings.settings.changeSetComment = field.text
+        }
+        if let clouser = enterClosure {
+            clouser()
+        }
+        removeFromSuperview()
+    }
+    
+    convenience init() {
+        self.init(frame: .zero)
+        setupConstrains()
+    }
+    
+    func setupConstrains() {
+        addSubview(toolbar)
+        addSubview(field)
+        NSLayoutConstraint.activate([
+            toolbar.bottomAnchor.constraint(equalTo: bottomAnchor),
+            toolbar.leftAnchor.constraint(equalTo: leftAnchor),
+            toolbar.rightAnchor.constraint(equalTo: rightAnchor),
+            toolbar.heightAnchor.constraint(equalToConstant: 50),
+            field.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+            field.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            field.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            field.bottomAnchor.constraint(equalTo: toolbar.topAnchor, constant: -20),
+        ])
+    }
+}
+
 //  TitleView for the tag editing controller
 class EditTitleView: UIView {
     var icon: UIImageView = {

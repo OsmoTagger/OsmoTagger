@@ -27,6 +27,13 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     enum EditableObject {
         case table
         case addView
+        case enterComment
+    }
+    
+    // Enum that sets setEnterCommentView() the type of operation - deleting or posting the object to the server.
+    enum typeOfOperation {
+        case sendObject
+        case deleteObject
     }
 
     var editObject: EditableObject = .table
@@ -42,8 +49,11 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     //  Saves the indexPath of the cell where the text is being edited.
     var editingIndexPath: IndexPath?
     //  The view that is displayed when manually entering text.
-    var addView = AddTagManuallyView()
+    var addTagView = AddTagManuallyView()
     var addViewConstrains = [NSLayoutConstraint]()
+    // View for enter comment to chageset
+    var enterCommentView = EnterChangesetComment()
+    var enterCommentViewConstrains = [NSLayoutConstraint]()
     
     var tap = UIGestureRecognizer()
     
@@ -61,6 +71,10 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     
     deinit {
         AppSettings.settings.saveObjectClouser = nil
+        AppSettings.settings.changeSetComment = nil
+        enterCommentView.closeClosure = nil
+        enterCommentView.autoClosure = nil
+        enterCommentView.enterClosure = nil
     }
     
     override func viewDidLoad() {
@@ -79,7 +93,7 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         }
         AppSettings.settings.saveAllowed = true
         
-//      Notifications about calling and hiding the keyboard.
+        // Notifications about calling and hiding the keyboard.
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         
@@ -87,6 +101,7 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
                             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
                             tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
                             tableView.leftAnchor.constraint(equalTo: view.leftAnchor)]
+        
         setRightBarItems()
         setTableView()
         setToolBar()
@@ -367,6 +382,10 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             showAction(message: "No point tag changes", addAlerts: [])
             return
         }
+        setEnterCommentView(typeOfOperation: .sendObject)
+    }
+    
+    func sendObject() {
         let indicator = showIndicator()
         object.tag = generateTags(properties: AppSettings.settings.newProperties)
         Task {
@@ -400,30 +419,20 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     
     //  By tap the delete button, you can delete tag changes or the entire object from the server (if it is not referenced by other objects).
     @objc func tapDeleteButton() {
-        let alert0 = UIAlertAction(title: "Revert object tag changes", style: .default, handler: { [weak self] _ in
-//          remove tags
-            guard let self = self else { return }
-            let tags = self.generateTags(properties: self.object.oldTags)
-            AppSettings.settings.savedObjects.removeValue(forKey: self.object.id)
-            self.object.tag = tags
-            AppSettings.settings.newProperties = self.object.oldTags
-            self.fillData()
-            self.tableView.reloadData()
-        })
-        let alert1 = UIAlertAction(title: "Delete this \(object.type.rawValue) from server and memory", style: .default, handler: { [weak self] _ in
-//          remove object from server
+        let alert0 = UIAlertAction(title: "Delete this \(object.type.rawValue) from server and memory", style: .default, handler: { [weak self] _ in
+            // remove object from server
             guard let self = self else { return }
             AppSettings.settings.savedObjects.removeValue(forKey: self.object.id)
-//          When deleting an object, if the object selection controller from several objects was opened before, a closure is called, which updates the table to SelectObjectVC.
+            // When deleting an object, if the object selection controller from several objects was opened before, a closure is called, which updates the table to SelectObjectVC.
             if let clouser = self.deleteObjectClosure {
                 clouser(self.object.id)
             }
             if self.object.id > 0 {
-                self.deleteFromServer()
+                self.setEnterCommentView(typeOfOperation: .deleteObject)
             }
         })
-        let alert2 = UIAlertAction(title: "Cancel", style: .destructive, handler: nil)
-        showAction(message: "Select action", addAlerts: [alert0, alert1, alert2])
+        let alert1 = UIAlertAction(title: "Cancel", style: .destructive, handler: nil)
+        showAction(message: "Remove object?", addAlerts: [alert0, alert1])
     }
     
     //  The method of deleting an object from the server, followed by updating the application data.
@@ -673,7 +682,7 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             } else if presetName == "Add tag manually" {
                 editObject = .addView
                 //  When the tag is entered manually, addView.callbackClosure is triggered, which passes the entered tag=value pair. The table data is updated.
-                addView.callbackClosure = { [weak self] addedTag in
+                addTagView.callbackClosure = { [weak self] addedTag in
                     guard let self = self else { return }
                     self.navigationController?.setToolbarHidden(false, animated: false)
                     self.editObject = .table
@@ -692,11 +701,11 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
                     self.fillData()
                     self.tableView.reloadData()
                 }
-                addView.translatesAutoresizingMaskIntoConstraints = false
-                addView.backgroundColor = .systemGray6
-                addView.alpha = 0.95
-                addView.keyField.becomeFirstResponder()
-                view.addSubview(addView)
+                addTagView.translatesAutoresizingMaskIntoConstraints = false
+                addTagView.backgroundColor = .systemBackground
+                addTagView.alpha = 0.95
+                addTagView.keyField.becomeFirstResponder()
+                view.addSubview(addTagView)
             } else {
                 guard let item = getItemFromName(name: presetName) else { return }
                 let itemVC = ItemTagsViewController(item: item)
@@ -830,6 +839,62 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         }
     }
     
+    // The method automatically generates a comment for changeset.
+    func generateComment(typeOfOperation: typeOfOperation) -> String {
+        let name = activePath?.item ?? object.type.rawValue
+        var comment = ""
+        switch typeOfOperation {
+        case .sendObject:
+            if object.id < 0 {
+                comment = "Create \(name)"
+            } else {
+                comment = "Edit tags of \(name)"
+            }
+        case .deleteObject:
+            comment = "Delete \(name)"
+        }
+        return comment
+    }
+    
+    // Method displays a comment input field of changeset
+    func setEnterCommentView(typeOfOperation: typeOfOperation) {
+        navigationController?.setToolbarHidden(true, animated: false)
+        editObject = .enterComment
+        enterCommentView.closeClosure = { [weak self] in
+            guard let self = self else { return }
+            self.editObject = .table
+            self.navigationController?.setToolbarHidden(false, animated: false)
+        }
+        enterCommentView.enterClosure = { [weak self] in
+            guard let self = self else { return }
+            self.editObject = .table
+            self.navigationController?.setToolbarHidden(false, animated: false)
+            switch typeOfOperation {
+            case .sendObject:
+                self.sendObject()
+            case .deleteObject:
+                self.deleteFromServer()
+            }
+        }
+        enterCommentView.autoClosure = { [weak self] in
+            guard let self = self else { return }
+            let comment = self.generateComment(typeOfOperation: typeOfOperation)
+            self.enterCommentView.field.text = comment
+        }
+        enterCommentView.backgroundColor = .backColor0
+        enterCommentView.layer.borderColor = UIColor.systemGray.cgColor
+        enterCommentView.layer.borderWidth = 2
+        enterCommentView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(enterCommentView)
+        NSLayoutConstraint.deactivate(enterCommentViewConstrains)
+        enterCommentViewConstrains = [
+            enterCommentView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            enterCommentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            enterCommentView.leftAnchor.constraint(equalTo: view.leftAnchor),
+        ]
+        NSLayoutConstraint.activate(enterCommentViewConstrains)
+    }
+    
     //  Updating the view when the keyboard appears.
     @objc func keyboardWillShow(notification: NSNotification) {
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
@@ -844,12 +909,20 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
                 NSLayoutConstraint.activate(tableConstraints)
             case .addView:
                 addViewConstrains = [
-                    addView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -keyboardSize.height),
-                    addView.leftAnchor.constraint(equalTo: view.leftAnchor),
-                    addView.rightAnchor.constraint(equalTo: view.rightAnchor),
-                    addView.topAnchor.constraint(equalTo: view.topAnchor),
+                    addTagView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -keyboardSize.height),
+                    addTagView.leftAnchor.constraint(equalTo: view.leftAnchor),
+                    addTagView.rightAnchor.constraint(equalTo: view.rightAnchor),
+                    addTagView.topAnchor.constraint(equalTo: view.topAnchor),
                 ]
                 NSLayoutConstraint.activate(addViewConstrains)
+            case .enterComment:
+                NSLayoutConstraint.deactivate(enterCommentViewConstrains)
+                enterCommentViewConstrains = [
+                    enterCommentView.rightAnchor.constraint(equalTo: view.rightAnchor),
+                    enterCommentView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -keyboardSize.height),
+                    enterCommentView.leftAnchor.constraint(equalTo: view.leftAnchor),
+                ]
+                NSLayoutConstraint.activate(enterCommentViewConstrains)
             }
         }
     }
@@ -868,12 +941,20 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             NSLayoutConstraint.deactivate(addViewConstrains)
             navigationController?.setToolbarHidden(true, animated: false)
             addViewConstrains = [
-                addView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-                addView.leftAnchor.constraint(equalTo: view.leftAnchor),
-                addView.rightAnchor.constraint(equalTo: view.rightAnchor),
-                addView.topAnchor.constraint(equalTo: view.topAnchor),
+                addTagView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                addTagView.leftAnchor.constraint(equalTo: view.leftAnchor),
+                addTagView.rightAnchor.constraint(equalTo: view.rightAnchor),
+                addTagView.topAnchor.constraint(equalTo: view.topAnchor),
             ]
             NSLayoutConstraint.activate(addViewConstrains)
+        case .enterComment:
+            NSLayoutConstraint.deactivate(enterCommentViewConstrains)
+            enterCommentViewConstrains = [
+                enterCommentView.rightAnchor.constraint(equalTo: view.rightAnchor),
+                enterCommentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                enterCommentView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            ]
+            NSLayoutConstraint.activate(enterCommentViewConstrains)
         }
     }
     
