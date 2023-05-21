@@ -220,6 +220,7 @@ class ItemCell: UITableViewCell {
     var valueLable: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
+        label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -274,38 +275,38 @@ class ItemCell: UITableViewCell {
         contentView.addSubview(label)
         contentView.addSubview(checkLable)
         NSLayoutConstraint.activate([
-            icon.leftAnchor.constraint(equalTo: leftAnchor),
-            icon.topAnchor.constraint(equalTo: topAnchor),
-            icon.widthAnchor.constraint(equalTo: heightAnchor),
-            icon.bottomAnchor.constraint(equalTo: bottomAnchor),
-            keyLabel.topAnchor.constraint(equalTo: topAnchor),
-            keyLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            icon.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            icon.topAnchor.constraint(equalTo: contentView.topAnchor),
+            icon.widthAnchor.constraint(equalToConstant: 50),
+            icon.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            keyLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            keyLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             keyLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
-            keyLabel.rightAnchor.constraint(equalTo: centerXAnchor),
-            valueLable.leftAnchor.constraint(equalTo: centerXAnchor),
+            keyLabel.rightAnchor.constraint(equalTo: contentView.centerXAnchor),
+            valueLable.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
             valueLable.rightAnchor.constraint(equalTo: checkBox.leftAnchor),
-            valueLable.topAnchor.constraint(equalTo: topAnchor),
-            valueLable.bottomAnchor.constraint(equalTo: bottomAnchor),
-            checkBox.rightAnchor.constraint(equalTo: rightAnchor),
+            valueLable.topAnchor.constraint(equalTo: contentView.topAnchor),
+            valueLable.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            checkBox.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             checkBox.widthAnchor.constraint(equalToConstant: 50),
-            checkBox.heightAnchor.constraint(equalTo: heightAnchor),
-            checkBox.centerYAnchor.constraint(equalTo: centerYAnchor),
+            checkBox.heightAnchor.constraint(equalTo: contentView.heightAnchor),
+            checkBox.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             checkLable.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
-            checkLable.topAnchor.constraint(equalTo: topAnchor),
-            checkLable.bottomAnchor.constraint(equalTo: bottomAnchor),
+            checkLable.topAnchor.constraint(equalTo: contentView.topAnchor),
+            checkLable.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             checkLable.rightAnchor.constraint(equalTo: checkBox.leftAnchor, constant: -10),
-            selectValueButton.leftAnchor.constraint(equalTo: centerXAnchor),
-            selectValueButton.rightAnchor.constraint(equalTo: rightAnchor),
-            selectValueButton.topAnchor.constraint(equalTo: topAnchor),
-            selectValueButton.bottomAnchor.constraint(equalTo: bottomAnchor),
-            valueField.leftAnchor.constraint(equalTo: centerXAnchor),
-            valueField.rightAnchor.constraint(equalTo: rightAnchor, constant: -3),
-            valueField.topAnchor.constraint(equalTo: topAnchor, constant: 3),
-            valueField.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -3),
-            label.topAnchor.constraint(equalTo: topAnchor),
-            label.leftAnchor.constraint(equalTo: leftAnchor, constant: 10),
-            label.rightAnchor.constraint(equalTo: rightAnchor, constant: -10),
-            label.bottomAnchor.constraint(equalTo: bottomAnchor),
+            selectValueButton.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
+            selectValueButton.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            selectValueButton.topAnchor.constraint(equalTo: contentView.topAnchor),
+            selectValueButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            valueField.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
+            valueField.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -3),
+            valueField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 3),
+            valueField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3),
+            label.topAnchor.constraint(equalTo: contentView.topAnchor),
+            label.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 10),
+            label.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -10),
+            label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
     
