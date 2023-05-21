@@ -317,7 +317,10 @@ class EnterChangesetComment: UIView {
     
     @objc func doneButtonTapped() {
         if field.text == "" {
-            AppSettings.settings.changeSetComment = nil
+            if let clouser = autoClosure {
+                clouser()
+            }
+            AppSettings.settings.changeSetComment = field.text
         } else {
             AppSettings.settings.changeSetComment = field.text
         }

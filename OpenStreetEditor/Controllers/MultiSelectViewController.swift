@@ -31,6 +31,7 @@ class MultiSelectViewController: UIViewController, UITableViewDelegate, UITableV
     
     override func viewDidLoad() {
         title = "Choose the required values"
+        view.backgroundColor = .systemBackground
         setTableView()
     }
     
@@ -49,7 +50,6 @@ class MultiSelectViewController: UIViewController, UITableViewDelegate, UITableV
         let cellFail = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
         cellFail.textLabel?.text = "Point data loading error"
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? SelectValuesCell else { return cellFail }
-        cell.backgroundColor = .backColor0
         let value = values[indexPath.row]
         cell.label.text = value
         if let inputValues = AppSettings.settings.newProperties[key] {
@@ -98,7 +98,6 @@ class MultiSelectViewController: UIViewController, UITableViewDelegate, UITableV
     
     func setTableView() {
         tableView.rowHeight = 50
-        tableView.separatorColor = .serparatorColor
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(SelectValuesCell.self, forCellReuseIdentifier: cellId)

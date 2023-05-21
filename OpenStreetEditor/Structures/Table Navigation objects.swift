@@ -80,11 +80,11 @@ class IconView: UIView {
         let iconHeight = icon.image?.size.height ?? 25
         NSLayoutConstraint.activate([
             backView.leftAnchor.constraint(equalTo: leftAnchor, constant: 5),
-            backView.topAnchor.constraint(equalTo: topAnchor, constant: 5),
-            backView.rightAnchor.constraint(equalTo: rightAnchor, constant: -5),
-            backView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -5),
-            icon.centerXAnchor.constraint(equalTo: centerXAnchor),
-            icon.centerYAnchor.constraint(equalTo: centerYAnchor),
+            backView.widthAnchor.constraint(equalToConstant: 38),
+            backView.heightAnchor.constraint(equalToConstant: 38),
+            backView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            icon.centerXAnchor.constraint(equalTo: backView.centerXAnchor),
+            icon.centerYAnchor.constraint(equalTo: backView.centerYAnchor),
             icon.widthAnchor.constraint(equalToConstant: iconWidth),
             icon.heightAnchor.constraint(equalToConstant: iconHeight),
         ])
@@ -115,7 +115,7 @@ class SimpleCell: UITableViewCell {
             icon.leftAnchor.constraint(equalTo: leftAnchor),
             icon.bottomAnchor.constraint(equalTo: bottomAnchor),
             icon.widthAnchor.constraint(equalTo: heightAnchor),
-            label.leftAnchor.constraint(equalTo: icon.rightAnchor),
+            label.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 4),
             label.topAnchor.constraint(equalTo: topAnchor),
             label.rightAnchor.constraint(equalTo: rightAnchor, constant: -50),
             label.bottomAnchor.constraint(equalTo: bottomAnchor),
@@ -160,14 +160,14 @@ class CategoryCell: UITableViewCell {
         contentView.addSubview(icon)
         contentView.addSubview(nameLabel)
         NSLayoutConstraint.activate([
-            icon.leftAnchor.constraint(equalTo: leftAnchor),
-            icon.topAnchor.constraint(equalTo: topAnchor),
-            icon.widthAnchor.constraint(equalTo: heightAnchor),
-            icon.bottomAnchor.constraint(equalTo: bottomAnchor),
+            icon.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            icon.topAnchor.constraint(equalTo: contentView.topAnchor),
+            icon.widthAnchor.constraint(equalTo: contentView.heightAnchor),
+            icon.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             nameLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
-            nameLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -50),
-            nameLabel.topAnchor.constraint(equalTo: topAnchor),
-            nameLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            nameLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50),
+            nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            nameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
     
@@ -276,9 +276,9 @@ class ItemCell: UITableViewCell {
         contentView.addSubview(checkLable)
         NSLayoutConstraint.activate([
             icon.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            icon.topAnchor.constraint(equalTo: contentView.topAnchor),
-            icon.widthAnchor.constraint(equalToConstant: 50),
-            icon.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            icon.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 3),
+            icon.widthAnchor.constraint(equalTo: icon.backView.widthAnchor),
+            icon.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3),
             keyLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             keyLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             keyLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
