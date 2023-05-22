@@ -810,12 +810,12 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         switch typeOfOperation {
         case .sendObject:
             if object.id < 0 {
-                comment = "Create \(name)"
+                comment = "Created \(name)"
             } else {
-                comment = "Edit tags of \(name)"
+                comment = "Edited tags of \(name)"
             }
         case .deleteObject:
-            comment = "Delete \(name)"
+            comment = "Deleted \(name)"
         }
         return comment
     }
