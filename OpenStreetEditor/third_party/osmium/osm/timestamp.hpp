@@ -125,7 +125,7 @@ namespace osmium {
                     tm.tm_min  >= 0 && tm.tm_min  <= 59 &&
                     tm.tm_sec  >= 0 && tm.tm_sec  <= 60) {
 #ifndef _WIN32
-                    return timegm(&tm);
+                    return 0;
 #else
                     return _mkgmtime(&tm);
 #endif
