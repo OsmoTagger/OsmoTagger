@@ -55,7 +55,10 @@ class ItemTagsViewController: UIViewController, UITableViewDelegate, UITableView
         setTableView()
     }
     
-    override func viewDidDisappear(_: Bool) {}
+    override func viewDidDisappear(_: Bool) {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
     
     //  The preset stores "chunks" - duplicate sets of tags as elements. In defaultpresets.xml they are taken out separately from Josm. The method extracts tags from the "chunk" and adds preset elements to the array.
     //  The method also transfers references to other presets to the end of the array.

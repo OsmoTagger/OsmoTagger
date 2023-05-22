@@ -40,6 +40,11 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         setTableView()
     }
     
+    override func viewDidDisappear(_: Bool) {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
     func setToolBar() {
         let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let publishButtom = UIBarButtonItem(title: "Publish", style: .plain, target: self, action: #selector(tapSendButton))
@@ -122,8 +127,6 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
         ])
     }
-    
-    override func viewDidDisappear(_: Bool) {}
 
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
         return tableData.count

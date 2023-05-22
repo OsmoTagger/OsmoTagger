@@ -108,7 +108,10 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         navigationController?.setToolbarHidden(false, animated: false)
     }
 
-    override func viewDidDisappear(_: Bool) {}
+    override func viewDidDisappear(_: Bool) {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
     
     //  Actions when clicking "undo" tag changes. Tags are reset to the initial state.
     @objc func tapCancel() {
