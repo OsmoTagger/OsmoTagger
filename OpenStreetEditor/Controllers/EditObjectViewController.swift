@@ -850,7 +850,7 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         NSLayoutConstraint.deactivate(enterCommentViewConstrains)
         enterCommentViewConstrains = [
             enterCommentView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            enterCommentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            enterCommentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             enterCommentView.leftAnchor.constraint(equalTo: view.leftAnchor),
         ]
         NSLayoutConstraint.activate(enterCommentViewConstrains)
@@ -902,7 +902,7 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             NSLayoutConstraint.deactivate(addViewConstrains)
             navigationController?.setToolbarHidden(true, animated: false)
             addViewConstrains = [
-                addTagView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                addTagView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
                 addTagView.leftAnchor.constraint(equalTo: view.leftAnchor),
                 addTagView.rightAnchor.constraint(equalTo: view.rightAnchor),
                 addTagView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -912,7 +912,7 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             NSLayoutConstraint.deactivate(enterCommentViewConstrains)
             enterCommentViewConstrains = [
                 enterCommentView.rightAnchor.constraint(equalTo: view.rightAnchor),
-                enterCommentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                enterCommentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
                 enterCommentView.leftAnchor.constraint(equalTo: view.leftAnchor),
             ]
             NSLayoutConstraint.activate(enterCommentViewConstrains)

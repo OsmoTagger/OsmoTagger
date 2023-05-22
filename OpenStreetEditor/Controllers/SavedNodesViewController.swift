@@ -316,7 +316,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         NSLayoutConstraint.deactivate(enterCommentViewConstrains)
         enterCommentViewConstrains = [
             enterCommentView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            enterCommentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            enterCommentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             enterCommentView.leftAnchor.constraint(equalTo: view.leftAnchor),
         ]
         NSLayoutConstraint.activate(enterCommentViewConstrains)
@@ -341,7 +341,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         NSLayoutConstraint.deactivate(enterCommentViewConstrains)
         enterCommentViewConstrains = [
             enterCommentView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            enterCommentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            enterCommentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             enterCommentView.leftAnchor.constraint(equalTo: view.leftAnchor),
         ]
         NSLayoutConstraint.activate(enterCommentViewConstrains)
