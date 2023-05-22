@@ -206,7 +206,7 @@ class ItemTagsViewController: UIViewController, UITableViewDelegate, UITableView
                 let inputValues = inputValuesString.components(separatedBy: ";")
                 var text = ""
                 for value in inputValues {
-                    text +=  value + "\n"
+                    text += value + "\n"
                 }
                 text.removeLast()
                 cell.valueLable.text = text
@@ -307,7 +307,7 @@ class ItemTagsViewController: UIViewController, UITableViewDelegate, UITableView
         case let .multiselect(key, values, _):
             let vc = MultiSelectViewController(values: values, key: key)
             vc.callbackClosure = { [weak self] in
-                guard let self = self else {return}
+                guard let self = self else { return }
                 self.navigationController?.setToolbarHidden(false, animated: false)
                 self.tableView.reloadRows(at: [indexPath], with: .none)
             }
