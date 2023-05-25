@@ -146,7 +146,6 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
               let id = Int(idString) else { return }
         if let object = AppSettings.settings.savedObjects[id] {
             let vc = EditObjectViewController(object: object)
-            vc.delegate = delegate
 //          On the tag editing controller, the user can delete an object. In this case, the table is updated.
             vc.deleteObjectClosure = { [weak self] id in
                 guard let self = self else { return }
@@ -167,7 +166,6 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
             let vector = object.getVectorObject()
             delegate?.showTapObject(object: vector)
             let vc = EditObjectViewController(object: object)
-            vc.delegate = delegate
 //          On the tag editing controller, the user can delete an object. In this case, the table is updated.
             vc.deleteObjectClosure = { [weak self] id in
                 guard let self = self else { return }

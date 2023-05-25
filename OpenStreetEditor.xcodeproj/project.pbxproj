@@ -19,7 +19,7 @@
 		2C1A361229B0674400AF3BEB /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1A361129B0674400AF3BEB /* String.swift */; };
 		2C21058929F095C6005A0B46 /* LineTool settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C21058829F095C6005A0B46 /* LineTool settings.swift */; };
 		2C21058D29F098F1005A0B46 /* OSM structures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5662C02912788600E5B4D5 /* OSM structures.swift */; };
-		2C24FA502A0AFA6300C9ACA3 /* circle.svg in Resources */ = {isa = PBXBuildFile; fileRef = 2C24FA4F2A0AFA6300C9ACA3 /* circle.svg */; };
+		2C24FA502A0AFA6300C9ACA3 /* circle_location.svg in Resources */ = {isa = PBXBuildFile; fileRef = 2C24FA4F2A0AFA6300C9ACA3 /* circle_location.svg */; };
 		2C27010C2A01AB6100A65363 /* Terms of service.md in Resources */ = {isa = PBXBuildFile; fileRef = 2C27010B2A01AB6000A65363 /* Terms of service.md */; };
 		2C2F972829D53DB200A994C8 /* ShowTappedObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2F972729D53DB100A994C8 /* ShowTappedObject.swift */; };
 		2C478A9929E69BCB004E35E1 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C478A9829E69BCB004E35E1 /* MainViewController.swift */; };
@@ -92,7 +92,7 @@
 		2C1707062A06E2A9003ECB39 /* ApiKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ApiKeys.swift; path = OpenStreetEditor/ApiKeys.swift; sourceTree = SOURCE_ROOT; };
 		2C1A361129B0674400AF3BEB /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		2C21058829F095C6005A0B46 /* LineTool settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LineTool settings.swift"; sourceTree = "<group>"; };
-		2C24FA4F2A0AFA6300C9ACA3 /* circle.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = circle.svg; sourceTree = "<group>"; };
+		2C24FA4F2A0AFA6300C9ACA3 /* circle_location.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = circle_location.svg; sourceTree = "<group>"; };
 		2C27010B2A01AB6000A65363 /* Terms of service.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = "Terms of service.md"; sourceTree = "<group>"; };
 		2C2F972729D53DB100A994C8 /* ShowTappedObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowTappedObject.swift; sourceTree = "<group>"; };
 		2C478A9829E69BCB004E35E1 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -264,7 +264,7 @@
 		2C24FA4E2A0AFA4700C9ACA3 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				2C24FA4F2A0AFA6300C9ACA3 /* circle.svg */,
+				2C24FA4F2A0AFA6300C9ACA3 /* circle_location.svg */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -477,7 +477,7 @@
 				2CA6A3F429CAB640004233E2 /* defaultPresets.xml in Resources */,
 				2042BCF7289C697A0026514E /* LaunchScreen.storyboard in Resources */,
 				2042BCF4289C697A0026514E /* Assets.xcassets in Resources */,
-				2C24FA502A0AFA6300C9ACA3 /* circle.svg in Resources */,
+				2C24FA502A0AFA6300C9ACA3 /* circle_location.svg in Resources */,
 				2C27010C2A01AB6100A65363 /* Terms of service.md in Resources */,
 				2042BCF2289C696E0026514E /* Main.storyboard in Resources */,
 			);

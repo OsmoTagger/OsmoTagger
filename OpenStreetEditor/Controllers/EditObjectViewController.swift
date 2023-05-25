@@ -10,7 +10,6 @@ import UIKit
 
 //  Object tag editing controller.
 class EditObjectViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
-    weak var delegate: ShowTappedObject?
     
     //  Called when the object is completely deleted from the server. Used only on SavedNodesVC.
     var deleteObjectClosure: ((Int) -> Void)?
@@ -27,13 +26,6 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     enum EditableObject {
         case table
         case addView
-        case enterComment
-    }
-    
-    // Enum that sets setEnterCommentView() the type of operation - deleting or posting the object to the server.
-    enum typeOfOperation {
-        case sendObject
-        case deleteObject
     }
 
     var editObject: EditableObject = .table
@@ -51,9 +43,6 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     //  The view that is displayed when manually entering text.
     var addTagView = AddTagManuallyView()
     var addViewConstrains = [NSLayoutConstraint]()
-    // View for enter comment to chageset
-    var enterCommentView = EnterChangesetComment()
-    var enterCommentViewConstrains = [NSLayoutConstraint]()
     
     var tap = UIGestureRecognizer()
     
@@ -67,14 +56,6 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    deinit {
-        AppSettings.settings.saveObjectClouser = nil
-        AppSettings.settings.changeSetComment = nil
-        enterCommentView.closeClosure = nil
-        enterCommentView.autoClosure = nil
-        enterCommentView.enterClosure = nil
     }
     
     override func viewDidLoad() {
@@ -109,6 +90,7 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     }
 
     override func viewDidDisappear(_: Bool) {
+        AppSettings.settings.saveObjectClouser = nil
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
@@ -362,14 +344,15 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     
     func setToolBar() {
         let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let discardBottom = UIBarButtonItem(title: "Delete", style: .plain, target: self, action: #selector(tapDeleteButton))
-        let publishButtom = UIBarButtonItem(title: "Publish", style: .plain, target: self, action: #selector(tapSendButton))
-        toolbarItems = [flexibleSpace, discardBottom, flexibleSpace, publishButtom, flexibleSpace]
+        let deleteButton = UIBarButtonItem(title: "Mark object for deletion", style: .plain, target: self, action: #selector(tapDeleteButton))
+        toolbarItems = [flexibleSpace, deleteButton, flexibleSpace]
     }
     
     //  Tap on the button to display brief information about the object (RightBarItems).
     @objc func tapInfo() {
-        let vc = InfoObjectViewController(object: object)
+        var newObject = object
+        newObject.tag = generateTags(properties: AppSettings.settings.newProperties)
+        let vc = InfoObjectViewController(object: newObject)
         navigationController?.setToolbarHidden(true, animated: false)
         vc.dismissClosure = { [weak self] in
             guard let self = self else { return }
@@ -377,39 +360,6 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             AppSettings.settings.saveAllowed = true
         }
         navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @objc func tapSendButton() {
-//      If the new tags do not differ from the original ones, we interrupt the method.
-        if NSDictionary(dictionary: object.oldTags).isEqual(to: AppSettings.settings.newProperties) && object.id > 0 {
-            showAction(message: "No point tag changes", addAlerts: [])
-            return
-        }
-        setEnterCommentView(typeOfOperation: .sendObject)
-    }
-    
-    func sendObject() {
-        let indicator = showIndicator()
-        object.tag = generateTags(properties: AppSettings.settings.newProperties)
-        Task {
-            do {
-                try await OsmClient.client.sendObjects(sendObjs: [object], deleteObjs: [])
-//              If the data is successfully sent to the server, update the downloaded OSM source data, collapse the controllers.
-                AppSettings.settings.savedObjects.removeValue(forKey: object.id)
-                delegate?.updateSourceData()
-                if let controllers = self.navigationController?.viewControllers {
-                    if controllers[0] is SelectObjectViewController || controllers[0] is SavedNodesViewController {
-                        self.navigationController?.setViewControllers([controllers[0]], animated: true)
-                    } else {
-                        self.dismiss(animated: true)
-                    }
-                }
-            } catch {
-                let message = error as? String ?? "Error submitting changes"
-                showAction(message: message, addAlerts: [])
-            }
-            removeIndicator(indicator: indicator)
-        }
     }
 
     //  The method is called from the closure when the CategoryNavigationController is collapsed. The tags entered in it are immediately saved in AppSettings.settings.newProperties, and the method updates the table.
@@ -422,8 +372,7 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     
     //  By tap the delete button, you can delete tag changes or the entire object from the server (if it is not referenced by other objects).
     @objc func tapDeleteButton() {
-        let alert0 = UIAlertAction(title: "Delete this \(object.type.rawValue) from server and memory", style: .default, handler: { [weak self] _ in
-            // remove object from server
+        let action0 = UIAlertAction(title: "Delete object", style: .default, handler: { [weak self] _ in
             guard let self = self else { return }
             AppSettings.settings.savedObjects.removeValue(forKey: self.object.id)
             // When deleting an object, if the object selection controller from several objects was opened before, a closure is called, which updates the table to SelectObjectVC.
@@ -431,31 +380,14 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
                 clouser(self.object.id)
             }
             if self.object.id > 0 {
-                self.setEnterCommentView(typeOfOperation: .deleteObject)
+                AppSettings.settings.deletedObjects[self.object.id] = self.object
             }
         })
-        let alert1 = UIAlertAction(title: "Cancel", style: .destructive, handler: nil)
-        showAction(message: "Remove object?", addAlerts: [alert0, alert1])
-    }
-    
-    //  The method of deleting an object from the server, followed by updating the application data.
-    @objc func deleteFromServer() {
-        Task {
-            do {
-                try await OsmClient.client.sendObjects(sendObjs: [], deleteObjs: [self.object])
-                delegate?.updateSourceData()
-                if let controllers = self.navigationController?.viewControllers {
-                    if controllers[0] is SelectObjectViewController || controllers[0] is SavedNodesViewController {
-                        self.navigationController?.setViewControllers([controllers[0]], animated: true)
-                    } else {
-                        self.dismiss(animated: true)
-                    }
-                }
-            } catch {
-                let message = error as? String ?? "Point deletion error"
-                self.showAction(message: message, addAlerts: [])
-            }
-        }
+        let action1 = UIAlertAction(title: "Cancel", style: .destructive, handler: nil)
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alert.addAction(action0)
+        alert.addAction(action1)
+        present(alert, animated: true, completion: nil)
     }
     
     //  Generating an array of tags [Tag] from a dictionary with tags.
@@ -673,9 +605,6 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             let svc = CustomSafari(url: url)
             AppSettings.settings.saveAllowed = false
             svc.callbackClosure = { [weak self] in
-                guard let self = self else { return }
-                let vector = self.object.getVectorObject()
-                self.delegate?.showTapObject(object: vector)
                 AppSettings.settings.saveAllowed = true
             }
             present(svc, animated: true, completion: nil)
@@ -803,62 +732,6 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         }
     }
     
-    // The method automatically generates a comment for changeset.
-    func generateComment(typeOfOperation: typeOfOperation) -> String {
-        let name = activePath?.item ?? object.type.rawValue
-        var comment = ""
-        switch typeOfOperation {
-        case .sendObject:
-            if object.id < 0 {
-                comment = "Created \(name)"
-            } else {
-                comment = "Edited tags of \(name)"
-            }
-        case .deleteObject:
-            comment = "Deleted \(name)"
-        }
-        return comment
-    }
-    
-    // Method displays a comment input field of changeset
-    func setEnterCommentView(typeOfOperation: typeOfOperation) {
-        navigationController?.setToolbarHidden(true, animated: false)
-        editObject = .enterComment
-        enterCommentView.closeClosure = { [weak self] in
-            guard let self = self else { return }
-            self.editObject = .table
-            self.navigationController?.setToolbarHidden(false, animated: false)
-        }
-        enterCommentView.enterClosure = { [weak self] in
-            guard let self = self else { return }
-            self.editObject = .table
-            self.navigationController?.setToolbarHidden(false, animated: false)
-            switch typeOfOperation {
-            case .sendObject:
-                self.sendObject()
-            case .deleteObject:
-                self.deleteFromServer()
-            }
-        }
-        enterCommentView.autoClosure = { [weak self] in
-            guard let self = self else { return }
-            let comment = self.generateComment(typeOfOperation: typeOfOperation)
-            self.enterCommentView.field.text = comment
-        }
-        enterCommentView.backgroundColor = .backColor0
-        enterCommentView.layer.borderColor = UIColor.systemGray.cgColor
-        enterCommentView.layer.borderWidth = 2
-        enterCommentView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(enterCommentView)
-        NSLayoutConstraint.deactivate(enterCommentViewConstrains)
-        enterCommentViewConstrains = [
-            enterCommentView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            enterCommentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            enterCommentView.leftAnchor.constraint(equalTo: view.leftAnchor),
-        ]
-        NSLayoutConstraint.activate(enterCommentViewConstrains)
-    }
-    
     //  Updating the view when the keyboard appears.
     @objc func keyboardWillShow(notification: NSNotification) {
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
@@ -879,14 +752,6 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
                     addTagView.topAnchor.constraint(equalTo: view.topAnchor),
                 ]
                 NSLayoutConstraint.activate(addViewConstrains)
-            case .enterComment:
-                NSLayoutConstraint.deactivate(enterCommentViewConstrains)
-                enterCommentViewConstrains = [
-                    enterCommentView.rightAnchor.constraint(equalTo: view.rightAnchor),
-                    enterCommentView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -keyboardSize.height),
-                    enterCommentView.leftAnchor.constraint(equalTo: view.leftAnchor),
-                ]
-                NSLayoutConstraint.activate(enterCommentViewConstrains)
             }
         }
     }
@@ -911,14 +776,6 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
                 addTagView.topAnchor.constraint(equalTo: view.topAnchor),
             ]
             NSLayoutConstraint.activate(addViewConstrains)
-        case .enterComment:
-            NSLayoutConstraint.deactivate(enterCommentViewConstrains)
-            enterCommentViewConstrains = [
-                enterCommentView.rightAnchor.constraint(equalTo: view.rightAnchor),
-                enterCommentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-                enterCommentView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            ]
-            NSLayoutConstraint.activate(enterCommentViewConstrains)
         }
     }
     

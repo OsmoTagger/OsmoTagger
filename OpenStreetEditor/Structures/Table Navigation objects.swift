@@ -103,6 +103,7 @@ class SimpleCell: UITableViewCell {
         label.textAlignment = .left
         label.baselineAdjustment = .alignCenters
         label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -111,14 +112,14 @@ class SimpleCell: UITableViewCell {
         contentView.addSubview(icon)
         contentView.addSubview(label)
         NSLayoutConstraint.activate([
-            icon.topAnchor.constraint(equalTo: topAnchor),
-            icon.leftAnchor.constraint(equalTo: leftAnchor),
-            icon.bottomAnchor.constraint(equalTo: bottomAnchor),
-            icon.widthAnchor.constraint(equalTo: heightAnchor),
+            icon.widthAnchor.constraint(equalToConstant: 44),
+            icon.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            icon.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             label.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 4),
-            label.topAnchor.constraint(equalTo: topAnchor),
-            label.rightAnchor.constraint(equalTo: rightAnchor, constant: -50),
-            label.bottomAnchor.constraint(equalTo: bottomAnchor),
+            label.topAnchor.constraint(equalTo: contentView.topAnchor),
+            label.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50),
+            label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            label.heightAnchor.constraint(greaterThanOrEqualToConstant: 44)
         ])
     }
     
@@ -135,6 +136,7 @@ class SimpleCell: UITableViewCell {
     
     override func prepareForReuse() {
         icon.icon.image = nil
+        icon.backView.backgroundColor = .white
         label.text = nil
     }
 }
@@ -276,9 +278,9 @@ class ItemCell: UITableViewCell {
         contentView.addSubview(checkLable)
         NSLayoutConstraint.activate([
             icon.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            icon.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 3),
+            icon.topAnchor.constraint(equalTo: contentView.topAnchor),
             icon.widthAnchor.constraint(equalTo: icon.backView.widthAnchor),
-            icon.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3),
+            icon.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             keyLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             keyLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             keyLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),

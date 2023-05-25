@@ -158,7 +158,7 @@ final class AppSettings: NSObject {
     //  Displays the loaded OSM data.
     let defaultStyle = """
     node {
-        icon-image: "circle.svg";
+        icon-image: "poi_circle_small.svg";
         icon-scale: 2;
         icon-tint: blue;
         text: eval(tag('text'));
@@ -182,7 +182,7 @@ final class AppSettings: NSObject {
     //  Displays objects that have been modified but not sent to the server (green).
     let savedStyle = """
     node {
-        icon-image: "circle.svg";
+        icon-image: "poi_circle_small.svg";
         icon-scale: 2;
         icon-tint: green;
     }
@@ -196,7 +196,7 @@ final class AppSettings: NSObject {
     //  Displays the object that was tapped and whose properties are currently being edited (yellow).
     let editStyle = """
     node {
-        icon-image: "circle.svg";
+        icon-image: "poi_circle_small.svg";
         icon-scale: 1;
         icon-tint: yellow;
     }
@@ -214,9 +214,9 @@ final class AppSettings: NSObject {
     //  Displays objects created but not sent to the server (orange color).
     let newStyle = """
     node {
-        icon-image: "circle.svg";
+        icon-image: "poi_circle_small.svg";
         icon-scale: 2;
-        icon-tint: orange;
+        icon-tint: red;
     }
     line {
         linecap: round;
@@ -228,7 +228,7 @@ final class AppSettings: NSObject {
     //  Highlights objects that fell under the tap, if there was not one object under the tap, but several.
     let tappedStyle = """
     node {
-        icon-image: "circle.svg";
+        icon-image: "poi_circle_small.svg";
         icon-scale: 2;
         icon-tint: orange;
     }
@@ -249,7 +249,11 @@ final class AppSettings: NSObject {
     
 //    MARK: FILE PATHES
     
+    // Path to a file that stores modified and created objects
     let savedNodesURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("savedNodes.data")
+    
+    // Path to a file that stores objects marked for deletion
+    let deletedNodesURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("deletedNodes.data")
     
     let inputFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input.xml")
     
@@ -273,13 +277,34 @@ final class AppSettings: NSObject {
         }
     }
     
-    //  Fills savedObjects with objects from the file when the application starts
+    // Objects marked for deletion
+    var deletedObjects: [Int:OSMAnyObject] = [:] {
+        didSet {
+            if let clouser = mapVCClouser {
+                clouser()
+            }
+            do {
+                let data = try JSONEncoder().encode(deletedObjects)
+                try data.write(to: deletedNodesURL, options: .atomic)
+            } catch {
+                print("Error while write saved objects: ", error)
+            }
+        }
+    }
+    
+    //  Fills savedObjects and deletedObjects with objects from the file when the application starts
     func getSavedObjects() {
         do {
             let data = try Data(contentsOf: savedNodesURL)
             savedObjects = try JSONDecoder().decode([Int: OSMAnyObject].self, from: data)
         } catch {
             savedObjects = [:]
+        }
+        do {
+            let data = try Data(contentsOf: deletedNodesURL)
+            deletedObjects = try JSONDecoder().decode([Int:OSMAnyObject].self, from: data)
+        } catch {
+            deletedObjects = [:]
         }
     }
     

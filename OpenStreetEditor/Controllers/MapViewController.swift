@@ -109,7 +109,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         mapView = GLMapView()
         mapView.showUserLocation = true
         var locationImage: UIImage?
-        if let locationImagePath = Bundle.main.path(forResource: "circle", ofType: "svg") {
+        if let locationImagePath = Bundle.main.path(forResource: "circle_location", ofType: "svg") {
             locationImage = GLMapVectorImageFactory.shared.image(fromSvg: locationImagePath)
         } else {
             locationImage = UIImage(systemName: "circle.fill")
@@ -458,7 +458,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         navController = NavigationController(rootViewController: selectVC)
         navController?.callbackClosure = { [weak self] in
             guard let self = self else { return }
-            print("clouser")
             self.mapView.remove(self.tappedDrawble)
             self.mapView.remove(self.editDrawble)
             self.navController = nil
@@ -541,11 +540,9 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
                 }
             }
             let editVC = EditObjectViewController(object: object)
-            editVC.delegate = self
             navController?.pushViewController(editVC, animated: true)
         } else {
             let editVC = EditObjectViewController(object: object)
-            editVC.delegate = self
             navController = NavigationController(rootViewController: editVC)
 //          When the user closes the tag editing controller, the backlight of the tapped object is removed.
             navController?.callbackClosure = { [weak self] in
@@ -626,11 +623,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
     func updateSavedNodesButton() {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            if AppSettings.settings.savedObjects.count == 0 {
-                self.savedNodesButton.hideGreenCircle()
-            } else {
-                self.savedNodesButton.showGreenCircle()
-            }
+            self.savedNodesButton.update()
         }
     }
     

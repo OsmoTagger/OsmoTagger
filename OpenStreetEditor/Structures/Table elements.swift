@@ -10,6 +10,11 @@ import UIKit
 
 //  MARK: SOME UI ELEMENTS
 
+struct InfoCellData {
+    let icon: String?
+    let text: String
+}
+
 //  View for displaying user data
 class UserInfoView: UIView {
     var idIcon: UIImageView = {
@@ -278,12 +283,6 @@ class EnterChangesetComment: UIView {
         doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         doneButton.translatesAutoresizingMaskIntoConstraints = false
         
-        let autoButton = UIButton()
-        autoButton.setTitle("Automatically", for: .normal)
-        autoButton.setTitleColor(.systemBlue, for: .normal)
-        autoButton.addTarget(self, action: #selector(tapAuto), for: .touchUpInside)
-        autoButton.translatesAutoresizingMaskIntoConstraints = false
-        
         let cancelButton = UIButton()
         cancelButton.setTitle("Cancel", for: .normal)
         cancelButton.setTitleColor(.systemBlue, for: .normal)
@@ -291,7 +290,6 @@ class EnterChangesetComment: UIView {
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
 
         stack.addArrangedSubview(cancelButton)
-        stack.addArrangedSubview(autoButton)
         stack.addArrangedSubview(doneButton)
         stack.distribution = .fillEqually
         stack.backgroundColor = .systemGray5
@@ -299,7 +297,6 @@ class EnterChangesetComment: UIView {
     }()
     
     var closeClosure: (() -> Void)?
-    var autoClosure: (() -> Void)?
     var enterClosure: (() -> Void)?
     
     @objc func tapCancel() {
@@ -308,18 +305,9 @@ class EnterChangesetComment: UIView {
         }
         removeFromSuperview()
     }
-    
-    @objc func tapAuto() {
-        if let clouser = autoClosure {
-            clouser()
-        }
-    }
-    
+        
     @objc func doneButtonTapped() {
         if field.text == "" {
-            if let clouser = autoClosure {
-                clouser()
-            }
             AppSettings.settings.changeSetComment = field.text
         } else {
             AppSettings.settings.changeSetComment = field.text
@@ -404,11 +392,26 @@ class EditTitleView: UIView {
 
 //  Custom button for switching to the controller of saved objects
 class SavedObjectButton: UIButton {
-    private let greenCircle = UIView()
+    private let circle: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemRed
+        view.layer.cornerRadius = 9
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    private let label: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 14)
+        label.text = "7"
+        label.textColor = .white
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
 
     init() {
         super.init(frame: .zero)
-        setupGreenCircle()
+        setupConstrains()
     }
 
     @available(*, unavailable)
@@ -416,28 +419,24 @@ class SavedObjectButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupGreenCircle() {
-        greenCircle.backgroundColor = .systemGreen
-        greenCircle.layer.cornerRadius = 4 // Радиус для круглой формы
-        greenCircle.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(greenCircle)
-
+    private func setupConstrains() {
+        addSubview(circle)
+        addSubview(label)
         NSLayoutConstraint.activate([
-            greenCircle.widthAnchor.constraint(equalToConstant: 8),
-            greenCircle.heightAnchor.constraint(equalToConstant: 8),
-            greenCircle.topAnchor.constraint(equalTo: topAnchor, constant: 3),
-            greenCircle.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -3),
+            circle.widthAnchor.constraint(equalToConstant: 18),
+            circle.heightAnchor.constraint(equalToConstant: 18),
+            circle.centerXAnchor.constraint(equalTo: rightAnchor, constant: -3),
+            circle.centerYAnchor.constraint(equalTo: topAnchor, constant: 3),
+            label.centerXAnchor.constraint(equalTo: circle.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: circle.centerYAnchor)
         ])
         
-        greenCircle.isHidden = true // Изначально кружок скрыт
+//        circle.isHidden = true
     }
 
-    func showGreenCircle() {
-        greenCircle.isHidden = false
-    }
-
-    func hideGreenCircle() {
-        greenCircle.isHidden = true
+    func update() {
+        let counts = String(AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count)
+        label.text = counts
     }
 }
 

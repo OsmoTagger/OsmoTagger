@@ -9,7 +9,23 @@ import Foundation
 import UIKit
 
 // Structures for SavedNodesVC (controller for displaying saved objects)
+struct SaveNodeTableData {
+    var name: String?
+    var items: [SaveNodeCellData]
+}
+
+struct SavedSelectedIndex: Equatable {
+    let type: SavedObjectType
+    let id: Int
+}
+
+enum SavedObjectType {
+    case saved
+    case deleted
+}
+
 struct SaveNodeCellData {
+    let type: SavedObjectType
     var itemIcon: String?
     let typeIcon: String
     var itemLabel: String?
@@ -23,9 +39,8 @@ class SavedNodeCell: UITableViewCell {
         return view
     }()
 
-    var iconType: UIImageView = {
-        let image = UIImageView()
-//        image.backgroundColor = .white
+    var iconType: IconView = {
+        let image = IconView()
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
     }()
@@ -41,6 +56,8 @@ class SavedNodeCell: UITableViewCell {
     var idLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
+        label.textColor = .systemGray
+        label.font = UIFont.systemFont(ofSize: 12)
         label.adjustsFontSizeToFitWidth = true
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -67,32 +84,29 @@ class SavedNodeCell: UITableViewCell {
         contentView.addSubview(idLabel)
         contentView.addSubview(checkBox)
         contentView.addSubview(bulb)
-        let iconTypeWidth = iconType.image?.size.width ?? 25
-        let iconTypeHeight = iconType.image?.size.height ?? 25
         NSLayoutConstraint.activate([
-            iconItem.leftAnchor.constraint(equalTo: leftAnchor),
-            iconItem.widthAnchor.constraint(equalTo: heightAnchor),
-            iconItem.topAnchor.constraint(equalTo: topAnchor),
-            iconItem.bottomAnchor.constraint(equalTo: bottomAnchor),
-            iconType.leftAnchor.constraint(equalTo: iconItem.rightAnchor, constant: 10),
-            iconType.widthAnchor.constraint(equalToConstant: iconTypeWidth),
-            iconType.heightAnchor.constraint(equalToConstant: iconTypeHeight),
-            iconType.centerYAnchor.constraint(equalTo: centerYAnchor),
-            itemLabel.leftAnchor.constraint(equalTo: iconType.rightAnchor, constant: 10),
-            itemLabel.topAnchor.constraint(equalTo: topAnchor),
-            itemLabel.rightAnchor.constraint(equalTo: centerXAnchor),
-            itemLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
-            idLabel.leftAnchor.constraint(equalTo: centerXAnchor),
-            idLabel.topAnchor.constraint(equalTo: topAnchor),
-            idLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            iconItem.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            iconItem.widthAnchor.constraint(equalToConstant: 44),
+            iconItem.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            iconType.leftAnchor.constraint(equalTo: iconItem.rightAnchor),
+            iconType.widthAnchor.constraint(equalToConstant: 44),
+            iconType.heightAnchor.constraint(equalToConstant: 44),
+            iconType.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            itemLabel.leftAnchor.constraint(equalTo: iconType.rightAnchor, constant: 5),
+            itemLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            itemLabel.rightAnchor.constraint(equalTo: checkBox.leftAnchor),
+            itemLabel.bottomAnchor.constraint(equalTo: contentView.centerYAnchor),
+            idLabel.leftAnchor.constraint(equalTo: iconType.rightAnchor, constant: 5),
+            idLabel.topAnchor.constraint(equalTo: contentView.centerYAnchor),
+            idLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             idLabel.rightAnchor.constraint(equalTo: checkBox.leftAnchor),
             checkBox.rightAnchor.constraint(equalTo: bulb.leftAnchor),
             checkBox.widthAnchor.constraint(equalToConstant: 50),
-            checkBox.centerYAnchor.constraint(equalTo: centerYAnchor),
-            bulb.bottomAnchor.constraint(equalTo: bottomAnchor),
+            checkBox.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            bulb.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             bulb.widthAnchor.constraint(equalToConstant: 45),
-            bulb.centerYAnchor.constraint(equalTo: centerYAnchor),
-            bulb.rightAnchor.constraint(equalTo: rightAnchor),
+            bulb.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            bulb.rightAnchor.constraint(equalTo: contentView.rightAnchor),
         ])
     }
     
@@ -109,7 +123,7 @@ class SavedNodeCell: UITableViewCell {
     
     override func prepareForReuse() {
         iconItem.icon.image = nil
-        iconType.image = nil
+        iconType.icon.image = nil
         itemLabel.text = nil
         idLabel.text = nil
         checkBox.isChecked = false

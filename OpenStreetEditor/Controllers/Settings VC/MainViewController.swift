@@ -27,7 +27,6 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     override func viewDidDisappear(_: Bool) {
-        print("buy")
     }
     
     func fillData() {
