@@ -389,9 +389,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
                                      testButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)])
     }
     
-    @objc func tapTestButton() {
-        mapView.remove(newDrawble)
-    }
+    @objc func tapTestButton() {}
     
 //    MARK: FUNCTIONS
 

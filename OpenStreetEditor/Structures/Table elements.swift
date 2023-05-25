@@ -402,7 +402,7 @@ class SavedObjectButton: UIButton {
     private let label: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 14)
-        label.text = "7"
+        label.text = String(AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count)
         label.textColor = .white
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -431,12 +431,28 @@ class SavedObjectButton: UIButton {
             label.centerYAnchor.constraint(equalTo: circle.centerYAnchor)
         ])
         
-//        circle.isHidden = true
     }
-
+    
+    // Method update count and color of circle
     func update() {
-        let counts = String(AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count)
-        label.text = counts
+        let counts = AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count
+        UIView.animate(withDuration: 0.4, animations: {
+            self.circle.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+            self.label.transform = CGAffineTransform(rotationAngle: -.pi)
+        }) { _ in
+            UIView.animate(withDuration: 0.4) {
+                self.circle.transform = .identity
+                self.label.transform = .identity
+            } completion: { _ in
+                if counts == 0 {
+                    self.circle.backgroundColor = .systemGray
+                    self.label.text = nil
+                } else {
+                    self.circle.backgroundColor = .systemRed
+                    self.label.text = String(counts)
+                }
+            }
+        }
     }
 }
 
