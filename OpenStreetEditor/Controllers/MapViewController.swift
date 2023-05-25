@@ -85,7 +85,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         setupLocationButton()
         setSavedNodesButton()
 //      The test button in the lower right corner of the screen is often needed during development.
-//        setTestButton()
+        setTestButton()
         
 //      Reading the modified and created objects into the AppSettings.settings.savedObjects variable.
         AppSettings.settings.getSavedObjects()
@@ -389,13 +389,17 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
                                      testButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)])
     }
     
-    @objc func tapTestButton() {}
+    @objc func tapTestButton() {
+        mapView.remove(newDrawble)
+    }
     
 //    MARK: FUNCTIONS
 
     //  The method searches for vector objects under the tap. If 1 object is detected, it goes to the controller for editing its tags, if > 1, it offers to select an object from the tapped ones.
     @objc func getObjects(sender: UITapGestureRecognizer) {
+        print("tap")
         if mapClient.objects.count == 0 { return }
+        print("tap2")
         var touchPoint = sender.location(in: mapView)
         let touchPointMapCoordinate = mapView.makeMapPoint(fromDisplay: touchPoint)
         let maxTapDistance = 20
