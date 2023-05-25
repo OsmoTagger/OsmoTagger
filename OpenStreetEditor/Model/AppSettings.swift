@@ -278,7 +278,7 @@ final class AppSettings: NSObject {
     }
     
     // Objects marked for deletion
-    var deletedObjects: [Int:OSMAnyObject] = [:] {
+    var deletedObjects: [Int: OSMAnyObject] = [:] {
         didSet {
             if let clouser = mapVCClouser {
                 clouser()
@@ -302,7 +302,7 @@ final class AppSettings: NSObject {
         }
         do {
             let data = try Data(contentsOf: deletedNodesURL)
-            deletedObjects = try JSONDecoder().decode([Int:OSMAnyObject].self, from: data)
+            deletedObjects = try JSONDecoder().decode([Int: OSMAnyObject].self, from: data)
         } catch {
             deletedObjects = [:]
         }

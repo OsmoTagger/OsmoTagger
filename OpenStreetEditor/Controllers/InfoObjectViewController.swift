@@ -9,7 +9,6 @@ import UIKit
 
 //  A simple controller for displaying brief information about the object being edited.
 class InfoObjectViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
     var object: OSMAnyObject
     
     var dismissClosure: (() -> Void)?
@@ -57,7 +56,7 @@ class InfoObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     
     @objc func tapRevert() {
         let action0 = UIAlertAction(title: "Cancel changes and edit object", style: .default, handler: { [weak self] _ in
-            guard let self = self else {return}
+            guard let self = self else { return }
             AppSettings.settings.savedObjects.removeValue(forKey: self.object.id)
             var tags: [Tag] = []
             for (key, value) in self.object.oldTags {
@@ -70,7 +69,7 @@ class InfoObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             self.navigationController?.pushViewController(vc, animated: true)
         })
         let action1 = UIAlertAction(title: "Cancel changes and close object", style: .default, handler: { [weak self] _ in
-            guard let self = self else {return}
+            guard let self = self else { return }
             AppSettings.settings.savedObjects.removeValue(forKey: self.object.id)
             self.navigationController?.popViewController(animated: true)
         })
@@ -146,7 +145,8 @@ class InfoObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         switch object.type {
         case .node:
             if let lat = object.lat,
-               let lon = object.lon {
+               let lon = object.lon
+            {
                 tableData.append(InfoCellData(icon: "location.circle", text: "Lat: \(lat)\nlon: \(lon)"))
             }
         case .way, .closedway:
@@ -174,7 +174,7 @@ class InfoObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             }
         }
         tableData.append(InfoCellData(icon: "tag", text: oldTagsText))
-        var newProperties: [String:String] = [:]
+        var newProperties: [String: String] = [:]
         for tag in object.tag {
             newProperties[tag.k] = tag.v
         }

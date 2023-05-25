@@ -26,8 +26,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         navigationController?.setToolbarHidden(true, animated: false)
     }
     
-    override func viewDidDisappear(_: Bool) {
-    }
+    override func viewDidDisappear(_: Bool) {}
     
     func fillData() {
         let general = SettingsTableData(name: nil, items: [

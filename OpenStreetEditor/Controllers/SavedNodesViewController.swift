@@ -42,7 +42,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         checkUniqInMemory()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_: Bool) {
         fillData()
         tableView.reloadData()
     }
@@ -91,7 +91,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         // Get saved objects
         var savedNodesItems: [SaveNodeCellData] = []
         for (_, object) in AppSettings.settings.savedObjects {
-            guard object.id > 0 else {continue}
+            guard object.id > 0 else { continue }
             var properties: [String: String] = [:]
             for tag in object.tag {
                 properties[tag.k] = tag.v
@@ -127,7 +127,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         
         var createdNodesItems: [SaveNodeCellData] = []
         for (_, object) in AppSettings.settings.savedObjects {
-            guard object.id < 0 else {continue}
+            guard object.id < 0 else { continue }
             var properties: [String: String] = [:]
             for tag in object.tag {
                 properties[tag.k] = tag.v
@@ -300,7 +300,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         case .deleted:
             nilObject = AppSettings.settings.deletedObjects[data.idLabel]
         }
-        guard let object = nilObject else {return}
+        guard let object = nilObject else { return }
         let vector = object.getVectorObject()
         delegate?.showTapObject(object: vector)
         let vc = InfoObjectViewController(object: object)
@@ -309,7 +309,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
     
     func tableView(_: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, completionHandler in
-            guard let self = self else {return}
+            guard let self = self else { return }
             let data = self.tableData[indexPath.section].items[indexPath.row]
             switch data.type {
             case .saved:
@@ -383,10 +383,10 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         for path in selectedIDs {
             switch path.type {
             case .saved:
-                guard let object = AppSettings.settings.savedObjects[path.id] else {continue}
+                guard let object = AppSettings.settings.savedObjects[path.id] else { continue }
                 savedObjects.append(object)
             case .deleted:
-                guard let object = AppSettings.settings.deletedObjects[path.id] else {continue}
+                guard let object = AppSettings.settings.deletedObjects[path.id] else { continue }
                 deletedObjects.append(object)
             }
         }
@@ -405,10 +405,10 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         for path in selectedIDs {
             switch path.type {
             case .saved:
-                guard let object = AppSettings.settings.savedObjects[path.id] else {continue}
+                guard let object = AppSettings.settings.savedObjects[path.id] else { continue }
                 savedObjects.append(object)
             case .deleted:
-                guard let object = AppSettings.settings.deletedObjects[path.id] else {continue}
+                guard let object = AppSettings.settings.deletedObjects[path.id] else { continue }
                 deletedObjects.append(object)
             }
         }
@@ -430,7 +430,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
                 tableView.reloadData()
                 removeIndicator(indicator: indicator)
                 let alert0 = UIAlertAction(title: "Ok", style: .default, handler: { _ in
-                    if AppSettings.settings.savedObjects.count == 0 && AppSettings.settings.deletedObjects.count == 0 {
+                    if AppSettings.settings.savedObjects.count == 0, AppSettings.settings.deletedObjects.count == 0 {
                         self.dismiss(animated: true)
                     }
                 })
@@ -452,14 +452,14 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         for path in selectedIDs {
             switch path.type {
             case .saved:
-                guard let object = AppSettings.settings.savedObjects[path.id] else {continue}
+                guard let object = AppSettings.settings.savedObjects[path.id] else { continue }
                 if path.id < 0 {
                     createdObjects.append(object)
                 } else {
                     editedObjects.append(object)
                 }
             case .deleted:
-                guard let object = AppSettings.settings.deletedObjects[path.id] else {continue}
+                guard let object = AppSettings.settings.deletedObjects[path.id] else { continue }
                 deletedObjects.append(object)
             }
         }

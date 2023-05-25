@@ -399,6 +399,7 @@ class SavedObjectButton: UIButton {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+
     private let label: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 14)
@@ -428,9 +429,8 @@ class SavedObjectButton: UIButton {
             circle.centerXAnchor.constraint(equalTo: rightAnchor, constant: -3),
             circle.centerYAnchor.constraint(equalTo: topAnchor, constant: 3),
             label.centerXAnchor.constraint(equalTo: circle.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: circle.centerYAnchor)
+            label.centerYAnchor.constraint(equalTo: circle.centerYAnchor),
         ])
-        
     }
     
     // Method update count and color of circle

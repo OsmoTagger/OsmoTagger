@@ -119,7 +119,7 @@ class SimpleCell: UITableViewCell {
             label.topAnchor.constraint(equalTo: contentView.topAnchor),
             label.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50),
             label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            label.heightAnchor.constraint(greaterThanOrEqualToConstant: 44)
+            label.heightAnchor.constraint(greaterThanOrEqualToConstant: 44),
         ])
     }
     
