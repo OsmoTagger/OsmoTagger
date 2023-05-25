@@ -33,19 +33,19 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
     let savedNodesButton = SavedObjectButton()
 
     //  Drawble objects and styles to display data on MapView.
-    var drawable = GLMapVectorLayer()
-    let style = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.defaultStyle)
+    var sourceDrawable = GLMapVectorLayer(drawOrder: 0)
+    let sourceStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.defaultStyle)
     //  Displays objects that have been modified but not sent to the server (green).
-    var savedDrawable = GLMapVectorLayer(drawOrder: 0)
+    var savedDrawable = GLMapVectorLayer(drawOrder: 1)
     let savedStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.savedStyle)
     //  Displays the object that was tapped and whose properties are currently being edited (yellow).
-    var editDrawble = GLMapVectorLayer(drawOrder: 2)
+    var editDrawble = GLMapVectorLayer(drawOrder: 4)
     let editStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.editStyle)
     //  Displays objects created but not sent to the server (orange color).
-    let newDrawble = GLMapVectorLayer()
+    let newDrawble = GLMapVectorLayer(drawOrder: 2)
     let newStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.newStyle)
     //  Highlights objects that fell under the tap, if there was not one object under the tap, but several.
-    let tappedDrawble = GLMapVectorLayer(drawOrder: 1)
+    let tappedDrawble = GLMapVectorLayer(drawOrder: 3)
     let tappedStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.tappedStyle)
     
     override func viewDidLoad() {
@@ -397,9 +397,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
 
     //  The method searches for vector objects under the tap. If 1 object is detected, it goes to the controller for editing its tags, if > 1, it offers to select an object from the tapped ones.
     @objc func getObjects(sender: UITapGestureRecognizer) {
-        print("tap")
         if mapClient.objects.count == 0 { return }
-        print("tap2")
         var touchPoint = sender.location(in: mapView)
         let touchPointMapCoordinate = mapView.makeMapPoint(fromDisplay: touchPoint)
         let maxTapDistance = 20
@@ -586,10 +584,10 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
             let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL)
             mapClient.objects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
             mapClient.objectsLength = mapClient.objects.count
-            if let style = style {
-                drawable.setVectorObjects(mapClient.objects, with: style, completion: nil)
+            if let style = sourceStyle {
+                sourceDrawable.setVectorObjects(mapClient.objects, with: style, completion: nil)
             }
-            mapView.add(drawable)
+            mapView.add(sourceDrawable)
         } catch {
             showAction(message: "Error show objects: \(error)", addAlerts: [])
         }

@@ -216,7 +216,7 @@ final class AppSettings: NSObject {
     node {
         icon-image: "poi_circle_small.svg";
         icon-scale: 2;
-        icon-tint: red;
+        icon-tint: orange;
     }
     line {
         linecap: round;
