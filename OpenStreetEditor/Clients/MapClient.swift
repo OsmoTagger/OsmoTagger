@@ -11,6 +11,7 @@ import UIKit
 
 // Class for work with mapView. Later it is necessary to transfer all map objects to it
 class MapClient: NSObject {
+    // Download objects
     var objects = GLMapVectorObjectArray()
     
     //  Load data and write to files

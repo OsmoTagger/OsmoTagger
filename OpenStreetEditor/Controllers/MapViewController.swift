@@ -164,7 +164,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
     }
     
     @objc func tapDownloadButton() {
-        // English: We get the coordinates of the corners of the screen, save them in an array and take the minimum and maximum values. These are the parameters of the bbox data to download
+        // We get the coordinates of the corners of the screen, save them in an array and take the minimum and maximum values. These are the parameters of the bbox data to download
         let point1 = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: UIScreen.main.bounds.height))
         let point2 = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height))
         let point3 = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: 0))
@@ -180,18 +180,18 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
             showAction(message: message, addAlerts: [])
             return
         }
-//      0.007 and 0.025 are experimentally selected values of the maximum size of the bbox of map. If you do the above, with a high density of points, the application slows down and the OSM server may not allow you to download data.
+        // 0.007 and 0.025 are experimentally selected values of the maximum size of the bbox of map. If you do the above, with a high density of points, the application slows down and the OSM server may not allow you to download data.
         if latitudeDisplayMax - latitudeDisplayMin < 0.007 && longitudeDisplayMax - longitudeDisplayMin < 0.025 {
             setLoadIndicator()
             Task {
                 do {
-//                  We download the data from the server, convert it to GeoJSON and write it to files.
+                    // We download the data from the server, convert it to GeoJSON and write it to files.
                     try await mapClient.getSourceData(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMax)
-//                  Displaying data on the map.
+                    // Displaying data on the map.
                     showGeoJSON()
                     showSavedObjects()
                     Task {
-//                      In the background, we start indexing the downloaded data and saving them with the dictionary appSettings.settings.inputObjects for quick access to the object by its id.
+                        // In the background, we start indexing the downloaded data and saving them with the dictionary appSettings.settings.inputObjects for quick access to the object by its id.
                         await getNodesFromXML()
                     }
                 } catch {
