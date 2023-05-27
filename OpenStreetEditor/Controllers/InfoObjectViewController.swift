@@ -167,7 +167,7 @@ class InfoObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         oldTags.sort()
         var oldTagsText = "Old tags:\n"
         if oldTags.count == 0 {
-            oldTagsText = "Empty"
+            oldTagsText = "Created point without tags"
         } else {
             for tag in oldTags {
                 oldTagsText += "\n" + tag

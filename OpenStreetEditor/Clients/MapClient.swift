@@ -12,7 +12,6 @@ import UIKit
 // Class for work with mapView. Later it is necessary to transfer all map objects to it
 class MapClient: NSObject {
     var objects = GLMapVectorObjectArray()
-    var objectsLength = UInt(0)
     
     //  Load data and write to files
     func getSourceData(longitudeDisplayMin: Double, latitudeDisplayMin: Double, longitudeDisplayMax: Double, latitudeDisplayMax: Double) async throws {

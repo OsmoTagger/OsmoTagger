@@ -144,6 +144,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
 //      After setting the starting position, all offsets are stored in memory
         mapView.mapDidMoveBlock = { [weak self] _ in
             guard let self = self else { return }
+            print(self.mapView.mapZoomLevel)
             AppSettings.settings.lastBbox = self.mapView.bbox
         }
     }
@@ -566,7 +567,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         do {
             let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL)
             mapClient.objects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-            mapClient.objectsLength = mapClient.objects.count
             if let style = sourceStyle {
                 sourceDrawable.setVectorObjects(mapClient.objects, with: style, completion: nil)
             }
