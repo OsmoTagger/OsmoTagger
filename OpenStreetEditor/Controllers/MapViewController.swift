@@ -173,11 +173,12 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         guard let latitudeDisplayMin = latitudeArray.min(),
               let latitudeDisplayMax = latitudeArray.max(),
               let longitudeDisplayMin = longitudeArray.min(),
-              let longitudeDisplayMax = longitudeArray.max() else {
-                  let message = "Error get display coordinate: \(point1.lat), \(point1.lon); \(point2.lat), \(point2.lon); \(point3.lat), \(point3.lon); \(point4.lat), \(point4.lon). Try rotate the map"
-                  showAction(message: message, addAlerts: [])
-                  return
-              }
+              let longitudeDisplayMax = longitudeArray.max()
+        else {
+            let message = "Error get display coordinate: \(point1.lat), \(point1.lon); \(point2.lat), \(point2.lon); \(point3.lat), \(point3.lon); \(point4.lat), \(point4.lon). Try rotate the map"
+            showAction(message: message, addAlerts: [])
+            return
+        }
 //      0.007 and 0.025 are experimentally selected values of the maximum size of the bbox of map. If you do the above, with a high density of points, the application slows down and the OSM server may not allow you to download data.
         if latitudeDisplayMax - latitudeDisplayMin < 0.007 && longitudeDisplayMax - longitudeDisplayMin < 0.025 {
             setLoadIndicator()
