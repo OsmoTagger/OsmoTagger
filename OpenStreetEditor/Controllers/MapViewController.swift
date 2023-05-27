@@ -163,44 +163,28 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
     }
     
     @objc func tapDownloadButton() {
-        var latitudeDisplayMin = 0.0
-        var latitudeDisplayMax = 0.0
-        var longitudeDisplayMin = 0.0
-        var longitudeDisplayMax = 0.0
-//      Depending on the rotation angle of the map, different screen angles are used from loading the bbox data.
-        switch mapView.mapAngle {
-        case 0 ... 90:
-            longitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: UIScreen.main.bounds.height)).lon
-            latitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height)).lat
-            longitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: 0)).lon
-            latitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: 0)).lat
-        case 90 ... 180:
-            longitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height)).lon
-            latitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: 0)).lat
-            longitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: 0)).lon
-            latitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: UIScreen.main.bounds.height)).lat
-        case 180 ... 270:
-            longitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: 0)).lon
-            latitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: 0)).lat
-            longitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: UIScreen.main.bounds.height)).lon
-            latitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height)).lat
-        default:
-            longitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: 0)).lon
-            latitudeDisplayMin = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: UIScreen.main.bounds.height)).lat
-            longitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height)).lon
-            latitudeDisplayMax = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: 0)).lat
-        }
-        let capturedLatitudeDisplayMin = latitudeDisplayMin
-        let capturedLatitudeDisplayMax = latitudeDisplayMax
-        let capturedLongitudeDisplayMin = longitudeDisplayMin
-        let capturedLongitudeDisplayMax = longitudeDisplayMax
+        // English: We get the coordinates of the corners of the screen, save them in an array and take the minimum and maximum values. These are the parameters of the bbox data to download
+        let point1 = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: UIScreen.main.bounds.height))
+        let point2 = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height))
+        let point3 = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: 0))
+        let point4 = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: 0))
+        let latitudeArray: [Double] = [point1.lat, point2.lat, point3.lat, point4.lat]
+        let longitudeArray: [Double] = [point1.lon, point2.lon, point3.lon, point4.lon]
+        guard let latitudeDisplayMin = latitudeArray.min(),
+              let latitudeDisplayMax = latitudeArray.max(),
+              let longitudeDisplayMin = longitudeArray.min(),
+              let longitudeDisplayMax = longitudeArray.max() else {
+                  let message = "Error get display coordinate: \(point1.lat), \(point1.lon); \(point2.lat), \(point2.lon); \(point3.lat), \(point3.lon); \(point4.lat), \(point4.lon). Try rotate the map"
+                  showAction(message: message, addAlerts: [])
+                  return
+              }
 //      0.007 and 0.025 are experimentally selected values of the maximum size of the bbox of map. If you do the above, with a high density of points, the application slows down and the OSM server may not allow you to download data.
         if latitudeDisplayMax - latitudeDisplayMin < 0.007 && longitudeDisplayMax - longitudeDisplayMin < 0.025 {
             setLoadIndicator()
             Task {
                 do {
 //                  We download the data from the server, convert it to GeoJSON and write it to files.
-                    try await mapClient.getSourceData(longitudeDisplayMin: capturedLongitudeDisplayMin, latitudeDisplayMin: capturedLatitudeDisplayMin, longitudeDisplayMax: capturedLongitudeDisplayMax, latitudeDisplayMax: capturedLatitudeDisplayMax)
+                    try await mapClient.getSourceData(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMax)
 //                  Displaying data on the map.
                     showGeoJSON()
                     showSavedObjects()
