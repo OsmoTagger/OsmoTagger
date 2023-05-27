@@ -550,14 +550,11 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.keyLabel.text = key
             cell.keyLabel.isHidden = false
             cell.valueLable.isHidden = false
-            if let inputValuesString = AppSettings.settings.newProperties[key] {
-                let inputValues = inputValuesString.components(separatedBy: ";")
-                var text = ""
-                for value in inputValues {
-                    text += value + "\n"
-                }
-                text.removeLast()
-                cell.valueLable.text = text
+            if var valuesString = AppSettings.settings.newProperties[key] {
+                valuesString = valuesString.replacingOccurrences(of: ";", with: ", ")
+                cell.valueLable.text = valuesString
+            } else {
+                cell.valueLable.text = nil
             }
             cell.valueField.isHidden = true
             cell.checkLable.isHidden = true
@@ -729,6 +726,7 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
                 AppSettings.settings.newProperties[key] = textField.text
             }
         }
+        tableView.reloadData()
     }
     
     //  Updating the view when the keyboard appears.

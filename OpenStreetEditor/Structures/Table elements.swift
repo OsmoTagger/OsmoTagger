@@ -477,7 +477,7 @@ class SelectValuesCell: UITableViewCell {
         contentView.addSubview(label)
         contentView.addSubview(checkBox)
         NSLayoutConstraint.activate([
-            checkBox.rightAnchor.constraint(equalTo: rightAnchor, constant: -30),
+            checkBox.rightAnchor.constraint(equalTo: rightAnchor),
             checkBox.widthAnchor.constraint(equalToConstant: 50),
             checkBox.heightAnchor.constraint(equalTo: heightAnchor),
             checkBox.centerYAnchor.constraint(equalTo: centerYAnchor),

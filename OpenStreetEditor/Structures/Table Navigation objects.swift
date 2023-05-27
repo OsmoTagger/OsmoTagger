@@ -251,7 +251,7 @@ class ItemCell: UITableViewCell {
 
     var valueField: ValueField = {
         let field = ValueField()
-        field.textAlignment = .center
+        field.textAlignment = .left
         field.borderStyle = .roundedRect
         field.placeholder = "Enter value"
         field.translatesAutoresizingMaskIntoConstraints = false
