@@ -95,6 +95,7 @@ class MapClient {
             print(error)
         }
         guard let data = data else {return}
+        var newObjects: GLMapVectorObjectArray?
         switch index {
         case 0:
             do {
@@ -109,22 +110,7 @@ class MapClient {
                     throw "Error osmium convert: \(error)"
                 }
                 let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL)
-                let newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-                
-                tapObjects.append(newObjects)
-                let newDrawble = GLMapVectorLayer(drawOrder: 0)
-                if let style = sourceStyle {
-                    newDrawble.setVectorObjects(newObjects, with: style, completion: nil)
-                    if let oldDrawble = showedDrawable[index],
-                       let deleteClouser = deleteDrawbleClouser {
-                        deleteClouser(oldDrawble)
-                        showedDrawable[index] = nil
-                    }
-                    if let addClouser = addDrawbleClouser {
-                        addClouser(newDrawble)
-                        showedDrawable[index] = newDrawble
-                    }
-                }
+                newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
             } catch {
                 print("Error write file: \(error)")
             }
@@ -141,22 +127,7 @@ class MapClient {
                     throw "Error osmium convert: \(error)"
                 }
                 let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL1)
-                let newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-                
-                tapObjects.append(newObjects)
-                let newDrawble = GLMapVectorLayer(drawOrder: 0)
-                if let style = sourceStyle {
-                    newDrawble.setVectorObjects(newObjects, with: style, completion: nil)
-                    if let oldDrawble = showedDrawable[index],
-                       let deleteClouser = deleteDrawbleClouser {
-                        deleteClouser(oldDrawble)
-                        showedDrawable[index] = nil
-                    }
-                    if let addClouser = addDrawbleClouser {
-                        addClouser(newDrawble)
-                        showedDrawable[index] = newDrawble
-                    }
-                }
+                newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
             } catch {
                 print("Error write file: \(error)")
             }
@@ -173,22 +144,7 @@ class MapClient {
                     throw "Error osmium convert: \(error)"
                 }
                 let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL2)
-                let newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-                
-                tapObjects.append(newObjects)
-                let newDrawble = GLMapVectorLayer(drawOrder: 0)
-                if let style = sourceStyle {
-                    newDrawble.setVectorObjects(newObjects, with: style, completion: nil)
-                    if let oldDrawble = showedDrawable[index],
-                       let deleteClouser = deleteDrawbleClouser {
-                        deleteClouser(oldDrawble)
-                        showedDrawable[index] = nil
-                    }
-                    if let addClouser = addDrawbleClouser {
-                        addClouser(newDrawble)
-                        showedDrawable[index] = newDrawble
-                    }
-                }
+                newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
             } catch {
                 print("Error write file: \(error)")
             }
@@ -205,22 +161,7 @@ class MapClient {
                     throw "Error osmium convert: \(error)"
                 }
                 let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL3)
-                let newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-                
-                tapObjects.append(newObjects)
-                let newDrawble = GLMapVectorLayer(drawOrder: 0)
-                if let style = sourceStyle {
-                    newDrawble.setVectorObjects(newObjects, with: style, completion: nil)
-                    if let oldDrawble = showedDrawable[index],
-                       let deleteClouser = deleteDrawbleClouser {
-                        deleteClouser(oldDrawble)
-                        showedDrawable[index] = nil
-                    }
-                    if let addClouser = addDrawbleClouser {
-                        addClouser(newDrawble)
-                        showedDrawable[index] = newDrawble
-                    }
-                }
+                newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
             } catch {
                 print("Error write file: \(error)")
             }
@@ -237,22 +178,7 @@ class MapClient {
                     throw "Error osmium convert: \(error)"
                 }
                 let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL4)
-                let newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-                
-                tapObjects.append(newObjects)
-                let newDrawble = GLMapVectorLayer(drawOrder: 0)
-                if let style = sourceStyle {
-                    newDrawble.setVectorObjects(newObjects, with: style, completion: nil)
-                    if let oldDrawble = showedDrawable[index],
-                       let deleteClouser = deleteDrawbleClouser {
-                        deleteClouser(oldDrawble)
-                        showedDrawable[index] = nil
-                    }
-                    if let addClouser = addDrawbleClouser {
-                        addClouser(newDrawble)
-                        showedDrawable[index] = newDrawble
-                    }
-                }
+                newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
             } catch {
                 print("Error write file: \(error)")
             }
@@ -269,22 +195,7 @@ class MapClient {
                     throw "Error osmium convert: \(error)"
                 }
                 let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL5)
-                let newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-                
-                tapObjects.append(newObjects)
-                let newDrawble = GLMapVectorLayer(drawOrder: 0)
-                if let style = sourceStyle {
-                    newDrawble.setVectorObjects(newObjects, with: style, completion: nil)
-                    if let oldDrawble = showedDrawable[index],
-                       let deleteClouser = deleteDrawbleClouser {
-                        deleteClouser(oldDrawble)
-                        showedDrawable[index] = nil
-                    }
-                    if let addClouser = addDrawbleClouser {
-                        addClouser(newDrawble)
-                        showedDrawable[index] = newDrawble
-                    }
-                }
+                newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
             } catch {
                 print("Error write file: \(error)")
             }
@@ -301,22 +212,7 @@ class MapClient {
                     throw "Error osmium convert: \(error)"
                 }
                 let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL6)
-                let newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-                
-                tapObjects.append(newObjects)
-                let newDrawble = GLMapVectorLayer(drawOrder: 0)
-                if let style = sourceStyle {
-                    newDrawble.setVectorObjects(newObjects, with: style, completion: nil)
-                    if let oldDrawble = showedDrawable[index],
-                       let deleteClouser = deleteDrawbleClouser {
-                        deleteClouser(oldDrawble)
-                        showedDrawable[index] = nil
-                    }
-                    if let addClouser = addDrawbleClouser {
-                        addClouser(newDrawble)
-                        showedDrawable[index] = newDrawble
-                    }
-                }
+                newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
             } catch {
                 print("Error write file: \(error)")
             }
@@ -333,22 +229,7 @@ class MapClient {
                     throw "Error osmium convert: \(error)"
                 }
                 let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL7)
-                let newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-                
-                tapObjects.append(newObjects)
-                let newDrawble = GLMapVectorLayer(drawOrder: 0)
-                if let style = sourceStyle {
-                    newDrawble.setVectorObjects(newObjects, with: style, completion: nil)
-                    if let oldDrawble = showedDrawable[index],
-                       let deleteClouser = deleteDrawbleClouser {
-                        deleteClouser(oldDrawble)
-                        showedDrawable[index] = nil
-                    }
-                    if let addClouser = addDrawbleClouser {
-                        addClouser(newDrawble)
-                        showedDrawable[index] = newDrawble
-                    }
-                }
+                newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
             } catch {
                 print("Error write file: \(error)")
             }
@@ -365,59 +246,28 @@ class MapClient {
                     throw "Error osmium convert: \(error)"
                 }
                 let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL8)
-                let newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-                
-                tapObjects.append(newObjects)
-                let newDrawble = GLMapVectorLayer(drawOrder: 0)
-                if let style = sourceStyle {
-                    newDrawble.setVectorObjects(newObjects, with: style, completion: nil)
-                    if let oldDrawble = showedDrawable[index],
-                       let deleteClouser = deleteDrawbleClouser {
-                        deleteClouser(oldDrawble)
-                        showedDrawable[index] = nil
-                    }
-                    if let addClouser = addDrawbleClouser {
-                        addClouser(newDrawble)
-                        showedDrawable[index] = newDrawble
-                    }
-                }
-            } catch {
-                print("Error write file: \(error)")
-            }
-        case 9:
-            do {
-                if fileManager.fileExists(atPath: AppSettings.settings.inputFileURL9.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.inputFileURL9.path)
-                }
-                if fileManager.fileExists(atPath: AppSettings.settings.outputFileURL9.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.outputFileURL9.path)
-                }
-                try data.write(to: URL(fileURLWithPath: AppSettings.settings.inputFileURL9.path))
-                if let error = osmium_convert(AppSettings.settings.inputFileURL9.path, AppSettings.settings.outputFileURL9.path) {
-                    throw "Error osmium convert: \(error)"
-                }
-                let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL9)
-                let newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-                
-                tapObjects.append(newObjects)
-                let newDrawble = GLMapVectorLayer(drawOrder: 0)
-                if let style = sourceStyle {
-                    newDrawble.setVectorObjects(newObjects, with: style, completion: nil)
-                    if let oldDrawble = showedDrawable[index],
-                       let deleteClouser = deleteDrawbleClouser {
-                        deleteClouser(oldDrawble)
-                        showedDrawable[index] = nil
-                    }
-                    if let addClouser = addDrawbleClouser {
-                        addClouser(newDrawble)
-                        showedDrawable[index] = newDrawble
-                    }
-                }
+                newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
             } catch {
                 print("Error write file: \(error)")
             }
         default:
             return
+        }
+        guard let newObjects = newObjects,
+              newObjects.count > 0 else {return}
+        tapObjects.append(newObjects)
+        let newDrawble = GLMapVectorLayer(drawOrder: 0)
+        if let style = sourceStyle {
+            newDrawble.setVectorObjects(newObjects, with: style, completion: nil)
+            if let oldDrawble = showedDrawable[index],
+               let deleteClouser = deleteDrawbleClouser {
+                deleteClouser(oldDrawble)
+                showedDrawable[index] = nil
+            }
+            if let addClouser = addDrawbleClouser {
+                addClouser(newDrawble)
+                showedDrawable[index] = newDrawble
+            }
         }
         await getNodesFromXML(index: index)
     }
