@@ -27,23 +27,16 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
     
     //  Buttons
     let downloadButton = UIButton()
+    // Variable activates the source data loading mode
+    var isDownloadSource = false
     let indicator = UIActivityIndicatorView()
     let centerIcon = UIImageView()
     let addNodeButton = UIButton()
     let savedNodesButton = SavedObjectButton()
-
-    //  Drawble objects and styles to display data on MapView.
-    var sourceDrawable = GLMapVectorLayer(drawOrder: 0)
-    let sourceStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.defaultStyle)
-    //  Displays objects that have been modified but not sent to the server (green).
-    var savedDrawable = GLMapVectorLayer(drawOrder: 1)
-    let savedStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.savedStyle)
+    
     //  Displays the object that was tapped and whose properties are currently being edited (yellow).
     var editDrawble = GLMapVectorLayer(drawOrder: 4)
     let editStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.editStyle)
-    //  Displays objects created but not sent to the server (orange color).
-    let newDrawble = GLMapVectorLayer(drawOrder: 2)
-    let newStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.newStyle)
     //  Highlights objects that fell under the tap, if there was not one object under the tap, but several.
     let tappedDrawble = GLMapVectorLayer(drawOrder: 3)
     let tappedStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.tappedStyle)
@@ -52,12 +45,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         super.viewDidLoad()
 //      Creating and adding MapView
         setMapView()
-        
-//      Every time AppSettings.settings.savedObjects is changed (this is the variable in which the modified or created objects are stored), a closure is called. In this case, when a short circuit is triggered, we update the illumination of saved and created objects.
-        AppSettings.settings.mapVCClouser = { [weak self] in
-            guard let self = self else { return }
-            self.showSavedObjects()
-        }
         
 //      We run the definition of the geo position and check its resolution for the application in the settings.
         locationManager.startUpdatingLocation()
@@ -89,18 +76,29 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         
 //      Reading the modified and created objects into the AppSettings.settings.savedObjects variable.
         AppSettings.settings.getSavedObjects()
-//      Displays created and modified objects.
-        showSavedObjects()
 //      In the background, we start parsing the file with Josm presets.
         DispatchQueue.global(qos: .default).async {
             Parser().fillPresetElements()
             Parser().fillChunks()
         }
+        
+        mapClient.addDrawbleClouser = { [weak self] drawble in
+            guard let self = self else {return}
+            self.mapView.add(drawble)
+        }
+        mapClient.deleteDrawbleClouser = { [weak self] drawble in
+            guard let self = self else {return}
+            self.mapView.remove(drawble)
+        }
+        
+        
     }
     
     override func viewDidAppear(_: Bool) {
 //      After successfully adding the map to the view, we set the initial position of the map
         setMapLocation()
+        updateSavedNodesButton()
+        mapClient.showSavedObjects()
     }
     
 //        MARK: ELEMENTS AND ACTIONS
@@ -144,16 +142,17 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
 //      After setting the starting position, all offsets are stored in memory
         mapView.mapDidMoveBlock = { [weak self] _ in
             guard let self = self else { return }
-            print(self.mapView.mapZoomLevel)
+//            print(self.mapView.mapZoomLevel)
             AppSettings.settings.lastBbox = self.mapView.bbox
         }
     }
 
     func setDownloadButton() {
         downloadButton.layer.cornerRadius = 5
+        downloadButton.isHighlighted = false
         downloadButton.backgroundColor = .white
         downloadButton.setImage(UIImage(systemName: "square.and.arrow.down.fill")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
-        downloadButton.addTarget(self, action: #selector(tapDownloadButton), for: .touchUpInside)
+        downloadButton.addTarget(self, action: #selector(downloadSourceData), for: .touchUpInside)
         view.addSubview(downloadButton)
         
         downloadButton.translatesAutoresizingMaskIntoConstraints = false
@@ -164,6 +163,16 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
     }
     
     @objc func tapDownloadButton() {
+        print(isDownloadSource)
+        isDownloadSource = !isDownloadSource
+        if isDownloadSource {
+            downloadButton.backgroundColor = .systemGreen
+        } else {
+            downloadButton.backgroundColor = .white
+        }
+    }
+    
+    @objc func downloadSourceData() {
         // We get the coordinates of the corners of the screen, save them in an array and take the minimum and maximum values. These are the parameters of the bbox data to download
         let point1 = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: UIScreen.main.bounds.height))
         let point2 = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height))
@@ -181,28 +190,20 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
             return
         }
         // 0.007 and 0.025 are experimentally selected values of the maximum size of the bbox of map. If you do the above, with a high density of points, the application slows down and the OSM server may not allow you to download data.
-        if latitudeDisplayMax - latitudeDisplayMin < 0.007 && longitudeDisplayMax - longitudeDisplayMin < 0.025 {
-            setLoadIndicator()
-            Task {
-                do {
-                    // We download the data from the server, convert it to GeoJSON and write it to files.
-                    try await mapClient.getSourceData(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMax)
-                    // Displaying data on the map.
-                    showGeoJSON()
-                    showSavedObjects()
-                    Task {
-                        // In the background, we start indexing the downloaded data and saving them with the dictionary appSettings.settings.inputObjects for quick access to the object by its id.
-                        await getNodesFromXML()
-                    }
-                } catch {
-                    let message = error as? String ?? "Unknown error"
-                    showAction(message: message, addAlerts: [])
-                    removeIndicator(indicator: indicator)
-                }
-            }
-        } else {
-//          If the zoom scale is too small, to prevent downloading too much data, do not download them.
-            showAction(message: "The editing area is too large. Zoom in.", addAlerts: [])
+        let diffArray = [latitudeDisplayMax - latitudeDisplayMin, longitudeDisplayMax - longitudeDisplayMin]
+        guard let diffMin = diffArray.min(),
+              let diffMax = diffArray.max(),
+              diffMin < 0.007,
+              diffMax < 0.025 else {
+                // If the zoom scale is too small, to prevent downloading too much data, do not download them.
+                showAction(message: "The editing area is too large. Zoom in.", addAlerts: [])
+                return
+              }
+        setLoadIndicator()
+        Task {
+            // We download the data from the server, convert it to GeoJSON and write it to files.
+            await mapClient.getSourceSurround(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMax)
+            removeIndicator(indicator: indicator)
         }
     }
     
@@ -375,13 +376,15 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
                                      testButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)])
     }
     
-    @objc func tapTestButton() {}
+    @objc func tapTestButton() {
+        print(AppSettings.settings.inputObjects.count)
+    }
     
 //    MARK: FUNCTIONS
 
     //  The method searches for vector objects under the tap. If 1 object is detected, it goes to the controller for editing its tags, if > 1, it offers to select an object from the tapped ones.
     @objc func getObjects(sender: UITapGestureRecognizer) {
-        if mapClient.objects.count == 0 { return }
+//        if mapClient.objects.count == 0 { return }
         var touchPoint = sender.location(in: mapView)
         let touchPointMapCoordinate = mapView.makeMapPoint(fromDisplay: touchPoint)
         let maxTapDistance = 20
@@ -561,72 +564,12 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
             setCenterMap()
         }
     }
-
-    //  The method displays the data downloaded from the server, which has been transcoded by osmium into a GeoJSON file.
-    func showGeoJSON() {
-        do {
-            let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL)
-            mapClient.objects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-            if let style = sourceStyle {
-                sourceDrawable.setVectorObjects(mapClient.objects, with: style, completion: nil)
-            }
-            mapView.add(sourceDrawable)
-        } catch {
-            showAction(message: "Error show objects: \(error)", addAlerts: [])
-        }
-    }
-    
-    //  Displays created and modified objects.
-    func showSavedObjects() {
-        mapView.remove(savedDrawable)
-        mapView.remove(newDrawble)
-        updateSavedNodesButton()
-        guard AppSettings.settings.savedObjects.count > 0 else { return }
-        let savedObjects = GLMapVectorObjectArray()
-        let newObjects = GLMapVectorObjectArray()
-        for (id, osmObject) in AppSettings.settings.savedObjects {
-            let object = osmObject.getVectorObject()
-            object.setValue(String(id), forKey: "@id")
-            if id < 0 {
-                newObjects.add(object)
-            } else {
-                savedObjects.add(object)
-            }
-            mapClient.objects.add(object)
-        }
-        if let savedStyle = savedStyle {
-            savedDrawable.setVectorObjects(savedObjects, with: savedStyle, completion: nil)
-        }
-        if let newStyle = newStyle {
-            newDrawble.setVectorObjects(newObjects, with: newStyle, completion: nil)
-        }
-        mapView.add(savedDrawable)
-        mapView.add(newDrawble)
-    }
     
     //  The method updates the transition button to the controller of saved and modified objects (adds and removes the green circle).
     func updateSavedNodesButton() {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.savedNodesButton.update()
-        }
-    }
-    
-    //  In the background, we start indexing the downloaded data and saving them with the dictionary appSettings.settings.inputObjects for quick access to the object by its id.
-    func getNodesFromXML() async {
-        do {
-            let data = try Data(contentsOf: AppSettings.settings.inputFileURL)
-            let xmlObjects = try XMLDecoder().decode(osm.self, from: data)
-            for node in xmlObjects.node {
-                AppSettings.settings.inputObjects[node.id] = node
-            }
-            for way in xmlObjects.way {
-                AppSettings.settings.inputObjects[way.id] = way
-            }
-            removeIndicator(indicator: indicator)
-        } catch {
-            removeIndicator(indicator: indicator)
-            showAction(message: "Data indexing error: \(error)", addAlerts: [])
         }
     }
     
@@ -659,26 +602,14 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
 
     //  The method updates the uploaded data. It is called from the tag editing controller and the saved objects display controller, after the changes have been successfully sent to the server.
     func updateSourceData() {
-        if mapClient.objects.count == 0 {
-            return
-        }
         guard let longitudeDisplayMin = OsmClient.client.lastLongitudeDisplayMin,
               let latitudeDisplayMin = OsmClient.client.lastLatitudeDisplayMin,
               let longitudeDisplayMax = OsmClient.client.lasltLongitudeDisplayMax,
               let latitudeDisplayMax = OsmClient.client.lastLatitudeDisplayMax else { return }
+        setLoadIndicator()
         Task {
-            setLoadIndicator()
-            do {
-                try await mapClient.getSourceData(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMax)
-                showGeoJSON()
-                showSavedObjects()
-                Task {
-                    await getNodesFromXML()
-                }
-            } catch {
-                let message = error as? String ?? "Unknown error"
-                showAction(message: message, addAlerts: [])
-            }
+            await mapClient.getSourceSurround(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMax)
+            removeIndicator(indicator: indicator)
         }
     }
     
