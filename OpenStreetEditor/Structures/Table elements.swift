@@ -394,7 +394,12 @@ class EditTitleView: UIView {
 class SavedObjectButton: UIButton {
     private let circle: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemRed
+        let counts = AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count
+        if counts == 0 {
+            view.backgroundColor = .systemGray
+        } else {
+            view.backgroundColor = .systemRed
+        }
         view.layer.cornerRadius = 9
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -409,6 +414,7 @@ class SavedObjectButton: UIButton {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    private var lastCount = AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count
 
     init() {
         super.init(frame: .zero)
@@ -435,7 +441,11 @@ class SavedObjectButton: UIButton {
     
     // Method update count and color of circle
     func update() {
+        print("update")
         let counts = AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count
+        guard lastCount != counts else {return}
+        lastCount = counts
+        print("update 2")
         UIView.animate(withDuration: 0.4, animations: {
             self.circle.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
             self.label.transform = CGAffineTransform(rotationAngle: -.pi)
