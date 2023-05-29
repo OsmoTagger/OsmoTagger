@@ -19,6 +19,10 @@ class MapClient {
     var addDrawbleClouser: ((GLMapDrawable) -> Void)?
     var deleteDrawbleClouser: ((GLMapDrawable) -> Void)?
     
+    private var mutex = pthread_mutex_t()
+    
+    var loadSourceTask: TaskGroup<Void>?
+    
     // Variable save showed layers.
     // 0...8 - layers with source data
     // 9 - created objects
@@ -34,6 +38,7 @@ class MapClient {
     
     init() {
         setAppSettingsClouser()
+        pthread_mutex_init(&mutex, nil)
     }
     
     func setAppSettingsClouser() {
@@ -54,8 +59,11 @@ class MapClient {
         let longitudeDiff = longitudeDisplayMax - longitudeDisplayMin
         let arr = [latitudeDiff, longitudeDiff]
         guard let diff = arr.min() else {return}
-        await withTaskGroup(of: Void.self, body: { [weak self] group in
-            guard let self = self else {return}
+        if loadSourceTask != nil {
+            loadSourceTask?.cancelAll()
+        }
+        loadSourceTask = await withTaskGroup(of: Void.self, body: { [weak self] group in
+            guard let self = self else {return nil}
             group.addTask {
                 await self.getBboxSourceData(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMax, index: 0)
             }
@@ -84,7 +92,9 @@ class MapClient {
                 await self.getBboxSourceData(longitudeDisplayMin: longitudeDisplayMin - diff, latitudeDisplayMin: latitudeDisplayMin - diff, longitudeDisplayMax: longitudeDisplayMin, latitudeDisplayMax: latitudeDisplayMax, index: 8)
             }
             await group.next()
+            return group
         })
+        print("done")
     }
     
     func getBboxSourceData(longitudeDisplayMin: Double, latitudeDisplayMin: Double, longitudeDisplayMax: Double, latitudeDisplayMax: Double, index: Int) async {
@@ -255,10 +265,13 @@ class MapClient {
         }
         guard let newObjects = newObjects,
               newObjects.count > 0 else {return}
+        pthread_mutex_lock(&mutex)
         tapObjects.append(newObjects)
+        pthread_mutex_unlock(&mutex)
         let newDrawble = GLMapVectorLayer(drawOrder: 0)
         if let style = sourceStyle {
             newDrawble.setVectorObjects(newObjects, with: style, completion: nil)
+            pthread_mutex_lock(&mutex)
             if let oldDrawble = showedDrawable[index],
                let deleteClouser = deleteDrawbleClouser {
                 deleteClouser(oldDrawble)
@@ -268,6 +281,7 @@ class MapClient {
                 addClouser(newDrawble)
                 showedDrawable[index] = newDrawble
             }
+            pthread_mutex_unlock(&mutex)
         }
         await getNodesFromXML(index: index)
     }
@@ -300,12 +314,14 @@ class MapClient {
         guard let data = data else {return}
         do {
             let xmlObjects = try XMLDecoder().decode(osm.self, from: data)
+            pthread_mutex_lock(&mutex)
             for node in xmlObjects.node {
                 AppSettings.settings.inputObjects[node.id] = node
             }
             for way in xmlObjects.way {
                 AppSettings.settings.inputObjects[way.id] = way
             }
+            pthread_mutex_unlock(&mutex)
         } catch {
             print(error)
         }
@@ -313,7 +329,6 @@ class MapClient {
     
     //  Get objects after tap
     func openObject(touchCoordinate: GLMapPoint, tmp: GLMapPoint) -> Set<Int> {
-        print("openObject")
         var result: Set<Int> = []
         let maxDist = CGFloat(hypot(tmp.x, tmp.y))
         var nearestPoint = GLMapPoint()

@@ -142,8 +142,15 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
 //      After setting the starting position, all offsets are stored in memory
         mapView.mapDidMoveBlock = { [weak self] _ in
             guard let self = self else { return }
-//            print(self.mapView.mapZoomLevel)
             AppSettings.settings.lastBbox = self.mapView.bbox
+            guard self.isDownloadSource == true else {return}
+            let zoom = self.mapView.mapZoomLevel
+            if zoom > 14 {
+                self.downloadButton.backgroundColor = .systemGreen
+                self.downloadSourceData()
+            } else {
+                self.downloadButton.backgroundColor = .systemGray
+            }
         }
     }
 
@@ -152,7 +159,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         downloadButton.isHighlighted = false
         downloadButton.backgroundColor = .white
         downloadButton.setImage(UIImage(systemName: "square.and.arrow.down.fill")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
-        downloadButton.addTarget(self, action: #selector(downloadSourceData), for: .touchUpInside)
+        downloadButton.addTarget(self, action: #selector(tapDownloadButton), for: .touchUpInside)
         view.addSubview(downloadButton)
         
         downloadButton.translatesAutoresizingMaskIntoConstraints = false
@@ -166,7 +173,13 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         print(isDownloadSource)
         isDownloadSource = !isDownloadSource
         if isDownloadSource {
-            downloadButton.backgroundColor = .systemGreen
+            let zoom = mapView.mapZoomLevel
+            if zoom > 14 {
+                downloadButton.backgroundColor = .systemGreen
+                downloadSourceData()
+            } else {
+                downloadButton.backgroundColor = .systemGray
+            }
         } else {
             downloadButton.backgroundColor = .white
         }
@@ -174,31 +187,12 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
     
     @objc func downloadSourceData() {
         // We get the coordinates of the corners of the screen, save them in an array and take the minimum and maximum values. These are the parameters of the bbox data to download
-        let point1 = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: UIScreen.main.bounds.height))
-        let point2 = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height))
-        let point3 = mapView.makeGeoPoint(fromDisplay: CGPoint(x: UIScreen.main.bounds.width, y: 0))
-        let point4 = mapView.makeGeoPoint(fromDisplay: CGPoint(x: 0, y: 0))
-        let latitudeArray: [Double] = [point1.lat, point2.lat, point3.lat, point4.lat]
-        let longitudeArray: [Double] = [point1.lon, point2.lon, point3.lon, point4.lon]
-        guard let latitudeDisplayMin = latitudeArray.min(),
-              let latitudeDisplayMax = latitudeArray.max(),
-              let longitudeDisplayMin = longitudeArray.min(),
-              let longitudeDisplayMax = longitudeArray.max()
-        else {
-            let message = "Error get display coordinate: \(point1.lat), \(point1.lon); \(point2.lat), \(point2.lon); \(point3.lat), \(point3.lon); \(point4.lat), \(point4.lon). Try rotate the map"
-            showAction(message: message, addAlerts: [])
-            return
-        }
-        // 0.007 and 0.025 are experimentally selected values of the maximum size of the bbox of map. If you do the above, with a high density of points, the application slows down and the OSM server may not allow you to download data.
-        let diffArray = [latitudeDisplayMax - latitudeDisplayMin, longitudeDisplayMax - longitudeDisplayMin]
-        guard let diffMin = diffArray.min(),
-              let diffMax = diffArray.max(),
-              diffMin < 0.007,
-              diffMax < 0.025 else {
-                // If the zoom scale is too small, to prevent downloading too much data, do not download them.
-                showAction(message: "The editing area is too large. Zoom in.", addAlerts: [])
-                return
-              }
+        let centerPoint = mapView.mapGeoCenter
+        let medianDiff = 0.0015
+        let latitudeDisplayMin = centerPoint.lat - medianDiff
+        let latitudeDisplayMax = centerPoint.lat + medianDiff
+        let longitudeDisplayMin = centerPoint.lon - medianDiff
+        let longitudeDisplayMax = centerPoint.lon + medianDiff
         setLoadIndicator()
         Task {
             // We download the data from the server, convert it to GeoJSON and write it to files.
@@ -211,7 +205,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
     func setLoadIndicator() {
         indicator.style = .large
         indicator.layer.cornerRadius = 5
-        indicator.backgroundColor = .systemBackground
+        indicator.backgroundColor = .systemGreen
         indicator.startAnimating()
         view.addSubview(indicator)
         
@@ -377,7 +371,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
     }
     
     @objc func tapTestButton() {
-        print(AppSettings.settings.inputObjects.count)
+//        mapClient.loadSourceTask?.
     }
     
 //    MARK: FUNCTIONS
