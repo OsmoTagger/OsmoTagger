@@ -58,12 +58,12 @@ class MapClient {
         let latitudeDiff = latitudeDisplayMax - latitudeDisplayMin
         let longitudeDiff = longitudeDisplayMax - longitudeDisplayMin
         let arr = [latitudeDiff, longitudeDiff]
-        guard let diff = arr.min() else {return}
+        guard let diff = arr.min() else { return }
         if loadSourceTask != nil {
             loadSourceTask?.cancelAll()
         }
         loadSourceTask = await withTaskGroup(of: Void.self, body: { [weak self] group in
-            guard let self = self else {return nil}
+            guard let self = self else { return nil }
             group.addTask {
                 await self.getBboxSourceData(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMax, index: 0)
             }
@@ -104,7 +104,7 @@ class MapClient {
         } catch {
             print(error)
         }
-        guard let data = data else {return}
+        guard let data = data else { return }
         var newObjects: GLMapVectorObjectArray?
         switch index {
         case 0:
@@ -264,7 +264,7 @@ class MapClient {
             return
         }
         guard let newObjects = newObjects,
-              newObjects.count > 0 else {return}
+              newObjects.count > 0 else { return }
         pthread_mutex_lock(&mutex)
         tapObjects.append(newObjects)
         pthread_mutex_unlock(&mutex)
@@ -273,7 +273,8 @@ class MapClient {
             newDrawble.setVectorObjects(newObjects, with: style, completion: nil)
             pthread_mutex_lock(&mutex)
             if let oldDrawble = showedDrawable[index],
-               let deleteClouser = deleteDrawbleClouser {
+               let deleteClouser = deleteDrawbleClouser
+            {
                 deleteClouser(oldDrawble)
                 showedDrawable[index] = nil
             }
@@ -311,7 +312,7 @@ class MapClient {
         default:
             return
         }
-        guard let data = data else {return}
+        guard let data = data else { return }
         do {
             let xmlObjects = try XMLDecoder().decode(osm.self, from: data)
             pthread_mutex_lock(&mutex)
@@ -334,8 +335,8 @@ class MapClient {
         var nearestPoint = GLMapPoint()
         var selectedObjects: [GLMapVectorObject] = []
         for array in tapObjects {
-            guard array.count > 0 else {continue}
-            for i in 0...array.count - 1 {
+            guard array.count > 0 else { continue }
+            for i in 0 ... array.count - 1 {
                 let object = array[i]
                 if object.findNearestPoint(&nearestPoint, to: touchCoordinate, maxDistance: maxDist) && (object.type.rawValue == 1 || object.type.rawValue == 2) {
                     selectedObjects.append(object)
@@ -365,27 +366,30 @@ class MapClient {
             tapObjects.append(savedObjects)
         }
         if let drawble = showedDrawable[10],
-           let deleteClouser = deleteDrawbleClouser {
+           let deleteClouser = deleteDrawbleClouser
+        {
             deleteClouser(drawble)
         }
         if savedObjects.count > 0,
            let savedStyle = savedStyle,
-           let addClouser = addDrawbleClouser  {
+           let addClouser = addDrawbleClouser
+        {
             let savedDrawable = GLMapVectorLayer(drawOrder: 1)
             savedDrawable.setVectorObjects(savedObjects, with: savedStyle, completion: nil)
             addClouser(savedDrawable)
         }
         if let drawble = showedDrawable[9],
-           let deleteClouser = deleteDrawbleClouser {
+           let deleteClouser = deleteDrawbleClouser
+        {
             deleteClouser(drawble)
         }
         if newObjects.count > 0,
            let newStyle = newStyle,
-           let addClouser = addDrawbleClouser {
+           let addClouser = addDrawbleClouser
+        {
             let newDrawble = GLMapVectorLayer(drawOrder: 2)
             newDrawble.setVectorObjects(newObjects, with: newStyle, completion: nil)
             addClouser(newDrawble)
         }
     }
-    
 }

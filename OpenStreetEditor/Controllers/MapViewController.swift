@@ -83,15 +83,13 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         }
         
         mapClient.addDrawbleClouser = { [weak self] drawble in
-            guard let self = self else {return}
+            guard let self = self else { return }
             self.mapView.add(drawble)
         }
         mapClient.deleteDrawbleClouser = { [weak self] drawble in
-            guard let self = self else {return}
+            guard let self = self else { return }
             self.mapView.remove(drawble)
         }
-        
-        
     }
     
     override func viewDidAppear(_: Bool) {
@@ -143,7 +141,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         mapView.mapDidMoveBlock = { [weak self] _ in
             guard let self = self else { return }
             AppSettings.settings.lastBbox = self.mapView.bbox
-            guard self.isDownloadSource == true else {return}
+            guard self.isDownloadSource == true else { return }
             let zoom = self.mapView.mapZoomLevel
             if zoom > 14 {
                 self.downloadButton.backgroundColor = .systemGreen
