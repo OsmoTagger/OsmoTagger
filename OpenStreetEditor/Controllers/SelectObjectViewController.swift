@@ -38,6 +38,10 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
         setTableView()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.setToolbarHidden(true, animated: true)
+    }
+    
     override func viewDidDisappear(_: Bool) {
         guard let clouser = callbackClosure else { return }
         clouser()
