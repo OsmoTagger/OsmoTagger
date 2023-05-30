@@ -4,8 +4,12 @@ import Foundation
 import GLMap
 import XMLCoder
 
-// MARK: changeSet structures
+enum OsmClientErrors: Error {
+    // object limit exceeded in request
+    case objectLimit
+}
 
+// MARK: changeSet structures
 struct osmChange: Decodable, Encodable, DynamicNodeEncoding {
     static func nodeEncoding(for key: CodingKey) -> XMLEncoder.NodeEncoding {
         switch key {

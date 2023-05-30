@@ -94,7 +94,7 @@ final class AppSettings: NSObject {
 //          When saving the token, it loads the user's data
             Task {
                 do {
-                    let userInfo = try await OsmClient.client.getUserInfo()
+                    let userInfo = try await OsmClient().getUserInfo()
                     if let clouser = userInfoClouser {
                         clouser(userInfo)
                     }
@@ -258,25 +258,6 @@ final class AppSettings: NSObject {
     // Pathes to files with XML (input) and geoJSON (output) data of central bbox (user screen)
     let inputFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input.xml")
     let outputFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data.geojson")
-    // Pathes to files with xml and geoJSON data of the map surrounding the bbox
-    let inputFileURL1 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input1.xml")
-    let outputFileURL1 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data1.geojson")
-    let inputFileURL2 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input2.xml")
-    let outputFileURL2 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data2.geojson")
-    let inputFileURL3 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input3.xml")
-    let outputFileURL3 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data3.geojson")
-    let inputFileURL4 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input4.xml")
-    let outputFileURL4 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data4.geojson")
-    let inputFileURL5 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input5.xml")
-    let outputFileURL5 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data5.geojson")
-    let inputFileURL6 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input6.xml")
-    let outputFileURL6 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data6.geojson")
-    let inputFileURL7 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input7.xml")
-    let outputFileURL7 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data7.geojson")
-    let inputFileURL8 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input8.xml")
-    let outputFileURL8 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data8.geojson")
-    let inputFileURL9 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input9.xml")
-    let outputFileURL9 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data9.geojson")
     
     //  Stores objects downloaded from OSM server
     var inputObjects: [Int: Any] = [:]

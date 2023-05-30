@@ -416,7 +416,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         let capturedDeletedObjects = deletedObjects
         Task {
             do {
-                try await OsmClient.client.sendObjects(sendObjs: capturedSavedObjects, deleteObjs: capturedDeletedObjects)
+                try await OsmClient().sendObjects(sendObjs: capturedSavedObjects, deleteObjs: capturedDeletedObjects)
                 for object in capturedSavedObjects {
                     AppSettings.settings.savedObjects.removeValue(forKey: object.id)
                 }

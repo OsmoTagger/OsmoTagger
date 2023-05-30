@@ -21,12 +21,12 @@ class CustomSafari: SFSafariViewController {
 
 //  Custom UINavigationController. It opens controllers for displaying saved objects, selecting an object in the case of tapping on several objects, and a tag editing controller.
 class NavigationController: UINavigationController {
-    var callbackClosure: (() -> Void)?
+    var dismissClosure: (() -> Void)?
     
     override func viewDidDisappear(_: Bool) {
         AppSettings.settings.saveAllowed = false
         AppSettings.settings.newProperties = [:]
-        guard let clouser = callbackClosure else { return }
+        guard let clouser = dismissClosure else { return }
         clouser()
     }
 }

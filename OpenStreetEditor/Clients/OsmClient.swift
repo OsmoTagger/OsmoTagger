@@ -12,8 +12,6 @@ import XMLCoder
 
 //  Class for working with the OSM API.  Later it is necessary to get rid of singleton
 class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
-    static let client = OsmClient()
-    
     let session = URLSession.shared
     
 //    MARK: OAuth 2.0
@@ -131,6 +129,9 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
                     lasltLongitudeDisplayMax = longitudeDisplayMax
                     lastLatitudeDisplayMax = latitudeDisplayMax
                     return data
+                } else if httpResponse.statusCode == 400 {
+                    print(httpResponse.statusCode)
+                    throw OsmClientErrors.objectLimit
                 } else {
                     guard let str = String(data: data, encoding: .utf8) else {
                         throw "Unknown response from server. URL: \(url). Status code: \(httpResponse.statusCode)"
@@ -144,7 +145,8 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
                 throw str
             }
         } catch {
-            throw "Request error to load data from URL \(url). Error: \(error)"
+            throw error
+//            throw "Request error to load data from URL \(url). Error: \(error)"
         }
     }
     

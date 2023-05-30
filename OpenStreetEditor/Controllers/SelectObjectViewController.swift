@@ -38,7 +38,7 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
         setTableView()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_: Bool) {
         navigationController?.setToolbarHidden(true, animated: true)
     }
     

@@ -396,8 +396,9 @@ class SavedObjectButton: UIButton {
         let view = UIView()
         let counts = AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count
         if counts == 0 {
-            view.backgroundColor = .systemGray
+            view.isHidden = true
         } else {
+            view.isHidden = false
             view.backgroundColor = .systemRed
         }
         view.layer.cornerRadius = 9
@@ -414,6 +415,7 @@ class SavedObjectButton: UIButton {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+
     private var lastCount = AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count
 
     init() {
@@ -439,13 +441,14 @@ class SavedObjectButton: UIButton {
         ])
     }
     
-    // Method update count and color of circle
+    // Method update count and of saved, created and deleted objects
     func update() {
-        print("update")
         let counts = AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count
-        guard lastCount != counts else {return}
+        guard lastCount != counts else { return }
+        if lastCount == 0 {
+            circle.isHidden = false
+        }
         lastCount = counts
-        print("update 2")
         UIView.animate(withDuration: 0.4, animations: {
             self.circle.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
             self.label.transform = CGAffineTransform(rotationAngle: -.pi)
@@ -455,7 +458,7 @@ class SavedObjectButton: UIButton {
                 self.label.transform = .identity
             } completion: { _ in
                 if counts == 0 {
-                    self.circle.backgroundColor = .systemGray
+                    self.circle.isHidden = true
                     self.label.text = nil
                 } else {
                     self.circle.backgroundColor = .systemRed
