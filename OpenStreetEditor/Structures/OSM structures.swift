@@ -10,6 +10,7 @@ enum OsmClientErrors: Error {
 }
 
 // MARK: changeSet structures
+
 struct osmChange: Decodable, Encodable, DynamicNodeEncoding {
     static func nodeEncoding(for key: CodingKey) -> XMLEncoder.NodeEncoding {
         switch key {

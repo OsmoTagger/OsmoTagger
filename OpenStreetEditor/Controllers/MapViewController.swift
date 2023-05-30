@@ -88,6 +88,8 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
     override func viewDidAppear(_: Bool) {
         // After successfully adding the map to the view, we set the initial position of the map
         setMapLocation()
+        // After setting the starting position, all offsets are stored in memory. Clouser download source data while map did move.
+        setDidMapMoveClouser()
         mapClient.showSavedObjects()
     }
     
@@ -129,7 +131,9 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
                 mapView.mapZoomLevel = 10
             }
         }
-//      After setting the starting position, all offsets are stored in memory
+    }
+    
+    func setDidMapMoveClouser() {
         mapView.mapDidMoveBlock = { [weak self] _ in
             guard let self = self else { return }
             AppSettings.settings.lastBbox = self.mapView.bbox
@@ -137,20 +141,13 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
             let zoom = self.mapView.mapZoomLevel
             if zoom > 14 {
                 self.downloadButton.backgroundColor = .systemGreen
-                let center = self.mapView.mapGeoCenter
-                do {
-                    try self.mapClient.checkMapCenter(center: center)
-                } catch {
-                    let message = error as? String ?? "Error download data when move map. Lat: \(center.lat),lon: \(center.lon)."
-                    self.showAction(message: message, addAlerts: [])
-                    self.removeIndicator(indicator: self.indicator)
-                }
+                self.checkMapCenter()
             } else {
                 self.downloadButton.backgroundColor = .systemGray
             }
         }
     }
-
+    
     func setDownloadButton() {
         downloadButton.layer.cornerRadius = 5
         downloadButton.isHighlighted = false
@@ -166,6 +163,17 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
                                      downloadButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)])
     }
     
+    func checkMapCenter() {
+        Task {
+            do {
+                try await mapClient.checkMapCenter(center: mapView.mapGeoCenter)
+            } catch {
+                let message = "Error download data. Lat: \(mapView.mapGeoCenter.lat),lon: \(mapView.mapGeoCenter.lon), bbox size: \(mapClient.defaultBboxSize).\nError: \(error)"
+                showAction(message: message, addAlerts: [])
+            }
+        }
+    }
+    
     @objc func tapDownloadButton() {
         print(isDownloadSource)
         isDownloadSource = !isDownloadSource
@@ -173,28 +181,12 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
             let zoom = mapView.mapZoomLevel
             if zoom > 14 {
                 downloadButton.backgroundColor = .systemGreen
+                checkMapCenter()
             } else {
                 downloadButton.backgroundColor = .systemGray
             }
-            downloadSourceData()
         } else {
             downloadButton.backgroundColor = .white
-        }
-    }
-    
-    @objc func downloadSourceData() {
-        setLoadIndicator()
-        let center = mapView.mapGeoCenter
-        Task {
-            // We download the data from the server, convert it to GeoJSON and write it to files.
-            do {
-                try await mapClient.getSourceBbox(mapCenter: center)
-                removeIndicator(indicator: indicator)
-            } catch {
-                let message = error as? String ?? "Error download data. Lat: \(center.lat),lon: \(center.lon), bbox size: \(mapClient.defaultBboxSize)"
-                showAction(message: message, addAlerts: [])
-                removeIndicator(indicator: indicator)
-            }
         }
     }
     
@@ -389,7 +381,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
     //  The method searches for vector objects under the tap. If 1 object is detected, it goes to the controller for editing its tags, if > 1, it offers to select an object from the tapped ones.
     @objc func getObjects(sender: UITapGestureRecognizer) {
 //        if mapClient.objects.count == 0 { return }
-        var touchPoint = sender.location(in: mapView)
+        let touchPoint = sender.location(in: mapView)
         let touchPointMapCoordinate = mapView.makeMapPoint(fromDisplay: touchPoint)
         let maxTapDistance = 20
         let tmp = mapView.makeMapPoint(fromDisplayDelta: CGPoint(x: maxTapDistance, y: 0))

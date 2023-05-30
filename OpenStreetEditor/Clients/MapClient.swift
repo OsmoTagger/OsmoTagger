@@ -48,8 +48,7 @@ class MapClient {
     // Latest options bbox loading raw map data
     var lastCenter: GLMapGeoPoint?
     // This is the default bbox size for loading OSM raw data. In case of receiving a response from the server "400" - too many objects in the bbox (may occur in regions with a high density of objects) is reduced by 25%
-//    var defaultBboxSize = 0.003
-    var defaultBboxSize = 0.1
+    var defaultBboxSize = 0.002
      
     init() {
         setAppSettingsClouser()
@@ -69,33 +68,37 @@ class MapClient {
     //   |           |
     //   |           |
     // lonMin------lonMax/latMin
-    func checkMapCenter(center: GLMapGeoPoint) throws {
-        guard let lastCenter = lastCenter else { return }
-        let longMin = lastCenter.lon - defaultBboxSize
-        let longMax = lastCenter.lon + defaultBboxSize
-        let latMin = lastCenter.lat - defaultBboxSize
-        let latMax = lastCenter.lat + defaultBboxSize
-        if center.lon < longMin || center.lon > longMax || center.lat < latMin || center.lat > latMax {
-            // When we call the new load method, we remove all values from the dictionary of operations to block them.
-            lock.lock()
-            openOperations.removeAll()
-            lock.unlock()
-            Task {
-                try await getSourceBbox(mapCenter: center)
+    func checkMapCenter(center: GLMapGeoPoint) async throws {
+        if let lastCenter = lastCenter {
+            let longMin = lastCenter.lon - defaultBboxSize
+            let longMax = lastCenter.lon + defaultBboxSize
+            let latMin = lastCenter.lat - defaultBboxSize
+            let latMax = lastCenter.lat + defaultBboxSize
+            if center.lon < longMin || center.lon > longMax || center.lat < latMin || center.lat > latMax {
+                // When we call the new load method, we remove all values from the dictionary of operations to block them.
+                try await startNewDownload(center: center)
             }
+        } else {
+            lastCenter = center
+            try await startNewDownload(center: center)
         }
+    }
+    
+    func startNewDownload(center: GLMapGeoPoint) async throws {
+        lock.lock()
+        openOperations.removeAll()
+        lock.unlock()
+        try await getSourceBbox(mapCenter: center)
     }
     
     // Loading the source data of the map in the bbox
     func getSourceBbox(mapCenter: GLMapGeoPoint) async throws {
-        print(defaultBboxSize)
         let id = operationID
         lock.lock()
         // Run indicator animation in MapViewController
         delegate?.startDownload()
         // Adding an operation to the dictionary of running operations
         openOperations[id] = true
-        lastCenter = mapCenter
         lock.unlock()
         // Setting a maximum bbox size to prevent getting a 400 error from the server
         let latitudeDisplayMin = mapCenter.lat - defaultBboxSize
@@ -116,15 +119,11 @@ class MapClient {
             nilData = try await OsmClient().downloadOSMData(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMax)
         } catch OsmClientErrors.objectLimit {
             // Reduce bbox size to reduce the number of loaded objects
-            print("objects limit")
-            defaultBboxSize = defaultBboxSize * 0.75
             lock.lock()
+            defaultBboxSize = defaultBboxSize * 0.75
             openOperations.removeAll()
             lock.unlock()
-            try? await getSourceBbox(mapCenter: mapCenter)
-        } catch {
-            print("throw here")
-            throw error
+            try await getSourceBbox(mapCenter: mapCenter)
         }
         lock.lock()
         if openOperations[id] == nil {
@@ -134,16 +133,14 @@ class MapClient {
         }
         lock.unlock()
         // Write data to file
-        if fileManager.fileExists(atPath: AppSettings.settings.inputFileURL.path) {
-            try fileManager.removeItem(atPath: AppSettings.settings.inputFileURL.path)
+        guard let data = nilData else { throw "Error get data - nill data" }
+        DispatchQueue.global().async { [weak self] in
+            guard let self = self else { return }
+            self.getNodesFromXML(data: data)
         }
-        if fileManager.fileExists(atPath: AppSettings.settings.outputFileURL.path) {
-            try fileManager.removeItem(atPath: AppSettings.settings.outputFileURL.path)
-        }
-        guard let data = nilData else {
-            throw "Error get data - nill data"
-        }
-        try data.write(to: URL(fileURLWithPath: AppSettings.settings.inputFileURL.path))
+        lock.lock()
+        try data.write(to: AppSettings.settings.inputFileURL)
+        lock.unlock()
         lock.lock()
         if openOperations[id] == nil {
             print("3-", id)
@@ -152,9 +149,12 @@ class MapClient {
         }
         lock.unlock()
         // Convert OSM xml to geoJSON
+        lock.lock()
         if let error = osmium_convert(AppSettings.settings.inputFileURL.path, AppSettings.settings.outputFileURL.path) {
+            lock.unlock()
             throw "Error osmium convert: \(error)"
         }
+        lock.unlock()
         lock.lock()
         if openOperations[id] == nil {
             print("4-", id)
@@ -162,7 +162,9 @@ class MapClient {
             return
         }
         lock.unlock()
+        lock.lock()
         let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL)
+        lock.unlock()
         lock.lock()
         if openOperations[id] == nil {
             print("5-", id)
@@ -180,8 +182,8 @@ class MapClient {
         }
         lock.unlock()
         // Add new objects to array for tap
-        tapObjects = newObjects
         lock.lock()
+        tapObjects = newObjects
         if openOperations[id] == nil {
             print("7-", id)
             lock.unlock()
@@ -191,45 +193,29 @@ class MapClient {
         // Add layer on MapViewController
         delegate?.removeDrawble(layer: sourceDrawble)
         if let style = sourceStyle {
+            lock.lock()
             sourceDrawble.setVectorObjects(newObjects, with: style, completion: nil)
+            lock.unlock()
             delegate?.addDrawble(layer: sourceDrawble)
         }
         lock.lock()
+        lastCenter = mapCenter
         if openOperations[id] == nil {
             print("8-", id)
             lock.unlock()
             return
         }
         lock.unlock()
-        lock.lock()
-        if openOperations[id] == nil {
-            print("9-", id)
-            lock.unlock()
-            return
-        }
-        lock.unlock()
-        // Parse input OSM xnl data to the memmory
-        getNodesFromXML()
-        delegate?.endDownload()
     }
     
     //  In the background, we start indexing the downloaded data and saving them with the dictionary appSettings.settings.inputObjects for quick access to the object by its id.
-    func getNodesFromXML() {
+    func getNodesFromXML(data: Data) {
         let id = operationID
         lock.lock()
         AppSettings.settings.inputObjects = [:]
         openOperations[id] = false
         lock.unlock()
         do {
-            let data = try Data(contentsOf: AppSettings.settings.inputFileURL)
-            lock.lock()
-            if openOperations[id] == nil {
-                print("11-", id)
-                AppSettings.settings.inputObjects = [:]
-                lock.unlock()
-                return
-            }
-            lock.unlock()
             let xmlObjects = try XMLDecoder().decode(osm.self, from: data)
             lock.lock()
             if openOperations[id] == nil {
@@ -239,9 +225,11 @@ class MapClient {
                 return
             }
             lock.unlock()
+            lock.lock()
             for node in xmlObjects.node {
                 AppSettings.settings.inputObjects[node.id] = node
             }
+            lock.unlock()
             lock.lock()
             if openOperations[id] == nil {
                 print("13-", id)
@@ -250,11 +238,15 @@ class MapClient {
                 return
             }
             lock.unlock()
+            lock.lock()
             for way in xmlObjects.way {
                 AppSettings.settings.inputObjects[way.id] = way
             }
+            lock.unlock()
+            delegate?.endDownload()
         } catch {
             lock.unlock()
+            delegate?.endDownload()
             print(error)
         }
     }

@@ -120,33 +120,27 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         guard let url = URL(string: "\(AppSettings.settings.server)/api/0.6/map?bbox=\(longitudeDisplayMin),\(latitudeDisplayMin),\(longitudeDisplayMax),\(latitudeDisplayMax)") else {
             throw "Error generate URL for download data. Server: \(AppSettings.settings.server), Bbox: \(longitudeDisplayMin),\(latitudeDisplayMin),\(longitudeDisplayMax),\(latitudeDisplayMax)"
         }
-        do {
-            let (data, response) = try await session.data(from: url)
-            if let httpResponse = response as? HTTPURLResponse {
-                if httpResponse.statusCode == 200 {
-                    lastLongitudeDisplayMin = longitudeDisplayMin
-                    lastLatitudeDisplayMin = latitudeDisplayMin
-                    lasltLongitudeDisplayMax = longitudeDisplayMax
-                    lastLatitudeDisplayMax = latitudeDisplayMax
-                    return data
-                } else if httpResponse.statusCode == 400 {
-                    print(httpResponse.statusCode)
-                    throw OsmClientErrors.objectLimit
-                } else {
-                    guard let str = String(data: data, encoding: .utf8) else {
-                        throw "Unknown response from server. URL: \(url). Status code: \(httpResponse.statusCode)"
-                    }
-                    throw "Error getting data. Status code: \(httpResponse.statusCode), error: \(str)"
-                }
+        let (data, response) = try await session.data(from: url)
+        if let httpResponse = response as? HTTPURLResponse {
+            if httpResponse.statusCode == 200 {
+                lastLongitudeDisplayMin = longitudeDisplayMin
+                lastLatitudeDisplayMin = latitudeDisplayMin
+                lasltLongitudeDisplayMax = longitudeDisplayMax
+                lastLatitudeDisplayMax = latitudeDisplayMax
+                return data
+            } else if httpResponse.statusCode == 400 {
+                throw OsmClientErrors.objectLimit
             } else {
                 guard let str = String(data: data, encoding: .utf8) else {
-                    throw "Unknown response from server. URL: \(url)"
+                    throw "Unknown response from server. URL: \(url). Status code: \(httpResponse.statusCode)"
                 }
-                throw str
+                throw "Error getting data. Status code: \(httpResponse.statusCode), error: \(str)"
             }
-        } catch {
-            throw error
-//            throw "Request error to load data from URL \(url). Error: \(error)"
+        } else {
+            guard let str = String(data: data, encoding: .utf8) else {
+                throw "Unknown response from server. URL: \(url)"
+            }
+            throw str
         }
     }
     
