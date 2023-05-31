@@ -305,7 +305,9 @@ class MapClient {
         delegate?.addDrawble(layer: newDrawble)
         // Update saveNodesButton counter
         if let button = savedNodeButtonLink {
-            button.update()
+            DispatchQueue.main.async {
+                button.update()
+            }
         }
     }
 }

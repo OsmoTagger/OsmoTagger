@@ -671,10 +671,9 @@ extension MapViewController: ShowTappedObject {
     
     //  The method updates the uploaded data. It is called from the tag editing controller and the saved objects display controller, after the changes have been successfully sent to the server.
     func updateSourceData() {
-        setLoadIndicator()
-        guard let lastCenter = mapClient.lastCenter else { return }
+        mapClient.lastCenter = nil
         Task {
-            try await mapClient.getSourceBbox(mapCenter: lastCenter)
+            try await mapClient.getSourceBbox(mapCenter: mapView.mapGeoCenter)
             removeIndicator(indicator: indicator)
         }
     }

@@ -239,10 +239,11 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
     //  open changeset
     func openChangeset() async throws -> Int {
         let comment = AppSettings.settings.changeSetComment ?? "The user has not entered a comment."
+        let buildNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "4"
         let requestData = """
         <osm>
             <changeset>
-                <tag k="created_by" v="OpenStreetEditor 1.0(3)"/>
+                <tag k="created_by" v="OpenStreetEditor 1.0(\(buildNumber))"/>
                 <tag k="contact:telegram" v="https://t.me/OpenStreetEditor"/>
                 <tag k="comment" v="\(comment)"/>
             </changeset>
