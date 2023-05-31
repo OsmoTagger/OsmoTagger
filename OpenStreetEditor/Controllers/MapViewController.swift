@@ -73,8 +73,8 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         setupLocationButton()
         setSavedNodesButton()
 //      The test button in the lower right corner of the screen is often needed during development.
-        setTestButton()
-        setCenterMap()
+//        setTestButton()
+//        setCenterMap()
         
 //      Reading the modified and created objects into the AppSettings.settings.savedObjects variable.
         AppSettings.settings.getSavedObjects()
@@ -139,7 +139,8 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
             AppSettings.settings.lastBbox = self.mapView.bbox
             guard self.isDownloadSource == true else { return }
             let zoom = self.mapView.mapZoomLevel
-            if zoom > 14 {
+            let beginLoadZoom = 15.0
+            if zoom > beginLoadZoom {
                 self.downloadButton.backgroundColor = .systemGreen
                 self.checkMapCenter()
             } else {
@@ -179,7 +180,8 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         isDownloadSource = !isDownloadSource
         if isDownloadSource {
             let zoom = mapView.mapZoomLevel
-            if zoom > 14 {
+            let beginLoadZoom = 15.0
+            if zoom > beginLoadZoom {
                 downloadButton.backgroundColor = .systemGreen
                 checkMapCenter()
             } else {
