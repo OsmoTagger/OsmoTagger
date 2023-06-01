@@ -53,7 +53,7 @@ class MapClient {
     init() {
         setAppSettingsClouser()
     }
-    
+        
     func setAppSettingsClouser() {
         // Every time AppSettings.settings.savedObjects is changed (this is the variable in which the modified or created objects are stored), a closure is called. In this case, when a short circuit is triggered, we update the illumination of saved and created objects.
         AppSettings.settings.mapVCClouser = { [weak self] in
@@ -94,25 +94,32 @@ class MapClient {
     // Loading the source data of the map in the bbox
     func getSourceBbox(mapCenter: GLMapGeoPoint) async throws {
         let id = operationID
-        lock.lock()
         // Run indicator animation in MapViewController
         delegate?.startDownload()
         // Adding an operation to the dictionary of running operations
+        lock.lock()
         openOperations[id] = true
         lock.unlock()
+
+        // Create tmp directory and file for converting OSM xml to geoJSON and indexing it
+        let xmlFileName = ProcessInfo().globallyUniqueString
+        let xmlFileURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(xmlFileName + ".osm")
+        let jsonFileName = ProcessInfo().globallyUniqueString
+        let jsonFileURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(jsonFileName + ".geojson")
+        defer {
+            if fileManager.fileExists(atPath: xmlFileURL.path) {
+                try? fileManager.removeItem(at: xmlFileURL)
+            }
+            if fileManager.fileExists(atPath: jsonFileURL.path) {
+                try? fileManager.removeItem(at: jsonFileURL)
+            }
+        }
+        
         // Setting a maximum bbox size to prevent getting a 400 error from the server
         let latitudeDisplayMin = mapCenter.lat - defaultBboxSize
         let latitudeDisplayMax = mapCenter.lat + defaultBboxSize
         let longitudeDisplayMin = mapCenter.lon - defaultBboxSize
         let longitudeDisplayMax = mapCenter.lon + defaultBboxSize
-        // We check with such blocks of code whether it is possible to perform the operation further
-        lock.lock()
-        if openOperations[id] == nil {
-            print("1-", id)
-            lock.unlock()
-            return
-        }
-        lock.unlock()
         // Get data from server
         var nilData: Data?
         do {
@@ -139,22 +146,17 @@ class MapClient {
             self.getNodesFromXML(data: data)
         }
         lock.lock()
-        try data.write(to: AppSettings.settings.inputFileURL)
-        lock.unlock()
-        lock.lock()
         if openOperations[id] == nil {
             print("3-", id)
             lock.unlock()
             return
         }
         lock.unlock()
+        try data.write(to: xmlFileURL)
         // Convert OSM xml to geoJSON
-        lock.lock()
-        if let error = osmium_convert(AppSettings.settings.inputFileURL.path, AppSettings.settings.outputFileURL.path) {
-            lock.unlock()
+        if let error = osmium_convert(xmlFileURL.path, jsonFileURL.path) {
             throw "Error osmium convert: \(error)"
         }
-        lock.unlock()
         lock.lock()
         if openOperations[id] == nil {
             print("4-", id)
@@ -162,9 +164,7 @@ class MapClient {
             return
         }
         lock.unlock()
-        lock.lock()
-        let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL)
-        lock.unlock()
+        let dataGeojson = try Data(contentsOf: jsonFileURL)
         lock.lock()
         if openOperations[id] == nil {
             print("5-", id)
@@ -215,6 +215,16 @@ class MapClient {
         AppSettings.settings.inputObjects = [:]
         openOperations[id] = false
         lock.unlock()
+        
+        // Create tmp directory and file for converting OSM xml to geoJSON and indexing it
+        let xmlFileName = ProcessInfo().globallyUniqueString
+        let xmlFileURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(xmlFileName + ".osm")
+        defer {
+            if fileManager.fileExists(atPath: xmlFileURL.path) {
+                try? fileManager.removeItem(at: xmlFileURL)
+            }
+        }
+        
         do {
             let xmlObjects = try XMLDecoder().decode(osm.self, from: data)
             lock.lock()

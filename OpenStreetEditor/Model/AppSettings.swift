@@ -264,10 +264,6 @@ final class AppSettings: NSObject {
     // Path to a file that stores objects marked for deletion
     let deletedNodesURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("deletedNodes.data")
     
-    // Pathes to files with XML (input) and geoJSON (output) data of central bbox (user screen)
-    let inputFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input.xml")
-    let outputFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data.geojson")
-    
     //  Stores objects downloaded from OSM server
     var inputObjects: [Int: Any] = [:]
     
