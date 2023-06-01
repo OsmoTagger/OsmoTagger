@@ -151,6 +151,7 @@ final class AppSettings: NSObject {
     }
     
     // the variable in which the comment is written, which the user assigns to changeset. Used on EditVC, SavedNodesVC and OsmClient
+    // Help - https://gurumaps.app/docs/mapcss/
     var changeSetComment: String?
     
 //    MARK: MAP STYLES
@@ -158,69 +159,42 @@ final class AppSettings: NSObject {
     //  Displays the loaded OSM data.
     let defaultStyle = """
     node {
-        |z15- {
-            icon-image: "poi_circle_small.svg";
+        icon-image: "poi_circle_small.svg";
+        icon-scale: 1;
+        icon-tint: blue;
+        [fixme] {icon-tint: red;}
+        |z17- {
             icon-scale: 2;
-            icon-tint: blue;
-            [fixme] { icon-tint: red;}
-            }
-        |z1-15 {
-            icon-image: "poi_circle_small.svg";
-            icon-scale: 1;
-            icon-tint: blue;
-            [fixme] { icon-tint: red;}
         }
     }
-    
     line {
-        |z15- {
-            linecap: round;
-            width: 3pt;
-            color:brown;
-        }
-        |z1-15 {
-            linecap: round;
-            width: 1pt;
-            color:brown;
-            }
+        linecap: round;
+        width: 1pt;
+        color:brown;
+        [fixme] {color:red;}
+        |z17- {width: 3pt;}
     }
     area {
-        |z15- {
-            width:2pt;
-            color:black;
-        }
-        |z1-15 {
-            width:1pt;
-            color:black;
-        }
+        width:1pt;
+        color:black;
+        [fixme] {color:red;}
+        |z17- {width:3pt;}
     }
     """
     
     //  Displays objects that have been modified but not sent to the server (green).
     let savedStyle = """
     node {
-        |z15- {
-            icon-image: "poi_circle_small.svg";
-            icon-scale: 2;
-            icon-tint: green;
-            }
-        |z1-15 {
-            icon-image: "poi_circle_small.svg";
-            icon-scale: 1;
-            icon-tint: green;
-        }
+        icon-image: "poi_circle_small.svg";
+        icon-scale: 1;
+        icon-tint: green;
+        |z17- {icon-scale: 2;}
     }
     line {
-        |z15- {
-            linecap: round;
-            width: 3pt;
-            color:green;
-        }
-        |z1-15 {
-            linecap: round;
-            width: 1pt;
-            color:green;
-            }
+        linecap: round;
+        width: 1pt;
+        color:green;
+        |z17- {width: 3pt;}
     }
     """
     
@@ -245,57 +219,33 @@ final class AppSettings: NSObject {
     //  Displays objects created but not sent to the server (orange color).
     let newStyle = """
     node {
-        |z15- {
-            icon-image: "poi_circle_small.svg";
-            icon-scale: 2;
-            icon-tint: orange;
-            }
-        |z1-15 {
-            icon-image: "poi_circle_small.svg";
-            icon-scale: 1;
-            icon-tint: orange;
-        }
+        icon-image: "poi_circle_small.svg";
+        icon-scale: 1;
+        icon-tint: orange;
+        |z17- {icon-scale: 2;}
     }
     line {
-        |z15- {
-            linecap: round;
-            width: 3pt;
-            color:orange;
-        }
-        |z1-15 {
-            linecap: round;
-            width: 1pt;
-            color:orange;
-            }
+        linecap: round;
+        width: 1pt;
+        color:orange;
+        |z17- {width: 3pt;}
     }
     """
     
     //  Highlights objects that fell under the tap, if there was not one object under the tap, but several.
     let tappedStyle = """
-    node {
-        |z15- {
-            icon-image: "poi_circle_small.svg";
-            icon-scale: 2;
-            icon-tint: orange;
-            }
-        |z1-15 {
+        node {
             icon-image: "poi_circle_small.svg";
             icon-scale: 1;
-            icon-tint: orange;
+            icon-tint: violet;
+            |z17- {icon-scale: 2;}
         }
-    }
-    line {
-        |z15- {
-            linecap: round;
-            width: 3pt;
-            color:orange;
-        }
-        |z1-15 {
+        line {
             linecap: round;
             width: 1pt;
-            color:orange;
-            }
-    }
+            color:violet;
+            |z17- {width: 3pt;}
+        }
     """
     
 //    MARK: PRESETS
