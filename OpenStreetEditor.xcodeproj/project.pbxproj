@@ -15,7 +15,6 @@
 		2042BCF7289C697A0026514E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2042BCF5289C697A0026514E /* LaunchScreen.storyboard */; };
 		2C1676EE29A7D50C004DD9D3 /* MapClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1676ED29A7D50B004DD9D3 /* MapClient.swift */; };
 		2C1707072A06E2AA003ECB39 /* ApiKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1707062A06E2A9003ECB39 /* ApiKeys.swift */; };
-		2C1707092A06E784003ECB39 /* GLMap in Frameworks */ = {isa = PBXBuildFile; productRef = 2C1707082A06E784003ECB39 /* GLMap */; };
 		2C1A361229B0674400AF3BEB /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1A361129B0674400AF3BEB /* String.swift */; };
 		2C21058929F095C6005A0B46 /* LineTool settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C21058829F095C6005A0B46 /* LineTool settings.swift */; };
 		2C21058D29F098F1005A0B46 /* OSM structures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5662C02912788600E5B4D5 /* OSM structures.swift */; };
@@ -55,6 +54,7 @@
 		2CDEA6D729862C2B00E5219D /* GLMapVectorObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CDEA6D629862C2B00E5219D /* GLMapVectorObject.swift */; };
 		2CE00A812A253DA5008A6119 /* MapClientProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE00A802A253DA5008A6119 /* MapClientProtocol.swift */; };
 		2CF9E7732A0C9FFC003DB2CC /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF9E7722A0C9FFC003DB2CC /* UIColor.swift */; };
+		2CFB66CA2A29269D00E474A3 /* GLMap in Frameworks */ = {isa = PBXBuildFile; productRef = 2CFB66C92A29269D00E474A3 /* GLMap */; };
 		2CFF98E4299BE44D0045D6B8 /* SavedNodesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFF98E3299BE44D0045D6B8 /* SavedNodesViewController.swift */; };
 		6C76E75928EC12AE0048C378 /* FastHash.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C76E75828EC12AE0048C378 /* FastHash.m */; };
 		6C8B010C28FC030B00C9238D /* option_clean.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C8B00FB28FC030B00C9238D /* option_clean.cpp */; };
@@ -163,8 +163,8 @@
 				6CF514DF28FB4C14001D2758 /* libexpat.tbd in Frameworks */,
 				6CF514DB28FB4B1F001D2758 /* libz.tbd in Frameworks */,
 				2CBA844E2A1492E500CE687F /* XMLCoder in Frameworks */,
-				2C1707092A06E784003ECB39 /* GLMap in Frameworks */,
 				6CF514D928FB4B05001D2758 /* libbz2.tbd in Frameworks */,
+				2CFB66CA2A29269D00E474A3 /* GLMap in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -402,8 +402,8 @@
 			);
 			name = OpenStreetEditor;
 			packageProductDependencies = (
-				2C1707082A06E784003ECB39 /* GLMap */,
 				2CBA844D2A1492E500CE687F /* XMLCoder */,
+				2CFB66C92A29269D00E474A3 /* GLMap */,
 			);
 			productName = "OSM editor";
 			productReference = 2042BCE7289C696E0026514E /* OpenStreetEditor.app */;
@@ -458,9 +458,9 @@
 			);
 			mainGroup = 2042BCDE289C696E0026514E;
 			packageReferences = (
-				6C76E73F28EC0E5A0048C378 /* XCRemoteSwiftPackageReference "GLMapSwift" */,
 				2C50297C28FC98EE00DC1DC8 /* XCRemoteSwiftPackageReference "GeoJSON" */,
 				2C529E3629102F8400F46972 /* XCRemoteSwiftPackageReference "XMLCoder" */,
+				2CFB66C82A29269D00E474A3 /* XCRemoteSwiftPackageReference "GLMapSwift" */,
 			);
 			productRefGroup = 2042BCE8289C696E0026514E /* Products */;
 			projectDirPath = "";
@@ -836,7 +836,7 @@
 				minimumVersion = 0.9.0;
 			};
 		};
-		6C76E73F28EC0E5A0048C378 /* XCRemoteSwiftPackageReference "GLMapSwift" */ = {
+		2CFB66C82A29269D00E474A3 /* XCRemoteSwiftPackageReference "GLMapSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GLMap/GLMapSwift";
 			requirement = {
@@ -847,11 +847,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		2C1707082A06E784003ECB39 /* GLMap */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6C76E73F28EC0E5A0048C378 /* XCRemoteSwiftPackageReference "GLMapSwift" */;
-			productName = GLMap;
-		};
 		2CA6A40429CABBC6004233E2 /* XMLCoder */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2C529E3629102F8400F46972 /* XCRemoteSwiftPackageReference "XMLCoder" */;
@@ -861,6 +856,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2C529E3629102F8400F46972 /* XCRemoteSwiftPackageReference "XMLCoder" */;
 			productName = XMLCoder;
+		};
+		2CFB66C92A29269D00E474A3 /* GLMap */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2CFB66C82A29269D00E474A3 /* XCRemoteSwiftPackageReference "GLMapSwift" */;
+			productName = GLMap;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

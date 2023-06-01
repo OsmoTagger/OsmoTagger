@@ -48,7 +48,7 @@ class MapClient {
     // Latest options bbox loading raw map data
     var lastCenter: GLMapGeoPoint?
     // This is the default bbox size for loading OSM raw data. In case of receiving a response from the server "400" - too many objects in the bbox (may occur in regions with a high density of objects) is reduced by 25%
-    var defaultBboxSize = 0.002
+    var defaultBboxSize = 0.004
      
     init() {
         setAppSettingsClouser()
@@ -93,6 +93,7 @@ class MapClient {
     
     // Loading the source data of the map in the bbox
     func getSourceBbox(mapCenter: GLMapGeoPoint) async throws {
+        print("load start")
         let id = operationID
         // Run indicator animation in MapViewController
         delegate?.startDownload()
@@ -126,6 +127,7 @@ class MapClient {
             nilData = try await OsmClient().downloadOSMData(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMax)
         } catch OsmClientErrors.objectLimit {
             // Reduce bbox size to reduce the number of loaded objects
+            print("--------------------Objects limit---------------------------")
             lock.lock()
             defaultBboxSize = defaultBboxSize * 0.75
             openOperations.removeAll()
@@ -206,59 +208,25 @@ class MapClient {
             return
         }
         lock.unlock()
+        print("load start")
     }
     
     //  In the background, we start indexing the downloaded data and saving them with the dictionary appSettings.settings.inputObjects for quick access to the object by its id.
     func getNodesFromXML(data: Data) {
+        print("get start")
         let id = operationID
         lock.lock()
-        AppSettings.settings.inputObjects = [:]
         openOperations[id] = false
+        lock.unlock()        
+        let parser = XMLParser(data: data)
+        let parserDelegate = OSMXmlParser()
+        parser.delegate = parserDelegate
+        parser.parse()
+        lock.lock()
+        AppSettings.settings.inputObjects = parserDelegate.objects
         lock.unlock()
-        
-        // Create tmp directory and file for converting OSM xml to geoJSON and indexing it
-        let xmlFileName = ProcessInfo().globallyUniqueString
-        let xmlFileURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(xmlFileName + ".osm")
-        defer {
-            if fileManager.fileExists(atPath: xmlFileURL.path) {
-                try? fileManager.removeItem(at: xmlFileURL)
-            }
-        }
-        
-        do {
-            let xmlObjects = try XMLDecoder().decode(osm.self, from: data)
-            lock.lock()
-            if openOperations[id] == nil {
-                print("12-", id)
-                AppSettings.settings.inputObjects = [:]
-                lock.unlock()
-                return
-            }
-            lock.unlock()
-            lock.lock()
-            for node in xmlObjects.node {
-                AppSettings.settings.inputObjects[node.id] = node
-            }
-            lock.unlock()
-            lock.lock()
-            if openOperations[id] == nil {
-                print("13-", id)
-                AppSettings.settings.inputObjects = [:]
-                lock.unlock()
-                return
-            }
-            lock.unlock()
-            lock.lock()
-            for way in xmlObjects.way {
-                AppSettings.settings.inputObjects[way.id] = way
-            }
-            lock.unlock()
-            delegate?.endDownload()
-        } catch {
-            lock.unlock()
-            delegate?.endDownload()
-            print(error)
-        }
+        delegate?.endDownload()
+        print("get end")
     }
     
     //  Get objects after tap

@@ -66,11 +66,6 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             tapTitleButton()
         }
         
-//      Closure that is performed every time the object tags are changed - AppSettings.settings.newProperties
-        AppSettings.settings.saveObjectClouser = { [weak self] in
-            guard let self = self else { return }
-            self.saveObject()
-        }
         AppSettings.settings.saveAllowed = true
         
         // Notifications about calling and hiding the keyboard.
@@ -87,7 +82,15 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         setToolBar()
         navigationController?.setToolbarHidden(false, animated: false)
     }
-
+    
+    override func viewWillAppear(_ animated: Bool) {
+        // Closure that is performed every time the object tags are changed - AppSettings.settings.newProperties
+        AppSettings.settings.saveObjectClouser = { [weak self] in
+            guard let self = self else { return }
+            self.saveObject()
+        }
+    }
+    
     override func viewDidDisappear(_: Bool) {
         AppSettings.settings.saveObjectClouser = nil
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -648,7 +651,9 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             vc.callbackClosure = { [weak self] in
                 guard let self = self else { return }
                 self.navigationController?.setToolbarHidden(false, animated: false)
-                self.tableView.reloadRows(at: [indexPath], with: .none)
+                self.saveObject()
+                self.fillData()
+                self.tableView.reloadData()
             }
             navigationController?.setToolbarHidden(true, animated: false)
             navigationController?.pushViewController(vc, animated: true)

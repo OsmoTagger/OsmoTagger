@@ -127,8 +127,8 @@ struct Way: Codable, DynamicNodeEncoding {
     let id: Int
     let version: Int
     var changeset: Int
-    let tag: [Tag]
-    let nd: [ND]
+    var tag: [Tag]
+    var nd: [ND]
     enum CodingKeys: String, CodingKey {
         case id
         case version
