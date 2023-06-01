@@ -175,7 +175,7 @@ final class AppSettings: NSObject {
     line {
         |z15- {
             linecap: round;
-            width: 2pt;
+            width: 3pt;
             color:brown;
         }
         |z1-15 {
@@ -213,7 +213,7 @@ final class AppSettings: NSObject {
     line {
         |z15- {
             linecap: round;
-            width: 2pt;
+            width: 3pt;
             color:green;
         }
         |z1-15 {
@@ -259,7 +259,7 @@ final class AppSettings: NSObject {
     line {
         |z15- {
             linecap: round;
-            width: 2pt;
+            width: 3pt;
             color:orange;
         }
         |z1-15 {
@@ -287,7 +287,7 @@ final class AppSettings: NSObject {
     line {
         |z15- {
             linecap: round;
-            width: 2pt;
+            width: 3pt;
             color:orange;
         }
         |z1-15 {
