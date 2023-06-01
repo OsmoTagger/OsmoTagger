@@ -514,13 +514,13 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             tableView.topAnchor.constraint(equalTo: enterCommentView.bottomAnchor),
             tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
             tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
     }
 }
     
 extension SavedNodesViewController: UITextViewDelegate {
-    func textViewDidBeginEditing(_ textView: UITextView) {
+    func textViewDidBeginEditing(_: UITextView) {
         tap = UITapGestureRecognizer(target: self, action: #selector(endEdit))
         tap.delegate = self
         view.addGestureRecognizer(tap)
@@ -531,14 +531,15 @@ extension SavedNodesViewController: UITextViewDelegate {
         view.removeGestureRecognizer(tap)
     }
     
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-            if text == "\n" {
+    func textView(_: UITextView, shouldChangeTextIn _: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
             endEdit()
             return false
         }
         return true
     }
-    func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
+
+    func textViewShouldBeginEditing(_: UITextView) -> Bool {
         return true
     }
 }
