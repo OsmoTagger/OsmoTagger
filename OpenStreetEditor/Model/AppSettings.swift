@@ -154,42 +154,73 @@ final class AppSettings: NSObject {
     var changeSetComment: String?
     
 //    MARK: MAP STYLES
-
+    
     //  Displays the loaded OSM data.
     let defaultStyle = """
     node {
-        icon-image: "poi_circle_small.svg";
-        icon-scale: 2;
-        icon-tint: blue;
-        text: eval(tag('text'));
-        text-color: red;
-        font-size: 12;
-        text-priority: 20;
-        [fixme] { icon-tint: red;}
+        |z15- {
+            icon-image: "poi_circle_small.svg";
+            icon-scale: 2;
+            icon-tint: blue;
+            [fixme] { icon-tint: red;}
+            }
+        |z1-15 {
+            icon-image: "poi_circle_small.svg";
+            icon-scale: 1;
+            icon-tint: blue;
+            [fixme] { icon-tint: red;}
+        }
     }
     
     line {
-        linecap: round;
-        width: 3pt;
-        color:brown;
+        |z15- {
+            linecap: round;
+            width: 2pt;
+            color:brown;
+        }
+        |z1-15 {
+            linecap: round;
+            width: 1pt;
+            color:brown;
+            }
     }
     area {
-        width:3pt;
-        color:black;
+        |z15- {
+            width:2pt;
+            color:black;
+        }
+        |z1-15 {
+            width:1pt;
+            color:black;
+        }
     }
     """
     
     //  Displays objects that have been modified but not sent to the server (green).
     let savedStyle = """
     node {
-        icon-image: "poi_circle_small.svg";
-        icon-scale: 2;
-        icon-tint: green;
+        |z15- {
+            icon-image: "poi_circle_small.svg";
+            icon-scale: 2;
+            icon-tint: green;
+            }
+        |z1-15 {
+            icon-image: "poi_circle_small.svg";
+            icon-scale: 1;
+            icon-tint: green;
+        }
     }
     line {
-        linecap: round;
-        width: 3pt;
-        color:green;
+        |z15- {
+            linecap: round;
+            width: 2pt;
+            color:green;
+        }
+        |z1-15 {
+            linecap: round;
+            width: 1pt;
+            color:green;
+            }
     }
     """
     
@@ -202,11 +233,11 @@ final class AppSettings: NSObject {
     }
     line {
         linecap: round;
-        width: 3pt;
+        width: 2pt;
         color:yellow;
     }
     area {
-        width:3pt;
+        width:2pt;
         color:yellow;
     }
     """
@@ -214,28 +245,56 @@ final class AppSettings: NSObject {
     //  Displays objects created but not sent to the server (orange color).
     let newStyle = """
     node {
-        icon-image: "poi_circle_small.svg";
-        icon-scale: 2;
-        icon-tint: orange;
+        |z15- {
+            icon-image: "poi_circle_small.svg";
+            icon-scale: 2;
+            icon-tint: orange;
+            }
+        |z1-15 {
+            icon-image: "poi_circle_small.svg";
+            icon-scale: 1;
+            icon-tint: orange;
+        }
     }
     line {
-        linecap: round;
-        width: 3pt;
-        color:orange;
+        |z15- {
+            linecap: round;
+            width: 2pt;
+            color:orange;
+        }
+        |z1-15 {
+            linecap: round;
+            width: 1pt;
+            color:orange;
+            }
     }
     """
     
     //  Highlights objects that fell under the tap, if there was not one object under the tap, but several.
     let tappedStyle = """
     node {
-        icon-image: "poi_circle_small.svg";
-        icon-scale: 2;
-        icon-tint: orange;
+        |z15- {
+            icon-image: "poi_circle_small.svg";
+            icon-scale: 2;
+            icon-tint: orange;
+            }
+        |z1-15 {
+            icon-image: "poi_circle_small.svg";
+            icon-scale: 1;
+            icon-tint: orange;
+        }
     }
     line {
-        linecap: round;
-        width: 4pt;
-        color:orange;
+        |z15- {
+            linecap: round;
+            width: 2pt;
+            color:orange;
+        }
+        |z1-15 {
+            linecap: round;
+            width: 1pt;
+            color:orange;
+            }
     }
     """
     
