@@ -20,7 +20,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
     //  An array in which the IDs of the selected objects are stored.
     var selectedIDs: [SavedSelectedIndex] = []
     // View for enter comment to chageset
-    var enterCommentView = UITextView()
+    var enterCommentView = UITextField()
     
     var tap = UIGestureRecognizer()
     
@@ -71,12 +71,10 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
                 let path = SavedSelectedIndex(type: .deleted, id: id)
                 selectedIDs.append(path)
             }
-            if enterCommentView.text == "" {
-                print(generateComment())
-                enterCommentView.text = generateComment()
-            }
+            enterCommentView.placeholder = generateComment()
         } else {
             selectedIDs = []
+            enterCommentView.placeholder = ""
         }
         tableView.reloadData()
     }
@@ -325,6 +323,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             }
             selectedIDs.remove(at: i)
         }
+        enterCommentView.placeholder = generateComment()
     }
     
     //  The method that is called when the "Bulb" backlight button is pressed.
@@ -376,7 +375,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             return
         }
         if enterCommentView.text == "" {
-            AppSettings.settings.changeSetComment = generateComment()
+            AppSettings.settings.changeSetComment = enterCommentView.placeholder
         } else {
             AppSettings.settings.changeSetComment = enterCommentView.text
         }
@@ -414,6 +413,12 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
                 fillData()
                 tableView.reloadData()
                 removeIndicator(indicator: indicator)
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else {return}
+                    self.enterCommentView.placeholder = nil
+                    self.enterCommentView.text = nil
+                    AppSettings.settings.changeSetComment = nil
+                }
                 let alert0 = UIAlertAction(title: "Ok", style: .default, handler: { _ in
                     if AppSettings.settings.savedObjects.count == 0, AppSettings.settings.deletedObjects.count == 0 {
                         self.dismiss(animated: true)
@@ -464,44 +469,27 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
     func setEnterCommentView() {
         enterCommentView.layer.borderWidth = 2
         enterCommentView.layer.cornerRadius = 5
-        enterCommentView.textContainerInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 20)
+        enterCommentView.clearButtonMode = .always
         enterCommentView.delegate = self
         enterCommentView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(enterCommentView)
-        let placeHolder = UILabel()
-        placeHolder.text = "Changeset comment"
-        placeHolder.backgroundColor = .systemBackground
-        placeHolder.font = UIFont.systemFont(ofSize: 14)
-        placeHolder.textColor = .systemGray
-        placeHolder.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(placeHolder)
-        let clearButton = UIButton()
-        clearButton.backgroundColor = .systemGray3
-        clearButton.layer.cornerRadius = 8
-        let clearIconConfig = UIImage.SymbolConfiguration(pointSize: 9, weight: .bold, scale: .large)
-        let clearImage = UIImage(systemName: "multiply", withConfiguration: clearIconConfig)?.withTintColor(.systemBackground, renderingMode: .alwaysOriginal)
-        clearButton.setImage(clearImage, for: .normal)
-        clearButton.addTarget(self, action: #selector(tapClearButton), for: .touchUpInside)
-        clearButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(clearButton)
+        let commentTitle = UILabel()
+        commentTitle.text = "Comment"
+        commentTitle.backgroundColor = .systemBackground
+        commentTitle.font = UIFont.systemFont(ofSize: 14)
+        commentTitle.textColor = .systemGray
+        commentTitle.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(commentTitle)
         NSLayoutConstraint.activate([
             enterCommentView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             enterCommentView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             enterCommentView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -20),
             enterCommentView.heightAnchor.constraint(equalToConstant: 40),
-            placeHolder.centerYAnchor.constraint(equalTo: enterCommentView.topAnchor),
-            placeHolder.leftAnchor.constraint(equalTo: enterCommentView.leftAnchor, constant: 10),
-            clearButton.widthAnchor.constraint(equalToConstant: 16),
-            clearButton.heightAnchor.constraint(equalToConstant: 16),
-            clearButton.centerYAnchor.constraint(equalTo: enterCommentView.centerYAnchor),
-            clearButton.rightAnchor.constraint(equalTo: enterCommentView.rightAnchor, constant: -9),
+            commentTitle.centerYAnchor.constraint(equalTo: enterCommentView.topAnchor),
+            commentTitle.leftAnchor.constraint(equalTo: enterCommentView.leftAnchor, constant: 10),
         ])
     }
-    
-    @objc func tapClearButton() {
-        enterCommentView.text = nil
-    }
-    
+
     func setTableView() {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 50
@@ -519,28 +507,24 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
     }
 }
     
-extension SavedNodesViewController: UITextViewDelegate {
-    func textViewDidBeginEditing(_: UITextView) {
+extension SavedNodesViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_: UITextField) -> Bool {
+        view.endEditing(true)
+        return true
+    }
+    
+    func textFieldDidBeginEditing(_: UITextField) {
         tap = UITapGestureRecognizer(target: self, action: #selector(endEdit))
         tap.delegate = self
         view.addGestureRecognizer(tap)
     }
-
-    @objc func endEdit() {
+    
+    @objc func endEdit(sender _: UIGestureRecognizer) {
         view.endEditing(true)
-        view.removeGestureRecognizer(tap)
     }
     
-    func textView(_: UITextView, shouldChangeTextIn _: NSRange, replacementText text: String) -> Bool {
-        if text == "\n" {
-            endEdit()
-            return false
-        }
-        return true
-    }
-
-    func textViewShouldBeginEditing(_: UITextView) -> Bool {
-        return true
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        view.removeGestureRecognizer(tap)
     }
 }
 

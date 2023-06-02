@@ -14,6 +14,7 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     var deleteObjectClosure: ((Int) -> Void)?
     
     var object: OSMAnyObject
+    
     //  A variable necessary for a quick transition to the desired category if the preset of the object is defined. It is not reset to zero, even if you delete the preset tags, all the same, when tapping on the titleView, the transition is made to the last category.
     var titlePath: ItemPath?
     //  A variable that is equal to the path of the defined preset. It is reset to zero if the tags are deleted and the preset is not defined. It is necessary to highlight the active preset when switching to CategoryVC to select a new preset.
@@ -79,7 +80,7 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         
         setRightBarItems()
         setTableView()
-        setToolBar()
+        setToolBar(fromSavedNodesVC: true)
         navigationController?.setToolbarHidden(false, animated: false)
     }
     
@@ -344,10 +345,27 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         present(navVC, animated: true, completion: nil)
     }
     
-    func setToolBar() {
+    func setToolBar(fromSavedNodesVC: Bool) {
         let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let deleteButton = UIBarButtonItem(title: "Mark object for deletion", style: .plain, target: self, action: #selector(tapDeleteButton))
-        toolbarItems = [flexibleSpace, deleteButton, flexibleSpace]
+        let deleteButton = UIBarButtonItem(title: "Delete object", style: .plain, target: self, action: #selector(tapDeleteButton))
+        let discardButton = UIBarButtonItem(title: "Discard changes", style: .plain, target: self, action: #selector(tapDiscard))
+        guard let controllers = navigationController?.viewControllers else {
+            toolbarItems = [flexibleSpace, deleteButton, flexibleSpace]
+            return
+        }
+        if fromSavedNodesVC {
+            if controllers.count > 1 {
+                if controllers[controllers.count - 2] is SavedNodesViewController {
+                    toolbarItems = [flexibleSpace, discardButton, flexibleSpace]
+                } else {
+                    toolbarItems = [flexibleSpace, deleteButton, flexibleSpace]
+                }
+            } else {
+                toolbarItems = [flexibleSpace, deleteButton, flexibleSpace]
+            }
+        } else {
+            toolbarItems = [flexibleSpace, deleteButton, flexibleSpace]
+        }
     }
     
     //  Tap on the button to display brief information about the object (RightBarItems).
@@ -372,24 +390,44 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         tableView.reloadData()
     }
     
+    func dismissViewController() {
+        guard let controllers = navigationController?.viewControllers else {
+            dismiss(animated: true)
+            return
+        }
+        if controllers.count > 1 {
+            navigationController?.popViewController(animated: true)
+        } else {
+            dismiss(animated: true)
+        }
+    }
+    
+    func updateViewController() {
+        AppSettings.settings.saveAllowed = false
+        fillNewProperties()
+        fillData()
+        AppSettings.settings.saveAllowed = true
+        setToolBar(fromSavedNodesVC: false)
+        tableView.reloadData()
+    }
+    
+    @objc func tapDiscard() {
+        AppSettings.settings.savedObjects.removeValue(forKey: object.id)
+        AppSettings.settings.deletedObjects.removeValue(forKey: object.id)
+        dismissViewController()
+    }
+    
     //  By tap the delete button, you can delete tag changes or the entire object from the server (if it is not referenced by other objects).
     @objc func tapDeleteButton() {
-        let action0 = UIAlertAction(title: "Delete object", style: .default, handler: { [weak self] _ in
-            guard let self = self else { return }
-            AppSettings.settings.savedObjects.removeValue(forKey: self.object.id)
-            // When deleting an object, if the object selection controller from several objects was opened before, a closure is called, which updates the table to SelectObjectVC.
-            if let clouser = self.deleteObjectClosure {
-                clouser(self.object.id)
-            }
-            if self.object.id > 0 {
-                AppSettings.settings.deletedObjects[self.object.id] = self.object
-            }
-        })
-        let action1 = UIAlertAction(title: "Cancel", style: .destructive, handler: nil)
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alert.addAction(action0)
-        alert.addAction(action1)
-        present(alert, animated: true, completion: nil)
+        AppSettings.settings.savedObjects.removeValue(forKey: object.id)
+        // When deleting an object, if the object selection controller from several objects was opened before, a closure is called, which updates the table to SelectObjectVC.
+        if let clouser = deleteObjectClosure {
+            clouser(object.id)
+        }
+        if object.id > 0 {
+            AppSettings.settings.deletedObjects[object.id] = object
+        }
+        dismissViewController()
     }
     
     //  Generating an array of tags [Tag] from a dictionary with tags.

@@ -520,12 +520,8 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
                 }
                 for controller in controllers where controller is EditObjectViewController {
                     if let newEditVC = controller as? EditObjectViewController {
-                        AppSettings.settings.saveAllowed = false
                         newEditVC.object = object
-                        newEditVC.fillNewProperties()
-                        newEditVC.fillData()
-                        AppSettings.settings.saveAllowed = true
-                        newEditVC.tableView.reloadData()
+                        newEditVC.updateViewController()
                         return
                     }
                 }
