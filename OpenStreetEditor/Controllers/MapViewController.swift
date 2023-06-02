@@ -26,7 +26,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
     var oneTap = UIGestureRecognizer()
     
     //  Buttons
-    let downloadButton = UIButton()
+    let downloadButton = DownloadButton()
     // Variable activates the source data loading mode
     var isDownloadSource = false
     let indicator = UIActivityIndicatorView()
@@ -139,19 +139,18 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
             AppSettings.settings.lastBbox = self.mapView.bbox
             guard self.isDownloadSource == true else { return }
             let zoom = self.mapView.mapZoomLevel
-            let beginLoadZoom = 15.0
+            let beginLoadZoom = 16.0
             if zoom > beginLoadZoom {
-                self.downloadButton.backgroundColor = .systemGreen
+                self.downloadButton.circle.backgroundColor = .systemGreen
                 self.checkMapCenter()
             } else {
-                self.downloadButton.backgroundColor = .systemGray
+                self.downloadButton.circle.backgroundColor = .systemRed
             }
         }
     }
     
     func setDownloadButton() {
         downloadButton.layer.cornerRadius = 5
-        downloadButton.isHighlighted = false
         downloadButton.backgroundColor = .white
         downloadButton.setImage(UIImage(systemName: "square.and.arrow.down.fill")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
         downloadButton.addTarget(self, action: #selector(tapDownloadButton), for: .touchUpInside)
@@ -176,19 +175,19 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
     }
     
     @objc func tapDownloadButton() {
-        print(isDownloadSource)
         isDownloadSource = !isDownloadSource
         if isDownloadSource {
             let zoom = mapView.mapZoomLevel
-            let beginLoadZoom = 15.0
+            let beginLoadZoom = 16.0
+            downloadButton.circle.isHidden = false
             if zoom > beginLoadZoom {
-                downloadButton.backgroundColor = .systemGreen
+                downloadButton.circle.backgroundColor = .systemGreen
                 checkMapCenter()
             } else {
-                downloadButton.backgroundColor = .systemGray
+                downloadButton.circle.backgroundColor = .systemRed
             }
         } else {
-            downloadButton.backgroundColor = .white
+            downloadButton.circle.isHidden = true
         }
     }
     

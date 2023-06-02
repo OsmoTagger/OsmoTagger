@@ -93,7 +93,9 @@ class MapClient {
     
     // Loading the source data of the map in the bbox
     func getSourceBbox(mapCenter: GLMapGeoPoint) async throws {
-        print("load start")
+        if defaultBboxSize < 0.0005 {
+            defaultBboxSize = 0.002
+        }
         let id = operationID
         // Run indicator animation in MapViewController
         delegate?.startDownload()
@@ -157,7 +159,7 @@ class MapClient {
         try data.write(to: xmlFileURL)
         // Convert OSM xml to geoJSON
         if let error = osmium_convert(xmlFileURL.path, jsonFileURL.path) {
-            throw "Error osmium convert: \(error)"
+            throw "Error osmium convert: \(error). Try move map center and load data again."
         }
         lock.lock()
         if openOperations[id] == nil {
@@ -208,12 +210,10 @@ class MapClient {
             return
         }
         lock.unlock()
-        print("load start")
     }
     
     //  In the background, we start indexing the downloaded data and saving them with the dictionary appSettings.settings.inputObjects for quick access to the object by its id.
     func getNodesFromXML(data: Data) {
-        print("get start")
         let id = operationID
         lock.lock()
         openOperations[id] = false
@@ -226,7 +226,6 @@ class MapClient {
         AppSettings.settings.inputObjects = parserDelegate.objects
         lock.unlock()
         delegate?.endDownload()
-        print("get end")
     }
     
     //  Get objects after tap

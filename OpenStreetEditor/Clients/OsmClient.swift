@@ -128,7 +128,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
                 lasltLongitudeDisplayMax = longitudeDisplayMax
                 lastLatitudeDisplayMax = latitudeDisplayMax
                 return data
-            } else if httpResponse.statusCode == 400 {
+            } else if httpResponse.statusCode == 400 || httpResponse.statusCode == 509 {
                 throw OsmClientErrors.objectLimit
             } else {
                 guard let str = String(data: data, encoding: .utf8) else {
