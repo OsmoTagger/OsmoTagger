@@ -12,17 +12,15 @@ import UIKit
 class MultiSelectViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     var values: [String]
     let key: String
-    var button: MultiSelectBotton
     
     var tableView = UITableView()
     var cellId = "cell"
     
-    var callbackClosure: ((MultiSelectBotton) -> Void)?
+    var callbackClosure: (() -> Void)?
     
-    init(values: [String], key: String, button: MultiSelectBotton) {
+    init(values: [String], key: String) {
         self.values = values
         self.key = key
-        self.button = button
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -32,11 +30,17 @@ class MultiSelectViewController: UIViewController, UITableViewDelegate, UITableV
     }
     
     override func viewDidLoad() {
+        title = "Choose the required values"
+        view.backgroundColor = .systemBackground
         setTableView()
-        setCloseButton()
     }
     
-    override func viewDidDisappear(_: Bool) {}
+    override func viewDidDisappear(_: Bool) {
+        if let clouser = callbackClosure {
+            clouser()
+        }
+        dismiss(animated: true, completion: nil)
+    }
     
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
         return values.count
@@ -46,7 +50,6 @@ class MultiSelectViewController: UIViewController, UITableViewDelegate, UITableV
         let cellFail = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
         cellFail.textLabel?.text = "Point data loading error"
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? SelectValuesCell else { return cellFail }
-        cell.backgroundColor = .backColor0
         let value = values[indexPath.row]
         cell.label.text = value
         if let inputValues = AppSettings.settings.newProperties[key] {
@@ -93,34 +96,8 @@ class MultiSelectViewController: UIViewController, UITableViewDelegate, UITableV
         }
     }
     
-    func setCloseButton() {
-        let closeButton = UIButton()
-        closeButton.setImage(UIImage(systemName: "xmark")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
-        closeButton.addTarget(self, action: #selector(dismissController), for: .touchUpInside)
-        closeButton.layer.cornerRadius = 15
-        closeButton.backgroundColor = .systemGray3
-        closeButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(closeButton)
-        NSLayoutConstraint.activate([closeButton.widthAnchor.constraint(equalToConstant: 30),
-                                     closeButton.heightAnchor.constraint(equalToConstant: 30),
-                                     closeButton.centerXAnchor.constraint(equalTo: view.rightAnchor, constant: -10),
-                                     closeButton.centerYAnchor.constraint(equalTo: view.topAnchor, constant: 10)])
-    }
-    
-    @objc func dismissController() {
-        guard let callbackClosure = callbackClosure else {
-            return
-        }
-        callbackClosure(button)
-        dismiss(animated: true, completion: nil)
-    }
-    
     func setTableView() {
         tableView.rowHeight = 50
-        tableView.layer.borderColor = UIColor.gray.cgColor
-        tableView.layer.borderWidth = 2
-        tableView.layer.cornerRadius = 4
-        tableView.separatorColor = .serparatorColor
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(SelectValuesCell.self, forCellReuseIdentifier: cellId)

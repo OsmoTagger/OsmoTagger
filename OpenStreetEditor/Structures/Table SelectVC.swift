@@ -32,7 +32,8 @@ class SelectObjectCell: UITableViewCell {
     var itemLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.adjustsFontSizeToFitWidth = true
+        label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -40,6 +41,8 @@ class SelectObjectCell: UITableViewCell {
     var idLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
+        label.textColor = .systemGray
+        label.font = UIFont.systemFont(ofSize: 12)
         label.adjustsFontSizeToFitWidth = true
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -61,26 +64,25 @@ class SelectObjectCell: UITableViewCell {
         let iconTypeWidth = iconType.image?.size.width ?? 25
         let iconTypeHeight = iconType.image?.size.height ?? 25
         NSLayoutConstraint.activate([
-            iconItem.leftAnchor.constraint(equalTo: leftAnchor),
-            iconItem.widthAnchor.constraint(equalTo: heightAnchor),
-            iconItem.topAnchor.constraint(equalTo: topAnchor),
-            iconItem.bottomAnchor.constraint(equalTo: bottomAnchor),
+            iconItem.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            iconItem.widthAnchor.constraint(equalToConstant: 44),
+            iconItem.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             iconType.leftAnchor.constraint(equalTo: iconItem.rightAnchor, constant: 10),
             iconType.widthAnchor.constraint(equalToConstant: iconTypeWidth),
             iconType.heightAnchor.constraint(equalToConstant: iconTypeHeight),
-            iconType.centerYAnchor.constraint(equalTo: centerYAnchor),
+            iconType.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             itemLabel.leftAnchor.constraint(equalTo: iconType.rightAnchor, constant: 10),
-            itemLabel.topAnchor.constraint(equalTo: topAnchor),
-            itemLabel.rightAnchor.constraint(equalTo: centerXAnchor),
-            itemLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
-            idLabel.leftAnchor.constraint(equalTo: itemLabel.rightAnchor),
-            idLabel.topAnchor.constraint(equalTo: topAnchor),
-            idLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
-            idLabel.rightAnchor.constraint(equalTo: bulb.leftAnchor),
-            bulb.rightAnchor.constraint(equalTo: rightAnchor),
-            bulb.bottomAnchor.constraint(equalTo: bottomAnchor),
+            itemLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            itemLabel.rightAnchor.constraint(equalTo: bulb.leftAnchor, constant: -10),
+            itemLabel.bottomAnchor.constraint(equalTo: contentView.centerYAnchor),
+            idLabel.leftAnchor.constraint(equalTo: iconType.rightAnchor, constant: 10),
+            idLabel.topAnchor.constraint(equalTo: contentView.centerYAnchor),
+            idLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            idLabel.rightAnchor.constraint(equalTo: bulb.leftAnchor, constant: -10),
+            bulb.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -1),
+            bulb.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             bulb.widthAnchor.constraint(equalToConstant: 50),
-            bulb.topAnchor.constraint(equalTo: topAnchor),
+            bulb.topAnchor.constraint(equalTo: contentView.topAnchor),
         ])
     }
     

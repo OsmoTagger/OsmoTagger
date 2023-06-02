@@ -16,14 +16,40 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         
     var tableView = UITableView()
     var cellId = "cell"
-    var tableData: [SaveNodeCellData] = []
+    var tableData: [SaveNodeTableData] = []
     //  An array in which the IDs of the selected objects are stored.
-    var selectedIDs: [Int] = []
+    var selectedIDs: [SavedSelectedIndex] = []
+    // View for enter comment to chageset
+    var enterCommentView = EnterChangesetComment()
+    var enterCommentViewConstrains = [NSLayoutConstraint]()
+    
+    deinit {
+        AppSettings.settings.changeSetComment = nil
+        enterCommentView.closeClosure = nil
+        enterCommentView.enterClosure = nil
+    }
     
     override func viewDidLoad() {
+        // Notifications about calling and hiding the keyboard.
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        title = "Set of changes"
+        
         setToolBar()
         fillData()
         setTableView()
+        checkUniqInMemory()
+    }
+    
+    override func viewWillAppear(_: Bool) {
+        fillData()
+        tableView.reloadData()
+    }
+    
+    override func viewDidDisappear(_: Bool) {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     func setToolBar() {
@@ -46,7 +72,12 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
     @objc func tapCheckAll() {
         if selectedIDs.isEmpty {
             for (id, _) in AppSettings.settings.savedObjects {
-                selectedIDs.append(id)
+                let path = SavedSelectedIndex(type: .saved, id: id)
+                selectedIDs.append(path)
+            }
+            for (id, _) in AppSettings.settings.deletedObjects {
+                let path = SavedSelectedIndex(type: .deleted, id: id)
+                selectedIDs.append(path)
             }
         } else {
             selectedIDs = []
@@ -56,9 +87,11 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
     
     //  The method of filling in tabular data. It defines the icon of the object, the icon of the object type, the name of the preset and the id of the object.
     func fillData() {
-        title = "\(AppSettings.settings.savedObjects.count) objects saved"
         tableData = []
+        // Get saved objects
+        var savedNodesItems: [SaveNodeCellData] = []
         for (_, object) in AppSettings.settings.savedObjects {
+            guard object.id > 0 else { continue }
             var properties: [String: String] = [:]
             for tag in object.tag {
                 properties[tag.k] = tag.v
@@ -74,28 +107,132 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             case .multipolygon:
                 iconName = "osm_element_area"
             }
-            var data = SaveNodeCellData(itemIcon: nil, typeIcon: iconName, itemLabel: nil, idLabel: object.id)
+            var data = SaveNodeCellData(type: .saved, itemIcon: nil, typeIcon: iconName, itemLabel: nil, idLabel: object.id)
             let pathes = getItemsFromTags(properties: properties)
             if let path = pathes.first {
                 if let item = getItemFromPath(path: path) {
-                    if let itemIconString = item.icon {
-                        let array = itemIconString.components(separatedBy: "/")
-                        let icon = array.last
-                        data.itemIcon = icon
-                        data.itemLabel = item.name
-                    }
+                    data.itemIcon = item.icon
+                    data.itemLabel = item.name
                 }
             }
-            tableData.append(data)
+            savedNodesItems.append(data)
         }
-//      The data is sorted by id.
-        tableData = tableData.sorted(by: { item1, item2 -> Bool in
+        savedNodesItems = savedNodesItems.sorted(by: { item1, item2 -> Bool in
             item1.idLabel < item2.idLabel
         })
+        let savedNodes = SaveNodeTableData(name: "Edited objects", items: savedNodesItems)
+        if savedNodes.items.count > 0 {
+            tableData.append(savedNodes)
+        }
+        
+        var createdNodesItems: [SaveNodeCellData] = []
+        for (_, object) in AppSettings.settings.savedObjects {
+            guard object.id < 0 else { continue }
+            var properties: [String: String] = [:]
+            for tag in object.tag {
+                properties[tag.k] = tag.v
+            }
+            var iconName = ""
+            switch object.type {
+            case .node:
+                iconName = "osm_element_node"
+            case .way:
+                iconName = "osm_element_way"
+            case .closedway:
+                iconName = "osm_element_closedway"
+            case .multipolygon:
+                iconName = "osm_element_area"
+            }
+            var data = SaveNodeCellData(type: .saved, itemIcon: nil, typeIcon: iconName, itemLabel: nil, idLabel: object.id)
+            let pathes = getItemsFromTags(properties: properties)
+            if let path = pathes.first {
+                if let item = getItemFromPath(path: path) {
+                    data.itemIcon = item.icon
+                    data.itemLabel = item.name
+                }
+            }
+            createdNodesItems.append(data)
+        }
+        createdNodesItems = createdNodesItems.sorted(by: { item1, item2 -> Bool in
+            item1.idLabel < item2.idLabel
+        })
+        let createdNodes = SaveNodeTableData(name: "Created objects", items: createdNodesItems)
+        if createdNodes.items.count > 0 {
+            tableData.append(createdNodes)
+        }
+        
+        var deletedObjectItems: [SaveNodeCellData] = []
+        for (_, object) in AppSettings.settings.deletedObjects {
+            var properties: [String: String] = [:]
+            for tag in object.tag {
+                properties[tag.k] = tag.v
+            }
+            var iconName = ""
+            switch object.type {
+            case .node:
+                iconName = "osm_element_node"
+            case .way:
+                iconName = "osm_element_way"
+            case .closedway:
+                iconName = "osm_element_closedway"
+            case .multipolygon:
+                iconName = "osm_element_area"
+            }
+            var data = SaveNodeCellData(type: .deleted, itemIcon: nil, typeIcon: iconName, itemLabel: nil, idLabel: object.id)
+            let pathes = getItemsFromTags(properties: properties)
+            if let path = pathes.first {
+                if let item = getItemFromPath(path: path) {
+                    data.itemIcon = item.icon
+                    data.itemLabel = item.name
+                }
+            }
+            deletedObjectItems.append(data)
+        }
+        deletedObjectItems = deletedObjectItems.sorted(by: { item1, item2 -> Bool in
+            item1.idLabel < item2.idLabel
+        })
+        let deletedNodes = SaveNodeTableData(name: "Deleted objects", items: deletedObjectItems)
+        if deletedNodes.items.count > 0 {
+            tableData.append(deletedNodes)
+        }
+    }
+    
+    func checkUniqInMemory() {
+        var editedObjects: [OSMAnyObject] = []
+        for (_, object) in AppSettings.settings.savedObjects {
+            editedObjects.append(object)
+        }
+        var deletedObjects: [OSMAnyObject] = []
+        for (_, object) in AppSettings.settings.deletedObjects {
+            deletedObjects.append(object)
+        }
+        let result = checkUniq(array1: editedObjects, array2: deletedObjects)
+        if result.count > 0 {
+            showAction(message: "Attention! The listed objects are modified for submission and are marked for deletion at the same time: \(result)", addAlerts: [])
+        }
+    }
+    
+    func checkUniq(array1: [OSMAnyObject], array2: [OSMAnyObject]) -> [Int] {
+        var result: [Int] = []
+        var arrayID1: [Int] = []
+        for object in array1 {
+            arrayID1.append(object.id)
+        }
+        var arrayID2: [Int] = []
+        for object in array2 {
+            arrayID2.append(object.id)
+        }
+        for id in arrayID1 {
+            if arrayID2.contains(id) {
+                result.append(id)
+            }
+        }
+        return result
     }
     
     func setTableView() {
-        tableView.rowHeight = 50
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 50
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(SavedNodeCell.self, forCellReuseIdentifier: cellId)
@@ -109,28 +246,41 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         ])
     }
     
-    override func viewDidDisappear(_: Bool) {}
-
-    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
+    func numberOfSections(in _: UITableView) -> Int {
         return tableData.count
+    }
+    
+    func tableView(_: UITableView, titleForHeaderInSection section: Int) -> String? {
+        let counts = tableData[section].items.count
+        if counts > 0 {
+            return tableData[section].name
+        } else {
+            return nil
+        }
+    }
+    
+    func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return tableData[section].items.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellFail = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
         cellFail.textLabel?.text = "Point data loading error"
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? SavedNodeCell else { return cellFail }
-        let data = tableData[indexPath.row]
+        let data = tableData[indexPath.section].items[indexPath.row]
         if let iconItem = data.itemIcon {
             cell.iconItem.icon.image = UIImage(named: iconItem)
             cell.iconItem.isHidden = false
         } else {
             cell.iconItem.isHidden = true
         }
-        cell.iconType.image = UIImage(named: data.typeIcon)
-        cell.itemLabel.text = data.itemLabel
-        cell.idLabel.text = String(data.idLabel)
+        cell.iconType.icon.image = UIImage(named: data.typeIcon)
+        let itemText = data.itemLabel ?? "Unknown"
+        cell.itemLabel.text = itemText
+        cell.idLabel.text = "id: " + String(data.idLabel)
         cell.checkBox.indexPath = indexPath
-        if selectedIDs.contains(data.idLabel) {
+        let selectObject = SavedSelectedIndex(type: data.type, id: data.idLabel)
+        if selectedIDs.contains(where: { $0.type == selectObject.type && $0.id == selectObject.id }) {
             cell.checkBox.isChecked = true
         } else {
             cell.checkBox.isChecked = false
@@ -142,33 +292,37 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let cell = tableView.cellForRow(at: indexPath) as? SavedNodeCell,
-              let idString = cell.idLabel.text,
-              let id = Int(idString) else { return }
-        guard let object = AppSettings.settings.savedObjects[id] else { return }
-        let vector = object.getVectorObject()
-//      Highlighting of the tapped object.
-        delegate?.showTapObject(object: vector)
-        let editVC = EditObjectViewController(object: object)
-//      If the user goes to the object tag editing screen, and then deletes the object, a closure is called, which updates the saved data and the table.
-        editVC.deleteObjectClosure = { [weak self] _ in
-            guard let self = self else { return }
-            self.fillData()
-            self.tableView.reloadData()
+        let data = tableData[indexPath.section].items[indexPath.row]
+        var nilObject: OSMAnyObject?
+        switch data.type {
+        case .saved:
+            nilObject = AppSettings.settings.savedObjects[data.idLabel]
+        case .deleted:
+            nilObject = AppSettings.settings.deletedObjects[data.idLabel]
         }
-        navigationController?.pushViewController(editVC, animated: true)
+        guard let object = nilObject else { return }
+        let vector = object.getVectorObject()
+        delegate?.showTapObject(object: vector)
+        let vc = InfoObjectViewController(object: object)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func tableView(_: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, completionHandler in
-            guard let self = self,
-                  let cell = self.tableView.cellForRow(at: indexPath) as? SavedNodeCell,
-                  let idString = cell.idLabel.text,
-                  let id = Int(idString) else { return }
-            AppSettings.settings.savedObjects.removeValue(forKey: id)
+            guard let self = self else { return }
+            let data = self.tableData[indexPath.section].items[indexPath.row]
+            switch data.type {
+            case .saved:
+                AppSettings.settings.savedObjects.removeValue(forKey: data.idLabel)
+            case .deleted:
+                AppSettings.settings.deletedObjects.removeValue(forKey: data.idLabel)
+            }
+            let path = SavedSelectedIndex(type: data.type, id: data.idLabel)
+            if let i = self.selectedIDs.firstIndex(of: path) {
+                self.selectedIDs.remove(at: i)
+            }
             self.fillData()
             self.tableView.reloadData()
-            self.delegate?.showSavedObjects()
             completionHandler(true)
         }
         deleteAction.image = UIImage(systemName: "trash.fill")
@@ -180,11 +334,12 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
     //  The method that is called when tapping on the checkbox.
     @objc func tapCheckBox(_ sender: CheckBox) {
         sender.isChecked = !sender.isChecked
-        let data = tableData[sender.indexPath.row]
+        let data = tableData[sender.indexPath.section].items[sender.indexPath.row]
+        let newIndex = SavedSelectedIndex(type: data.type, id: data.idLabel)
         if sender.isChecked {
-            selectedIDs.append(data.idLabel)
+            selectedIDs.append(newIndex)
         } else {
-            guard let i = selectedIDs.firstIndex(of: data.idLabel) else {
+            guard let i = selectedIDs.firstIndex(of: newIndex) else {
                 showAction(message: "ID \(data.idLabel) not found", addAlerts: [])
                 return
             }
@@ -207,39 +362,75 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             activeBulb = sender
         }
         guard let key = sender.key,
-              let id = Int(key),
-              let object = AppSettings.settings.savedObjects[id] else { return }
-        let vector = object.getVectorObject()
-        delegate?.showTapObject(object: vector)
+              let id = Int(key) else { return }
+        if let object = AppSettings.settings.savedObjects[id] {
+            let vector = object.getVectorObject()
+            delegate?.showTapObject(object: vector)
+        } else if let object = AppSettings.settings.deletedObjects[id] {
+            let vector = object.getVectorObject()
+            delegate?.showTapObject(object: vector)
+        }
     }
     
     //  The method of sending data to the server.
     @objc func tapSendButton() {
-        if selectedIDs.count == 0 {
+        guard selectedIDs.count > 0 else {
             showAction(message: "Select objects!", addAlerts: [])
             return
         }
-        let indicator = showIndicator()
-        var objects: [OSMAnyObject] = []
-        for id in selectedIDs {
-            guard let object = AppSettings.settings.savedObjects[id] else { continue }
-            objects.append(object)
+        var savedObjects: [OSMAnyObject] = []
+        var deletedObjects: [OSMAnyObject] = []
+        for path in selectedIDs {
+            switch path.type {
+            case .saved:
+                guard let object = AppSettings.settings.savedObjects[path.id] else { continue }
+                savedObjects.append(object)
+            case .deleted:
+                guard let object = AppSettings.settings.deletedObjects[path.id] else { continue }
+                deletedObjects.append(object)
+            }
         }
-        let sendObjects = objects
+        let uniq = checkUniq(array1: savedObjects, array2: deletedObjects)
+        if uniq.count > 0 {
+            showAction(message: "Attention! The listed objects are modified for submission and are marked for deletion at the same time: \(uniq). Fix it.", addAlerts: [])
+            return
+        }
+        setEnterCommentView()
+    }
+    
+    func sendObjects() {
+        let indicator = showIndicator()
+        var savedObjects: [OSMAnyObject] = []
+        var deletedObjects: [OSMAnyObject] = []
+        for path in selectedIDs {
+            switch path.type {
+            case .saved:
+                guard let object = AppSettings.settings.savedObjects[path.id] else { continue }
+                savedObjects.append(object)
+            case .deleted:
+                guard let object = AppSettings.settings.deletedObjects[path.id] else { continue }
+                deletedObjects.append(object)
+            }
+        }
+        let capturedSavedObjects = savedObjects
+        let capturedDeletedObjects = deletedObjects
         Task {
             do {
-                try await OsmClient.client.sendObjects(sendObjs: sendObjects, deleteObjs: [])
-                for id in self.selectedIDs {
-                    AppSettings.settings.savedObjects.removeValue(forKey: id)
+                try await OsmClient.client.sendObjects(sendObjs: capturedSavedObjects, deleteObjs: capturedDeletedObjects)
+                for object in capturedSavedObjects {
+                    AppSettings.settings.savedObjects.removeValue(forKey: object.id)
                 }
-//              After successfully sending the changes, we update the downloaded data from the server, delete objects from memory.
+                for object in capturedDeletedObjects {
+                    AppSettings.settings.deletedObjects.removeValue(forKey: object.id)
+                }
+                // After successfully sending the changes, we update the downloaded data from the server, delete objects from memory.
                 delegate?.updateSourceData()
                 selectedIDs = []
                 fillData()
                 tableView.reloadData()
                 removeIndicator(indicator: indicator)
                 let alert0 = UIAlertAction(title: "Ok", style: .default, handler: { _ in
-                    if AppSettings.settings.savedObjects.count == 0 {
+                    if AppSettings.settings.savedObjects.count == 0, AppSettings.settings.deletedObjects.count == 0 {
                         self.dismiss(animated: true)
                     }
                 })
@@ -250,5 +441,90 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
                 showAction(message: message, addAlerts: [])
             }
         }
+    }
+    
+    // The method automatically generates a comment for changeset.
+    func generateComment() -> String {
+        var comment = ""
+        var createdObjects: [OSMAnyObject] = []
+        var editedObjects: [OSMAnyObject] = []
+        var deletedObjects: [OSMAnyObject] = []
+        for path in selectedIDs {
+            switch path.type {
+            case .saved:
+                guard let object = AppSettings.settings.savedObjects[path.id] else { continue }
+                if path.id < 0 {
+                    createdObjects.append(object)
+                } else {
+                    editedObjects.append(object)
+                }
+            case .deleted:
+                guard let object = AppSettings.settings.deletedObjects[path.id] else { continue }
+                deletedObjects.append(object)
+            }
+        }
+        if editedObjects.count > 0 {
+            comment += "\(editedObjects.count) object(s) edited. "
+        }
+        if createdObjects.count > 0 {
+            comment += "\(createdObjects.count) object(s) created. "
+        }
+        if deletedObjects.count > 0 {
+            comment += "\(deletedObjects.count) object(s) deleted."
+        }
+        return comment
+    }
+    
+    // Method displays a comment input field of changeset
+    func setEnterCommentView() {
+        navigationController?.setToolbarHidden(true, animated: false)
+        enterCommentView.closeClosure = { [weak self] in
+            guard let self = self else { return }
+            self.navigationController?.setToolbarHidden(false, animated: false)
+        }
+        enterCommentView.enterClosure = { [weak self] in
+            guard let self = self else { return }
+            self.navigationController?.setToolbarHidden(false, animated: false)
+            self.sendObjects()
+        }
+        enterCommentView.backgroundColor = .backColor0
+        enterCommentView.layer.borderColor = UIColor.systemGray.cgColor
+        enterCommentView.layer.borderWidth = 2
+        let comment = generateComment()
+        enterCommentView.field.text = comment
+        enterCommentView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(enterCommentView)
+        NSLayoutConstraint.deactivate(enterCommentViewConstrains)
+        enterCommentViewConstrains = [
+            enterCommentView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            enterCommentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            enterCommentView.leftAnchor.constraint(equalTo: view.leftAnchor),
+        ]
+        NSLayoutConstraint.activate(enterCommentViewConstrains)
+    }
+    
+    //  Updating the view when the keyboard appears.
+    @objc func keyboardWillShow(notification: NSNotification) {
+        guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
+        if keyboardSize.height > 0 {
+            NSLayoutConstraint.deactivate(enterCommentViewConstrains)
+            enterCommentViewConstrains = [
+                enterCommentView.rightAnchor.constraint(equalTo: view.rightAnchor),
+                enterCommentView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -keyboardSize.height),
+                enterCommentView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            ]
+            NSLayoutConstraint.activate(enterCommentViewConstrains)
+        }
+    }
+    
+    //  Updating the view when hiding the keyboard.
+    @objc func keyboardWillHide(notification _: NSNotification) {
+        NSLayoutConstraint.deactivate(enterCommentViewConstrains)
+        enterCommentViewConstrains = [
+            enterCommentView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            enterCommentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            enterCommentView.leftAnchor.constraint(equalTo: view.leftAnchor),
+        ]
+        NSLayoutConstraint.activate(enterCommentViewConstrains)
     }
 }

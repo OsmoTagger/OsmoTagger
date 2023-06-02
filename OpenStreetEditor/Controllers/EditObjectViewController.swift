@@ -10,8 +10,6 @@ import UIKit
 
 //  Object tag editing controller.
 class EditObjectViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
-    weak var delegate: ShowTappedObject?
-    
     //  Called when the object is completely deleted from the server. Used only on SavedNodesVC.
     var deleteObjectClosure: ((Int) -> Void)?
     
@@ -42,7 +40,7 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     //  Saves the indexPath of the cell where the text is being edited.
     var editingIndexPath: IndexPath?
     //  The view that is displayed when manually entering text.
-    var addView = AddTagManuallyView()
+    var addTagView = AddTagManuallyView()
     var addViewConstrains = [NSLayoutConstraint]()
     
     var tap = UIGestureRecognizer()
@@ -57,10 +55,6 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    deinit {
-        AppSettings.settings.saveObjectClouser = nil
     }
     
     override func viewDidLoad() {
@@ -79,7 +73,7 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         }
         AppSettings.settings.saveAllowed = true
         
-//      Notifications about calling and hiding the keyboard.
+        // Notifications about calling and hiding the keyboard.
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         
@@ -87,13 +81,18 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
                             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
                             tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
                             tableView.leftAnchor.constraint(equalTo: view.leftAnchor)]
+        
         setRightBarItems()
         setTableView()
         setToolBar()
         navigationController?.setToolbarHidden(false, animated: false)
     }
 
-    override func viewDidDisappear(_: Bool) {}
+    override func viewDidDisappear(_: Bool) {
+        AppSettings.settings.saveObjectClouser = nil
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
     
     //  Actions when clicking "undo" tag changes. Tags are reset to the initial state.
     @objc func tapCancel() {
@@ -344,14 +343,15 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     
     func setToolBar() {
         let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let discardBottom = UIBarButtonItem(title: "Delete", style: .plain, target: self, action: #selector(tapDeleteButton))
-        let publishButtom = UIBarButtonItem(title: "Publish", style: .plain, target: self, action: #selector(tapSendButton))
-        toolbarItems = [flexibleSpace, discardBottom, flexibleSpace, publishButtom, flexibleSpace]
+        let deleteButton = UIBarButtonItem(title: "Mark object for deletion", style: .plain, target: self, action: #selector(tapDeleteButton))
+        toolbarItems = [flexibleSpace, deleteButton, flexibleSpace]
     }
     
     //  Tap on the button to display brief information about the object (RightBarItems).
     @objc func tapInfo() {
-        let vc = InfoObjectViewController(object: object)
+        var newObject = object
+        newObject.tag = generateTags(properties: AppSettings.settings.newProperties)
+        let vc = InfoObjectViewController(object: newObject)
         navigationController?.setToolbarHidden(true, animated: false)
         vc.dismissClosure = { [weak self] in
             guard let self = self else { return }
@@ -359,35 +359,6 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             AppSettings.settings.saveAllowed = true
         }
         navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @objc func tapSendButton() {
-//      If the new tags do not differ from the original ones, we interrupt the method.
-        if NSDictionary(dictionary: object.oldTags).isEqual(to: AppSettings.settings.newProperties) && object.id > 0 {
-            showAction(message: "No point tag changes", addAlerts: [])
-            return
-        }
-        let indicator = showIndicator()
-        object.tag = generateTags(properties: AppSettings.settings.newProperties)
-        Task {
-            do {
-                try await OsmClient.client.sendObjects(sendObjs: [object], deleteObjs: [])
-//              If the data is successfully sent to the server, update the downloaded OSM source data, collapse the controllers.
-                AppSettings.settings.savedObjects.removeValue(forKey: object.id)
-                delegate?.updateSourceData()
-                if let controllers = self.navigationController?.viewControllers {
-                    if controllers[0] is SelectObjectViewController || controllers[0] is SavedNodesViewController {
-                        self.navigationController?.setViewControllers([controllers[0]], animated: true)
-                    } else {
-                        self.dismiss(animated: true)
-                    }
-                }
-            } catch {
-                let message = error as? String ?? "Error submitting changes"
-                showAction(message: message, addAlerts: [])
-            }
-            removeIndicator(indicator: indicator)
-        }
     }
 
     //  The method is called from the closure when the CategoryNavigationController is collapsed. The tags entered in it are immediately saved in AppSettings.settings.newProperties, and the method updates the table.
@@ -400,50 +371,22 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     
     //  By tap the delete button, you can delete tag changes or the entire object from the server (if it is not referenced by other objects).
     @objc func tapDeleteButton() {
-        let alert0 = UIAlertAction(title: "Revert object tag changes", style: .default, handler: { [weak self] _ in
-//          remove tags
-            guard let self = self else { return }
-            let tags = self.generateTags(properties: self.object.oldTags)
-            AppSettings.settings.savedObjects.removeValue(forKey: self.object.id)
-            self.object.tag = tags
-            AppSettings.settings.newProperties = self.object.oldTags
-            self.fillData()
-            self.tableView.reloadData()
-        })
-        let alert1 = UIAlertAction(title: "Delete this \(object.type.rawValue) from server and memory", style: .default, handler: { [weak self] _ in
-//          remove object from server
+        let action0 = UIAlertAction(title: "Delete object", style: .default, handler: { [weak self] _ in
             guard let self = self else { return }
             AppSettings.settings.savedObjects.removeValue(forKey: self.object.id)
-//          When deleting an object, if the object selection controller from several objects was opened before, a closure is called, which updates the table to SelectObjectVC.
+            // When deleting an object, if the object selection controller from several objects was opened before, a closure is called, which updates the table to SelectObjectVC.
             if let clouser = self.deleteObjectClosure {
                 clouser(self.object.id)
             }
             if self.object.id > 0 {
-                self.deleteFromServer()
+                AppSettings.settings.deletedObjects[self.object.id] = self.object
             }
         })
-        let alert2 = UIAlertAction(title: "Cancel", style: .destructive, handler: nil)
-        showAction(message: "Select action", addAlerts: [alert0, alert1, alert2])
-    }
-    
-    //  The method of deleting an object from the server, followed by updating the application data.
-    @objc func deleteFromServer() {
-        Task {
-            do {
-                try await OsmClient.client.sendObjects(sendObjs: [], deleteObjs: [self.object])
-                delegate?.updateSourceData()
-                if let controllers = self.navigationController?.viewControllers {
-                    if controllers[0] is SelectObjectViewController || controllers[0] is SavedNodesViewController {
-                        self.navigationController?.setViewControllers([controllers[0]], animated: true)
-                    } else {
-                        self.dismiss(animated: true)
-                    }
-                }
-            } catch {
-                let message = error as? String ?? "Point deletion error"
-                self.showAction(message: message, addAlerts: [])
-            }
-        }
+        let action1 = UIAlertAction(title: "Cancel", style: .destructive, handler: nil)
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alert.addAction(action0)
+        alert.addAction(action1)
+        present(alert, animated: true, completion: nil)
     }
     
     //  Generating an array of tags [Tag] from a dictionary with tags.
@@ -600,27 +543,24 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.label.isHidden = true
             cell.selectValueButton.isHidden = true
             cell.accessoryType = .disclosureIndicator
-        case let .multiselect(key, values, _):
+        case let .multiselect(key, _, _):
             cell.icon.icon.image = UIImage(systemName: "tag")
             cell.icon.backView.backgroundColor = .systemBackground
             cell.icon.isHidden = false
             cell.keyLabel.text = key
             cell.keyLabel.isHidden = false
-            cell.valueLable.isHidden = true
+            cell.valueLable.isHidden = false
+            if var valuesString = AppSettings.settings.newProperties[key] {
+                valuesString = valuesString.replacingOccurrences(of: ";", with: ", ")
+                cell.valueLable.text = valuesString
+            } else {
+                cell.valueLable.text = nil
+            }
             cell.valueField.isHidden = true
             cell.checkLable.isHidden = true
             cell.checkBox.isHidden = true
-            cell.selectValueButton.isHidden = false
-            cell.selectValueButton.key = key
-            cell.selectValueButton.values = values
-            cell.selectValueButton.addTarget(self, action: #selector(tapMultiselectButton), for: .touchUpInside)
-            if let inputValuesString = AppSettings.settings.newProperties[key] {
-                let inputValues = inputValuesString.components(separatedBy: ";")
-                let count = inputValues.count
-                let text = "\(count) values entered"
-                cell.selectValueButton.setTitle(text, for: .normal)
-            }
-            cell.accessoryType = .none
+            cell.selectValueButton.isHidden = true
+            cell.accessoryType = .disclosureIndicator
         case let .label(text):
             cell.icon.isHidden = true
             cell.keyLabel.isHidden = true
@@ -661,9 +601,6 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             let svc = CustomSafari(url: url)
             AppSettings.settings.saveAllowed = false
             svc.callbackClosure = { [weak self] in
-                guard let self = self else { return }
-                let vector = self.object.getVectorObject()
-                self.delegate?.showTapObject(object: vector)
                 AppSettings.settings.saveAllowed = true
             }
             present(svc, animated: true, completion: nil)
@@ -673,7 +610,7 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             } else if presetName == "Add tag manually" {
                 editObject = .addView
                 //  When the tag is entered manually, addView.callbackClosure is triggered, which passes the entered tag=value pair. The table data is updated.
-                addView.callbackClosure = { [weak self] addedTag in
+                addTagView.callbackClosure = { [weak self] addedTag in
                     guard let self = self else { return }
                     self.navigationController?.setToolbarHidden(false, animated: false)
                     self.editObject = .table
@@ -692,11 +629,11 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
                     self.fillData()
                     self.tableView.reloadData()
                 }
-                addView.translatesAutoresizingMaskIntoConstraints = false
-                addView.backgroundColor = .systemGray6
-                addView.alpha = 0.95
-                addView.keyField.becomeFirstResponder()
-                view.addSubview(addView)
+                addTagView.translatesAutoresizingMaskIntoConstraints = false
+                addTagView.backgroundColor = .systemBackground
+                addTagView.alpha = 0.95
+                addTagView.keyField.becomeFirstResponder()
+                view.addSubview(addTagView)
             } else {
                 guard let item = getItemFromName(name: presetName) else { return }
                 let itemVC = ItemTagsViewController(item: item)
@@ -706,6 +643,15 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
                 }
                 present(navVC, animated: true, completion: nil)
             }
+        case let .multiselect(key, values, _):
+            let vc = MultiSelectViewController(values: values, key: key)
+            vc.callbackClosure = { [weak self] in
+                guard let self = self else { return }
+                self.navigationController?.setToolbarHidden(false, animated: false)
+                self.tableView.reloadRows(at: [indexPath], with: .none)
+            }
+            navigationController?.setToolbarHidden(true, animated: false)
+            navigationController?.pushViewController(vc, animated: true)
         default:
             tableView.deselectRow(at: indexPath, animated: true)
         }
@@ -746,54 +692,6 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         }
     }
     
-    //  One of the preset elements is "Multiselect", for example for tags where there can be several values sports=volleyball,swimming and so on. This method calls MultiSelectVC, on which all tag values can be selected.
-    @objc func tapMultiselectButton(_ sender: MultiSelectBotton) {
-        let buttonOriginInTableView = sender.convert(sender.bounds.origin, to: tableView)
-        let buttonOriginInWindow = tableView.convert(buttonOriginInTableView, to: nil)
-        let viewHeight = CGFloat(view.bounds.height)
-        var multiHeght = CGFloat(sender.values.count * 50)
-        var vcY = CGFloat(buttonOriginInWindow.y)
-//      Checks that the new view fits on the screen.
-        if multiHeght > viewHeight {
-            multiHeght = viewHeight - 20
-        }
-        if viewHeight - vcY < multiHeght {
-            vcY = viewHeight - multiHeght + 10
-        }
-        guard let key = sender.key else {
-            showAction(message: "Not according to the tag value", addAlerts: [])
-            return
-        }
-        let customVC = MultiSelectViewController(values: sender.values, key: key, button: sender)
-//      When closing MultiSelectVC, a closure is triggered, which updates the tag.
-        customVC.callbackClosure = { sender in
-            print("closure")
-            if let inputValuesString = AppSettings.settings.newProperties[key] {
-                let inputValues = inputValuesString.components(separatedBy: ";")
-                let count = inputValues.count
-                let text = "\(count) values entered"
-                sender.setTitle(text, for: .normal)
-            } else {
-                sender.setTitle("", for: .normal)
-            }
-        }
-        customVC.modalPresentationStyle = .overCurrentContext
-        customVC.modalTransitionStyle = .crossDissolve
-        let containerVC = UIViewController()
-        containerVC.modalPresentationStyle = .overFullScreen
-        containerVC.addChild(customVC)
-        containerVC.view.addSubview(customVC.view)
-        customVC.didMove(toParent: containerVC)
-        customVC.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            customVC.view.widthAnchor.constraint(equalToConstant: 300),
-            customVC.view.heightAnchor.constraint(equalToConstant: multiHeght),
-            customVC.view.rightAnchor.constraint(equalTo: containerVC.view.rightAnchor, constant: -10),
-            customVC.view.topAnchor.constraint(equalTo: containerVC.view.topAnchor, constant: vcY),
-        ])
-        present(containerVC, animated: true, completion: nil)
-    }
-    
     //  Several methods that are triggered when you finish typing. The finishEdit method is called, which assigns the entered value to the tag.
     func textFieldShouldReturn(_: UITextField) -> Bool {
         view.endEditing(true)
@@ -828,6 +726,7 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
                 AppSettings.settings.newProperties[key] = textField.text
             }
         }
+        tableView.reloadData()
     }
     
     //  Updating the view when the keyboard appears.
@@ -844,10 +743,10 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
                 NSLayoutConstraint.activate(tableConstraints)
             case .addView:
                 addViewConstrains = [
-                    addView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -keyboardSize.height),
-                    addView.leftAnchor.constraint(equalTo: view.leftAnchor),
-                    addView.rightAnchor.constraint(equalTo: view.rightAnchor),
-                    addView.topAnchor.constraint(equalTo: view.topAnchor),
+                    addTagView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -keyboardSize.height),
+                    addTagView.leftAnchor.constraint(equalTo: view.leftAnchor),
+                    addTagView.rightAnchor.constraint(equalTo: view.rightAnchor),
+                    addTagView.topAnchor.constraint(equalTo: view.topAnchor),
                 ]
                 NSLayoutConstraint.activate(addViewConstrains)
             }
@@ -868,10 +767,10 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             NSLayoutConstraint.deactivate(addViewConstrains)
             navigationController?.setToolbarHidden(true, animated: false)
             addViewConstrains = [
-                addView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-                addView.leftAnchor.constraint(equalTo: view.leftAnchor),
-                addView.rightAnchor.constraint(equalTo: view.rightAnchor),
-                addView.topAnchor.constraint(equalTo: view.topAnchor),
+                addTagView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+                addTagView.leftAnchor.constraint(equalTo: view.leftAnchor),
+                addTagView.rightAnchor.constraint(equalTo: view.rightAnchor),
+                addTagView.topAnchor.constraint(equalTo: view.topAnchor),
             ]
             NSLayoutConstraint.activate(addViewConstrains)
         }

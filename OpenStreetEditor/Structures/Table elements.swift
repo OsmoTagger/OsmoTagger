@@ -10,6 +10,11 @@ import UIKit
 
 //  MARK: SOME UI ELEMENTS
 
+struct InfoCellData {
+    let icon: String?
+    let text: String
+}
+
 //  View for displaying user data
 class UserInfoView: UIView {
     var idIcon: UIImageView = {
@@ -256,6 +261,84 @@ class AddTagManuallyView: UIView {
     }
 }
 
+// View for enter comment to chageset. Use on EditVC and SavedNodesVC.
+class EnterChangesetComment: UIView {
+    var field: UITextField = {
+        let field = UITextField()
+        field.translatesAutoresizingMaskIntoConstraints = false
+        field.text = AppSettings.settings.changeSetComment
+        field.borderStyle = .roundedRect
+        field.clearButtonMode = .always
+        field.placeholder = "Enter comment for changeset"
+        return field
+    }()
+
+    lazy var toolbar: UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        
+        let doneButton = UIButton()
+        doneButton.setTitle("Enter", for: .normal)
+        doneButton.setTitleColor(.systemBlue, for: .normal)
+        doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        doneButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        let cancelButton = UIButton()
+        cancelButton.setTitle("Cancel", for: .normal)
+        cancelButton.setTitleColor(.systemBlue, for: .normal)
+        cancelButton.addTarget(self, action: #selector(tapCancel), for: .touchUpInside)
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+
+        stack.addArrangedSubview(cancelButton)
+        stack.addArrangedSubview(doneButton)
+        stack.distribution = .fillEqually
+        stack.backgroundColor = .systemGray5
+        return stack
+    }()
+    
+    var closeClosure: (() -> Void)?
+    var enterClosure: (() -> Void)?
+    
+    @objc func tapCancel() {
+        if let clouser = closeClosure {
+            clouser()
+        }
+        removeFromSuperview()
+    }
+        
+    @objc func doneButtonTapped() {
+        if field.text == "" {
+            AppSettings.settings.changeSetComment = field.text
+        } else {
+            AppSettings.settings.changeSetComment = field.text
+        }
+        if let clouser = enterClosure {
+            clouser()
+        }
+        removeFromSuperview()
+    }
+    
+    convenience init() {
+        self.init(frame: .zero)
+        setupConstrains()
+    }
+    
+    func setupConstrains() {
+        addSubview(toolbar)
+        addSubview(field)
+        NSLayoutConstraint.activate([
+            toolbar.bottomAnchor.constraint(equalTo: bottomAnchor),
+            toolbar.leftAnchor.constraint(equalTo: leftAnchor),
+            toolbar.rightAnchor.constraint(equalTo: rightAnchor),
+            toolbar.heightAnchor.constraint(equalToConstant: 50),
+            field.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+            field.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            field.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            field.bottomAnchor.constraint(equalTo: toolbar.topAnchor, constant: -20),
+        ])
+    }
+}
+
 //  TitleView for the tag editing controller
 class EditTitleView: UIView {
     var icon: UIImageView = {
@@ -309,11 +392,27 @@ class EditTitleView: UIView {
 
 //  Custom button for switching to the controller of saved objects
 class SavedObjectButton: UIButton {
-    private let greenCircle = UIView()
+    private let circle: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemRed
+        view.layer.cornerRadius = 9
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
+    private let label: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 14)
+        label.text = String(AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count)
+        label.textColor = .white
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
 
     init() {
         super.init(frame: .zero)
-        setupGreenCircle()
+        setupConstrains()
     }
 
     @available(*, unavailable)
@@ -321,28 +420,39 @@ class SavedObjectButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupGreenCircle() {
-        greenCircle.backgroundColor = .systemGreen
-        greenCircle.layer.cornerRadius = 4 // Радиус для круглой формы
-        greenCircle.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(greenCircle)
-
+    private func setupConstrains() {
+        addSubview(circle)
+        addSubview(label)
         NSLayoutConstraint.activate([
-            greenCircle.widthAnchor.constraint(equalToConstant: 8),
-            greenCircle.heightAnchor.constraint(equalToConstant: 8),
-            greenCircle.topAnchor.constraint(equalTo: topAnchor, constant: 3),
-            greenCircle.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -3),
+            circle.widthAnchor.constraint(equalToConstant: 18),
+            circle.heightAnchor.constraint(equalToConstant: 18),
+            circle.centerXAnchor.constraint(equalTo: rightAnchor, constant: -3),
+            circle.centerYAnchor.constraint(equalTo: topAnchor, constant: 3),
+            label.centerXAnchor.constraint(equalTo: circle.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: circle.centerYAnchor),
         ])
-        
-        greenCircle.isHidden = true // Изначально кружок скрыт
     }
-
-    func showGreenCircle() {
-        greenCircle.isHidden = false
-    }
-
-    func hideGreenCircle() {
-        greenCircle.isHidden = true
+    
+    // Method update count and color of circle
+    func update() {
+        let counts = AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count
+        UIView.animate(withDuration: 0.4, animations: {
+            self.circle.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+            self.label.transform = CGAffineTransform(rotationAngle: -.pi)
+        }) { _ in
+            UIView.animate(withDuration: 0.4) {
+                self.circle.transform = .identity
+                self.label.transform = .identity
+            } completion: { _ in
+                if counts == 0 {
+                    self.circle.backgroundColor = .systemGray
+                    self.label.text = nil
+                } else {
+                    self.circle.backgroundColor = .systemRed
+                    self.label.text = String(counts)
+                }
+            }
+        }
     }
 }
 
@@ -367,7 +477,7 @@ class SelectValuesCell: UITableViewCell {
         contentView.addSubview(label)
         contentView.addSubview(checkBox)
         NSLayoutConstraint.activate([
-            checkBox.rightAnchor.constraint(equalTo: rightAnchor, constant: -30),
+            checkBox.rightAnchor.constraint(equalTo: rightAnchor),
             checkBox.widthAnchor.constraint(equalToConstant: 50),
             checkBox.heightAnchor.constraint(equalTo: heightAnchor),
             checkBox.centerYAnchor.constraint(equalTo: centerYAnchor),

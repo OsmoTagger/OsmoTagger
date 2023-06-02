@@ -12,6 +12,5 @@ import GLMap
 protocol ShowTappedObject: NSObject {
     func showTapObject(object: GLMapVectorObject)
     func showTappedObjects(objects: [OSMAnyObject])
-    func showSavedObjects()
     func updateSourceData()
 }

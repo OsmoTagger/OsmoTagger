@@ -55,7 +55,10 @@ class ItemTagsViewController: UIViewController, UITableViewDelegate, UITableView
         setTableView()
     }
     
-    override func viewDidDisappear(_: Bool) {}
+    override func viewDidDisappear(_: Bool) {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
     
     //  The preset stores "chunks" - duplicate sets of tags as elements. In defaultpresets.xml they are taken out separately from Josm. The method extracts tags from the "chunk" and adds preset elements to the array.
     //  The method also transfers references to other presets to the end of the array.
@@ -192,28 +195,27 @@ class ItemTagsViewController: UIViewController, UITableViewDelegate, UITableView
             cell.selectValueButton.isHidden = false
             cell.configureButton(values: values)
             cell.accessoryType = .none
-        case let .multiselect(key, values, _):
+        case let .multiselect(key, _, _):
             cell.icon.icon.image = UIImage(systemName: "tag")
             cell.icon.backView.backgroundColor = .systemBackground
             cell.icon.isHidden = false
             cell.keyLabel.text = key
             cell.keyLabel.isHidden = false
-            cell.valueLable.isHidden = true
+            cell.valueLable.isHidden = false
+            if let inputValuesString = AppSettings.settings.newProperties[key] {
+                let inputValues = inputValuesString.components(separatedBy: ";")
+                var text = ""
+                for value in inputValues {
+                    text += value + "\n"
+                }
+                text.removeLast()
+                cell.valueLable.text = text
+            }
             cell.valueField.isHidden = true
             cell.checkLable.isHidden = true
             cell.checkBox.isHidden = true
-            cell.selectValueButton.isHidden = false
-            cell.selectValueButton.key = key
-            cell.selectValueButton.values = values
-            cell.selectValueButton.addTarget(self, action: #selector(tapMultiselectButton), for: .touchUpInside)
-            if let inputValuesString = AppSettings.settings.newProperties[key] {
-                let inputValues = inputValuesString.components(separatedBy: ";")
-                let count = inputValues.count
-                print("count = ", count)
-                let text = "\(count) values entered"
-                cell.selectValueButton.setTitle(text, for: .normal)
-            }
-            cell.accessoryType = .none
+            cell.selectValueButton.isHidden = true
+            cell.accessoryType = .disclosureIndicator
         case let .check(key, text, valueOn):
             cell.icon.icon.image = UIImage(systemName: "tag")
             cell.icon.backView.backgroundColor = .systemBackground
@@ -289,54 +291,6 @@ class ItemTagsViewController: UIViewController, UITableViewDelegate, UITableView
         return cell
     }
     
-    //  Opens a tag value selection controller that supports multiple values.
-    @objc func tapMultiselectButton(_ sender: MultiSelectBotton) {
-        let buttonOriginInTableView = sender.convert(sender.bounds.origin, to: tableView)
-        let buttonOriginInWindow = tableView.convert(buttonOriginInTableView, to: nil)
-        let viewHeight = CGFloat(view.bounds.height)
-        var multiHeght = CGFloat(sender.values.count * 50)
-        var vcY = CGFloat(buttonOriginInWindow.y)
-        print(vcY)
-        if multiHeght > viewHeight {
-            multiHeght = viewHeight - 20
-        }
-        if viewHeight - vcY < multiHeght {
-            vcY = viewHeight - multiHeght + 10
-        }
-        print(vcY)
-        guard let key = sender.key else {
-            showAction(message: "Not according to the tag value", addAlerts: [])
-            return
-        }
-        let customVC = MultiSelectViewController(values: sender.values, key: key, button: sender)
-//      Closure is called to update the button after entering values.
-        customVC.callbackClosure = { sender in
-            if let inputValuesString = AppSettings.settings.newProperties[key] {
-                let inputValues = inputValuesString.components(separatedBy: ";")
-                let count = inputValues.count
-                let text = "\(count) values entered"
-                sender.setTitle(text, for: .normal)
-            } else {
-                sender.setTitle("", for: .normal)
-            }
-        }
-        customVC.modalPresentationStyle = .overCurrentContext
-        customVC.modalTransitionStyle = .crossDissolve
-        let containerVC = UIViewController()
-        containerVC.modalPresentationStyle = .overFullScreen
-        containerVC.addChild(customVC)
-        containerVC.view.addSubview(customVC.view)
-        customVC.didMove(toParent: containerVC)
-        customVC.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            customVC.view.widthAnchor.constraint(equalToConstant: 300),
-            customVC.view.heightAnchor.constraint(equalToConstant: multiHeght),
-            customVC.view.rightAnchor.constraint(equalTo: containerVC.view.rightAnchor, constant: -10),
-            customVC.view.topAnchor.constraint(equalTo: containerVC.view.topAnchor, constant: vcY),
-        ])
-        present(containerVC, animated: true, completion: nil)
-    }
-    
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         let data = item.elements[indexPath.row]
         switch data {
@@ -349,6 +303,15 @@ class ItemTagsViewController: UIViewController, UITableViewDelegate, UITableView
         case let .presetLink(presetName):
             guard let item = getItemFromName(name: presetName) else { return }
             let vc = ItemTagsViewController(item: item)
+            navigationController?.pushViewController(vc, animated: true)
+        case let .multiselect(key, values, _):
+            let vc = MultiSelectViewController(values: values, key: key)
+            vc.callbackClosure = { [weak self] in
+                guard let self = self else { return }
+                self.navigationController?.setToolbarHidden(false, animated: false)
+                self.tableView.reloadRows(at: [indexPath], with: .none)
+            }
+            navigationController?.setToolbarHidden(true, animated: false)
             navigationController?.pushViewController(vc, animated: true)
         default:
             tableView.deselectRow(at: indexPath, animated: true)

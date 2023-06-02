@@ -80,11 +80,11 @@ class IconView: UIView {
         let iconHeight = icon.image?.size.height ?? 25
         NSLayoutConstraint.activate([
             backView.leftAnchor.constraint(equalTo: leftAnchor, constant: 5),
-            backView.topAnchor.constraint(equalTo: topAnchor, constant: 5),
-            backView.rightAnchor.constraint(equalTo: rightAnchor, constant: -5),
-            backView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -5),
-            icon.centerXAnchor.constraint(equalTo: centerXAnchor),
-            icon.centerYAnchor.constraint(equalTo: centerYAnchor),
+            backView.widthAnchor.constraint(equalToConstant: 38),
+            backView.heightAnchor.constraint(equalToConstant: 38),
+            backView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            icon.centerXAnchor.constraint(equalTo: backView.centerXAnchor),
+            icon.centerYAnchor.constraint(equalTo: backView.centerYAnchor),
             icon.widthAnchor.constraint(equalToConstant: iconWidth),
             icon.heightAnchor.constraint(equalToConstant: iconHeight),
         ])
@@ -103,6 +103,7 @@ class SimpleCell: UITableViewCell {
         label.textAlignment = .left
         label.baselineAdjustment = .alignCenters
         label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -111,14 +112,14 @@ class SimpleCell: UITableViewCell {
         contentView.addSubview(icon)
         contentView.addSubview(label)
         NSLayoutConstraint.activate([
-            icon.topAnchor.constraint(equalTo: topAnchor),
-            icon.leftAnchor.constraint(equalTo: leftAnchor),
-            icon.bottomAnchor.constraint(equalTo: bottomAnchor),
-            icon.widthAnchor.constraint(equalTo: heightAnchor),
-            label.leftAnchor.constraint(equalTo: icon.rightAnchor),
-            label.topAnchor.constraint(equalTo: topAnchor),
-            label.rightAnchor.constraint(equalTo: rightAnchor, constant: -50),
-            label.bottomAnchor.constraint(equalTo: bottomAnchor),
+            icon.widthAnchor.constraint(equalToConstant: 44),
+            icon.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            icon.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            label.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 4),
+            label.topAnchor.constraint(equalTo: contentView.topAnchor),
+            label.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50),
+            label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            label.heightAnchor.constraint(greaterThanOrEqualToConstant: 44),
         ])
     }
     
@@ -135,6 +136,7 @@ class SimpleCell: UITableViewCell {
     
     override func prepareForReuse() {
         icon.icon.image = nil
+        icon.backView.backgroundColor = .white
         label.text = nil
     }
 }
@@ -160,14 +162,14 @@ class CategoryCell: UITableViewCell {
         contentView.addSubview(icon)
         contentView.addSubview(nameLabel)
         NSLayoutConstraint.activate([
-            icon.leftAnchor.constraint(equalTo: leftAnchor),
-            icon.topAnchor.constraint(equalTo: topAnchor),
-            icon.widthAnchor.constraint(equalTo: heightAnchor),
-            icon.bottomAnchor.constraint(equalTo: bottomAnchor),
+            icon.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            icon.topAnchor.constraint(equalTo: contentView.topAnchor),
+            icon.widthAnchor.constraint(equalTo: contentView.heightAnchor),
+            icon.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             nameLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
-            nameLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -50),
-            nameLabel.topAnchor.constraint(equalTo: topAnchor),
-            nameLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            nameLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50),
+            nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            nameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
     
@@ -220,6 +222,7 @@ class ItemCell: UITableViewCell {
     var valueLable: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
+        label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -248,7 +251,7 @@ class ItemCell: UITableViewCell {
 
     var valueField: ValueField = {
         let field = ValueField()
-        field.textAlignment = .center
+        field.textAlignment = .left
         field.borderStyle = .roundedRect
         field.placeholder = "Enter value"
         field.translatesAutoresizingMaskIntoConstraints = false
@@ -274,38 +277,38 @@ class ItemCell: UITableViewCell {
         contentView.addSubview(label)
         contentView.addSubview(checkLable)
         NSLayoutConstraint.activate([
-            icon.leftAnchor.constraint(equalTo: leftAnchor),
-            icon.topAnchor.constraint(equalTo: topAnchor),
-            icon.widthAnchor.constraint(equalTo: heightAnchor),
-            icon.bottomAnchor.constraint(equalTo: bottomAnchor),
-            keyLabel.topAnchor.constraint(equalTo: topAnchor),
-            keyLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            icon.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            icon.topAnchor.constraint(equalTo: contentView.topAnchor),
+            icon.widthAnchor.constraint(equalTo: icon.backView.widthAnchor),
+            icon.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            keyLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            keyLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             keyLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
-            keyLabel.rightAnchor.constraint(equalTo: centerXAnchor),
-            valueLable.leftAnchor.constraint(equalTo: centerXAnchor),
+            keyLabel.rightAnchor.constraint(equalTo: contentView.centerXAnchor),
+            valueLable.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
             valueLable.rightAnchor.constraint(equalTo: checkBox.leftAnchor),
-            valueLable.topAnchor.constraint(equalTo: topAnchor),
-            valueLable.bottomAnchor.constraint(equalTo: bottomAnchor),
-            checkBox.rightAnchor.constraint(equalTo: rightAnchor),
+            valueLable.topAnchor.constraint(equalTo: contentView.topAnchor),
+            valueLable.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            checkBox.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             checkBox.widthAnchor.constraint(equalToConstant: 50),
-            checkBox.heightAnchor.constraint(equalTo: heightAnchor),
-            checkBox.centerYAnchor.constraint(equalTo: centerYAnchor),
+            checkBox.heightAnchor.constraint(equalTo: contentView.heightAnchor),
+            checkBox.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             checkLable.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
-            checkLable.topAnchor.constraint(equalTo: topAnchor),
-            checkLable.bottomAnchor.constraint(equalTo: bottomAnchor),
+            checkLable.topAnchor.constraint(equalTo: contentView.topAnchor),
+            checkLable.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             checkLable.rightAnchor.constraint(equalTo: checkBox.leftAnchor, constant: -10),
-            selectValueButton.leftAnchor.constraint(equalTo: centerXAnchor),
-            selectValueButton.rightAnchor.constraint(equalTo: rightAnchor),
-            selectValueButton.topAnchor.constraint(equalTo: topAnchor),
-            selectValueButton.bottomAnchor.constraint(equalTo: bottomAnchor),
-            valueField.leftAnchor.constraint(equalTo: centerXAnchor),
-            valueField.rightAnchor.constraint(equalTo: rightAnchor, constant: -3),
-            valueField.topAnchor.constraint(equalTo: topAnchor, constant: 3),
-            valueField.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -3),
-            label.topAnchor.constraint(equalTo: topAnchor),
-            label.leftAnchor.constraint(equalTo: leftAnchor, constant: 10),
-            label.rightAnchor.constraint(equalTo: rightAnchor, constant: -10),
-            label.bottomAnchor.constraint(equalTo: bottomAnchor),
+            selectValueButton.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
+            selectValueButton.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            selectValueButton.topAnchor.constraint(equalTo: contentView.topAnchor),
+            selectValueButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            valueField.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
+            valueField.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -3),
+            valueField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 3),
+            valueField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3),
+            label.topAnchor.constraint(equalTo: contentView.topAnchor),
+            label.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 10),
+            label.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -10),
+            label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
     
@@ -366,7 +369,6 @@ class ItemCell: UITableViewCell {
             optionsArray.append(action)
         }
         optionsArray.append(nilAction)
-        print(optionsArray.count)
         let optionsMenu = UIMenu(title: "", image: nil, identifier: nil, options: .singleSelection, children: optionsArray)
         selectValueButton.menu = optionsMenu
         selectValueButton.setImage(UIImage(systemName: "chevron.down"), for: .normal)

@@ -62,9 +62,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
             return
         }
         let scheme = "openstreeteditor"
-        print("session start")
         let authSession = ASWebAuthenticationSession(url: authURL, callbackURLScheme: scheme) { callbackURL, error in
-            print("session start2")
             if error != nil {
                 handler(nil)
             } else if let callbackURL = callbackURL {
@@ -79,7 +77,6 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
     }
 
     @Sendable func getAccessToken(code: String) async throws -> String {
-        print("getAccessToken start")
         guard let url = URL(string: "\(AppSettings.settings.authServer)/oauth2/token") else {
             throw "Error generate auth URL for get access token. Code: \(code)"
         }
@@ -234,6 +231,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         }
         try await sendChangeset(osmChange: changeset, changesetID: changesetID)
         removeObjectsFromSaved(objects: sendObjs)
+        await closeChangeset(changeSetID: changesetID)
     }
     
     func removeObjectsFromSaved(objects: [OSMAnyObject]) {
@@ -244,11 +242,13 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
     
     //  open changeset
     func openChangeset() async throws -> Int {
+        let comment = AppSettings.settings.changeSetComment ?? "The user has not entered a comment."
         let requestData = """
         <osm>
             <changeset>
-                <tag k="created_by" v="OpenStreetEditor"/>
+                <tag k="created_by" v="OpenStreetEditor 1.0(3)"/>
                 <tag k="contact:telegram" v="https://t.me/OpenStreetEditor"/>
+                <tag k="comment" v="\(comment)"/>
             </changeset>
         </osm>
         """.data(using: .utf8)
@@ -336,7 +336,6 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         request.httpMethod = "PUT"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         _ = try? await session.data(for: request)
-        print("closeChangeSet end")
     }
     
     //  Get user information

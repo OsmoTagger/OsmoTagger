@@ -38,6 +38,10 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
         setTableView()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.setToolbarHidden(true, animated: true)
+    }
+    
     override func viewDidDisappear(_: Bool) {
         guard let clouser = callbackClosure else { return }
         clouser()
@@ -70,7 +74,8 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func setTableView() {
-        tableView.rowHeight = 50
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 50
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(SelectObjectCell.self, forCellReuseIdentifier: cellId)
@@ -111,9 +116,11 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
             iconName = "osm_element_area"
         }
         cell.iconType.image = UIImage(named: iconName)
-        cell.itemLabel.text = data.itemLabel
-        cell.idLabel.text = data.idLabel
+        let itemText = data.itemLabel ?? "Unknown"
+        cell.itemLabel.text = itemText
+        cell.idLabel.text = "id: " + data.idLabel
         cell.bulb.key = data.idLabel
+        cell.accessoryType = .disclosureIndicator
         cell.bulb.addTarget(self, action: #selector(tapBulb), for: .touchUpInside)
         return cell
     }
@@ -141,12 +148,10 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
     
     //  Opening the object for editing by tap.
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let cell = tableView.cellForRow(at: indexPath) as? SelectObjectCell,
-              let idString = cell.idLabel.text,
-              let id = Int(idString) else { return }
+        let idString = tableData[indexPath.row].idLabel
+        guard let id = Int(idString) else { return }
         if let object = AppSettings.settings.savedObjects[id] {
             let vc = EditObjectViewController(object: object)
-            vc.delegate = delegate
 //          On the tag editing controller, the user can delete an object. In this case, the table is updated.
             vc.deleteObjectClosure = { [weak self] id in
                 guard let self = self else { return }
@@ -167,7 +172,6 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
             let vector = object.getVectorObject()
             delegate?.showTapObject(object: vector)
             let vc = EditObjectViewController(object: object)
-            vc.delegate = delegate
 //          On the tag editing controller, the user can delete an object. In this case, the table is updated.
             vc.deleteObjectClosure = { [weak self] id in
                 guard let self = self else { return }

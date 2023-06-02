@@ -150,12 +150,15 @@ final class AppSettings: NSObject {
         }
     }
     
+    // the variable in which the comment is written, which the user assigns to changeset. Used on EditVC, SavedNodesVC and OsmClient
+    var changeSetComment: String?
+    
 //    MARK: MAP STYLES
 
     //  Displays the loaded OSM data.
     let defaultStyle = """
     node {
-        icon-image: "circle.svg";
+        icon-image: "poi_circle_small.svg";
         icon-scale: 2;
         icon-tint: blue;
         text: eval(tag('text'));
@@ -179,7 +182,7 @@ final class AppSettings: NSObject {
     //  Displays objects that have been modified but not sent to the server (green).
     let savedStyle = """
     node {
-        icon-image: "circle.svg";
+        icon-image: "poi_circle_small.svg";
         icon-scale: 2;
         icon-tint: green;
     }
@@ -193,7 +196,7 @@ final class AppSettings: NSObject {
     //  Displays the object that was tapped and whose properties are currently being edited (yellow).
     let editStyle = """
     node {
-        icon-image: "circle.svg";
+        icon-image: "poi_circle_small.svg";
         icon-scale: 1;
         icon-tint: yellow;
     }
@@ -211,7 +214,7 @@ final class AppSettings: NSObject {
     //  Displays objects created but not sent to the server (orange color).
     let newStyle = """
     node {
-        icon-image: "circle.svg";
+        icon-image: "poi_circle_small.svg";
         icon-scale: 2;
         icon-tint: orange;
     }
@@ -225,7 +228,7 @@ final class AppSettings: NSObject {
     //  Highlights objects that fell under the tap, if there was not one object under the tap, but several.
     let tappedStyle = """
     node {
-        icon-image: "circle.svg";
+        icon-image: "poi_circle_small.svg";
         icon-scale: 2;
         icon-tint: orange;
     }
@@ -246,11 +249,34 @@ final class AppSettings: NSObject {
     
 //    MARK: FILE PATHES
     
+    // Path to a file that stores modified and created objects
     let savedNodesURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("savedNodes.data")
     
-    let inputFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input.xml")
+    // Path to a file that stores objects marked for deletion
+    let deletedNodesURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("deletedNodes.data")
     
+    // Pathes to files with XML (input) and geoJSON (output) data of central bbox (user screen)
+    let inputFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input.xml")
     let outputFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data.geojson")
+    // Pathes to files with xml and geoJSON data of the map surrounding the bbox
+    let inputFileURL1 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input1.xml")
+    let outputFileURL1 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data1.geojson")
+    let inputFileURL2 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input2.xml")
+    let outputFileURL2 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data2.geojson")
+    let inputFileURL3 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input3.xml")
+    let outputFileURL3 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data3.geojson")
+    let inputFileURL4 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input4.xml")
+    let outputFileURL4 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data4.geojson")
+    let inputFileURL5 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input5.xml")
+    let outputFileURL5 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data5.geojson")
+    let inputFileURL6 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input6.xml")
+    let outputFileURL6 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data6.geojson")
+    let inputFileURL7 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input7.xml")
+    let outputFileURL7 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data7.geojson")
+    let inputFileURL8 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input8.xml")
+    let outputFileURL8 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data8.geojson")
+    let inputFileURL9 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input9.xml")
+    let outputFileURL9 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data9.geojson")
     
     //  Stores objects downloaded from OSM server
     var inputObjects: [Int: Any] = [:]
@@ -270,13 +296,34 @@ final class AppSettings: NSObject {
         }
     }
     
-    //  Fills savedObjects with objects from the file when the application starts
+    // Objects marked for deletion
+    var deletedObjects: [Int: OSMAnyObject] = [:] {
+        didSet {
+            if let clouser = mapVCClouser {
+                clouser()
+            }
+            do {
+                let data = try JSONEncoder().encode(deletedObjects)
+                try data.write(to: deletedNodesURL, options: .atomic)
+            } catch {
+                print("Error while write saved objects: ", error)
+            }
+        }
+    }
+    
+    //  Fills savedObjects and deletedObjects with objects from the file when the application starts
     func getSavedObjects() {
         do {
             let data = try Data(contentsOf: savedNodesURL)
             savedObjects = try JSONDecoder().decode([Int: OSMAnyObject].self, from: data)
         } catch {
             savedObjects = [:]
+        }
+        do {
+            let data = try Data(contentsOf: deletedNodesURL)
+            deletedObjects = try JSONDecoder().decode([Int: OSMAnyObject].self, from: data)
+        } catch {
+            deletedObjects = [:]
         }
     }
     
