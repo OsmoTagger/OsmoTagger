@@ -13,31 +13,28 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
     
     //  The variable in which the reference to the last pressed button "Bulb" is written, which highlights the tapped object. When you click on another object, the backlight is removed, the link changes.
     private var activeBulb: MultiSelectBotton?
-        
+    
     var tableView = UITableView()
     var cellId = "cell"
     var tableData: [SaveNodeTableData] = []
     //  An array in which the IDs of the selected objects are stored.
     var selectedIDs: [SavedSelectedIndex] = []
     // View for enter comment to chageset
-    var enterCommentView = EnterChangesetComment()
-    var enterCommentViewConstrains = [NSLayoutConstraint]()
+    var enterCommentView = UITextField()
+    
+    var tap = UIGestureRecognizer()
     
     deinit {
         AppSettings.settings.changeSetComment = nil
-        enterCommentView.closeClosure = nil
-        enterCommentView.enterClosure = nil
     }
     
     override func viewDidLoad() {
-        // Notifications about calling and hiding the keyboard.
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        view.backgroundColor = .systemBackground
+        title = "Changeset"
         
-        title = "Set of changes"
-        
-        setToolBar()
         fillData()
+        setToolBar()
+        setEnterCommentView()
         setTableView()
         checkUniqInMemory()
     }
@@ -45,11 +42,6 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
     override func viewWillAppear(_: Bool) {
         fillData()
         tableView.reloadData()
-    }
-    
-    override func viewDidDisappear(_: Bool) {
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     func setToolBar() {
@@ -79,8 +71,10 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
                 let path = SavedSelectedIndex(type: .deleted, id: id)
                 selectedIDs.append(path)
             }
+            enterCommentView.placeholder = generateComment()
         } else {
             selectedIDs = []
+            enterCommentView.placeholder = ""
         }
         tableView.reloadData()
     }
@@ -229,23 +223,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         }
         return result
     }
-    
-    func setTableView() {
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 50
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(SavedNodeCell.self, forCellReuseIdentifier: cellId)
-        view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
-        ])
-    }
-    
+
     func numberOfSections(in _: UITableView) -> Int {
         return tableData.count
     }
@@ -303,7 +281,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         guard let object = nilObject else { return }
         let vector = object.getVectorObject()
         delegate?.showTapObject(object: vector)
-        let vc = InfoObjectViewController(object: object)
+        let vc = EditObjectViewController(object: object)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -345,6 +323,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             }
             selectedIDs.remove(at: i)
         }
+        enterCommentView.placeholder = generateComment()
     }
     
     //  The method that is called when the "Bulb" backlight button is pressed.
@@ -395,7 +374,12 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             showAction(message: "Attention! The listed objects are modified for submission and are marked for deletion at the same time: \(uniq). Fix it.", addAlerts: [])
             return
         }
-        setEnterCommentView()
+        if enterCommentView.text == "" {
+            AppSettings.settings.changeSetComment = enterCommentView.placeholder
+        } else {
+            AppSettings.settings.changeSetComment = enterCommentView.text
+        }
+        sendObjects()
     }
     
     func sendObjects() {
@@ -416,7 +400,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         let capturedDeletedObjects = deletedObjects
         Task {
             do {
-                try await OsmClient.client.sendObjects(sendObjs: capturedSavedObjects, deleteObjs: capturedDeletedObjects)
+                try await OsmClient().sendObjects(sendObjs: capturedSavedObjects, deleteObjs: capturedDeletedObjects)
                 for object in capturedSavedObjects {
                     AppSettings.settings.savedObjects.removeValue(forKey: object.id)
                 }
@@ -429,6 +413,12 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
                 fillData()
                 tableView.reloadData()
                 removeIndicator(indicator: indicator)
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else {return}
+                    self.enterCommentView.placeholder = nil
+                    self.enterCommentView.text = nil
+                    AppSettings.settings.changeSetComment = nil
+                }
                 let alert0 = UIAlertAction(title: "Ok", style: .default, handler: { _ in
                     if AppSettings.settings.savedObjects.count == 0, AppSettings.settings.deletedObjects.count == 0 {
                         self.dismiss(animated: true)
@@ -477,54 +467,67 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
     
     // Method displays a comment input field of changeset
     func setEnterCommentView() {
-        navigationController?.setToolbarHidden(true, animated: false)
-        enterCommentView.closeClosure = { [weak self] in
-            guard let self = self else { return }
-            self.navigationController?.setToolbarHidden(false, animated: false)
-        }
-        enterCommentView.enterClosure = { [weak self] in
-            guard let self = self else { return }
-            self.navigationController?.setToolbarHidden(false, animated: false)
-            self.sendObjects()
-        }
-        enterCommentView.backgroundColor = .backColor0
-        enterCommentView.layer.borderColor = UIColor.systemGray.cgColor
         enterCommentView.layer.borderWidth = 2
-        let comment = generateComment()
-        enterCommentView.field.text = comment
+        enterCommentView.layer.cornerRadius = 5
+        enterCommentView.clearButtonMode = .always
+        enterCommentView.delegate = self
         enterCommentView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(enterCommentView)
-        NSLayoutConstraint.deactivate(enterCommentViewConstrains)
-        enterCommentViewConstrains = [
-            enterCommentView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            enterCommentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            enterCommentView.leftAnchor.constraint(equalTo: view.leftAnchor),
-        ]
-        NSLayoutConstraint.activate(enterCommentViewConstrains)
+        let commentTitle = UILabel()
+        commentTitle.text = "Comment"
+        commentTitle.backgroundColor = .systemBackground
+        commentTitle.font = UIFont.systemFont(ofSize: 14)
+        commentTitle.textColor = .systemGray
+        commentTitle.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(commentTitle)
+        NSLayoutConstraint.activate([
+            enterCommentView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            enterCommentView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            enterCommentView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -20),
+            enterCommentView.heightAnchor.constraint(equalToConstant: 40),
+            commentTitle.centerYAnchor.constraint(equalTo: enterCommentView.topAnchor),
+            commentTitle.leftAnchor.constraint(equalTo: enterCommentView.leftAnchor, constant: 10),
+        ])
+    }
+
+    func setTableView() {
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 50
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(SavedNodeCell.self, forCellReuseIdentifier: cellId)
+        view.addSubview(tableView)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: enterCommentView.bottomAnchor),
+            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        ])
+    }
+}
+    
+extension SavedNodesViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_: UITextField) -> Bool {
+        view.endEditing(true)
+        return true
     }
     
-    //  Updating the view when the keyboard appears.
-    @objc func keyboardWillShow(notification: NSNotification) {
-        guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-        if keyboardSize.height > 0 {
-            NSLayoutConstraint.deactivate(enterCommentViewConstrains)
-            enterCommentViewConstrains = [
-                enterCommentView.rightAnchor.constraint(equalTo: view.rightAnchor),
-                enterCommentView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -keyboardSize.height),
-                enterCommentView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            ]
-            NSLayoutConstraint.activate(enterCommentViewConstrains)
-        }
+    func textFieldDidBeginEditing(_: UITextField) {
+        tap = UITapGestureRecognizer(target: self, action: #selector(endEdit))
+        tap.delegate = self
+        view.addGestureRecognizer(tap)
     }
     
-    //  Updating the view when hiding the keyboard.
-    @objc func keyboardWillHide(notification _: NSNotification) {
-        NSLayoutConstraint.deactivate(enterCommentViewConstrains)
-        enterCommentViewConstrains = [
-            enterCommentView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            enterCommentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            enterCommentView.leftAnchor.constraint(equalTo: view.leftAnchor),
-        ]
-        NSLayoutConstraint.activate(enterCommentViewConstrains)
+    @objc func endEdit(sender _: UIGestureRecognizer) {
+        view.endEditing(true)
     }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        view.removeGestureRecognizer(tap)
+    }
+}
+
+extension SavedNodesViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer) -> Bool { return true }
 }

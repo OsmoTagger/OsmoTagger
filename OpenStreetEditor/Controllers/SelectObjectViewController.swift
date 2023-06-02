@@ -38,7 +38,7 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
         setTableView()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_: Bool) {
         navigationController?.setToolbarHidden(true, animated: true)
     }
     
@@ -150,41 +150,8 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         let idString = tableData[indexPath.row].idLabel
         guard let id = Int(idString) else { return }
-        if let object = AppSettings.settings.savedObjects[id] {
+        for object in objects where object.id == id {
             let vc = EditObjectViewController(object: object)
-//          On the tag editing controller, the user can delete an object. In this case, the table is updated.
-            vc.deleteObjectClosure = { [weak self] id in
-                guard let self = self else { return }
-                for i in self.objects.indices {
-                    let object = self.objects[i]
-                    if object.id == id {
-                        self.objects.remove(at: i)
-                        self.fillData()
-                        self.tableView.reloadData()
-                    }
-                }
-            }
-            let vector = object.getVectorObject()
-            delegate?.showTapObject(object: vector)
-            navigationController?.pushViewController(vc, animated: true)
-        } else if let osmObject = AppSettings.settings.inputObjects[id] {
-            guard let object = convertOSMToObject(osmObject: osmObject) else { return }
-            let vector = object.getVectorObject()
-            delegate?.showTapObject(object: vector)
-            let vc = EditObjectViewController(object: object)
-//          On the tag editing controller, the user can delete an object. In this case, the table is updated.
-            vc.deleteObjectClosure = { [weak self] id in
-                guard let self = self else { return }
-                for i in self.objects.indices {
-                    let object = self.objects[i]
-                    if object.id == id {
-                        self.objects.remove(at: i)
-                        self.fillData()
-                        self.tableView.reloadData()
-                        break
-                    }
-                }
-            }
             navigationController?.pushViewController(vc, animated: true)
         }
     }

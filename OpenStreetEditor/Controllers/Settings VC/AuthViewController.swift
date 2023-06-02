@@ -141,7 +141,7 @@ class AuthViewController: UIViewController {
         let indicator = showIndicator()
         Task {
             do {
-                try await OsmClient.client.checkAuth()
+                try await OsmClient().checkAuth()
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
                     self.authResult.update()
@@ -159,7 +159,7 @@ class AuthViewController: UIViewController {
         Task {
             let indicator = showIndicator()
             do {
-                let userInfo = try await OsmClient.client.getUserInfo()
+                let userInfo = try await OsmClient().getUserInfo()
                 setUserInfoView(user: userInfo)
             } catch {
                 let message = error as? String ?? "Error check user info"

@@ -117,6 +117,71 @@ class Parser {
     }
 }
 
+class OSMXmlParser: NSObject {
+    var objects: [Int: Any] = [:]
+    var curNode: Node?
+    var curWay: Way?
+}
+
+extension OSMXmlParser: XMLParserDelegate {
+    
+    func parser(_: XMLParser, didStartElement elementName: String, namespaceURI _: String?, qualifiedName _: String?, attributes attributeDict: [String: String] = [:]) {
+        if elementName == "node" {
+            guard let idString = attributeDict["id"],
+                  let versionString = attributeDict["version"],
+                  let changesetString = attributeDict["changeset"],
+                  let latString = attributeDict["lat"],
+                  let lonString = attributeDict["lon"],
+                  let id = Int(idString),
+                  let version = Int(versionString),
+                  let changeset = Int(changesetString),
+                  let lat = Double(latString),
+                  let lon = Double(lonString) else {return}
+            curNode = Node(id: id, version: version, changeset: changeset, lat: lat, lon: lon, tag: [])
+        }
+        if elementName == "way" {
+            guard let idString = attributeDict["id"],
+                  let versionString = attributeDict["version"],
+                  let changesetString = attributeDict["changeset"],
+                  let id = Int(idString),
+                  let version = Int(versionString),
+                  let changeset = Int(changesetString) else {return}
+            curWay = Way(id: id, version: version, changeset: changeset, tag: [], nd: [])
+        }
+        if elementName == "tag" {
+            guard let key = attributeDict["k"],
+                  let value = attributeDict["v"] else {return}
+            let tag = Tag(k: key, v: value, value: "")
+            if curNode != nil && curWay == nil {
+                // fill node
+                curNode?.tag.append(tag)
+            } else if curNode == nil && curWay != nil {
+                // fill way
+                curWay?.tag.append(tag)
+            }
+        }
+        if elementName == "nd" {
+            guard let refString = attributeDict["ref"],
+                  let ref = Int(refString) else {return}
+            let nd = ND(ref: ref)
+            curWay?.nd.append(nd)
+        }
+    }
+    
+    func parser(_: XMLParser, didEndElement: String, namespaceURI _: String?, qualifiedName _: String?) {
+        if didEndElement == "node" {
+            guard let node = curNode else {return}
+            objects[node.id] = node
+            curNode = nil
+        }
+        if didEndElement == "way" {
+            guard let way = curWay else {return}
+            objects[way.id] = way
+            curWay = nil
+        }
+    }
+}
+
 class PresetElementsParser: NSObject {
     var preset: Presets
     var item: Item = .init(name: "", icon: nil, type: [], elements: [])

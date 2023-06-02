@@ -12,35 +12,48 @@ import XMLCoder
 
 // Class for work with mapView. Later it is necessary to transfer all map objects to it
 class MapClient {
-    // Download objects
-    var tapObjects: [GLMapVectorObjectArray] = []
-    let fileManager = FileManager.default
+    weak var delegate: MapClientProtocol?
     
-    var addDrawbleClouser: ((GLMapDrawable) -> Void)?
-    var deleteDrawbleClouser: ((GLMapDrawable) -> Void)?
-    
-    private var mutex = pthread_mutex_t()
-    
-    var loadSourceTask: TaskGroup<Void>?
-    
-    // Variable save showed layers.
-    // 0...8 - layers with source data
-    // 9 - created objects
-    // 10 - edited objects
-    var showedDrawable: [Int: GLMapDrawable] = [:]
-    
-    //  Drawble objects and styles to display data on MapView.
-    let sourceStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.defaultStyle)
-    //  Displays objects created but not sent to the server (orange color).
-    let newStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.newStyle)
-    //  Displays objects that have been modified but not sent to the server (green).
-    let savedStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.savedStyle)
-    
-    init() {
-        setAppSettingsClouser()
-        pthread_mutex_init(&mutex, nil)
+    // Since the getSourceBbox data loading method is launched when the screen is shifted, we use lock to block simultaneous access to variables.
+    let lock = NSLock()
+    // A dictionary that stores the unique id of the upload operation
+    var openOperations: [Int: Bool] = [:]
+    // Variable to give each load operation a unique id
+    var lastID: Int = 0
+    var operationID: Int {
+        let number = lastID + 1
+        lastID = number
+        return number
     }
     
+    let fileManager = FileManager.default
+    
+    // All vector objects on the map are added to the array, to search for objects under the tap
+    var tapObjects = GLMapVectorObjectArray()
+        
+    // Drawble objects and styles to display data on MapView
+    // Layer with original OSM map data
+    let sourceDrawble = GLMapVectorLayer(drawOrder: 0)
+    let sourceStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.defaultStyle)
+    //  Displays objects created but not sent to the server (orange color).
+    let newDrawble = GLMapVectorLayer(drawOrder: 2)
+    let newStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.newStyle)
+    //  Displays objects that have been modified but not sent to the server (green).
+    let savedDrawable = GLMapVectorLayer(drawOrder: 1)
+    let savedStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.savedStyle)
+    
+    // Link to SavedNodesButton on MapViewController to update counter
+    var savedNodeButtonLink: SavedObjectButton?
+    
+    // Latest options bbox loading raw map data
+    var lastCenter: GLMapGeoPoint?
+    // This is the default bbox size for loading OSM raw data. In case of receiving a response from the server "400" - too many objects in the bbox (may occur in regions with a high density of objects) is reduced by 25%
+    var defaultBboxSize = 0.004
+     
+    init() {
+        setAppSettingsClouser()
+    }
+        
     func setAppSettingsClouser() {
         // Every time AppSettings.settings.savedObjects is changed (this is the variable in which the modified or created objects are stored), a closure is called. In this case, when a short circuit is triggered, we update the illumination of saved and created objects.
         AppSettings.settings.mapVCClouser = { [weak self] in
@@ -49,283 +62,170 @@ class MapClient {
         }
     }
     
-    // Loading the source data of the map surrounding the bbox
-    // 1 2 3
-    // 8 0 4
-    // 7 6 5
-    func getSourceSurround(longitudeDisplayMin: Double, latitudeDisplayMin: Double, longitudeDisplayMax: Double, latitudeDisplayMax: Double) async {
-        print("getSourceSurround")
-        let latitudeDiff = latitudeDisplayMax - latitudeDisplayMin
-        let longitudeDiff = longitudeDisplayMax - longitudeDisplayMin
-        let arr = [latitudeDiff, longitudeDiff]
-        guard let diff = arr.min() else { return }
-        if loadSourceTask != nil {
-            loadSourceTask?.cancelAll()
+    // The method is called from a closure on the MapViewController to load data in case the map moves out of the area of previously loaded data
+    //    ---------latMax
+    //   |           |
+    //   |           |
+    //   |           |
+    // lonMin------lonMax/latMin
+    func checkMapCenter(center: GLMapGeoPoint) async throws {
+        if let lastCenter = lastCenter {
+            let longMin = lastCenter.lon - defaultBboxSize
+            let longMax = lastCenter.lon + defaultBboxSize
+            let latMin = lastCenter.lat - defaultBboxSize
+            let latMax = lastCenter.lat + defaultBboxSize
+            if center.lon < longMin || center.lon > longMax || center.lat < latMin || center.lat > latMax {
+                // When we call the new load method, we remove all values from the dictionary of operations to block them.
+                try await startNewDownload(center: center)
+            }
+        } else {
+            lastCenter = center
+            try await startNewDownload(center: center)
         }
-        loadSourceTask = await withTaskGroup(of: Void.self, body: { [weak self] group in
-            guard let self = self else { return nil }
-            group.addTask {
-                await self.getBboxSourceData(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMax, index: 0)
-            }
-            group.addTask {
-                await self.getBboxSourceData(longitudeDisplayMin: longitudeDisplayMin - diff, latitudeDisplayMin: latitudeDisplayMax, longitudeDisplayMax: longitudeDisplayMin, latitudeDisplayMax: latitudeDisplayMax + diff, index: 1)
-            }
-            group.addTask {
-                await self.getBboxSourceData(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMax, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMax + diff, index: 2)
-            }
-            group.addTask {
-                await self.getBboxSourceData(longitudeDisplayMin: longitudeDisplayMax, latitudeDisplayMin: latitudeDisplayMax, longitudeDisplayMax: longitudeDisplayMax + diff, latitudeDisplayMax: latitudeDisplayMax + diff, index: 3)
-            }
-            group.addTask {
-                await self.getBboxSourceData(longitudeDisplayMin: longitudeDisplayMax, latitudeDisplayMin: latitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax + diff, latitudeDisplayMax: latitudeDisplayMax, index: 4)
-            }
-            group.addTask {
-                await self.getBboxSourceData(longitudeDisplayMin: longitudeDisplayMax, latitudeDisplayMin: latitudeDisplayMin - diff, longitudeDisplayMax: longitudeDisplayMax + diff, latitudeDisplayMax: latitudeDisplayMin, index: 5)
-            }
-            group.addTask {
-                await self.getBboxSourceData(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMin - diff, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMin, index: 6)
-            }
-            group.addTask {
-                await self.getBboxSourceData(longitudeDisplayMin: longitudeDisplayMin - diff, latitudeDisplayMin: latitudeDisplayMin - diff, longitudeDisplayMax: longitudeDisplayMin, latitudeDisplayMax: latitudeDisplayMin, index: 7)
-            }
-            group.addTask {
-                await self.getBboxSourceData(longitudeDisplayMin: longitudeDisplayMin - diff, latitudeDisplayMin: latitudeDisplayMin - diff, longitudeDisplayMax: longitudeDisplayMin, latitudeDisplayMax: latitudeDisplayMax, index: 8)
-            }
-            await group.next()
-            return group
-        })
-        print("done")
     }
     
-    func getBboxSourceData(longitudeDisplayMin: Double, latitudeDisplayMin: Double, longitudeDisplayMax: Double, latitudeDisplayMax: Double, index: Int) async {
-        var data: Data?
-        do {
-            data = try await OsmClient().downloadOSMData(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMax)
-        } catch {
-            print(error)
+    func startNewDownload(center: GLMapGeoPoint) async throws {
+        lock.lock()
+        openOperations.removeAll()
+        lock.unlock()
+        try await getSourceBbox(mapCenter: center)
+    }
+    
+    // Loading the source data of the map in the bbox
+    func getSourceBbox(mapCenter: GLMapGeoPoint) async throws {
+        if defaultBboxSize < 0.0005 {
+            defaultBboxSize = 0.002
         }
-        guard let data = data else { return }
-        var newObjects: GLMapVectorObjectArray?
-        switch index {
-        case 0:
-            do {
-                if fileManager.fileExists(atPath: AppSettings.settings.inputFileURL.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.inputFileURL.path)
-                }
-                if fileManager.fileExists(atPath: AppSettings.settings.outputFileURL1.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.outputFileURL.path)
-                }
-                try data.write(to: URL(fileURLWithPath: AppSettings.settings.inputFileURL.path))
-                if let error = osmium_convert(AppSettings.settings.inputFileURL.path, AppSettings.settings.outputFileURL.path) {
-                    throw "Error osmium convert: \(error)"
-                }
-                let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL)
-                newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-            } catch {
-                print("Error write file: \(error)")
+        let id = operationID
+        // Run indicator animation in MapViewController
+        delegate?.startDownload()
+        // Adding an operation to the dictionary of running operations
+        lock.lock()
+        openOperations[id] = true
+        lock.unlock()
+
+        // Create tmp directory and file for converting OSM xml to geoJSON and indexing it
+        let xmlFileName = ProcessInfo().globallyUniqueString
+        let xmlFileURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(xmlFileName + ".osm")
+        let jsonFileName = ProcessInfo().globallyUniqueString
+        let jsonFileURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(jsonFileName + ".geojson")
+        defer {
+            if fileManager.fileExists(atPath: xmlFileURL.path) {
+                try? fileManager.removeItem(at: xmlFileURL)
             }
-        case 1:
-            do {
-                if fileManager.fileExists(atPath: AppSettings.settings.inputFileURL1.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.inputFileURL1.path)
-                }
-                if fileManager.fileExists(atPath: AppSettings.settings.outputFileURL1.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.outputFileURL1.path)
-                }
-                try data.write(to: URL(fileURLWithPath: AppSettings.settings.inputFileURL1.path))
-                if let error = osmium_convert(AppSettings.settings.inputFileURL1.path, AppSettings.settings.outputFileURL1.path) {
-                    throw "Error osmium convert: \(error)"
-                }
-                let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL1)
-                newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-            } catch {
-                print("Error write file: \(error)")
+            if fileManager.fileExists(atPath: jsonFileURL.path) {
+                try? fileManager.removeItem(at: jsonFileURL)
             }
-        case 2:
-            do {
-                if fileManager.fileExists(atPath: AppSettings.settings.inputFileURL2.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.inputFileURL2.path)
-                }
-                if fileManager.fileExists(atPath: AppSettings.settings.outputFileURL2.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.outputFileURL2.path)
-                }
-                try data.write(to: URL(fileURLWithPath: AppSettings.settings.inputFileURL2.path))
-                if let error = osmium_convert(AppSettings.settings.inputFileURL2.path, AppSettings.settings.outputFileURL2.path) {
-                    throw "Error osmium convert: \(error)"
-                }
-                let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL2)
-                newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-            } catch {
-                print("Error write file: \(error)")
-            }
-        case 3:
-            do {
-                if fileManager.fileExists(atPath: AppSettings.settings.inputFileURL3.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.inputFileURL3.path)
-                }
-                if fileManager.fileExists(atPath: AppSettings.settings.outputFileURL3.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.outputFileURL3.path)
-                }
-                try data.write(to: URL(fileURLWithPath: AppSettings.settings.inputFileURL3.path))
-                if let error = osmium_convert(AppSettings.settings.inputFileURL3.path, AppSettings.settings.outputFileURL3.path) {
-                    throw "Error osmium convert: \(error)"
-                }
-                let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL3)
-                newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-            } catch {
-                print("Error write file: \(error)")
-            }
-        case 4:
-            do {
-                if fileManager.fileExists(atPath: AppSettings.settings.inputFileURL4.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.inputFileURL4.path)
-                }
-                if fileManager.fileExists(atPath: AppSettings.settings.outputFileURL4.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.outputFileURL4.path)
-                }
-                try data.write(to: URL(fileURLWithPath: AppSettings.settings.inputFileURL4.path))
-                if let error = osmium_convert(AppSettings.settings.inputFileURL4.path, AppSettings.settings.outputFileURL4.path) {
-                    throw "Error osmium convert: \(error)"
-                }
-                let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL4)
-                newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-            } catch {
-                print("Error write file: \(error)")
-            }
-        case 5:
-            do {
-                if fileManager.fileExists(atPath: AppSettings.settings.inputFileURL5.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.inputFileURL5.path)
-                }
-                if fileManager.fileExists(atPath: AppSettings.settings.outputFileURL5.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.outputFileURL5.path)
-                }
-                try data.write(to: URL(fileURLWithPath: AppSettings.settings.inputFileURL5.path))
-                if let error = osmium_convert(AppSettings.settings.inputFileURL5.path, AppSettings.settings.outputFileURL5.path) {
-                    throw "Error osmium convert: \(error)"
-                }
-                let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL5)
-                newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-            } catch {
-                print("Error write file: \(error)")
-            }
-        case 6:
-            do {
-                if fileManager.fileExists(atPath: AppSettings.settings.inputFileURL6.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.inputFileURL6.path)
-                }
-                if fileManager.fileExists(atPath: AppSettings.settings.outputFileURL6.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.outputFileURL6.path)
-                }
-                try data.write(to: URL(fileURLWithPath: AppSettings.settings.inputFileURL6.path))
-                if let error = osmium_convert(AppSettings.settings.inputFileURL6.path, AppSettings.settings.outputFileURL6.path) {
-                    throw "Error osmium convert: \(error)"
-                }
-                let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL6)
-                newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-            } catch {
-                print("Error write file: \(error)")
-            }
-        case 7:
-            do {
-                if fileManager.fileExists(atPath: AppSettings.settings.inputFileURL7.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.inputFileURL7.path)
-                }
-                if fileManager.fileExists(atPath: AppSettings.settings.outputFileURL7.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.outputFileURL7.path)
-                }
-                try data.write(to: URL(fileURLWithPath: AppSettings.settings.inputFileURL7.path))
-                if let error = osmium_convert(AppSettings.settings.inputFileURL7.path, AppSettings.settings.outputFileURL7.path) {
-                    throw "Error osmium convert: \(error)"
-                }
-                let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL7)
-                newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-            } catch {
-                print("Error write file: \(error)")
-            }
-        case 8:
-            do {
-                if fileManager.fileExists(atPath: AppSettings.settings.inputFileURL8.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.inputFileURL8.path)
-                }
-                if fileManager.fileExists(atPath: AppSettings.settings.outputFileURL8.path) {
-                    try fileManager.removeItem(atPath: AppSettings.settings.outputFileURL8.path)
-                }
-                try data.write(to: URL(fileURLWithPath: AppSettings.settings.inputFileURL8.path))
-                if let error = osmium_convert(AppSettings.settings.inputFileURL8.path, AppSettings.settings.outputFileURL8.path) {
-                    throw "Error osmium convert: \(error)"
-                }
-                let dataGeojson = try Data(contentsOf: AppSettings.settings.outputFileURL8)
-                newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
-            } catch {
-                print("Error write file: \(error)")
-            }
-        default:
+        }
+        
+        // Setting a maximum bbox size to prevent getting a 400 error from the server
+        let latitudeDisplayMin = mapCenter.lat - defaultBboxSize
+        let latitudeDisplayMax = mapCenter.lat + defaultBboxSize
+        let longitudeDisplayMin = mapCenter.lon - defaultBboxSize
+        let longitudeDisplayMax = mapCenter.lon + defaultBboxSize
+        // Get data from server
+        var nilData: Data?
+        do {
+            nilData = try await OsmClient().downloadOSMData(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMax)
+        } catch OsmClientErrors.objectLimit {
+            // Reduce bbox size to reduce the number of loaded objects
+            print("--------------------Objects limit---------------------------")
+            lock.lock()
+            defaultBboxSize = defaultBboxSize * 0.75
+            openOperations.removeAll()
+            lock.unlock()
+            try await getSourceBbox(mapCenter: mapCenter)
+        }
+        lock.lock()
+        if openOperations[id] == nil {
+            print("2-", id)
+            lock.unlock()
             return
         }
-        guard let newObjects = newObjects,
-              newObjects.count > 0 else { return }
-        pthread_mutex_lock(&mutex)
-        tapObjects.append(newObjects)
-        pthread_mutex_unlock(&mutex)
-        let newDrawble = GLMapVectorLayer(drawOrder: 0)
-        if let style = sourceStyle {
-            newDrawble.setVectorObjects(newObjects, with: style, completion: nil)
-            pthread_mutex_lock(&mutex)
-            if let oldDrawble = showedDrawable[index],
-               let deleteClouser = deleteDrawbleClouser
-            {
-                deleteClouser(oldDrawble)
-                showedDrawable[index] = nil
-            }
-            if let addClouser = addDrawbleClouser {
-                addClouser(newDrawble)
-                showedDrawable[index] = newDrawble
-            }
-            pthread_mutex_unlock(&mutex)
+        lock.unlock()
+        // Write data to file
+        guard let data = nilData else { throw "Error get data - nill data" }
+        DispatchQueue.global().async { [weak self] in
+            guard let self = self else { return }
+            self.getNodesFromXML(data: data)
         }
-        await getNodesFromXML(index: index)
+        lock.lock()
+        if openOperations[id] == nil {
+            print("3-", id)
+            lock.unlock()
+            return
+        }
+        lock.unlock()
+        try data.write(to: xmlFileURL)
+        // Convert OSM xml to geoJSON
+        if let error = osmium_convert(xmlFileURL.path, jsonFileURL.path) {
+            throw "Error osmium convert: \(error). Try move map center and load data again."
+        }
+        lock.lock()
+        if openOperations[id] == nil {
+            print("4-", id)
+            lock.unlock()
+            return
+        }
+        lock.unlock()
+        let dataGeojson = try Data(contentsOf: jsonFileURL)
+        lock.lock()
+        if openOperations[id] == nil {
+            print("5-", id)
+            lock.unlock()
+            return
+        }
+        lock.unlock()
+        // Make vector objects from geoJSON
+        let newObjects = try GLMapVectorObject.createVectorObjects(fromGeoJSONData: dataGeojson)
+        lock.lock()
+        if openOperations[id] == nil {
+            print("6-", id)
+            lock.unlock()
+            return
+        }
+        lock.unlock()
+        // Add new objects to array for tap
+        lock.lock()
+        tapObjects = newObjects
+        if openOperations[id] == nil {
+            print("7-", id)
+            lock.unlock()
+            return
+        }
+        lock.unlock()
+        // Add layer on MapViewController
+        delegate?.removeDrawble(layer: sourceDrawble)
+        if let style = sourceStyle {
+            lock.lock()
+            sourceDrawble.setVectorObjects(newObjects, with: style, completion: nil)
+            lock.unlock()
+            delegate?.addDrawble(layer: sourceDrawble)
+        }
+        lock.lock()
+        lastCenter = mapCenter
+        if openOperations[id] == nil {
+            print("8-", id)
+            lock.unlock()
+            return
+        }
+        lock.unlock()
     }
     
     //  In the background, we start indexing the downloaded data and saving them with the dictionary appSettings.settings.inputObjects for quick access to the object by its id.
-    func getNodesFromXML(index: Int) async {
-        var data: Data?
-        switch index {
-        case 0:
-            data = try? Data(contentsOf: AppSettings.settings.inputFileURL)
-        case 1:
-            data = try? Data(contentsOf: AppSettings.settings.inputFileURL1)
-        case 2:
-            data = try? Data(contentsOf: AppSettings.settings.inputFileURL2)
-        case 3:
-            data = try? Data(contentsOf: AppSettings.settings.inputFileURL3)
-        case 4:
-            data = try? Data(contentsOf: AppSettings.settings.inputFileURL4)
-        case 5:
-            data = try? Data(contentsOf: AppSettings.settings.inputFileURL5)
-        case 6:
-            data = try? Data(contentsOf: AppSettings.settings.inputFileURL6)
-        case 7:
-            data = try? Data(contentsOf: AppSettings.settings.inputFileURL7)
-        case 8:
-            data = try? Data(contentsOf: AppSettings.settings.inputFileURL8)
-        default:
-            return
-        }
-        guard let data = data else { return }
-        do {
-            let xmlObjects = try XMLDecoder().decode(osm.self, from: data)
-            pthread_mutex_lock(&mutex)
-            for node in xmlObjects.node {
-                AppSettings.settings.inputObjects[node.id] = node
-            }
-            for way in xmlObjects.way {
-                AppSettings.settings.inputObjects[way.id] = way
-            }
-            pthread_mutex_unlock(&mutex)
-        } catch {
-            print(error)
-        }
+    func getNodesFromXML(data: Data) {
+        let id = operationID
+        lock.lock()
+        openOperations[id] = false
+        lock.unlock()        
+        let parser = XMLParser(data: data)
+        let parserDelegate = OSMXmlParser()
+        parser.delegate = parserDelegate
+        parser.parse()
+        lock.lock()
+        AppSettings.settings.inputObjects = parserDelegate.objects
+        lock.unlock()
+        delegate?.endDownload()
     }
     
     //  Get objects after tap
@@ -333,19 +233,13 @@ class MapClient {
         var result: Set<Int> = []
         let maxDist = CGFloat(hypot(tmp.x, tmp.y))
         var nearestPoint = GLMapPoint()
-        var selectedObjects: [GLMapVectorObject] = []
-        for array in tapObjects {
-            guard array.count > 0 else { continue }
-            for i in 0 ... array.count - 1 {
-                let object = array[i]
-                if object.findNearestPoint(&nearestPoint, to: touchCoordinate, maxDistance: maxDist) && (object.type.rawValue == 1 || object.type.rawValue == 2) {
-                    selectedObjects.append(object)
-                }
+        guard tapObjects.count > 0 else { return [] }
+        for i in 0 ... tapObjects.count - 1 {
+            let object = tapObjects[i]
+            if object.findNearestPoint(&nearestPoint, to: touchCoordinate, maxDistance: maxDist) && (object.type.rawValue == 1 || object.type.rawValue == 2) {
+                guard let id = object.getObjectID() else { continue }
+                result.insert(id)
             }
-        }
-        for object in selectedObjects {
-            guard let id = object.getObjectID() else { continue }
-            result.insert(id)
         }
         return result
     }
@@ -356,40 +250,41 @@ class MapClient {
         let newObjects = GLMapVectorObjectArray()
         for (id, osmObject) in AppSettings.settings.savedObjects {
             let object = osmObject.getVectorObject()
+            // The ID is stored as a string in each vector object (feature of how osmium works). To recognize the id of the created object after the tap, assign it a number
             object.setValue(String(id), forKey: "@id")
             if id < 0 {
                 newObjects.add(object)
             } else {
                 savedObjects.add(object)
             }
-            tapObjects.append(newObjects)
-            tapObjects.append(savedObjects)
         }
-        if let drawble = showedDrawable[10],
-           let deleteClouser = deleteDrawbleClouser
-        {
-            deleteClouser(drawble)
+        if savedObjects.count > 0 {
+            for i in 0 ... savedObjects.count - 1 {
+                let object = savedObjects[i]
+                tapObjects.add(object)
+            }
         }
-        if savedObjects.count > 0,
-           let savedStyle = savedStyle,
-           let addClouser = addDrawbleClouser
-        {
-            let savedDrawable = GLMapVectorLayer(drawOrder: 1)
+        if newObjects.count > 0 {
+            for i in 0 ... newObjects.count - 1 {
+                let object = newObjects[i]
+                tapObjects.add(object)
+            }
+        }
+        delegate?.removeDrawble(layer: savedDrawable)
+        delegate?.removeDrawble(layer: newDrawble)
+        if let savedStyle = savedStyle {
             savedDrawable.setVectorObjects(savedObjects, with: savedStyle, completion: nil)
-            addClouser(savedDrawable)
         }
-        if let drawble = showedDrawable[9],
-           let deleteClouser = deleteDrawbleClouser
-        {
-            deleteClouser(drawble)
-        }
-        if newObjects.count > 0,
-           let newStyle = newStyle,
-           let addClouser = addDrawbleClouser
-        {
-            let newDrawble = GLMapVectorLayer(drawOrder: 2)
+        if let newStyle = newStyle {
             newDrawble.setVectorObjects(newObjects, with: newStyle, completion: nil)
-            addClouser(newDrawble)
+        }
+        delegate?.addDrawble(layer: savedDrawable)
+        delegate?.addDrawble(layer: newDrawble)
+        // Update saveNodesButton counter
+        if let button = savedNodeButtonLink {
+            DispatchQueue.main.async {
+                button.update()
+            }
         }
     }
 }

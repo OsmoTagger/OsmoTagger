@@ -261,84 +261,6 @@ class AddTagManuallyView: UIView {
     }
 }
 
-// View for enter comment to chageset. Use on EditVC and SavedNodesVC.
-class EnterChangesetComment: UIView {
-    var field: UITextField = {
-        let field = UITextField()
-        field.translatesAutoresizingMaskIntoConstraints = false
-        field.text = AppSettings.settings.changeSetComment
-        field.borderStyle = .roundedRect
-        field.clearButtonMode = .always
-        field.placeholder = "Enter comment for changeset"
-        return field
-    }()
-
-    lazy var toolbar: UIStackView = {
-        let stack = UIStackView()
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        
-        let doneButton = UIButton()
-        doneButton.setTitle("Enter", for: .normal)
-        doneButton.setTitleColor(.systemBlue, for: .normal)
-        doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
-        doneButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        let cancelButton = UIButton()
-        cancelButton.setTitle("Cancel", for: .normal)
-        cancelButton.setTitleColor(.systemBlue, for: .normal)
-        cancelButton.addTarget(self, action: #selector(tapCancel), for: .touchUpInside)
-        cancelButton.translatesAutoresizingMaskIntoConstraints = false
-
-        stack.addArrangedSubview(cancelButton)
-        stack.addArrangedSubview(doneButton)
-        stack.distribution = .fillEqually
-        stack.backgroundColor = .systemGray5
-        return stack
-    }()
-    
-    var closeClosure: (() -> Void)?
-    var enterClosure: (() -> Void)?
-    
-    @objc func tapCancel() {
-        if let clouser = closeClosure {
-            clouser()
-        }
-        removeFromSuperview()
-    }
-        
-    @objc func doneButtonTapped() {
-        if field.text == "" {
-            AppSettings.settings.changeSetComment = field.text
-        } else {
-            AppSettings.settings.changeSetComment = field.text
-        }
-        if let clouser = enterClosure {
-            clouser()
-        }
-        removeFromSuperview()
-    }
-    
-    convenience init() {
-        self.init(frame: .zero)
-        setupConstrains()
-    }
-    
-    func setupConstrains() {
-        addSubview(toolbar)
-        addSubview(field)
-        NSLayoutConstraint.activate([
-            toolbar.bottomAnchor.constraint(equalTo: bottomAnchor),
-            toolbar.leftAnchor.constraint(equalTo: leftAnchor),
-            toolbar.rightAnchor.constraint(equalTo: rightAnchor),
-            toolbar.heightAnchor.constraint(equalToConstant: 50),
-            field.topAnchor.constraint(equalTo: topAnchor, constant: 20),
-            field.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            field.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
-            field.bottomAnchor.constraint(equalTo: toolbar.topAnchor, constant: -20),
-        ])
-    }
-}
-
 //  TitleView for the tag editing controller
 class EditTitleView: UIView {
     var icon: UIImageView = {
@@ -390,11 +312,49 @@ class EditTitleView: UIView {
     }
 }
 
+// Custom button for download button on the map
+class DownloadButton: UIButton {
+    let circle: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 6
+        view.isHidden = true
+        view.backgroundColor = .systemGreen
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    init() {
+        super.init(frame: .zero)
+        setupConstrains()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupConstrains() {
+        addSubview(circle)
+        NSLayoutConstraint.activate([
+            circle.widthAnchor.constraint(equalToConstant: 12),
+            circle.heightAnchor.constraint(equalToConstant: 12),
+            circle.centerXAnchor.constraint(equalTo: rightAnchor, constant: -8),
+            circle.centerYAnchor.constraint(equalTo: topAnchor, constant: 8),
+        ])
+    }
+}
+
+
 //  Custom button for switching to the controller of saved objects
 class SavedObjectButton: UIButton {
     private let circle: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemRed
+        let counts = AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count
+        if counts == 0 {
+            view.isHidden = true
+        } else {
+            view.isHidden = false
+            view.backgroundColor = .systemRed
+        }
         view.layer.cornerRadius = 9
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -409,6 +369,8 @@ class SavedObjectButton: UIButton {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+
+    private var lastCount = AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count
 
     init() {
         super.init(frame: .zero)
@@ -433,9 +395,14 @@ class SavedObjectButton: UIButton {
         ])
     }
     
-    // Method update count and color of circle
+    // Method update count and of saved, created and deleted objects
     func update() {
         let counts = AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count
+        guard lastCount != counts else { return }
+        if lastCount == 0 {
+            circle.isHidden = false
+        }
+        lastCount = counts
         UIView.animate(withDuration: 0.4, animations: {
             self.circle.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
             self.label.transform = CGAffineTransform(rotationAngle: -.pi)
@@ -445,7 +412,7 @@ class SavedObjectButton: UIButton {
                 self.label.transform = .identity
             } completion: { _ in
                 if counts == 0 {
-                    self.circle.backgroundColor = .systemGray
+                    self.circle.isHidden = true
                     self.label.text = nil
                 } else {
                     self.circle.backgroundColor = .systemRed

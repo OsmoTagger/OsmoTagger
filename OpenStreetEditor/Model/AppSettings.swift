@@ -94,7 +94,7 @@ final class AppSettings: NSObject {
 //          When saving the token, it loads the user's data
             Task {
                 do {
-                    let userInfo = try await OsmClient.client.getUserInfo()
+                    let userInfo = try await OsmClient().getUserInfo()
                     if let clouser = userInfoClouser {
                         clouser(userInfo)
                     }
@@ -151,31 +151,34 @@ final class AppSettings: NSObject {
     }
     
     // the variable in which the comment is written, which the user assigns to changeset. Used on EditVC, SavedNodesVC and OsmClient
+    // Help - https://gurumaps.app/docs/mapcss/
     var changeSetComment: String?
     
 //    MARK: MAP STYLES
-
+    
     //  Displays the loaded OSM data.
     let defaultStyle = """
     node {
         icon-image: "poi_circle_small.svg";
-        icon-scale: 2;
+        icon-scale: 1;
         icon-tint: blue;
-        text: eval(tag('text'));
-        text-color: red;
-        font-size: 12;
-        text-priority: 20;
-        [fixme] { icon-tint: red;}
+        [fixme] {icon-tint: red;}
+        |z17- {
+            icon-scale: 2;
+        }
     }
-    
     line {
         linecap: round;
-        width: 3pt;
+        width: 1pt;
         color:brown;
+        [fixme] {color:red;}
+        |z17- {width: 3pt;}
     }
     area {
-        width:3pt;
+        width:1pt;
         color:black;
+        [fixme] {color:red;}
+        |z17- {width:3pt;}
     }
     """
     
@@ -183,13 +186,15 @@ final class AppSettings: NSObject {
     let savedStyle = """
     node {
         icon-image: "poi_circle_small.svg";
-        icon-scale: 2;
+        icon-scale: 1;
         icon-tint: green;
+        |z17- {icon-scale: 2;}
     }
     line {
         linecap: round;
-        width: 3pt;
+        width: 1pt;
         color:green;
+        |z17- {width: 3pt;}
     }
     """
     
@@ -202,11 +207,11 @@ final class AppSettings: NSObject {
     }
     line {
         linecap: round;
-        width: 3pt;
+        width: 2pt;
         color:yellow;
     }
     area {
-        width:3pt;
+        width:2pt;
         color:yellow;
     }
     """
@@ -215,28 +220,32 @@ final class AppSettings: NSObject {
     let newStyle = """
     node {
         icon-image: "poi_circle_small.svg";
-        icon-scale: 2;
+        icon-scale: 1;
         icon-tint: orange;
+        |z17- {icon-scale: 2;}
     }
     line {
         linecap: round;
-        width: 3pt;
+        width: 1pt;
         color:orange;
+        |z17- {width: 3pt;}
     }
     """
     
     //  Highlights objects that fell under the tap, if there was not one object under the tap, but several.
     let tappedStyle = """
-    node {
-        icon-image: "poi_circle_small.svg";
-        icon-scale: 2;
-        icon-tint: orange;
-    }
-    line {
-        linecap: round;
-        width: 4pt;
-        color:orange;
-    }
+        node {
+            icon-image: "poi_circle_small.svg";
+            icon-scale: 1;
+            icon-tint: violet;
+            |z17- {icon-scale: 2;}
+        }
+        line {
+            linecap: round;
+            width: 1pt;
+            color:violet;
+            |z17- {width: 3pt;}
+        }
     """
     
 //    MARK: PRESETS
@@ -254,29 +263,6 @@ final class AppSettings: NSObject {
     
     // Path to a file that stores objects marked for deletion
     let deletedNodesURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("deletedNodes.data")
-    
-    // Pathes to files with XML (input) and geoJSON (output) data of central bbox (user screen)
-    let inputFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input.xml")
-    let outputFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data.geojson")
-    // Pathes to files with xml and geoJSON data of the map surrounding the bbox
-    let inputFileURL1 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input1.xml")
-    let outputFileURL1 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data1.geojson")
-    let inputFileURL2 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input2.xml")
-    let outputFileURL2 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data2.geojson")
-    let inputFileURL3 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input3.xml")
-    let outputFileURL3 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data3.geojson")
-    let inputFileURL4 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input4.xml")
-    let outputFileURL4 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data4.geojson")
-    let inputFileURL5 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input5.xml")
-    let outputFileURL5 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data5.geojson")
-    let inputFileURL6 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input6.xml")
-    let outputFileURL6 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data6.geojson")
-    let inputFileURL7 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input7.xml")
-    let outputFileURL7 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data7.geojson")
-    let inputFileURL8 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input8.xml")
-    let outputFileURL8 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data8.geojson")
-    let inputFileURL9 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("input9.xml")
-    let outputFileURL9 = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("data9.geojson")
     
     //  Stores objects downloaded from OSM server
     var inputObjects: [Int: Any] = [:]

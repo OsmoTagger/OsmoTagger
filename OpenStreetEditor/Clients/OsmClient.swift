@@ -12,8 +12,6 @@ import XMLCoder
 
 //  Class for working with the OSM API.  Later it is necessary to get rid of singleton
 class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
-    static let client = OsmClient()
-    
     let session = URLSession.shared
     
 //    MARK: OAuth 2.0
@@ -122,29 +120,27 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         guard let url = URL(string: "\(AppSettings.settings.server)/api/0.6/map?bbox=\(longitudeDisplayMin),\(latitudeDisplayMin),\(longitudeDisplayMax),\(latitudeDisplayMax)") else {
             throw "Error generate URL for download data. Server: \(AppSettings.settings.server), Bbox: \(longitudeDisplayMin),\(latitudeDisplayMin),\(longitudeDisplayMax),\(latitudeDisplayMax)"
         }
-        do {
-            let (data, response) = try await session.data(from: url)
-            if let httpResponse = response as? HTTPURLResponse {
-                if httpResponse.statusCode == 200 {
-                    lastLongitudeDisplayMin = longitudeDisplayMin
-                    lastLatitudeDisplayMin = latitudeDisplayMin
-                    lasltLongitudeDisplayMax = longitudeDisplayMax
-                    lastLatitudeDisplayMax = latitudeDisplayMax
-                    return data
-                } else {
-                    guard let str = String(data: data, encoding: .utf8) else {
-                        throw "Unknown response from server. URL: \(url). Status code: \(httpResponse.statusCode)"
-                    }
-                    throw "Error getting data. Status code: \(httpResponse.statusCode), error: \(str)"
-                }
+        let (data, response) = try await session.data(from: url)
+        if let httpResponse = response as? HTTPURLResponse {
+            if httpResponse.statusCode == 200 {
+                lastLongitudeDisplayMin = longitudeDisplayMin
+                lastLatitudeDisplayMin = latitudeDisplayMin
+                lasltLongitudeDisplayMax = longitudeDisplayMax
+                lastLatitudeDisplayMax = latitudeDisplayMax
+                return data
+            } else if httpResponse.statusCode == 400 || httpResponse.statusCode == 509 {
+                throw OsmClientErrors.objectLimit
             } else {
                 guard let str = String(data: data, encoding: .utf8) else {
-                    throw "Unknown response from server. URL: \(url)"
+                    throw "Unknown response from server. URL: \(url). Status code: \(httpResponse.statusCode)"
                 }
-                throw str
+                throw "Error getting data. Status code: \(httpResponse.statusCode), error: \(str)"
             }
-        } catch {
-            throw "Request error to load data from URL \(url). Error: \(error)"
+        } else {
+            guard let str = String(data: data, encoding: .utf8) else {
+                throw "Unknown response from server. URL: \(url)"
+            }
+            throw str
         }
     }
     
@@ -243,10 +239,12 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
     //  open changeset
     func openChangeset() async throws -> Int {
         let comment = AppSettings.settings.changeSetComment ?? "The user has not entered a comment."
+        let buildNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "4"
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
         let requestData = """
         <osm>
             <changeset>
-                <tag k="created_by" v="OpenStreetEditor 1.0(3)"/>
+                <tag k="created_by" v="OpenStreetEditor \(appVersion)(\(buildNumber))"/>
                 <tag k="contact:telegram" v="https://t.me/OpenStreetEditor"/>
                 <tag k="comment" v="\(comment)"/>
             </changeset>
