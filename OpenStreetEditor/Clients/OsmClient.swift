@@ -150,7 +150,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         if sendObjs.count == 0 && deleteObjs.count == 0 {
             throw "Point array is empty"
         }
-        var delete = Delete(node: [], way: [])
+        var delete = Delete(node: [], way: [], relation: [])
         for object in deleteObjs {
             switch object.type {
             case .node:
@@ -163,7 +163,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
                 continue
             }
         }
-        var changeset = osmChange(version: "0.6", generator: "osm editor", modify: Modify(node: [], way: []), create: Create(node: [], way: []), delete: delete)
+        var changeset = osmChange(version: "0.6", generator: "OpenstreetEditor", modify: Modify(node: [], way: [], relation: []), create: Create(node: [], way: [], relation: []), delete: delete)
         for object in sendObjs {
             if object.id < 0 {
                 switch object.type {

@@ -37,22 +37,79 @@ struct osmChange: Decodable, Encodable, DynamicNodeEncoding {
     }
 }
 
-struct Modify: Decodable, Encodable {
+struct Modify: Codable {
     var node: [Node]
     var way: [Way]
+    var relation: [Relation]
 }
 
 struct Create: Codable {
     var node: [Node]
     var way: [Way]
+    var relation: [Relation]
 }
 
 struct Delete: Codable {
     var node: [Node]
     var way: [Way]
+    var relation: [Relation]
 }
 
 // MARK: OSM DATA STRUCTURES
+
+struct Relation: Codable, DynamicNodeEncoding {
+    static func nodeEncoding(for key: CodingKey) -> XMLEncoder.NodeEncoding {
+        switch key {
+        case CodingKeys.id:
+            return .attribute
+        case CodingKeys.version:
+            return .attribute
+        case CodingKeys.changeset:
+            return .attribute
+        default:
+            return .element
+        }
+    }
+    
+    let id: Int
+    let version: Int
+    let changeset: Int
+    var member: [Member]
+    var tag: [Tag]
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case version
+        case changeset
+        case member
+        case tag
+    }
+}
+
+struct Member: Codable, DynamicNodeEncoding {
+    static func nodeEncoding(for key: CodingKey) -> XMLEncoder.NodeEncoding {
+        switch key {
+        case CodingKeys.type:
+            return .attribute
+        case CodingKeys.ref:
+            return .attribute
+        case CodingKeys.role:
+            return .attribute
+        default:
+            return .element
+        }
+    }
+    
+    let type: OSMObjectType.RawValue
+    let ref: Int
+    let role: String
+    
+    enum CodingKeys: String, CodingKey {
+        case type
+        case ref
+        case role
+    }
+}
 
 struct Node: Decodable, Encodable, DynamicNodeEncoding {
     static func nodeEncoding(for key: CodingKey) -> XMLEncoder.NodeEncoding {
