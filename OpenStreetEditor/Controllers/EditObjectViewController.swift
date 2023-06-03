@@ -83,7 +83,7 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         navigationController?.setToolbarHidden(false, animated: false)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_: Bool) {
         // Closure that is performed every time the object tags are changed - AppSettings.settings.newProperties
         AppSettings.settings.saveObjectClouser = { [weak self] in
             guard let self = self else { return }

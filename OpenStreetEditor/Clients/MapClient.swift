@@ -217,7 +217,7 @@ class MapClient {
         let id = operationID
         lock.lock()
         openOperations[id] = false
-        lock.unlock()        
+        lock.unlock()
         let parser = XMLParser(data: data)
         let parserDelegate = OSMXmlParser()
         parser.delegate = parserDelegate
@@ -250,7 +250,7 @@ class MapClient {
         let newObjects = GLMapVectorObjectArray()
         for (id, osmObject) in AppSettings.settings.savedObjects {
             let object = osmObject.getVectorObject()
-            guard object.type.rawValue != 0 else {continue}
+            guard object.type.rawValue != 0 else { continue }
             // The ID is stored as a string in each vector object (feature of how osmium works). To recognize the id of the created object after the tap, assign it a number
             object.setValue(String(id), forKey: "@id")
             if id < 0 {

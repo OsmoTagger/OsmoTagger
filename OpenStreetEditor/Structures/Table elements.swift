@@ -322,6 +322,7 @@ class DownloadButton: UIButton {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+
     init() {
         super.init(frame: .zero)
         setupConstrains()
@@ -342,7 +343,6 @@ class DownloadButton: UIButton {
         ])
     }
 }
-
 
 //  Custom button for switching to the controller of saved objects
 class SavedObjectButton: UIButton {

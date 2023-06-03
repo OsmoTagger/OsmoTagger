@@ -372,8 +372,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
                                      testButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)])
     }
     
-    @objc func tapTestButton() {
-    }
+    @objc func tapTestButton() {}
     
 //    MARK: FUNCTIONS
 
@@ -634,7 +633,7 @@ extension MapViewController: MapClientProtocol {
 extension MapViewController: ShowTappedObject {
     //  The method displays the vector object passed to it and moves it to the visible part of the map. It is used on the tag editing controller, and on the object selection controller, if there are several of them under the tap.
     func showTapObject(object: GLMapVectorObject) {
-        guard object.type.rawValue != 0 else {return}
+        guard object.type.rawValue != 0 else { return }
         var newCenter = GLMapGeoPoint(lat: 1, lon: 1)
         switch object.type.rawValue {
         case 1:
@@ -671,7 +670,7 @@ extension MapViewController: ShowTappedObject {
     
     //  The method updates the uploaded data. It is called from the tag editing controller and the saved objects display controller, after the changes have been successfully sent to the server.
     func updateSourceData() {
-        mapClient.lastCenter = GLMapGeoPoint.init(lat: 0, lon: 0)
+        mapClient.lastCenter = GLMapGeoPoint(lat: 0, lon: 0)
         Task {
             try await mapClient.getSourceBbox(mapCenter: mapView.mapGeoCenter)
             removeIndicator(indicator: indicator)

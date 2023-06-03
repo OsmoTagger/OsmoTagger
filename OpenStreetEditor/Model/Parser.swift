@@ -125,7 +125,6 @@ class OSMXmlParser: NSObject {
 }
 
 extension OSMXmlParser: XMLParserDelegate {
-    
     func parser(_: XMLParser, didStartElement elementName: String, namespaceURI _: String?, qualifiedName _: String?, attributes attributeDict: [String: String] = [:]) {
         if elementName == "node" {
             guard let idString = attributeDict["id"],
@@ -137,7 +136,7 @@ extension OSMXmlParser: XMLParserDelegate {
                   let version = Int(versionString),
                   let changeset = Int(changesetString),
                   let lat = Double(latString),
-                  let lon = Double(lonString) else {return}
+                  let lon = Double(lonString) else { return }
             curNode = Node(id: id, version: version, changeset: changeset, lat: lat, lon: lon, tag: [])
         }
         if elementName == "way" {
@@ -146,7 +145,7 @@ extension OSMXmlParser: XMLParserDelegate {
                   let changesetString = attributeDict["changeset"],
                   let id = Int(idString),
                   let version = Int(versionString),
-                  let changeset = Int(changesetString) else {return}
+                  let changeset = Int(changesetString) else { return }
             curWay = Way(id: id, version: version, changeset: changeset, tag: [], nd: [])
         }
         if elementName == "relation" {
@@ -155,20 +154,20 @@ extension OSMXmlParser: XMLParserDelegate {
                   let changesetString = attributeDict["changeset"],
                   let id = Int(idString),
                   let version = Int(versionString),
-                  let changeset = Int(changesetString) else {return}
+                  let changeset = Int(changesetString) else { return }
             curRelation = Relation(id: id, version: version, changeset: changeset, member: [], tag: [])
         }
         if elementName == "member" {
             guard let type = attributeDict["type"],
                   let refString = attributeDict["ref"],
                   let role = attributeDict["role"],
-                  let ref = Int(refString) else {return}
+                  let ref = Int(refString) else { return }
             let member = Member(type: type, ref: ref, role: role)
             curRelation?.member.append(member)
         }
         if elementName == "tag" {
             guard let key = attributeDict["k"],
-                  let value = attributeDict["v"] else {return}
+                  let value = attributeDict["v"] else { return }
             let tag = Tag(k: key, v: value, value: "")
             if curNode != nil && curWay == nil && curRelation == nil {
                 // fill node
@@ -182,7 +181,7 @@ extension OSMXmlParser: XMLParserDelegate {
         }
         if elementName == "nd" {
             guard let refString = attributeDict["ref"],
-                  let ref = Int(refString) else {return}
+                  let ref = Int(refString) else { return }
             let nd = ND(ref: ref)
             curWay?.nd.append(nd)
         }
@@ -190,17 +189,17 @@ extension OSMXmlParser: XMLParserDelegate {
     
     func parser(_: XMLParser, didEndElement: String, namespaceURI _: String?, qualifiedName _: String?) {
         if didEndElement == "node" {
-            guard let node = curNode else {return}
+            guard let node = curNode else { return }
             objects[node.id] = node
             curNode = nil
         }
         if didEndElement == "way" {
-            guard let way = curWay else {return}
+            guard let way = curWay else { return }
             objects[way.id] = way
             curWay = nil
         }
         if didEndElement == "relation" {
-            guard let relation = curRelation else {return}
+            guard let relation = curRelation else { return }
             objects[relation.id] = relation
             curRelation = nil
         }

@@ -214,7 +214,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
                 }
             }
             if changeset.modify.relation.count != 0 {
-                for i in 0...changeset.modify.relation.count - 1 {
+                for i in 0 ... changeset.modify.relation.count - 1 {
                     changeset.modify.relation[i].changeset = changesetID
                 }
             }

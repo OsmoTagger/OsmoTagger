@@ -431,7 +431,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
                 tableView.reloadData()
                 removeIndicator(indicator: indicator)
                 DispatchQueue.main.async { [weak self] in
-                    guard let self = self else {return}
+                    guard let self = self else { return }
                     self.enterCommentView.placeholder = nil
                     self.enterCommentView.text = nil
                     AppSettings.settings.changeSetComment = nil
@@ -540,7 +540,7 @@ extension SavedNodesViewController: UITextFieldDelegate {
         view.endEditing(true)
     }
     
-    func textFieldDidEndEditing(_ textField: UITextField) {
+    func textFieldDidEndEditing(_: UITextField) {
         view.removeGestureRecognizer(tap)
     }
 }
