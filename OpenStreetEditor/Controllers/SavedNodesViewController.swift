@@ -24,6 +24,10 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
     
     var tap = UIGestureRecognizer()
     
+    var flexibleSpace = UIBarButtonItem()
+    var nilButton = UIBarButtonItem()
+    var publishButtom = UIBarButtonItem()
+    
     deinit {
         AppSettings.settings.changeSetComment = nil
     }
@@ -32,11 +36,16 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         view.backgroundColor = .systemBackground
         title = "Changeset"
         
+        flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        nilButton = UIBarButtonItem(title: "Select objects", style: .plain, target: nil, action: nil)
+        publishButtom = UIBarButtonItem(title: "Publish", style: .done, target: self, action: #selector(tapSendButton))
+        
         fillData()
-        setToolBar()
+        createToolBar()
         setEnterCommentView()
         setTableView()
         checkUniqInMemory()
+        tapCheckAll()
     }
     
     override func viewWillAppear(_: Bool) {
@@ -44,10 +53,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         tableView.reloadData()
     }
     
-    func setToolBar() {
-        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let publishButtom = UIBarButtonItem(title: "Publish", style: .plain, target: self, action: #selector(tapSendButton))
-        toolbarItems = [flexibleSpace, publishButtom, flexibleSpace]
+    func createToolBar() {
         navigationController?.setToolbarHidden(false, animated: false)
         let checkAll = UIImageView(image: UIImage(systemName: "checkmark.square"))
         let checkAllTap = UITapGestureRecognizer(target: self, action: #selector(tapCheckAll))
@@ -58,6 +64,15 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         ])
         let checkAllBar = UIBarButtonItem(customView: checkAll)
         navigationItem.setRightBarButton(checkAllBar, animated: false)
+        setToolBar()
+    }
+    
+    func setToolBar() {
+        if selectedIDs.count == 0 {
+            toolbarItems = [flexibleSpace, nilButton, flexibleSpace]
+        } else {
+            toolbarItems = [flexibleSpace, publishButtom, flexibleSpace]
+        }
     }
     
     //  The target of the button for selecting all saved objects.
@@ -77,6 +92,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             enterCommentView.placeholder = ""
         }
         tableView.reloadData()
+        setToolBar()
     }
     
     //  The method of filling in tabular data. It defines the icon of the object, the icon of the object type, the name of the preset and the id of the object.
@@ -324,6 +340,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             selectedIDs.remove(at: i)
         }
         enterCommentView.placeholder = generateComment()
+        setToolBar()
     }
     
     //  The method that is called when the "Bulb" backlight button is pressed.
