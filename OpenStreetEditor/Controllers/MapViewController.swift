@@ -74,10 +74,9 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         setSavedNodesButton()
 //      The test button in the lower right corner of the screen is often needed during development.
 //        setTestButton()
-//        setCenterMap()
         
 //      Reading the modified and created objects into the AppSettings.settings.savedObjects variable.
-        AppSettings.settings.getSavedObjects()
+//        AppSettings.settings.getSavedObjects()
 //      In the background, we start parsing the file with Josm presets.
         DispatchQueue.global(qos: .default).async {
             Parser().fillPresetElements()
@@ -354,7 +353,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         addNodeButton.removeFromSuperview()
         let geoPoint = mapView.makeGeoPoint(fromDisplay: mapView.center)
         // To send the created objects to the server, you need to assign them an id < 0. To prevent duplicate IDs, the AppSettings.settings.nextId variable has been created, which reduces the id by 1 each time.
-        let object = OSMAnyObject(type: .node, id: AppSettings.settings.nextID, version: 0, changeset: 0, lat: geoPoint.lat, lon: geoPoint.lon, tag: [], nd: [], nodes: [:])
+        let object = OSMAnyObject(type: .node, id: AppSettings.settings.nextID, version: 0, changeset: 0, lat: geoPoint.lat, lon: geoPoint.lon, tag: [], nd: [], nodes: [:], members: [])
         goToPropertiesVC(object: object)
     }
     
@@ -374,7 +373,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
     }
     
     @objc func tapTestButton() {
-//        mapClient.pr()
     }
     
 //    MARK: FUNCTIONS
@@ -482,6 +480,12 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
             }
             goToPropertiesVC(object: object)
         } else if let osmObject = AppSettings.settings.inputObjects[id] as? Way {
+            guard let object = convertOSMToObject(osmObject: osmObject) else {
+                showAction(message: "Error converting way to OSMAnyObject. ID: \(id)", addAlerts: [])
+                return
+            }
+            goToPropertiesVC(object: object)
+        } else if let osmObject = AppSettings.settings.inputObjects[id] as? Relation {
             guard let object = convertOSMToObject(osmObject: osmObject) else {
                 showAction(message: "Error converting way to OSMAnyObject. ID: \(id)", addAlerts: [])
                 return
@@ -630,6 +634,7 @@ extension MapViewController: MapClientProtocol {
 extension MapViewController: ShowTappedObject {
     //  The method displays the vector object passed to it and moves it to the visible part of the map. It is used on the tag editing controller, and on the object selection controller, if there are several of them under the tap.
     func showTapObject(object: GLMapVectorObject) {
+        guard object.type.rawValue != 0 else {return}
         var newCenter = GLMapGeoPoint(lat: 1, lon: 1)
         switch object.type.rawValue {
         case 1:

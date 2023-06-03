@@ -46,13 +46,11 @@ struct Modify: Codable {
 struct Create: Codable {
     var node: [Node]
     var way: [Way]
-    var relation: [Relation]
 }
 
 struct Delete: Codable {
     var node: [Node]
     var way: [Way]
-    var relation: [Relation]
 }
 
 // MARK: OSM DATA STRUCTURES
@@ -73,7 +71,7 @@ struct Relation: Codable, DynamicNodeEncoding {
     
     let id: Int
     let version: Int
-    let changeset: Int
+    var changeset: Int
     var member: [Member]
     var tag: [Tag]
     
@@ -100,7 +98,7 @@ struct Member: Codable, DynamicNodeEncoding {
         }
     }
     
-    let type: OSMObjectType.RawValue
+    let type: String
     let ref: Int
     let role: String
     
@@ -234,8 +232,9 @@ struct OSMAnyObject: Codable {
     var oldTags: [String: String]
     var nd: [ND]
     var nodes: [Int: Node]
+    var members: [Member]
     
-    init(type: OSMObjectType, id: Int, version: Int, changeset: Int, lat: Double?, lon: Double?, tag: [Tag], nd: [ND], nodes: [Int: Node]) {
+    init(type: OSMObjectType, id: Int, version: Int, changeset: Int, lat: Double?, lon: Double?, tag: [Tag], nd: [ND], nodes: [Int: Node], members: [Member]) {
         self.type = type
         self.id = id
         self.version = version
@@ -249,6 +248,12 @@ struct OSMAnyObject: Codable {
         for tg in tag {
             oldTags[tg.k] = tg.v
         }
+        self.members = members
+    }
+    
+    func getRelation() -> Relation {
+        let relation = Relation(id: id, version: version, changeset: changeset, member: members, tag: tag)
+        return relation
     }
     
     func getWay() -> Way {

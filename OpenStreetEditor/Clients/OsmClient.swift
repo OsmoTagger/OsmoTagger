@@ -150,7 +150,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         if sendObjs.count == 0 && deleteObjs.count == 0 {
             throw "Point array is empty"
         }
-        var delete = Delete(node: [], way: [], relation: [])
+        var delete = Delete(node: [], way: [])
         for object in deleteObjs {
             switch object.type {
             case .node:
@@ -163,7 +163,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
                 continue
             }
         }
-        var changeset = osmChange(version: "0.6", generator: "OpenstreetEditor", modify: Modify(node: [], way: [], relation: []), create: Create(node: [], way: [], relation: []), delete: delete)
+        var changeset = osmChange(version: "0.6", generator: "OpenstreetEditor", modify: Modify(node: [], way: [], relation: []), create: Create(node: [], way: []), delete: delete)
         for object in sendObjs {
             if object.id < 0 {
                 switch object.type {
@@ -184,8 +184,9 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
                 case .way, .closedway:
                     let way = object.getWay()
                     changeset.modify.way.append(way)
-                default:
-                    continue
+                case .multipolygon:
+                    let relation = object.getRelation()
+                    changeset.modify.relation.append(relation)
                 }
             }
         }
@@ -210,6 +211,11 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
             if changeset.modify.way.count != 0 {
                 for i in 0 ... changeset.modify.way.count - 1 {
                     changeset.modify.way[i].changeset = changesetID
+                }
+            }
+            if changeset.modify.relation.count != 0 {
+                for i in 0...changeset.modify.relation.count - 1 {
+                    changeset.modify.relation[i].changeset = changesetID
                 }
             }
             if changeset.delete.node.count != 0 {

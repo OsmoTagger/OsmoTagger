@@ -121,6 +121,7 @@ class OSMXmlParser: NSObject {
     var objects: [Int: Any] = [:]
     var curNode: Node?
     var curWay: Way?
+    var curRelation: Relation?
 }
 
 extension OSMXmlParser: XMLParserDelegate {
@@ -148,16 +149,35 @@ extension OSMXmlParser: XMLParserDelegate {
                   let changeset = Int(changesetString) else {return}
             curWay = Way(id: id, version: version, changeset: changeset, tag: [], nd: [])
         }
+        if elementName == "relation" {
+            guard let idString = attributeDict["id"],
+                  let versionString = attributeDict["version"],
+                  let changesetString = attributeDict["changeset"],
+                  let id = Int(idString),
+                  let version = Int(versionString),
+                  let changeset = Int(changesetString) else {return}
+            curRelation = Relation(id: id, version: version, changeset: changeset, member: [], tag: [])
+        }
+        if elementName == "member" {
+            guard let type = attributeDict["type"],
+                  let refString = attributeDict["ref"],
+                  let role = attributeDict["role"],
+                  let ref = Int(refString) else {return}
+            let member = Member(type: type, ref: ref, role: role)
+            curRelation?.member.append(member)
+        }
         if elementName == "tag" {
             guard let key = attributeDict["k"],
                   let value = attributeDict["v"] else {return}
             let tag = Tag(k: key, v: value, value: "")
-            if curNode != nil && curWay == nil {
+            if curNode != nil && curWay == nil && curRelation == nil {
                 // fill node
                 curNode?.tag.append(tag)
-            } else if curNode == nil && curWay != nil {
+            } else if curNode == nil && curWay != nil && curRelation == nil {
                 // fill way
                 curWay?.tag.append(tag)
+            } else if curNode == nil && curWay == nil && curRelation != nil {
+                curRelation?.tag.append(tag)
             }
         }
         if elementName == "nd" {
@@ -178,6 +198,11 @@ extension OSMXmlParser: XMLParserDelegate {
             guard let way = curWay else {return}
             objects[way.id] = way
             curWay = nil
+        }
+        if didEndElement == "relation" {
+            guard let relation = curRelation else {return}
+            objects[relation.id] = relation
+            curRelation = nil
         }
     }
 }

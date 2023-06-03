@@ -104,7 +104,7 @@ extension UIViewController {
     //  The method converts OSMAnyObject to Node or Way, depending on the type "type" that is specified during its initialization.
     func convertOSMToObject(osmObject: Any) -> OSMAnyObject? {
         if let object = osmObject as? Node {
-            let point = OSMAnyObject(type: .node, id: object.id, version: object.version, changeset: object.changeset, lat: object.lat, lon: object.lon, tag: object.tag, nd: [], nodes: [:])
+            let point = OSMAnyObject(type: .node, id: object.id, version: object.version, changeset: object.changeset, lat: object.lat, lon: object.lon, tag: object.tag, nd: [], nodes: [:], members: [])
             return point
         } else if let object = osmObject as? Way {
             var nodes: [Int: Node] = [:]
@@ -113,12 +113,15 @@ extension UIViewController {
                 nodes[node.id] = node
             }
             if object.nd[0].ref == object.nd.last?.ref {
-                let closedWay = OSMAnyObject(type: .closedway, id: object.id, version: object.version, changeset: object.changeset, lat: nil, lon: nil, tag: object.tag, nd: object.nd, nodes: nodes)
+                let closedWay = OSMAnyObject(type: .closedway, id: object.id, version: object.version, changeset: object.changeset, lat: nil, lon: nil, tag: object.tag, nd: object.nd, nodes: nodes, members: [])
                 return closedWay
             } else {
-                let way = OSMAnyObject(type: .way, id: object.id, version: object.version, changeset: object.changeset, lat: nil, lon: nil, tag: object.tag, nd: object.nd, nodes: nodes)
+                let way = OSMAnyObject(type: .way, id: object.id, version: object.version, changeset: object.changeset, lat: nil, lon: nil, tag: object.tag, nd: object.nd, nodes: nodes, members: [])
                 return way
             }
+        } else if let object = osmObject as? Relation {
+            let relation = OSMAnyObject(type: .multipolygon, id: object.id, version: object.version, changeset: object.changeset, lat: nil, lon: nil, tag: object.tag, nd: [], nodes: [:], members: object.member)
+            return relation
         } else {
             return nil
         }

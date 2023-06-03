@@ -115,7 +115,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             case .closedway:
                 iconName = "osm_element_closedway"
             case .multipolygon:
-                iconName = "osm_element_area"
+                iconName = "osm_element_multipolygon"
             }
             var data = SaveNodeCellData(type: .saved, itemIcon: nil, typeIcon: iconName, itemLabel: nil, idLabel: object.id)
             let pathes = getItemsFromTags(properties: properties)
@@ -151,7 +151,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             case .closedway:
                 iconName = "osm_element_closedway"
             case .multipolygon:
-                iconName = "osm_element_area"
+                iconName = "osm_element_multipolygon"
             }
             var data = SaveNodeCellData(type: .saved, itemIcon: nil, typeIcon: iconName, itemLabel: nil, idLabel: object.id)
             let pathes = getItemsFromTags(properties: properties)
@@ -186,7 +186,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             case .closedway:
                 iconName = "osm_element_closedway"
             case .multipolygon:
-                iconName = "osm_element_area"
+                iconName = "osm_element_multipolygon"
             }
             var data = SaveNodeCellData(type: .deleted, itemIcon: nil, typeIcon: iconName, itemLabel: nil, idLabel: object.id)
             let pathes = getItemsFromTags(properties: properties)

@@ -113,7 +113,7 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
         case .closedway:
             iconName = "osm_element_closedway"
         case .multipolygon:
-            iconName = "osm_element_area"
+            iconName = "osm_element_multipolygon"
         }
         cell.iconType.image = UIImage(named: iconName)
         let itemText = data.itemLabel ?? "Unknown"

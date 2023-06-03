@@ -236,7 +236,7 @@ class MapClient {
         guard tapObjects.count > 0 else { return [] }
         for i in 0 ... tapObjects.count - 1 {
             let object = tapObjects[i]
-            if object.findNearestPoint(&nearestPoint, to: touchCoordinate, maxDistance: maxDist) && (object.type.rawValue == 1 || object.type.rawValue == 2) {
+            if object.findNearestPoint(&nearestPoint, to: touchCoordinate, maxDistance: maxDist) && (object.type.rawValue == 1 || object.type.rawValue == 2 || object.type.rawValue == 4) {
                 guard let id = object.getObjectID() else { continue }
                 result.insert(id)
             }
@@ -250,6 +250,7 @@ class MapClient {
         let newObjects = GLMapVectorObjectArray()
         for (id, osmObject) in AppSettings.settings.savedObjects {
             let object = osmObject.getVectorObject()
+            guard object.type.rawValue != 0 else {continue}
             // The ID is stored as a string in each vector object (feature of how osmium works). To recognize the id of the created object after the tap, assign it a number
             object.setValue(String(id), forKey: "@id")
             if id < 0 {
