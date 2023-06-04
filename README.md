@@ -1,6 +1,6 @@
 # README
 
-OpenStreetEditor is an open-source project for editing OpenStreetMap maps, utilizing the fast and powerful [GLMap framework](https://globus.software) for displaying OpenStreetMap maps.
+OpenStreetEditor is an open-source project for editing OpenStreetMap maps on iOS, utilizing the fast and powerful [GLMap framework](https://globus.software) for displaying OpenStreetMap maps.
 
 ## Resources
 
