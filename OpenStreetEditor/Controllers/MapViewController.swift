@@ -74,14 +74,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         setSavedNodesButton()
 //      The test button in the lower right corner of the screen is often needed during development.
 //        setTestButton()
-        
-//      Reading the modified and created objects into the AppSettings.settings.savedObjects variable.
-//        AppSettings.settings.getSavedObjects()
-//      In the background, we start parsing the file with Josm presets.
-        DispatchQueue.global(qos: .default).async {
-            Parser().fillPresetElements()
-            Parser().fillChunks()
-        }
     }
     
     override func viewDidAppear(_: Bool) {
@@ -353,7 +345,8 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         addNodeButton.removeFromSuperview()
         let geoPoint = mapView.makeGeoPoint(fromDisplay: mapView.center)
         // To send the created objects to the server, you need to assign them an id < 0. To prevent duplicate IDs, the AppSettings.settings.nextId variable has been created, which reduces the id by 1 each time.
-        let object = OSMAnyObject(type: .node, id: AppSettings.settings.nextID, version: 0, changeset: 0, lat: geoPoint.lat, lon: geoPoint.lon, tag: [], nd: [], nodes: [:], members: [])
+        let vector = GLMapVectorObject(point: GLMapPoint(geoPoint: geoPoint))
+        let object = OSMAnyObject(type: .node, id: AppSettings.settings.nextID, version: 0, changeset: 0, lat: geoPoint.lat, lon: geoPoint.lon, tag: [], nd: [], nodes: [:], members: [], vector: vector)
         goToPropertiesVC(object: object)
     }
     
@@ -378,7 +371,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
 
     //  The method searches for vector objects under the tap. If 1 object is detected, it goes to the controller for editing its tags, if > 1, it offers to select an object from the tapped ones.
     @objc func getObjects(sender: UITapGestureRecognizer) {
-//        if mapClient.objects.count == 0 { return }
         let touchPoint = sender.location(in: mapView)
         let touchPointMapCoordinate = mapView.makeMapPoint(fromDisplay: touchPoint)
         let maxTapDistance = 20
@@ -389,7 +381,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
             return
         case 1:
             if let first = tapObjects.first {
-                openObject(id: first)
+                goToPropertiesVC(object: first)
             }
         default:
 //          Moves the tapped object to the visible part of the map.
@@ -399,28 +391,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
                 animation.transition = .linear
                 animation.fly(to: centerPoint)
             }
-            var objects: [OSMAnyObject] = []
-//          If some objects cannot be opened, then it will indicate their id.
-            var failObjects: [Int] = []
-            for id in tapObjects {
-                if let object = AppSettings.settings.savedObjects[id] {
-                    objects.append(object)
-                } else if let osmObject = AppSettings.settings.inputObjects[id] {
-                    guard let object = convertOSMToObject(osmObject: osmObject) else {
-                        failObjects.append(id)
-                        continue
-                    }
-                    objects.append(object)
-                }
-            }
-            if tapObjects.count != objects.count {
-                let alert = UIAlertAction(title: "Continue", style: .default, handler: { _ in
-                    self.selectObjects(objects: objects)
-                })
-                showAction(message: "Objects with the listed IDs cannot be opened: \(failObjects)", addAlerts: [alert])
-            } else {
-                selectObjects(objects: objects)
-            }
+            selectObjects(objects: tapObjects)
         }
     }
     
@@ -437,6 +408,15 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
     }
     
     func goToSelectVC(objects: [OSMAnyObject]) {
+        let tappedObjects = GLMapVectorObjectArray()
+        for object in objects {
+            let vector = object.vector
+            tappedObjects.add(vector)
+        }
+        if let style = tappedStyle {
+            tappedDrawble.setVectorObjects(tappedObjects, with: style, completion: nil)
+        }
+        mapView.add(tappedDrawble)
         mapView.animate { [weak self] animation in
             guard let self = self else { return }
             animation.duration = 0.25
@@ -468,33 +448,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         }
     }
     
-    //  Objects that are detected under the tap can be stored both in appSettings.settings.inputObjects (downloaded from the server) and in appSettings.settings.savedObjects (created or modified earlier). The method determines where the object is stored, and passes it to the tag editing controller.
-    func openObject(id: Int) {
-        if let object = AppSettings.settings.savedObjects[id] {
-            goToPropertiesVC(object: object)
-        } else if let osmObject = AppSettings.settings.inputObjects[id] as? Node {
-            guard let object = convertOSMToObject(osmObject: osmObject) else {
-                showAction(message: "Error converting node to OSMAnyObject. ID: \(id)", addAlerts: [])
-                return
-            }
-            goToPropertiesVC(object: object)
-        } else if let osmObject = AppSettings.settings.inputObjects[id] as? Way {
-            guard let object = convertOSMToObject(osmObject: osmObject) else {
-                showAction(message: "Error converting way to OSMAnyObject. ID: \(id)", addAlerts: [])
-                return
-            }
-            goToPropertiesVC(object: object)
-        } else if let osmObject = AppSettings.settings.inputObjects[id] as? Relation {
-            guard let object = convertOSMToObject(osmObject: osmObject) else {
-                showAction(message: "Error converting way to OSMAnyObject. ID: \(id)", addAlerts: [])
-                return
-            }
-            goToPropertiesVC(object: object)
-        } else {
-            showAction(message: "Object opening error, id: \(id)", addAlerts: [])
-        }
-    }
-    
     //  The method opens the tag editing controller.
     //  The user can tap on the object on the visible part of the map at the moment when the editing controller is already open. Then the editable object on the controller changes to a new one.
     func goToPropertiesVC(object: OSMAnyObject) {
@@ -504,8 +457,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
             animation.transition = .linear
             self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.75)
         }
-        let vector = object.getVectorObject()
-        showTapObject(object: vector)
+        showTapObject(object: object.vector)
         if navController != nil {
             if let controllers = navController?.viewControllers {
                 for controller in controllers where controller is InfoObjectViewController {
@@ -638,7 +590,7 @@ extension MapViewController: ShowTappedObject {
         switch object.type.rawValue {
         case 1:
             newCenter = GLMapGeoPoint(point: object.point)
-        case 2:
+        case 2,4:
             newCenter = GLMapGeoPoint(point: object.bbox.center)
         default:
             return
@@ -652,20 +604,6 @@ extension MapViewController: ShowTappedObject {
             animation.transition = .linear
             mapView.mapGeoCenter = newCenter
         }
-    }
-    
-    //  If there are no objects under the tap, they are highlighted by this method.
-    func showTappedObjects(objects: [OSMAnyObject]) {
-        mapView.remove(editDrawble)
-        let tappedObjects = GLMapVectorObjectArray()
-        for object in objects {
-            let vector = object.getVectorObject()
-            tappedObjects.add(vector)
-        }
-        if let style = tappedStyle {
-            tappedDrawble.setVectorObjects(tappedObjects, with: style, completion: nil)
-        }
-        mapView.add(tappedDrawble)
     }
     
     //  The method updates the uploaded data. It is called from the tag editing controller and the saved objects display controller, after the changes have been successfully sent to the server.

@@ -233,8 +233,24 @@ struct OSMAnyObject: Codable {
     var nd: [ND]
     var nodes: [Int: Node]
     var members: [Member]
+    var vectorString: String
+    var vector: GLMapVectorObject {
+        get {
+            do {
+                let vectors = try GLMapVectorObject.createVectorObjects(fromGeoJSON: vectorString)
+                return vectors.object(at: 0)
+            } catch {
+                print(error)
+                return GLMapVectorObject()
+            }
+        }
+        set {
+            let string = newValue.asGeoJSON()
+            vectorString = string
+        }
+    }
     
-    init(type: OSMObjectType, id: Int, version: Int, changeset: Int, lat: Double?, lon: Double?, tag: [Tag], nd: [ND], nodes: [Int: Node], members: [Member]) {
+    init(type: OSMObjectType, id: Int, version: Int, changeset: Int, lat: Double?, lon: Double?, tag: [Tag], nd: [ND], nodes: [Int: Node], members: [Member], vector: GLMapVectorObject) {
         self.type = type
         self.id = id
         self.version = version
@@ -249,6 +265,7 @@ struct OSMAnyObject: Codable {
             oldTags[tg.k] = tg.v
         }
         self.members = members
+        self.vectorString = vector.asGeoJSON()
     }
     
     func getRelation() -> Relation {
@@ -266,29 +283,6 @@ struct OSMAnyObject: Codable {
               let lon = lon else { return nil }
         let node = Node(id: id, version: version, changeset: changeset, lat: lat, lon: lon, tag: tag)
         return node
-    }
-    
-    func getVectorObject() -> GLMapVectorObject {
-        var vector = GLMapVectorObject()
-        switch type {
-        case .node:
-            guard let lat = lat,
-                  let lon = lon else { return vector }
-            let point = GLMapPoint(lat: lat, lon: lon)
-            vector = GLMapVectorObject(point: point)
-            return vector
-        case .way, .closedway:
-            let pointArray = GLMapPointArray()
-            for id in nd {
-                guard let node = nodes[id.ref] else { continue }
-                let point = GLMapPoint(lat: node.lat, lon: node.lon)
-                pointArray.add(point)
-            }
-            vector = GLMapVectorObject(line: pointArray)
-            return vector
-        case .multipolygon:
-            return vector
-        }
     }
 }
 

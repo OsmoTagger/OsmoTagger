@@ -52,8 +52,19 @@ class MapClient {
      
     init() {
         setAppSettingsClouser()
+        // Reading the modified and created objects into the AppSettings.settings.savedObjects variable.
+        AppSettings.settings.getSavedObjects()
+        // In the background, we start parsing the file with Josm presets.
+        loadPresets()
     }
-        
+    
+    func loadPresets() {
+        DispatchQueue.global(qos: .default).async {
+            Parser().fillPresetElements()
+            Parser().fillChunks()
+        }
+    }
+    
     func setAppSettingsClouser() {
         // Every time AppSettings.settings.savedObjects is changed (this is the variable in which the modified or created objects are stored), a closure is called. In this case, when a short circuit is triggered, we update the illumination of saved and created objects.
         AppSettings.settings.mapVCClouser = { [weak self] in
@@ -229,16 +240,50 @@ class MapClient {
     }
     
     //  Get objects after tap
-    func openObject(touchCoordinate: GLMapPoint, tmp: GLMapPoint) -> Set<Int> {
-        var result: Set<Int> = []
+    func openObject(touchCoordinate: GLMapPoint, tmp: GLMapPoint) -> [OSMAnyObject] {
+        var tappedVectorObjects: [GLMapVectorObject] = []
+        var uniqTappedObjects: [GLMapVectorObject] = []
+        var uniqTappedObjectsIDs: [Int] = []
+        var result: [OSMAnyObject] = []
         let maxDist = CGFloat(hypot(tmp.x, tmp.y))
         var nearestPoint = GLMapPoint()
         guard tapObjects.count > 0 else { return [] }
         for i in 0 ... tapObjects.count - 1 {
             let object = tapObjects[i]
             if object.findNearestPoint(&nearestPoint, to: touchCoordinate, maxDistance: maxDist) && (object.type.rawValue == 1 || object.type.rawValue == 2 || object.type.rawValue == 4) {
-                guard let id = object.getObjectID() else { continue }
-                result.insert(id)
+                tappedVectorObjects.append(object)
+            }
+        }
+        for object in tappedVectorObjects {
+            guard let id = object.getObjectID() else {continue}
+            if uniqTappedObjectsIDs.contains(id) == false {
+                uniqTappedObjectsIDs.append(id)
+                uniqTappedObjects.append(object)
+            }
+        }
+        for vectorObject in uniqTappedObjects {
+            guard let id = vectorObject.getObjectID() else {continue}
+            if let object = AppSettings.settings.savedObjects[id] {
+                result.append(object)
+            } else if let node = AppSettings.settings.inputObjects[id] as? Node {
+                let object = OSMAnyObject(type: .node, id: node.id, version: node.version, changeset: node.changeset, lat: node.lat, lon: node.lon, tag: node.tag, nd: [], nodes: [:], members: [], vector: vectorObject)
+                result.append(object)
+            } else if let way = AppSettings.settings.inputObjects[id] as? Way {
+                var nodes: [Int: Node] = [:]
+                for id in way.nd {
+                    guard let node = AppSettings.settings.inputObjects[id.ref] as? Node else { continue }
+                    nodes[node.id] = node
+                }
+                if way.nd[0].ref == way.nd.last?.ref {
+                    let object = OSMAnyObject(type: .closedway, id: way.id, version: way.version, changeset: way.changeset, lat: nil, lon: nil, tag: way.tag, nd: way.nd, nodes: nodes, members: [], vector: vectorObject)
+                    result.append(object)
+                } else {
+                    let object = OSMAnyObject(type: .way, id: way.id, version: way.version, changeset: way.changeset, lat: nil, lon: nil, tag: way.tag, nd: way.nd, nodes: nodes, members: [], vector: vectorObject)
+                    result.append(object)
+                }
+            } else if let relation = AppSettings.settings.inputObjects[id] as? Relation {
+                let object = OSMAnyObject(type: .multipolygon, id: relation.id, version: relation.version, changeset: relation.changeset, lat: nil, lon: nil, tag: relation.tag, nd: [], nodes: [:], members: relation.member, vector: vectorObject)
+                result.append(object)
             }
         }
         return result
@@ -249,7 +294,7 @@ class MapClient {
         let savedObjects = GLMapVectorObjectArray()
         let newObjects = GLMapVectorObjectArray()
         for (id, osmObject) in AppSettings.settings.savedObjects {
-            let object = osmObject.getVectorObject()
+            let object = osmObject.vector
             guard object.type.rawValue != 0 else { continue }
             // The ID is stored as a string in each vector object (feature of how osmium works). To recognize the id of the created object after the tap, assign it a number
             object.setValue(String(id), forKey: "@id")

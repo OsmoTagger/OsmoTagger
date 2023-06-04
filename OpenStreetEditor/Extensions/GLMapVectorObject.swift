@@ -10,7 +10,7 @@ import GLMapCore
 
 //  The loaded OSM data is displayed on the map as a GLMapVectorObject. The unique identifier of the object is the id.
 //  The method gets an Int(id), which is stored in the "properties" of each GLMapVectorObject.
-extension GLMapVectorObject {
+extension GLMapVectorObject {    
     func getObjectID() -> Int? {
         guard let str = properties[AnyHashable(3_942_483_187)] as? String,
               let double = Double(str) else { return nil }

@@ -295,7 +295,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             nilObject = AppSettings.settings.deletedObjects[data.idLabel]
         }
         guard let object = nilObject else { return }
-        let vector = object.getVectorObject()
+        let vector = object.vector
         delegate?.showTapObject(object: vector)
         let vc = EditObjectViewController(object: object)
         navigationController?.pushViewController(vc, animated: true)
@@ -360,11 +360,9 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         guard let key = sender.key,
               let id = Int(key) else { return }
         if let object = AppSettings.settings.savedObjects[id] {
-            let vector = object.getVectorObject()
-            delegate?.showTapObject(object: vector)
+            delegate?.showTapObject(object: object.vector)
         } else if let object = AppSettings.settings.deletedObjects[id] {
-            let vector = object.getVectorObject()
-            delegate?.showTapObject(object: vector)
+            delegate?.showTapObject(object: object.vector)
         }
     }
     
