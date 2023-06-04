@@ -265,7 +265,7 @@ struct OSMAnyObject: Codable {
             oldTags[tg.k] = tg.v
         }
         self.members = members
-        self.vectorString = vector.asGeoJSON()
+        vectorString = vector.asGeoJSON()
     }
     
     func getRelation() -> Relation {

@@ -108,22 +108,22 @@ class Parser {
             let dict = ["building": value]
             AppSettings.settings.itemPathes[dict] = buildingPath
         }
-        let residentalBuildingValues = ["residential","apartments","ger","house","hotel","hut","bungalow","dormitory","terrace","detached","farm","stilt_house"]
+        let residentalBuildingValues = ["residential", "apartments", "ger", "house", "hotel", "hut", "bungalow", "dormitory", "terrace", "detached", "farm", "stilt_house"]
         let residentalBuildingPath = ItemPath(category: "Man Made", group: "Man Made", item: "Residential Building")
         for value in residentalBuildingValues {
             let dict = ["building": value]
             AppSettings.settings.itemPathes[dict] = residentalBuildingPath
         }
-        let buildingPartValues = ["allotment_house","bakehouse","barn","college","commercial","construction","cowshed","farm_auxiliary","garage","garages","greenhouse","hangar","hospital","industrial","office","parking","retail","riding_hall","roof","ruins","school","shed","sports_centre","sports_hall","supermarket","toilets","transportation","university","warehouse","yes"]
+        let buildingPartValues = ["allotment_house", "bakehouse", "barn", "college", "commercial", "construction", "cowshed", "farm_auxiliary", "garage", "garages", "greenhouse", "hangar", "hospital", "industrial", "office", "parking", "retail", "riding_hall", "roof", "ruins", "school", "shed", "sports_centre", "sports_hall", "supermarket", "toilets", "transportation", "university", "warehouse", "yes"]
         let buildingPartPath = ItemPath(category: "Man Made", group: "Man Made", item: "Building part")
         for value in buildingPartValues {
-            let dict = ["building:part":value]
+            let dict = ["building:part": value]
             AppSettings.settings.itemPathes[dict] = buildingPartPath
         }
-        let policeValues = ["barracks","car_pound","checkpoint","detention","naval_base","offices","range","storage","training_area","yes"]
+        let policeValues = ["barracks", "car_pound", "checkpoint", "detention", "naval_base", "offices", "range", "storage", "training_area", "yes"]
         let policePath = ItemPath(category: "Man Made", group: "Man Made", item: "Non-public police facility")
         for value in policeValues {
-            let dict = ["police":value]
+            let dict = ["police": value]
             AppSettings.settings.itemPathes[dict] = policePath
         }
         let entranceValues = ["main", "service", "shop", "exit", "emergency", "staircase", "home", "garage", "yes"]
@@ -132,7 +132,7 @@ class Parser {
             let dict = ["entrance": value]
             AppSettings.settings.itemPathes[dict] = entrancePath
         }
-        AppSettings.settings.itemPathes.removeValue(forKey: ["type":"multipolygon"])
+        AppSettings.settings.itemPathes.removeValue(forKey: ["type": "multipolygon"])
     }
 }
 

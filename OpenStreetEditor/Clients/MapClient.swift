@@ -255,14 +255,14 @@ class MapClient {
             }
         }
         for object in tappedVectorObjects {
-            guard let id = object.getObjectID() else {continue}
+            guard let id = object.getObjectID() else { continue }
             if uniqTappedObjectsIDs.contains(id) == false {
                 uniqTappedObjectsIDs.append(id)
                 uniqTappedObjects.append(object)
             }
         }
         for vectorObject in uniqTappedObjects {
-            guard let id = vectorObject.getObjectID() else {continue}
+            guard let id = vectorObject.getObjectID() else { continue }
             if let object = AppSettings.settings.savedObjects[id] {
                 result.append(object)
             } else if let node = AppSettings.settings.inputObjects[id] as? Node {

@@ -590,7 +590,7 @@ extension MapViewController: ShowTappedObject {
         switch object.type.rawValue {
         case 1:
             newCenter = GLMapGeoPoint(point: object.point)
-        case 2,4:
+        case 2, 4:
             newCenter = GLMapGeoPoint(point: object.bbox.center)
         default:
             return
