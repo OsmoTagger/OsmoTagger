@@ -101,12 +101,30 @@ class Parser {
                 }
             }
         }
-//      the frequently used preset Building and Entrance do not have key=value pairs, and therefore it is not pulled up to objects. We enter it manually by copying the data from the xml file
-        let values = ["allotment_house", "bakehouse", "barn", "basilica", "boathouse", "bunker", "cabin", "carport", "cathedral", "chapel", "church", "college", "commercial", "construction", "cowshed", "digester", "farm_auxiliary", "fire_station", "garage", "garages", "gasometer", "gatehouse", "grandstand", "greenhouse", "hangar", "hospital", "industrial", "kindergarten", "kiosk", "manufacture", "monastery", "mosque", "office", "pavilion", "parking", "public", "retail", "riding_hall", "roof", "ruins", "school", "service", "shed", "silo", "sports_centre", "sports_hall", "stable", "storage_tank", "sty", "supermarket", "synagogue", "temple", "tent", "toilets", "train_station", "transformer_tower", "transportation", "university", "warehouse", "yes"]
+        // the frequently used preset Building and Entrance do not have key=value pairs, and therefore it is not pulled up to objects. We enter it manually by copying the data from the xml file
+        let buildingValues = ["allotment_house", "bakehouse", "barn", "basilica", "boathouse", "bunker", "cabin", "carport", "cathedral", "chapel", "church", "college", "commercial", "construction", "cowshed", "digester", "farm_auxiliary", "fire_station", "garage", "garages", "gasometer", "gatehouse", "grandstand", "greenhouse", "hangar", "hospital", "industrial", "kindergarten", "kiosk", "manufacture", "monastery", "mosque", "office", "pavilion", "parking", "public", "retail", "riding_hall", "roof", "ruins", "school", "service", "shed", "silo", "sports_centre", "sports_hall", "stable", "storage_tank", "sty", "supermarket", "synagogue", "temple", "tent", "toilets", "train_station", "transformer_tower", "transportation", "university", "warehouse", "yes"]
         let buildingPath = ItemPath(category: "Man Made", group: "Man Made", item: "Building")
-        for value in values {
+        for value in buildingValues {
             let dict = ["building": value]
             AppSettings.settings.itemPathes[dict] = buildingPath
+        }
+        let residentalBuildingValues = ["residential","apartments","ger","house","hotel","hut","bungalow","dormitory","terrace","detached","farm","stilt_house"]
+        let residentalBuildingPath = ItemPath(category: "Man Made", group: "Man Made", item: "Residential Building")
+        for value in residentalBuildingValues {
+            let dict = ["building": value]
+            AppSettings.settings.itemPathes[dict] = residentalBuildingPath
+        }
+        let buildingPartValues = ["allotment_house","bakehouse","barn","college","commercial","construction","cowshed","farm_auxiliary","garage","garages","greenhouse","hangar","hospital","industrial","office","parking","retail","riding_hall","roof","ruins","school","shed","sports_centre","sports_hall","supermarket","toilets","transportation","university","warehouse","yes"]
+        let buildingPartPath = ItemPath(category: "Man Made", group: "Man Made", item: "Building part")
+        for value in buildingPartValues {
+            let dict = ["building:part":value]
+            AppSettings.settings.itemPathes[dict] = buildingPartPath
+        }
+        let policeValues = ["barracks","car_pound","checkpoint","detention","naval_base","offices","range","storage","training_area","yes"]
+        let policePath = ItemPath(category: "Man Made", group: "Man Made", item: "Non-public police facility")
+        for value in policeValues {
+            let dict = ["police":value]
+            AppSettings.settings.itemPathes[dict] = policePath
         }
         let entranceValues = ["main", "service", "shop", "exit", "emergency", "staircase", "home", "garage", "yes"]
         let entrancePath = ItemPath(category: "Man Made", group: "Man Made", item: "Entrance")
@@ -114,6 +132,7 @@ class Parser {
             let dict = ["entrance": value]
             AppSettings.settings.itemPathes[dict] = entrancePath
         }
+        AppSettings.settings.itemPathes.removeValue(forKey: ["type":"multipolygon"])
     }
 }
 
