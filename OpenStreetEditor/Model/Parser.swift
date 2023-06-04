@@ -101,12 +101,30 @@ class Parser {
                 }
             }
         }
-//      the frequently used preset Building and Entrance do not have key=value pairs, and therefore it is not pulled up to objects. We enter it manually by copying the data from the xml file
-        let values = ["allotment_house", "bakehouse", "barn", "basilica", "boathouse", "bunker", "cabin", "carport", "cathedral", "chapel", "church", "college", "commercial", "construction", "cowshed", "digester", "farm_auxiliary", "fire_station", "garage", "garages", "gasometer", "gatehouse", "grandstand", "greenhouse", "hangar", "hospital", "industrial", "kindergarten", "kiosk", "manufacture", "monastery", "mosque", "office", "pavilion", "parking", "public", "retail", "riding_hall", "roof", "ruins", "school", "service", "shed", "silo", "sports_centre", "sports_hall", "stable", "storage_tank", "sty", "supermarket", "synagogue", "temple", "tent", "toilets", "train_station", "transformer_tower", "transportation", "university", "warehouse", "yes"]
+        // the frequently used preset Building and Entrance do not have key=value pairs, and therefore it is not pulled up to objects. We enter it manually by copying the data from the xml file
+        let buildingValues = ["allotment_house", "bakehouse", "barn", "basilica", "boathouse", "bunker", "cabin", "carport", "cathedral", "chapel", "church", "college", "commercial", "construction", "cowshed", "digester", "farm_auxiliary", "fire_station", "garage", "garages", "gasometer", "gatehouse", "grandstand", "greenhouse", "hangar", "hospital", "industrial", "kindergarten", "kiosk", "manufacture", "monastery", "mosque", "office", "pavilion", "parking", "public", "retail", "riding_hall", "roof", "ruins", "school", "service", "shed", "silo", "sports_centre", "sports_hall", "stable", "storage_tank", "sty", "supermarket", "synagogue", "temple", "tent", "toilets", "train_station", "transformer_tower", "transportation", "university", "warehouse", "yes"]
         let buildingPath = ItemPath(category: "Man Made", group: "Man Made", item: "Building")
-        for value in values {
+        for value in buildingValues {
             let dict = ["building": value]
             AppSettings.settings.itemPathes[dict] = buildingPath
+        }
+        let residentalBuildingValues = ["residential","apartments","ger","house","hotel","hut","bungalow","dormitory","terrace","detached","farm","stilt_house"]
+        let residentalBuildingPath = ItemPath(category: "Man Made", group: "Man Made", item: "Residential Building")
+        for value in residentalBuildingValues {
+            let dict = ["building": value]
+            AppSettings.settings.itemPathes[dict] = residentalBuildingPath
+        }
+        let buildingPartValues = ["allotment_house","bakehouse","barn","college","commercial","construction","cowshed","farm_auxiliary","garage","garages","greenhouse","hangar","hospital","industrial","office","parking","retail","riding_hall","roof","ruins","school","shed","sports_centre","sports_hall","supermarket","toilets","transportation","university","warehouse","yes"]
+        let buildingPartPath = ItemPath(category: "Man Made", group: "Man Made", item: "Building part")
+        for value in buildingPartValues {
+            let dict = ["building:part":value]
+            AppSettings.settings.itemPathes[dict] = buildingPartPath
+        }
+        let policeValues = ["barracks","car_pound","checkpoint","detention","naval_base","offices","range","storage","training_area","yes"]
+        let policePath = ItemPath(category: "Man Made", group: "Man Made", item: "Non-public police facility")
+        for value in policeValues {
+            let dict = ["police":value]
+            AppSettings.settings.itemPathes[dict] = policePath
         }
         let entranceValues = ["main", "service", "shop", "exit", "emergency", "staircase", "home", "garage", "yes"]
         let entrancePath = ItemPath(category: "Man Made", group: "Man Made", item: "Entrance")
@@ -114,6 +132,7 @@ class Parser {
             let dict = ["entrance": value]
             AppSettings.settings.itemPathes[dict] = entrancePath
         }
+        AppSettings.settings.itemPathes.removeValue(forKey: ["type":"multipolygon"])
     }
 }
 
@@ -121,10 +140,10 @@ class OSMXmlParser: NSObject {
     var objects: [Int: Any] = [:]
     var curNode: Node?
     var curWay: Way?
+    var curRelation: Relation?
 }
 
 extension OSMXmlParser: XMLParserDelegate {
-    
     func parser(_: XMLParser, didStartElement elementName: String, namespaceURI _: String?, qualifiedName _: String?, attributes attributeDict: [String: String] = [:]) {
         if elementName == "node" {
             guard let idString = attributeDict["id"],
@@ -136,7 +155,7 @@ extension OSMXmlParser: XMLParserDelegate {
                   let version = Int(versionString),
                   let changeset = Int(changesetString),
                   let lat = Double(latString),
-                  let lon = Double(lonString) else {return}
+                  let lon = Double(lonString) else { return }
             curNode = Node(id: id, version: version, changeset: changeset, lat: lat, lon: lon, tag: [])
         }
         if elementName == "way" {
@@ -145,24 +164,43 @@ extension OSMXmlParser: XMLParserDelegate {
                   let changesetString = attributeDict["changeset"],
                   let id = Int(idString),
                   let version = Int(versionString),
-                  let changeset = Int(changesetString) else {return}
+                  let changeset = Int(changesetString) else { return }
             curWay = Way(id: id, version: version, changeset: changeset, tag: [], nd: [])
+        }
+        if elementName == "relation" {
+            guard let idString = attributeDict["id"],
+                  let versionString = attributeDict["version"],
+                  let changesetString = attributeDict["changeset"],
+                  let id = Int(idString),
+                  let version = Int(versionString),
+                  let changeset = Int(changesetString) else { return }
+            curRelation = Relation(id: id, version: version, changeset: changeset, member: [], tag: [])
+        }
+        if elementName == "member" {
+            guard let type = attributeDict["type"],
+                  let refString = attributeDict["ref"],
+                  let role = attributeDict["role"],
+                  let ref = Int(refString) else { return }
+            let member = Member(type: type, ref: ref, role: role)
+            curRelation?.member.append(member)
         }
         if elementName == "tag" {
             guard let key = attributeDict["k"],
-                  let value = attributeDict["v"] else {return}
+                  let value = attributeDict["v"] else { return }
             let tag = Tag(k: key, v: value, value: "")
-            if curNode != nil && curWay == nil {
+            if curNode != nil && curWay == nil && curRelation == nil {
                 // fill node
                 curNode?.tag.append(tag)
-            } else if curNode == nil && curWay != nil {
+            } else if curNode == nil && curWay != nil && curRelation == nil {
                 // fill way
                 curWay?.tag.append(tag)
+            } else if curNode == nil && curWay == nil && curRelation != nil {
+                curRelation?.tag.append(tag)
             }
         }
         if elementName == "nd" {
             guard let refString = attributeDict["ref"],
-                  let ref = Int(refString) else {return}
+                  let ref = Int(refString) else { return }
             let nd = ND(ref: ref)
             curWay?.nd.append(nd)
         }
@@ -170,14 +208,19 @@ extension OSMXmlParser: XMLParserDelegate {
     
     func parser(_: XMLParser, didEndElement: String, namespaceURI _: String?, qualifiedName _: String?) {
         if didEndElement == "node" {
-            guard let node = curNode else {return}
+            guard let node = curNode else { return }
             objects[node.id] = node
             curNode = nil
         }
         if didEndElement == "way" {
-            guard let way = curWay else {return}
+            guard let way = curWay else { return }
             objects[way.id] = way
             curWay = nil
+        }
+        if didEndElement == "relation" {
+            guard let relation = curRelation else { return }
+            objects[relation.id] = relation
+            curRelation = nil
         }
     }
 }

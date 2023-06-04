@@ -37,9 +37,10 @@ struct osmChange: Decodable, Encodable, DynamicNodeEncoding {
     }
 }
 
-struct Modify: Decodable, Encodable {
+struct Modify: Codable {
     var node: [Node]
     var way: [Way]
+    var relation: [Relation]
 }
 
 struct Create: Codable {
@@ -53,6 +54,60 @@ struct Delete: Codable {
 }
 
 // MARK: OSM DATA STRUCTURES
+
+struct Relation: Codable, DynamicNodeEncoding {
+    static func nodeEncoding(for key: CodingKey) -> XMLEncoder.NodeEncoding {
+        switch key {
+        case CodingKeys.id:
+            return .attribute
+        case CodingKeys.version:
+            return .attribute
+        case CodingKeys.changeset:
+            return .attribute
+        default:
+            return .element
+        }
+    }
+    
+    let id: Int
+    let version: Int
+    var changeset: Int
+    var member: [Member]
+    var tag: [Tag]
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case version
+        case changeset
+        case member
+        case tag
+    }
+}
+
+struct Member: Codable, DynamicNodeEncoding {
+    static func nodeEncoding(for key: CodingKey) -> XMLEncoder.NodeEncoding {
+        switch key {
+        case CodingKeys.type:
+            return .attribute
+        case CodingKeys.ref:
+            return .attribute
+        case CodingKeys.role:
+            return .attribute
+        default:
+            return .element
+        }
+    }
+    
+    let type: String
+    let ref: Int
+    let role: String
+    
+    enum CodingKeys: String, CodingKey {
+        case type
+        case ref
+        case role
+    }
+}
 
 struct Node: Decodable, Encodable, DynamicNodeEncoding {
     static func nodeEncoding(for key: CodingKey) -> XMLEncoder.NodeEncoding {
@@ -177,8 +232,25 @@ struct OSMAnyObject: Codable {
     var oldTags: [String: String]
     var nd: [ND]
     var nodes: [Int: Node]
+    var members: [Member]
+    var vectorString: String
+    var vector: GLMapVectorObject {
+        get {
+            do {
+                let vectors = try GLMapVectorObject.createVectorObjects(fromGeoJSON: vectorString)
+                return vectors.object(at: 0)
+            } catch {
+                print(error)
+                return GLMapVectorObject()
+            }
+        }
+        set {
+            let string = newValue.asGeoJSON()
+            vectorString = string
+        }
+    }
     
-    init(type: OSMObjectType, id: Int, version: Int, changeset: Int, lat: Double?, lon: Double?, tag: [Tag], nd: [ND], nodes: [Int: Node]) {
+    init(type: OSMObjectType, id: Int, version: Int, changeset: Int, lat: Double?, lon: Double?, tag: [Tag], nd: [ND], nodes: [Int: Node], members: [Member], vector: GLMapVectorObject) {
         self.type = type
         self.id = id
         self.version = version
@@ -192,6 +264,13 @@ struct OSMAnyObject: Codable {
         for tg in tag {
             oldTags[tg.k] = tg.v
         }
+        self.members = members
+        self.vectorString = vector.asGeoJSON()
+    }
+    
+    func getRelation() -> Relation {
+        let relation = Relation(id: id, version: version, changeset: changeset, member: members, tag: tag)
+        return relation
     }
     
     func getWay() -> Way {
@@ -204,29 +283,6 @@ struct OSMAnyObject: Codable {
               let lon = lon else { return nil }
         let node = Node(id: id, version: version, changeset: changeset, lat: lat, lon: lon, tag: tag)
         return node
-    }
-    
-    func getVectorObject() -> GLMapVectorObject {
-        var vector = GLMapVectorObject()
-        switch type {
-        case .node:
-            guard let lat = lat,
-                  let lon = lon else { return vector }
-            let point = GLMapPoint(lat: lat, lon: lon)
-            vector = GLMapVectorObject(point: point)
-            return vector
-        case .way, .closedway:
-            let pointArray = GLMapPointArray()
-            for id in nd {
-                guard let node = nodes[id.ref] else { continue }
-                let point = GLMapPoint(lat: node.lat, lon: node.lon)
-                pointArray.add(point)
-            }
-            vector = GLMapVectorObject(line: pointArray)
-            return vector
-        case .multipolygon:
-            return vector
-        }
     }
 }
 

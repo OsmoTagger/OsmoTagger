@@ -67,7 +67,7 @@ class CategoryViewController: UIViewController, UITableViewDelegate, UITableView
         case .closedway:
             iconName = "osm_element_closedway"
         case .multipolygon:
-            iconName = "osm_element_area"
+            iconName = "osm_element_multipolygon"
         }
         iconType.image = UIImage(named: iconName)
     }

@@ -66,7 +66,6 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         if object.tag.count == 0 {
             tapTitleButton()
         }
-        
         AppSettings.settings.saveAllowed = true
         
         // Notifications about calling and hiding the keyboard.
@@ -84,7 +83,7 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         navigationController?.setToolbarHidden(false, animated: false)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_: Bool) {
         // Closure that is performed every time the object tags are changed - AppSettings.settings.newProperties
         AppSettings.settings.saveObjectClouser = { [weak self] in
             guard let self = self else { return }
@@ -128,7 +127,7 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         case .closedway:
             iconTypeName = "osm_element_closedway"
         case .multipolygon:
-            iconTypeName = "osm_element_area"
+            iconTypeName = "osm_element_multipolygon"
         }
         let iconType = UIImageView(image: UIImage(named: iconTypeName))
         iconType.addConstraints([

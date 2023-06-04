@@ -138,7 +138,7 @@ class InfoObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         case .closedway:
             iconTypeName = "osm_element_closedway"
         case .multipolygon:
-            iconTypeName = "osm_element_area"
+            iconTypeName = "osm_element_multipolygon"
         }
         tableData.append(InfoCellData(icon: iconTypeName, text: "Type: \(object.type.rawValue)"))
         

@@ -115,7 +115,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             case .closedway:
                 iconName = "osm_element_closedway"
             case .multipolygon:
-                iconName = "osm_element_area"
+                iconName = "osm_element_multipolygon"
             }
             var data = SaveNodeCellData(type: .saved, itemIcon: nil, typeIcon: iconName, itemLabel: nil, idLabel: object.id)
             let pathes = getItemsFromTags(properties: properties)
@@ -151,7 +151,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             case .closedway:
                 iconName = "osm_element_closedway"
             case .multipolygon:
-                iconName = "osm_element_area"
+                iconName = "osm_element_multipolygon"
             }
             var data = SaveNodeCellData(type: .saved, itemIcon: nil, typeIcon: iconName, itemLabel: nil, idLabel: object.id)
             let pathes = getItemsFromTags(properties: properties)
@@ -186,7 +186,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             case .closedway:
                 iconName = "osm_element_closedway"
             case .multipolygon:
-                iconName = "osm_element_area"
+                iconName = "osm_element_multipolygon"
             }
             var data = SaveNodeCellData(type: .deleted, itemIcon: nil, typeIcon: iconName, itemLabel: nil, idLabel: object.id)
             let pathes = getItemsFromTags(properties: properties)
@@ -295,7 +295,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             nilObject = AppSettings.settings.deletedObjects[data.idLabel]
         }
         guard let object = nilObject else { return }
-        let vector = object.getVectorObject()
+        let vector = object.vector
         delegate?.showTapObject(object: vector)
         let vc = EditObjectViewController(object: object)
         navigationController?.pushViewController(vc, animated: true)
@@ -360,11 +360,9 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         guard let key = sender.key,
               let id = Int(key) else { return }
         if let object = AppSettings.settings.savedObjects[id] {
-            let vector = object.getVectorObject()
-            delegate?.showTapObject(object: vector)
+            delegate?.showTapObject(object: object.vector)
         } else if let object = AppSettings.settings.deletedObjects[id] {
-            let vector = object.getVectorObject()
-            delegate?.showTapObject(object: vector)
+            delegate?.showTapObject(object: object.vector)
         }
     }
     
@@ -431,7 +429,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
                 tableView.reloadData()
                 removeIndicator(indicator: indicator)
                 DispatchQueue.main.async { [weak self] in
-                    guard let self = self else {return}
+                    guard let self = self else { return }
                     self.enterCommentView.placeholder = nil
                     self.enterCommentView.text = nil
                     AppSettings.settings.changeSetComment = nil
@@ -540,7 +538,7 @@ extension SavedNodesViewController: UITextFieldDelegate {
         view.endEditing(true)
     }
     
-    func textFieldDidEndEditing(_ textField: UITextField) {
+    func textFieldDidEndEditing(_: UITextField) {
         view.removeGestureRecognizer(tap)
     }
 }

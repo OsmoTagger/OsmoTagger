@@ -196,6 +196,11 @@ final class AppSettings: NSObject {
         color:green;
         |z17- {width: 3pt;}
     }
+    area {
+        width:1pt;
+        color:green;
+        |z17- {width:3pt;}
+    }
     """
     
     //  Displays the object that was tapped and whose properties are currently being edited (yellow).
@@ -211,8 +216,9 @@ final class AppSettings: NSObject {
         color:yellow;
     }
     area {
-        width:2pt;
+        width:1pt;
         color:yellow;
+        |z17- {width:3pt;}
     }
     """
     
@@ -230,6 +236,11 @@ final class AppSettings: NSObject {
         color:orange;
         |z17- {width: 3pt;}
     }
+    area {
+        width:1pt;
+        color:orange;
+        |z17- {width:3pt;}
+    }
     """
     
     //  Highlights objects that fell under the tap, if there was not one object under the tap, but several.
@@ -245,6 +256,11 @@ final class AppSettings: NSObject {
             width: 1pt;
             color:violet;
             |z17- {width: 3pt;}
+        }
+        area {
+            width:1pt;
+            color:violet;
+            |z17- {width:3pt;}
         }
     """
     

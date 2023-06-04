@@ -48,7 +48,6 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func fillData() {
-        delegate?.showTappedObjects(objects: objects)
         tableData = []
         for object in objects {
             var properties: [String: String] = [:]
@@ -113,7 +112,7 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
         case .closedway:
             iconName = "osm_element_closedway"
         case .multipolygon:
-            iconName = "osm_element_area"
+            iconName = "osm_element_multipolygon"
         }
         cell.iconType.image = UIImage(named: iconName)
         let itemText = data.itemLabel ?? "Unknown"
@@ -140,7 +139,7 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
         guard let key = sender.key,
               let id = Int(key) else { return }
         for object in objects where object.id == id {
-            let vector = object.getVectorObject()
+            let vector = object.vector
 //          We highlight the object.
             delegate?.showTapObject(object: vector)
         }
