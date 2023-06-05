@@ -48,8 +48,8 @@ class SelectObjectCell: UITableViewCell {
         return label
     }()
 
-    var bulb: MultiSelectBotton = {
-        let bulb = MultiSelectBotton()
+    var bulb: BulbButton = {
+        let bulb = BulbButton()
         bulb.setImage(UIImage(systemName: "lightbulb")?.withTintColor(.systemYellow, renderingMode: .alwaysOriginal), for: .normal)
         bulb.translatesAutoresizingMaskIntoConstraints = false
         return bulb
@@ -102,6 +102,6 @@ class SelectObjectCell: UITableViewCell {
         iconType.image = nil
         itemLabel.text = nil
         idLabel.text = nil
-        bulb.key = nil
+        bulb.id = nil
     }
 }

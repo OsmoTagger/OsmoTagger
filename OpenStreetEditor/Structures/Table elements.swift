@@ -472,10 +472,50 @@ class SelectValuesCell: UITableViewCell {
     }
 }
 
+class BulbButton: UIButton {
+    let button: UIButton = {
+        let but = UIButton()
+        but.translatesAutoresizingMaskIntoConstraints = false
+        return but
+    }()
+    var id: Int?
+}
+
 //  The button that is used to select the tag values from the list. Used on the tag editing controller and ItemVC
-class MultiSelectBotton: UIButton {
+class SelectButton: UIButton {
+    let button: UIButton = {
+        let but = UIButton()
+        but.translatesAutoresizingMaskIntoConstraints = false
+        return but
+    }()
+    private let icon: UIImageView = {
+        let image = UIImageView(image: UIImage(systemName: "chevron.down"))
+        image.translatesAutoresizingMaskIntoConstraints = false
+        return image
+    }()
     var key: String?
     var values: [String] = []
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setUpConstrains()
+    }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setUpConstrains() {
+        addSubview(button)
+        addSubview(icon)
+        NSLayoutConstraint.activate([
+            button.leftAnchor.constraint(equalTo: leftAnchor),
+            button.topAnchor.constraint(equalTo: topAnchor),
+            button.rightAnchor.constraint(equalTo: rightAnchor),
+            button.bottomAnchor.constraint(equalTo: bottomAnchor),
+            icon.rightAnchor.constraint(equalTo: button.rightAnchor, constant: -10),
+            icon.centerYAnchor.constraint(equalTo: button.centerYAnchor),
+        ])
+    }
 }
 
 //  Custom UITextField for entering the text value of the tag. Use in ItemVC and EditObjectVC

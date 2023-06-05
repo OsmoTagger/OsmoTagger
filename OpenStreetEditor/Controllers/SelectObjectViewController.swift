@@ -15,7 +15,7 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
     var callbackClosure: (() -> Void)?
     
     //  A link to the pressed Bulb backlight button. When you click on another button, the link changes.
-    private var activeBulb: MultiSelectBotton?
+    private var activeBulb: BulbButton?
     
     var objects: [OSMAnyObject]
     
@@ -118,13 +118,13 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
         let itemText = data.itemLabel ?? "Unknown"
         cell.itemLabel.text = itemText
         cell.idLabel.text = "id: " + data.idLabel
-        cell.bulb.key = data.idLabel
+        cell.bulb.id = Int(data.idLabel)
         cell.accessoryType = .disclosureIndicator
         cell.bulb.addTarget(self, action: #selector(tapBulb), for: .touchUpInside)
         return cell
     }
     
-    @objc func tapBulb(_ sender: MultiSelectBotton) {
+    @objc func tapBulb(_ sender: BulbButton) {
         if activeBulb == sender {
 //          Resetting the active button and color when pressed again
             activeBulb?.backgroundColor = .clear
@@ -136,8 +136,8 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
             sender.backgroundColor = .lightGray
             activeBulb = sender
         }
-        guard let key = sender.key,
-              let id = Int(key) else { return }
+        guard let id = sender.id else { return }
+              
         for object in objects where object.id == id {
             let vector = object.vector
 //          We highlight the object.

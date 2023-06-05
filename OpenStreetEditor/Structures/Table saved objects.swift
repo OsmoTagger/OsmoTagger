@@ -70,8 +70,8 @@ class SavedNodeCell: UITableViewCell {
         return checkBox
     }()
 
-    var bulb: MultiSelectBotton = {
-        let bulb = MultiSelectBotton()
+    var bulb: BulbButton = {
+        let bulb = BulbButton()
         bulb.setImage(UIImage(systemName: "lightbulb")?.withTintColor(.systemYellow, renderingMode: .alwaysOriginal), for: .normal)
         bulb.translatesAutoresizingMaskIntoConstraints = false
         return bulb
@@ -127,6 +127,6 @@ class SavedNodeCell: UITableViewCell {
         itemLabel.text = nil
         idLabel.text = nil
         checkBox.isChecked = false
-        bulb.key = nil
+        bulb.id = nil
     }
 }

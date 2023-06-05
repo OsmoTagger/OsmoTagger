@@ -241,10 +241,10 @@ class ItemCell: UITableViewCell {
         return label
     }()
 
-    var selectValueButton: MultiSelectBotton = {
-        let button = MultiSelectBotton()
+    var selectValueButton: SelectButton = {
+        let button = SelectButton()
+        button.backgroundColor = .systemBackground
         button.setTitleColor(.label, for: .normal)
-        button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -362,7 +362,6 @@ class ItemCell: UITableViewCell {
             if value == AppSettings.settings.newProperties[key] {
                 nilAction.state = .off
                 action.state = .on
-                checkBox.isChecked = true
             } else {
                 nilAction.state = .on
             }
@@ -371,7 +370,6 @@ class ItemCell: UITableViewCell {
         optionsArray.append(nilAction)
         let optionsMenu = UIMenu(title: "", image: nil, identifier: nil, options: .singleSelection, children: optionsArray)
         selectValueButton.menu = optionsMenu
-        selectValueButton.setImage(UIImage(systemName: "chevron.down"), for: .normal)
         selectValueButton.showsMenuAsPrimaryAction = true
         selectValueButton.changesSelectionAsPrimaryAction = true
     }
