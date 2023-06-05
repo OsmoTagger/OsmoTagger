@@ -151,6 +151,7 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
         guard let id = Int(idString) else { return }
         for object in objects where object.id == id {
             let vc = EditObjectViewController(object: object)
+            delegate?.showTapObject(object: object.vector)
             navigationController?.pushViewController(vc, animated: true)
         }
     }
