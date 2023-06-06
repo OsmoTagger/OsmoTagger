@@ -614,4 +614,8 @@ extension MapViewController: ShowTappedObject {
             removeIndicator(indicator: indicator)
         }
     }
+    
+    func removeEditDrawble() {
+        mapView.remove(editDrawble)
+    }
 }

@@ -12,4 +12,5 @@ import GLMap
 protocol ShowTappedObject: NSObject {
     func showTapObject(object: GLMapVectorObject)
     func updateSourceData()
+    func removeEditDrawble()
 }

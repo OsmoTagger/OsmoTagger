@@ -64,7 +64,7 @@ class AuthViewController: UIViewController {
         warningLabel.textAlignment = .center
         warningLabel.numberOfLines = 0
         let text = """
-        StreetEditor uses OAuth 2.0 authentication, and does not have access to a login and password for authorization on the server openstreetmap.org .
+        OpenStreetEditor uses OAuth 2.0 authentication, and does not have access to a login and password for authorization on the server openstreetmap.org.
         """
         warningLabel.text = text
         warningLabel.translatesAutoresizingMaskIntoConstraints = false

@@ -39,9 +39,9 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         let channelText = "Telegram channel"
         let gitText = "Source code."
         let support = SettingsTableData(name: "Support and development", items: [
-            SettingsCellData(icon: "chatIcon", text: telegramText, link: "https://t.me/OpenStreetEditor_chat"),
-            SettingsCellData(icon: "channelIcon", text: channelText, link: "https://t.me/OpenStreetEditor"),
-            SettingsCellData(icon: "gitIcon", text: gitText, link: "https://github.com/OpenStreetEditor/OpenStreetEditor"),
+            SettingsCellData(icon: "chatIcon.png", text: telegramText, link: "https://t.me/OpenStreetEditor_chat"),
+            SettingsCellData(icon: "channelIcon.png", text: channelText, link: "https://t.me/OpenStreetEditor"),
+            SettingsCellData(icon: "gitIcon.png", text: gitText, link: "https://github.com/OpenStreetEditor/OpenStreetEditor"),
         ])
         tableData.append(support)
         let osmText = "Map data (c) Openstreetmap contributors"
@@ -49,15 +49,15 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         let osmiumText = "Data conversion by Osmium"
         let josmText = "Presets and images from JOSM"
         let second = SettingsTableData(name: "Thanks", items: [
-            SettingsCellData(icon: "osmIcon", text: osmText, link: "https://www.openstreetmap.org/"),
-            SettingsCellData(icon: "globusIcon", text: glText, link: "https://globus.software/"),
-            SettingsCellData(icon: "osmiumIcon", text: osmiumText, link: "https://osmcode.org/"),
-            SettingsCellData(icon: "josmIcon", text: josmText, link: "https://josm.openstreetmap.de/"),
+            SettingsCellData(icon: "osmIcon.jpg", text: osmText, link: "https://www.openstreetmap.org/"),
+            SettingsCellData(icon: "globusIcon.png", text: glText, link: "https://globus.software/"),
+            SettingsCellData(icon: "osmiumIcon.png", text: osmiumText, link: "https://osmcode.org/"),
+            SettingsCellData(icon: "josmIcon.png", text: josmText, link: "https://josm.openstreetmap.de/"),
         ])
         tableData.append(second)
         let licenseText = "GPLv3"
         let third = SettingsTableData(name: "License", items: [
-            SettingsCellData(icon: "gnuIcon", text: licenseText, link: "https://www.gnu.org/licenses/gpl-3.0.html"),
+            SettingsCellData(icon: "gnuIcon.png", text: licenseText, link: "https://www.gnu.org/licenses/gpl-3.0.html"),
         ])
         tableData.append(third)
     }
@@ -101,29 +101,29 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard indexPath.section == 0 else {
-            tableView.deselectRow(at: indexPath, animated: true)
-            return
-        }
-        switch indexPath.row {
+        switch indexPath.section {
         case 0:
-            let vc = AuthViewController()
-            navigationController?.pushViewController(vc, animated: true)
-        case 1:
-            let vc = QuickGuideViewController()
-            navigationController?.pushViewController(vc, animated: true)
+            switch indexPath.row {
+            case 0:
+                let vc = AuthViewController()
+                navigationController?.pushViewController(vc, animated: true)
+            case 1:
+                let vc = QuickGuideViewController()
+                navigationController?.pushViewController(vc, animated: true)
+            default:
+                return
+            }
         default:
-            return
+            let link = tableData[indexPath.section].items[indexPath.row].link
+            guard let url = URL(string: link) else {
+                showAction(message: "Error create url: \(link)", addAlerts: [])
+                return
+            }
+            let svc = SFSafariViewController(url: url)
+            present(svc, animated: true, completion: nil)
         }
     }
-    
-    func tableView(_: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        let data = tableData[indexPath.section].items[indexPath.row]
-        guard let url = URL(string: data.link) else { return }
-        let svc = SFSafariViewController(url: url)
-        present(svc, animated: true, completion: nil)
-    }
-    
+        
     func tableView(_: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? SimpleCell else {
             let cellFail = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
@@ -133,11 +133,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         let data = tableData[indexPath.section].items[indexPath.row]
         cell.icon.icon.image = UIImage(named: data.icon)
         cell.label.text = data.text
-        if indexPath.section == 0 {
-            cell.accessoryType = .disclosureIndicator
-        } else {
-            cell.accessoryType = .detailButton
-        }
+        cell.accessoryType = .disclosureIndicator
         return cell
     }
 }

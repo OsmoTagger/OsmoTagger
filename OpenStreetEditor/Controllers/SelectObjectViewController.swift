@@ -40,6 +40,7 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
     
     override func viewWillAppear(_: Bool) {
         navigationController?.setToolbarHidden(true, animated: true)
+        delegate?.removeEditDrawble()
     }
     
     override func viewDidDisappear(_: Bool) {
