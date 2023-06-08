@@ -40,7 +40,6 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
     
     override func viewWillAppear(_: Bool) {
         navigationController?.setToolbarHidden(true, animated: true)
-        delegate?.removeEditDrawble()
     }
     
     override func viewDidDisappear(_: Bool) {
@@ -152,6 +151,10 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
         guard let id = Int(idString) else { return }
         for object in objects where object.id == id {
             let vc = EditObjectViewController(object: object)
+            vc.deinitClouser = { [weak self] in
+                guard let self = self else {return}
+                self.delegate?.removeEditDrawble()
+            }
             delegate?.showTapObject(object: object.vector)
             navigationController?.pushViewController(vc, animated: true)
         }

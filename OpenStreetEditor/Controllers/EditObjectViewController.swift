@@ -12,6 +12,8 @@ import UIKit
 class EditObjectViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
     //  Called when the object is completely deleted from the server. Used only on SavedNodesVC.
     var deleteObjectClosure: ((Int) -> Void)?
+    // Closure that is called when the controller is deinitialized
+    var deinitClouser: (() -> Void)?
     
     var object: OSMAnyObject
     
@@ -56,6 +58,12 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit {
+        if let clouser = deinitClouser {
+            clouser()
+        }
     }
     
     override func viewDidLoad() {
