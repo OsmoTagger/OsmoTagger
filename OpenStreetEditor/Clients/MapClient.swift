@@ -35,9 +35,6 @@ class MapClient {
     // Layer with original OSM map data
     let sourceDrawble = GLMapVectorLayer(drawOrder: 0)
     let sourceStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.defaultStyle)
-    //  Displays objects created but not sent to the server (orange color).
-    let newDrawble = GLMapVectorLayer(drawOrder: 2)
-    let newStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.newStyle)
     //  Displays objects that have been modified but not sent to the server (green).
     let savedDrawable = GLMapVectorLayer(drawOrder: 1)
     let savedStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.savedStyle)
@@ -239,6 +236,17 @@ class MapClient {
         delegate?.endDownload()
     }
     
+    func getObjectType(object: GLMapVectorObject) -> GLMapVectoObjectType? {
+        if object is GLMapVectorPoint || object is GLMapVectorLine {
+            return .simple
+        } else if let polygon = object as? GLMapVectorPolygon {
+            let line = polygon.buildOutline() // GLMapVectorLine
+            return .polygon(line: line)
+        } else {
+            return nil
+        }
+    }
+    
     //  Get objects after tap
     func openObject(touchCoordinate: GLMapPoint, tmp: GLMapPoint) -> [OSMAnyObject] {
         var tappedVectorObjects: [GLMapVectorObject] = []
@@ -250,8 +258,18 @@ class MapClient {
         guard tapObjects.count > 0 else { return [] }
         for i in 0 ... tapObjects.count - 1 {
             let object = tapObjects[i]
-            if object.findNearestPoint(&nearestPoint, to: touchCoordinate, maxDistance: maxDist) && (object.type.rawValue == 1 || object.type.rawValue == 2 || object.type.rawValue == 4) {
-                tappedVectorObjects.append(object)
+            if object.findNearestPoint(&nearestPoint, to: touchCoordinate, maxDistance: maxDist) {
+                let type = getObjectType(object: object)
+                switch type {
+                case .simple:
+                    tappedVectorObjects.append(object)
+                case let .polygon(line):
+                    if line.findNearestPoint(&nearestPoint, to: touchCoordinate, maxDistance: maxDist) {
+                        tappedVectorObjects.append(object)
+                    }
+                case .none:
+                    continue
+                }
             }
         }
         for object in tappedVectorObjects {
@@ -292,17 +310,11 @@ class MapClient {
     //  Displays created and modified objects.
     func showSavedObjects() {
         let savedObjects = GLMapVectorObjectArray()
-        let newObjects = GLMapVectorObjectArray()
         for (id, osmObject) in AppSettings.settings.savedObjects {
             let object = osmObject.vector
-            guard object.type.rawValue != 0 else { continue }
             // The ID is stored as a string in each vector object (feature of how osmium works). To recognize the id of the created object after the tap, assign it a number
             object.setValue(String(id), forKey: "@id")
-            if id < 0 {
-                newObjects.add(object)
-            } else {
-                savedObjects.add(object)
-            }
+            savedObjects.add(object)
         }
         if savedObjects.count > 0 {
             for i in 0 ... savedObjects.count - 1 {
@@ -310,22 +322,11 @@ class MapClient {
                 tapObjects.add(object)
             }
         }
-        if newObjects.count > 0 {
-            for i in 0 ... newObjects.count - 1 {
-                let object = newObjects[i]
-                tapObjects.add(object)
-            }
-        }
         delegate?.removeDrawble(layer: savedDrawable)
-        delegate?.removeDrawble(layer: newDrawble)
         if let savedStyle = savedStyle {
             savedDrawable.setVectorObjects(savedObjects, with: savedStyle, completion: nil)
         }
-        if let newStyle = newStyle {
-            newDrawble.setVectorObjects(newObjects, with: newStyle, completion: nil)
-        }
         delegate?.addDrawble(layer: savedDrawable)
-        delegate?.addDrawble(layer: newDrawble)
         // Update saveNodesButton counter
         if let button = savedNodeButtonLink {
             DispatchQueue.main.async {

@@ -53,8 +53,8 @@
 		2CD9133C29AB972E00A4A853 /* Table elements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD9133B29AB972E00A4A853 /* Table elements.swift */; };
 		2CDEA6D729862C2B00E5219D /* GLMapVectorObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CDEA6D629862C2B00E5219D /* GLMapVectorObject.swift */; };
 		2CE00A812A253DA5008A6119 /* MapClientProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE00A802A253DA5008A6119 /* MapClientProtocol.swift */; };
+		2CECC4B92A30AB25002B41EC /* GLMap in Frameworks */ = {isa = PBXBuildFile; productRef = 2CECC4B82A30AB25002B41EC /* GLMap */; };
 		2CF9E7732A0C9FFC003DB2CC /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF9E7722A0C9FFC003DB2CC /* UIColor.swift */; };
-		2CFB66CA2A29269D00E474A3 /* GLMap in Frameworks */ = {isa = PBXBuildFile; productRef = 2CFB66C92A29269D00E474A3 /* GLMap */; };
 		2CFF98E4299BE44D0045D6B8 /* SavedNodesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFF98E3299BE44D0045D6B8 /* SavedNodesViewController.swift */; };
 		6C76E75928EC12AE0048C378 /* FastHash.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C76E75828EC12AE0048C378 /* FastHash.m */; };
 		6C8B010C28FC030B00C9238D /* option_clean.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C8B00FB28FC030B00C9238D /* option_clean.cpp */; };
@@ -164,7 +164,7 @@
 				6CF514DB28FB4B1F001D2758 /* libz.tbd in Frameworks */,
 				2CBA844E2A1492E500CE687F /* XMLCoder in Frameworks */,
 				6CF514D928FB4B05001D2758 /* libbz2.tbd in Frameworks */,
-				2CFB66CA2A29269D00E474A3 /* GLMap in Frameworks */,
+				2CECC4B92A30AB25002B41EC /* GLMap in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -403,7 +403,7 @@
 			name = OpenStreetEditor;
 			packageProductDependencies = (
 				2CBA844D2A1492E500CE687F /* XMLCoder */,
-				2CFB66C92A29269D00E474A3 /* GLMap */,
+				2CECC4B82A30AB25002B41EC /* GLMap */,
 			);
 			productName = "OSM editor";
 			productReference = 2042BCE7289C696E0026514E /* OpenStreetEditor.app */;
@@ -840,7 +840,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GLMap/GLMapSwift";
 			requirement = {
-				branch = master;
+				branch = snapshot;
 				kind = branch;
 			};
 		};
@@ -857,7 +857,7 @@
 			package = 2C529E3629102F8400F46972 /* XCRemoteSwiftPackageReference "XMLCoder" */;
 			productName = XMLCoder;
 		};
-		2CFB66C92A29269D00E474A3 /* GLMap */ = {
+		2CECC4B82A30AB25002B41EC /* GLMap */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2CFB66C82A29269D00E474A3 /* XCRemoteSwiftPackageReference "GLMapSwift" */;
 			productName = GLMap;

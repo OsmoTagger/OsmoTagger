@@ -12,7 +12,7 @@ import UIKit
 import XMLCoder
 
 //  RootViewController with mapView
-class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureRecognizerDelegate {
+class MapViewController: UIViewController {
     //  Class for working with MapView. Subsequently, all GLMap entities should be transferred to it.
     let mapClient = MapClient()
     //  map and location service
@@ -52,7 +52,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         chekAuthorization()
         
 //      Setting up taps.
-        let doubleTap = UITapGestureRecognizer(target: self, action: nil)
+        let doubleTap = UITapGestureRecognizer(target: self, action: #selector(doubleTap))
         doubleTap.numberOfTapsRequired = 2
         doubleTap.delegate = self
         mapView.addGestureRecognizer(doubleTap)
@@ -66,6 +66,9 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         oneTap.require(toFail: pressTap)
         pressTap.delegate = self
         mapView.addGestureRecognizer(pressTap)
+        let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(pinchGesture))
+        pinchGesture.delegate = self
+        mapView.addGestureRecognizer(pinchGesture)
         
 //      Add buttons
         setDownloadButton()
@@ -127,7 +130,9 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
     func setDidMapMoveClouser() {
         mapView.mapDidMoveBlock = { [weak self] _ in
             guard let self = self else { return }
-            AppSettings.settings.lastBbox = self.mapView.bbox
+            if self.navController == nil {
+                AppSettings.settings.lastBbox = self.mapView.bbox
+            }
             guard self.isDownloadSource == true else { return }
             let zoom = self.mapView.mapZoomLevel
             let beginLoadZoom = 16.0
@@ -344,9 +349,10 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         centerIcon.removeFromSuperview()
         addNodeButton.removeFromSuperview()
         let geoPoint = mapView.makeGeoPoint(fromDisplay: mapView.center)
+        let glPoint = GLMapPoint(geoPoint: geoPoint)
         // To send the created objects to the server, you need to assign them an id < 0. To prevent duplicate IDs, the AppSettings.settings.nextId variable has been created, which reduces the id by 1 each time.
-        let vector = GLMapVectorObject(point: GLMapPoint(geoPoint: geoPoint))
-        let object = OSMAnyObject(type: .node, id: AppSettings.settings.nextID, version: 0, changeset: 0, lat: geoPoint.lat, lon: geoPoint.lon, tag: [], nd: [], nodes: [:], members: [], vector: vector)
+        let point = GLMapVectorPoint(glPoint)
+        let object = OSMAnyObject(type: .node, id: AppSettings.settings.nextID, version: 0, changeset: 0, lat: geoPoint.lat, lon: geoPoint.lon, tag: [], nd: [], nodes: [:], members: [], vector: point)
         goToPropertiesVC(object: object)
     }
     
@@ -368,32 +374,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
     @objc func tapTestButton() {}
     
 //    MARK: FUNCTIONS
-
-    //  The method searches for vector objects under the tap. If 1 object is detected, it goes to the controller for editing its tags, if > 1, it offers to select an object from the tapped ones.
-    @objc func getObjects(sender: UITapGestureRecognizer) {
-        let touchPoint = sender.location(in: mapView)
-        let touchPointMapCoordinate = mapView.makeMapPoint(fromDisplay: touchPoint)
-        let maxTapDistance = 20
-        let tmp = mapView.makeMapPoint(fromDisplayDelta: CGPoint(x: maxTapDistance, y: 0))
-        let tapObjects = mapClient.openObject(touchCoordinate: touchPointMapCoordinate, tmp: tmp)
-        switch tapObjects.count {
-        case 0:
-            return
-        case 1:
-            if let first = tapObjects.first {
-                goToPropertiesVC(object: first)
-            }
-        default:
-//          Moves the tapped object to the visible part of the map.
-            let centerPoint = mapView.makeGeoPoint(fromDisplay: touchPoint)
-            mapView.animate { animation in
-                animation.duration = 0.25
-                animation.transition = .linear
-                animation.fly(to: centerPoint)
-            }
-            selectObjects(objects: tapObjects)
-        }
-    }
     
     //  Calls the object selection controller if there are several of them under the tap.
     func selectObjects(objects: [OSMAnyObject]) {
@@ -435,6 +415,10 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
                 animation.duration = 0.25
                 animation.transition = .linear
                 self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.5)
+                if let userBoox = AppSettings.settings.lastBbox {
+                    self.mapView.mapCenter = userBoox.center
+                    self.mapView.mapZoom = self.mapView.mapZoom(for: userBoox)
+                }
             }
         }
         if let sheetPresentationController = navController?.presentationController as? UISheetPresentationController {
@@ -515,13 +499,127 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
             let location = sender.location(in: mapView)
             let newMapCenter = mapView.makeGeoPoint(fromDisplay: CGPoint(x: location.x, y: location.y))
             mapView.animate { animation in
-                animation.fly(to: newMapCenter)
+                animation.duration = 0.25
+                animation.transition = .linear
+                mapView.mapGeoCenter = newMapCenter
             }
             setAddNodeButton()
             setCenterMap()
         }
     }
-        
+}
+
+extension MapViewController: MapClientProtocol {
+    func addDrawble(layer: GLMapDrawable) {
+        mapView.add(layer)
+    }
+    
+    func removeDrawble(layer: GLMapDrawable) {
+        mapView.remove(layer)
+    }
+    
+    func startDownload() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.setLoadIndicator()
+        }
+    }
+    
+    func endDownload() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.removeIndicator(indicator: self.indicator)
+        }
+    }
+}
+
+extension MapViewController: ShowTappedObject {
+    //  The method displays the vector object passed to it and moves it to the visible part of the map. It is used on the tag editing controller, and on the object selection controller, if there are several of them under the tap.
+    func showTapObject(object: GLMapVectorObject) {
+        let newCenter = GLMapGeoPoint(point: object.bbox.center)
+        let userBbox = AppSettings.settings.lastBbox ?? mapView.bbox
+        let userZoom = mapView.mapZoom(for: userBbox)
+        var newZoom = mapView.mapZoom(for: object.bbox)
+        if newZoom > userZoom {
+            newZoom = userZoom
+        }
+        if let editStyle = editStyle {
+            editDrawble.setVectorObject(object, with: editStyle, completion: nil)
+        }
+        mapView.add(editDrawble)
+        mapView.animate({ animation in
+            animation.duration = 0.25
+            animation.transition = .linear
+            mapView.mapGeoCenter = newCenter
+            mapView.mapZoom = newZoom
+        }, withCompletion: { _ in
+//            AppSettings.settings.lastBbox = lastBbox
+        })
+    }
+    
+    //  The method updates the uploaded data. It is called from the tag editing controller and the saved objects display controller, after the changes have been successfully sent to the server.
+    func updateSourceData() {
+        mapClient.lastCenter = GLMapGeoPoint(lat: 0, lon: 0)
+        Task {
+            try await mapClient.getSourceBbox(mapCenter: mapView.mapGeoCenter)
+            removeIndicator(indicator: indicator)
+        }
+    }
+    
+    func removeEditDrawble() {
+        mapView.remove(editDrawble)
+    }
+}
+
+extension MapViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer) -> Bool { return true }
+    
+    //  The method searches for vector objects under the tap. If 1 object is detected, it goes to the controller for editing its tags, if > 1, it offers to select an object from the tapped ones.
+    @objc func getObjects(sender: UITapGestureRecognizer) {
+        let touchPoint = sender.location(in: mapView)
+        let touchPointMapCoordinate = mapView.makeMapPoint(fromDisplay: touchPoint)
+        let maxTapDistance = 20
+        let tmp = mapView.makeMapPoint(fromDisplayDelta: CGPoint(x: maxTapDistance, y: 0))
+        let tapObjects = mapClient.openObject(touchCoordinate: touchPointMapCoordinate, tmp: tmp)
+        switch tapObjects.count {
+        case 0:
+            return
+        case 1:
+            if let first = tapObjects.first {
+                goToPropertiesVC(object: first)
+            }
+        default:
+//          Moves the tapped object to the visible part of the map.
+            let centerPoint = mapView.makeGeoPoint(fromDisplay: touchPoint)
+            mapView.animate { animation in
+                animation.duration = 0.25
+                animation.transition = .linear
+                mapView.mapGeoCenter = centerPoint
+            }
+            selectObjects(objects: tapObjects)
+        }
+    }
+    
+    @objc func pinchGesture(_ gesture: UIPinchGestureRecognizer) {
+        guard navController != nil else {return}
+        if gesture.state.rawValue == 3 {
+            AppSettings.settings.lastBbox = mapView.bbox
+        }
+    }
+    
+    @objc func doubleTap() {
+        guard navController != nil else {return}
+        mapView.mapDidMoveBlock = { [weak self] _ in
+            guard let self = self else {return}
+            AppSettings.settings.lastBbox = self.mapView.bbox
+            self.mapView.mapDidMoveBlock = nil
+        }
+    }
+    
+}
+
+extension MapViewController: CLLocationManagerDelegate {
+    
     func setupManager() {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -555,67 +653,4 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, UIGestureR
         }
     }
     
-    func gestureRecognizer(_: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer) -> Bool { return true }
-}
-
-extension MapViewController: MapClientProtocol {
-    func addDrawble(layer: GLMapDrawable) {
-        mapView.add(layer)
-    }
-    
-    func removeDrawble(layer: GLMapDrawable) {
-        mapView.remove(layer)
-    }
-    
-    func startDownload() {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.setLoadIndicator()
-        }
-    }
-    
-    func endDownload() {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.removeIndicator(indicator: self.indicator)
-        }
-    }
-}
-
-extension MapViewController: ShowTappedObject {
-    //  The method displays the vector object passed to it and moves it to the visible part of the map. It is used on the tag editing controller, and on the object selection controller, if there are several of them under the tap.
-    func showTapObject(object: GLMapVectorObject) {
-        guard object.type.rawValue != 0 else { return }
-        var newCenter = GLMapGeoPoint(lat: 1, lon: 1)
-        switch object.type.rawValue {
-        case 1:
-            newCenter = GLMapGeoPoint(point: object.point)
-        case 2, 4:
-            newCenter = GLMapGeoPoint(point: object.bbox.center)
-        default:
-            return
-        }
-        if let editStyle = editStyle {
-            editDrawble.setVectorObject(object, with: editStyle, completion: nil)
-        }
-        mapView.add(editDrawble)
-        mapView.animate { animation in
-            animation.duration = 0.25
-            animation.transition = .linear
-            mapView.mapGeoCenter = newCenter
-        }
-    }
-    
-    //  The method updates the uploaded data. It is called from the tag editing controller and the saved objects display controller, after the changes have been successfully sent to the server.
-    func updateSourceData() {
-        mapClient.lastCenter = GLMapGeoPoint(lat: 0, lon: 0)
-        Task {
-            try await mapClient.getSourceBbox(mapCenter: mapView.mapGeoCenter)
-            removeIndicator(indicator: indicator)
-        }
-    }
-    
-    func removeEditDrawble() {
-        mapView.remove(editDrawble)
-    }
 }

@@ -163,9 +163,7 @@ final class AppSettings: NSObject {
         icon-scale: 1;
         icon-tint: blue;
         [fixme] {icon-tint: red;}
-        |z17- {
-            icon-scale: 2;
-        }
+        |z17- {icon-scale: 2;}
     }
     line {
         linecap: round;
@@ -186,18 +184,17 @@ final class AppSettings: NSObject {
     let savedStyle = """
     node {
         icon-image: "poi_circle_small.svg";
-        icon-scale: 1;
+        icon-scale: 2;
         icon-tint: green;
-        |z17- {icon-scale: 2;}
     }
     line {
         linecap: round;
-        width: 1pt;
+        width: 2pt;
         color:green;
         |z17- {width: 3pt;}
     }
     area {
-        width:1pt;
+        width:2pt;
         color:green;
         |z17- {width:3pt;}
     }
@@ -207,39 +204,17 @@ final class AppSettings: NSObject {
     let editStyle = """
     node {
         icon-image: "poi_circle_small.svg";
-        icon-scale: 1;
+        icon-scale: 2;
         icon-tint: yellow;
     }
     line {
         linecap: round;
-        width: 2pt;
+        width: 3pt;
         color:yellow;
     }
     area {
-        width:1pt;
+        width:3pt;
         color:yellow;
-        |z17- {width:3pt;}
-    }
-    """
-    
-    //  Displays objects created but not sent to the server (orange color).
-    let newStyle = """
-    node {
-        icon-image: "poi_circle_small.svg";
-        icon-scale: 1;
-        icon-tint: orange;
-        |z17- {icon-scale: 2;}
-    }
-    line {
-        linecap: round;
-        width: 1pt;
-        color:orange;
-        |z17- {width: 3pt;}
-    }
-    area {
-        width:1pt;
-        color:orange;
-        |z17- {width:3pt;}
     }
     """
     
@@ -248,18 +223,18 @@ final class AppSettings: NSObject {
         node {
             icon-image: "poi_circle_small.svg";
             icon-scale: 1;
-            icon-tint: violet;
+            icon-tint: orange;
             |z17- {icon-scale: 2;}
         }
         line {
             linecap: round;
             width: 1pt;
-            color:violet;
+            color:orange;
             |z17- {width: 3pt;}
         }
         area {
             width:1pt;
-            color:violet;
+            color:orange;
             |z17- {width:3pt;}
         }
     """

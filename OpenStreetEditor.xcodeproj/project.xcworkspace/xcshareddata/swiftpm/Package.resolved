@@ -23,8 +23,8 @@
         "package": "GLMap",
         "repositoryURL": "https://github.com/GLMap/GLMapSwift",
         "state": {
-          "branch": "master",
-          "revision": "83ea5ef2ae2d617dca323707593f2f84efc0bf10",
+          "branch": "snapshot",
+          "revision": "adc68a489a26b216680aa286a1b3a86bf97040ff",
           "version": null
         }
       },

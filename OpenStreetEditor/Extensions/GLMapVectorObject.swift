@@ -12,9 +12,14 @@ import GLMapCore
 //  The method gets an Int(id), which is stored in the "properties" of each GLMapVectorObject.
 extension GLMapVectorObject {
     func getObjectID() -> Int? {
-        guard let str = properties[AnyHashable(3_942_483_187)] as? String,
+        guard let str = properties[AnyHashable("@id")] as? String,
               let double = Double(str) else { return nil }
         let id = Int(double)
         return id
     }
+}
+
+enum GLMapVectoObjectType {
+    case simple
+    case polygon(line: GLMapVectorLine)
 }
