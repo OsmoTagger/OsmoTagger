@@ -21,6 +21,7 @@
 		2C24FA502A0AFA6300C9ACA3 /* circle_location.svg in Resources */ = {isa = PBXBuildFile; fileRef = 2C24FA4F2A0AFA6300C9ACA3 /* circle_location.svg */; };
 		2C27010C2A01AB6100A65363 /* Terms of service.md in Resources */ = {isa = PBXBuildFile; fileRef = 2C27010B2A01AB6000A65363 /* Terms of service.md */; };
 		2C2F972829D53DB200A994C8 /* ShowTappedObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2F972729D53DB100A994C8 /* ShowTappedObject.swift */; };
+		2C450A762A326EFF001D73A9 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C450A752A326EFF001D73A9 /* TestViewController.swift */; };
 		2C478A9929E69BCB004E35E1 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C478A9829E69BCB004E35E1 /* MainViewController.swift */; };
 		2C478A9B29E69CAD004E35E1 /* Table SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C478A9A29E69CAD004E35E1 /* Table SettingsVC.swift */; };
 		2C478A9D29E6D558004E35E1 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C478A9C29E6D557004E35E1 /* AuthViewController.swift */; };
@@ -96,6 +97,7 @@
 		2C24FA4F2A0AFA6300C9ACA3 /* circle_location.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = circle_location.svg; sourceTree = "<group>"; };
 		2C27010B2A01AB6000A65363 /* Terms of service.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = "Terms of service.md"; sourceTree = "<group>"; };
 		2C2F972729D53DB100A994C8 /* ShowTappedObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowTappedObject.swift; sourceTree = "<group>"; };
+		2C450A752A326EFF001D73A9 /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
 		2C478A9829E69BCB004E35E1 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		2C478A9A29E69CAD004E35E1 /* Table SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Table SettingsVC.swift"; sourceTree = "<group>"; };
 		2C478A9C29E6D557004E35E1 /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
@@ -229,6 +231,7 @@
 				2CFF98E3299BE44D0045D6B8 /* SavedNodesViewController.swift */,
 				2CD9133929AB94F500A4A853 /* EditObjectViewController.swift */,
 				2C6F1CC329DD40370091784B /* InfoObjectViewController.swift */,
+				2C450A752A326EFF001D73A9 /* TestViewController.swift */,
 				2042BCEE289C696E0026514E /* MapViewController.swift */,
 				2CD2E7AB29D30D150042D36E /* MultiSelectViewController.swift */,
 				2CCB304129D4553100C8E5E7 /* SelectObjectViewController.swift */,
@@ -503,6 +506,7 @@
 				2C9DEBD429B526980058CCC2 /* JSOM presets.swift in Sources */,
 				2CB58A6329ECF01800FD0E59 /* QuickGuideViewController.swift in Sources */,
 				2C5146C229D6F1680007D468 /* Table Navigation objects.swift in Sources */,
+				2C450A762A326EFF001D73A9 /* TestViewController.swift in Sources */,
 				6C8B010C28FC030B00C9238D /* option_clean.cpp in Sources */,
 				6C8B010D28FC030B00C9238D /* util.cpp in Sources */,
 				6C76E75928EC12AE0048C378 /* FastHash.m in Sources */,

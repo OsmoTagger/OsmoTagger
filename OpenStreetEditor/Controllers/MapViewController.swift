@@ -78,7 +78,7 @@ class MapViewController: UIViewController {
         setupLocationButton()
         setSavedNodesButton()
 //      The test button in the lower right corner of the screen is often needed during development.
-//        setTestButton()
+        setTestButton()
     }
     
     override func viewDidAppear(_: Bool) {
@@ -376,7 +376,10 @@ class MapViewController: UIViewController {
                                      testButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)])
     }
     
-    @objc func tapTestButton() {}
+    @objc func tapTestButton() {
+        let vc = TestViewController()
+        present(vc, animated: true, completion: nil)
+    }
     
 //    MARK: FUNCTIONS
     

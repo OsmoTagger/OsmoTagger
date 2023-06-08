@@ -57,6 +57,7 @@ struct CategoryTableData {
 class IconView: UIView {
     var backView: UIView = {
         let view = UIView()
+        view.layer.cornerRadius = 19
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .white
         return view
