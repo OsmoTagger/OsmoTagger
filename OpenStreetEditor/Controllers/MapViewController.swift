@@ -40,6 +40,8 @@ class MapViewController: UIViewController {
     let tappedDrawble = GLMapVectorLayer(drawOrder: 3)
     let tappedStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.tappedStyle)
     
+    let animationDuration = 0.3
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 //      Creating and adding MapView
@@ -295,7 +297,7 @@ class MapViewController: UIViewController {
     func goToSAvedNodesVC() {
         mapView.animate { [weak self] animation in
             guard let self = self else { return }
-            animation.duration = 0.25
+            animation.duration = animationDuration
             animation.transition = .linear
             self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.75)
         }
@@ -304,13 +306,16 @@ class MapViewController: UIViewController {
         navController = NavigationController(rootViewController: savedNodesVC)
         navController?.dismissClosure = { [weak self] in
             guard let self = self else { return }
-            self.navController = nil
-            self.mapView.remove(self.editDrawble)
-            self.mapView.animate { animation in
-                animation.duration = 0.25
+            self.mapView.animate({ [weak self] animation in
+                guard let self = self else {return}
+                animation.duration = self.animationDuration
                 animation.transition = .linear
                 self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.5)
-            }
+            }, withCompletion: { [weak self] _ in
+                guard let self = self else {return}
+                self.navController = nil
+                self.mapView.remove(self.editDrawble)
+            })
         }
         if let sheetPresentationController = navController?.presentationController as? UISheetPresentationController {
             sheetPresentationController.detents = [.medium(), .large()]
@@ -377,17 +382,7 @@ class MapViewController: UIViewController {
     
     //  Calls the object selection controller if there are several of them under the tap.
     func selectObjects(objects: [OSMAnyObject]) {
-        if navController != nil {
-            navController?.dismiss(animated: true) { [weak self] in
-                guard let self = self else { return }
-                self.goToSelectVC(objects: objects)
-            }
-        } else {
-            goToSelectVC(objects: objects)
-        }
-    }
-    
-    func goToSelectVC(objects: [OSMAnyObject]) {
+        mapView.remove(tappedDrawble)
         let tappedObjects = GLMapVectorObjectArray()
         for object in objects {
             let vector = object.vector
@@ -397,9 +392,37 @@ class MapViewController: UIViewController {
             tappedDrawble.setVectorObjects(tappedObjects, with: style, completion: nil)
         }
         mapView.add(tappedDrawble)
+        if navController != nil {
+            if let controllers = navController?.viewControllers {
+                if controllers.count > 1 {
+                    navController?.setViewControllers([controllers[0]], animated: false)
+                }
+                for controller in controllers where controller is SelectObjectViewController {
+                    if let selectVC = controller as? SelectObjectViewController {
+                        selectVC.objects = objects
+                        selectVC.fillData()
+                        if selectVC.isViewLoaded && selectVC.view.window != nil {
+                            selectVC.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+                        } else {
+                            selectVC.tableView.reloadData()
+                        }
+                        return
+                    }
+                }
+            }
+            navController?.dismiss(animated: true, completion: { [weak self] in
+                guard let self = self else {return}
+                self.goToSelectVC(objects: objects)
+            })
+        } else {
+            goToSelectVC(objects: objects)
+        }
+    }
+    
+    func goToSelectVC(objects: [OSMAnyObject]) {
         mapView.animate { [weak self] animation in
             guard let self = self else { return }
-            animation.duration = 0.25
+            animation.duration = animationDuration
             animation.transition = .linear
             self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.75)
         }
@@ -408,18 +431,16 @@ class MapViewController: UIViewController {
         navController = NavigationController(rootViewController: selectVC)
         navController?.dismissClosure = { [weak self] in
             guard let self = self else { return }
-            self.mapView.remove(self.tappedDrawble)
-            self.mapView.remove(self.editDrawble)
-            self.navController = nil
-            self.mapView.animate { animation in
-                animation.duration = 0.25
+            self.mapView.animate({ animation in
+                animation.duration = self.animationDuration
                 animation.transition = .linear
                 self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.5)
-                if let userBoox = AppSettings.settings.lastBbox {
-                    self.mapView.mapCenter = userBoox.center
-                    self.mapView.mapZoom = self.mapView.mapZoom(for: userBoox)
-                }
-            }
+            }, withCompletion: { [weak self] _ in
+                guard let self = self else {return}
+                self.mapView.remove(self.tappedDrawble)
+                self.mapView.remove(self.editDrawble)
+                self.navController = nil
+            })
         }
         if let sheetPresentationController = navController?.presentationController as? UISheetPresentationController {
             sheetPresentationController.detents = [.medium(), .large()]
@@ -437,7 +458,7 @@ class MapViewController: UIViewController {
     func goToPropertiesVC(object: OSMAnyObject) {
         mapView.animate { [weak self] animation in
             guard let self = self else { return }
-            animation.duration = 0.25
+            animation.duration = animationDuration
             animation.transition = .linear
             self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.75)
         }
@@ -475,7 +496,7 @@ class MapViewController: UIViewController {
                 self.navController = nil
                 self.mapView.remove(self.editDrawble)
                 self.mapView.animate { animation in
-                    animation.duration = 0.25
+                    animation.duration = self.animationDuration
                     animation.transition = .linear
                     self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.5)
                 }
@@ -499,7 +520,7 @@ class MapViewController: UIViewController {
             let location = sender.location(in: mapView)
             let newMapCenter = mapView.makeGeoPoint(fromDisplay: CGPoint(x: location.x, y: location.y))
             mapView.animate { animation in
-                animation.duration = 0.25
+                animation.duration = animationDuration
                 animation.transition = .linear
                 mapView.mapGeoCenter = newMapCenter
             }
@@ -509,6 +530,7 @@ class MapViewController: UIViewController {
     }
 }
 
+// MARK: MapClientProtocol
 extension MapViewController: MapClientProtocol {
     func addDrawble(layer: GLMapDrawable) {
         mapView.add(layer)
@@ -533,6 +555,7 @@ extension MapViewController: MapClientProtocol {
     }
 }
 
+// MARK: ShowTappedObject
 extension MapViewController: ShowTappedObject {
     //  The method displays the vector object passed to it and moves it to the visible part of the map. It is used on the tag editing controller, and on the object selection controller, if there are several of them under the tap.
     func showTapObject(object: GLMapVectorObject) {
@@ -548,7 +571,7 @@ extension MapViewController: ShowTappedObject {
         }
         mapView.add(editDrawble)
         mapView.animate({ animation in
-            animation.duration = 0.25
+            animation.duration = animationDuration
             animation.transition = .linear
             mapView.mapGeoCenter = newCenter
             mapView.mapZoom = newZoom
@@ -571,6 +594,7 @@ extension MapViewController: ShowTappedObject {
     }
 }
 
+// MARK: UIGestureRecognizerDelegate
 extension MapViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer) -> Bool { return true }
     
@@ -591,11 +615,14 @@ extension MapViewController: UIGestureRecognizerDelegate {
         default:
 //          Moves the tapped object to the visible part of the map.
             let centerPoint = mapView.makeGeoPoint(fromDisplay: touchPoint)
-            mapView.animate { animation in
-                animation.duration = 0.25
+            mapView.animate({ animation in
+                animation.duration = animationDuration
                 animation.transition = .linear
                 mapView.mapGeoCenter = centerPoint
-            }
+            }, withCompletion: { [weak self] _ in
+                guard let self = self else {return}
+                AppSettings.settings.lastBbox = self.mapView.bbox
+            })
             selectObjects(objects: tapObjects)
         }
     }
@@ -607,17 +634,25 @@ extension MapViewController: UIGestureRecognizerDelegate {
         }
     }
     
-    @objc func doubleTap() {
-        guard navController != nil else {return}
+    func saveBboxAfterDoubleTap(completion: @escaping () -> Void) {
         mapView.mapDidMoveBlock = { [weak self] _ in
             guard let self = self else {return}
             AppSettings.settings.lastBbox = self.mapView.bbox
-            self.mapView.mapDidMoveBlock = nil
+            completion()
         }
+    }
+    
+    @objc func doubleTap() {
+        guard navController != nil else {return}
+        saveBboxAfterDoubleTap(completion: { [weak self] in
+            guard let self = self else {return}
+            self.setDidMapMoveClouser()
+        })
     }
     
 }
 
+// MARK: CLLocationManagerDelegate
 extension MapViewController: CLLocationManagerDelegate {
     
     func setupManager() {
