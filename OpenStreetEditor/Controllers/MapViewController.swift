@@ -307,12 +307,12 @@ class MapViewController: UIViewController {
         navController?.dismissClosure = { [weak self] in
             guard let self = self else { return }
             self.mapView.animate({ [weak self] animation in
-                guard let self = self else {return}
+                guard let self = self else { return }
                 animation.duration = self.animationDuration
                 animation.transition = .linear
                 self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.5)
             }, withCompletion: { [weak self] _ in
-                guard let self = self else {return}
+                guard let self = self else { return }
                 self.navController = nil
                 self.mapView.remove(self.editDrawble)
             })
@@ -411,7 +411,7 @@ class MapViewController: UIViewController {
                 }
             }
             navController?.dismiss(animated: true, completion: { [weak self] in
-                guard let self = self else {return}
+                guard let self = self else { return }
                 self.goToSelectVC(objects: objects)
             })
         } else {
@@ -436,7 +436,7 @@ class MapViewController: UIViewController {
                 animation.transition = .linear
                 self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.5)
             }, withCompletion: { [weak self] _ in
-                guard let self = self else {return}
+                guard let self = self else { return }
                 self.mapView.remove(self.tappedDrawble)
                 self.mapView.remove(self.editDrawble)
                 self.navController = nil
@@ -531,6 +531,7 @@ class MapViewController: UIViewController {
 }
 
 // MARK: MapClientProtocol
+
 extension MapViewController: MapClientProtocol {
     func addDrawble(layer: GLMapDrawable) {
         mapView.add(layer)
@@ -556,6 +557,7 @@ extension MapViewController: MapClientProtocol {
 }
 
 // MARK: ShowTappedObject
+
 extension MapViewController: ShowTappedObject {
     //  The method displays the vector object passed to it and moves it to the visible part of the map. It is used on the tag editing controller, and on the object selection controller, if there are several of them under the tap.
     func showTapObject(object: GLMapVectorObject) {
@@ -595,6 +597,7 @@ extension MapViewController: ShowTappedObject {
 }
 
 // MARK: UIGestureRecognizerDelegate
+
 extension MapViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer) -> Bool { return true }
     
@@ -620,7 +623,7 @@ extension MapViewController: UIGestureRecognizerDelegate {
                 animation.transition = .linear
                 mapView.mapGeoCenter = centerPoint
             }, withCompletion: { [weak self] _ in
-                guard let self = self else {return}
+                guard let self = self else { return }
                 AppSettings.settings.lastBbox = self.mapView.bbox
             })
             selectObjects(objects: tapObjects)
@@ -628,7 +631,7 @@ extension MapViewController: UIGestureRecognizerDelegate {
     }
     
     @objc func pinchGesture(_ gesture: UIPinchGestureRecognizer) {
-        guard navController != nil else {return}
+        guard navController != nil else { return }
         if gesture.state.rawValue == 3 {
             AppSettings.settings.lastBbox = mapView.bbox
         }
@@ -636,25 +639,24 @@ extension MapViewController: UIGestureRecognizerDelegate {
     
     func saveBboxAfterDoubleTap(completion: @escaping () -> Void) {
         mapView.mapDidMoveBlock = { [weak self] _ in
-            guard let self = self else {return}
+            guard let self = self else { return }
             AppSettings.settings.lastBbox = self.mapView.bbox
             completion()
         }
     }
     
     @objc func doubleTap() {
-        guard navController != nil else {return}
+        guard navController != nil else { return }
         saveBboxAfterDoubleTap(completion: { [weak self] in
-            guard let self = self else {return}
+            guard let self = self else { return }
             self.setDidMapMoveClouser()
         })
     }
-    
 }
 
 // MARK: CLLocationManagerDelegate
+
 extension MapViewController: CLLocationManagerDelegate {
-    
     func setupManager() {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -687,5 +689,4 @@ extension MapViewController: CLLocationManagerDelegate {
             break
         }
     }
-    
 }

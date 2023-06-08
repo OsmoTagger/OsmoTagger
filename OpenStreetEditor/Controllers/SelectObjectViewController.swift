@@ -152,7 +152,7 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
         for object in objects where object.id == id {
             let vc = EditObjectViewController(object: object)
             vc.deinitClouser = { [weak self] in
-                guard let self = self else {return}
+                guard let self = self else { return }
                 self.delegate?.removeEditDrawble()
             }
             delegate?.showTapObject(object: object.vector)

@@ -478,6 +478,7 @@ class BulbButton: UIButton {
         but.translatesAutoresizingMaskIntoConstraints = false
         return but
     }()
+
     var id: Int?
 }
 
@@ -488,11 +489,13 @@ class SelectButton: UIButton {
         but.translatesAutoresizingMaskIntoConstraints = false
         return but
     }()
+
     private let icon: UIImageView = {
         let image = UIImageView(image: UIImage(systemName: "chevron.down"))
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
     }()
+
     var key: String?
     var values: [String] = []
     
@@ -500,7 +503,9 @@ class SelectButton: UIButton {
         super.init(frame: frame)
         setUpConstrains()
     }
-    required init?(coder: NSCoder) {
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
