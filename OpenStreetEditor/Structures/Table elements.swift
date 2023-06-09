@@ -10,6 +10,56 @@ import UIKit
 
 //  MARK: SOME UI ELEMENTS
 
+// Custom download indicator for MapVC
+class DownloadIndicatorView: UIView {
+    private let indicator: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
+    convenience init() {
+        self.init(frame: .zero)
+        setupConstrains()
+    }
+    
+    private func setupConstrains() {
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold, scale: .default)
+        let image = UIImage(systemName: "arrow.triangle.2.circlepath", withConfiguration: imageConfig)?.withTintColor(.black, renderingMode: .alwaysOriginal)
+        indicator.image = image
+        indicator.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        addSubview(indicator)
+        NSLayoutConstraint.activate([
+            indicator.centerXAnchor.constraint(equalTo: centerXAnchor),
+            indicator.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
+    }
+    
+    func startAnimating() {
+        if indicator.isHidden == false {
+            return
+        }
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else {return}
+            self.indicator.isHidden = false
+            let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation.z")
+            rotationAnimation.toValue = NSNumber(value: Double.pi * 2)
+            rotationAnimation.duration = 1.3
+            rotationAnimation.repeatCount = Float.infinity
+            self.indicator.layer.add(rotationAnimation, forKey: "rotationAnimation")
+        }
+    }
+    
+    func stopAnimating() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else {return}
+            self.indicator.layer.removeAnimation(forKey: "rotationAnimation")
+            self.indicator.isHidden = true
+        }
+    }
+}
+
 struct InfoCellData {
     let icon: String?
     let text: String

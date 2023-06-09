@@ -29,7 +29,7 @@ class MapViewController: UIViewController {
     let downloadButton = DownloadButton()
     // Variable activates the source data loading mode
     var isDownloadSource = false
-    let indicator = UIActivityIndicatorView()
+    let indicator = DownloadIndicatorView()
     let centerIcon = UIImageView()
     let addNodeButton = UIButton()
     
@@ -73,12 +73,13 @@ class MapViewController: UIViewController {
         mapView.addGestureRecognizer(pinchGesture)
         
 //      Add buttons
+        setLoadIndicator()
         setDownloadButton()
         setupSettingsButton()
         setupLocationButton()
         setSavedNodesButton()
 //      The test button in the lower right corner of the screen is often needed during development.
-        setTestButton()
+//        setTestButton()
     }
     
     override func viewDidAppear(_: Bool) {
@@ -147,6 +148,20 @@ class MapViewController: UIViewController {
         }
     }
     
+    //  The indicator that appears in place of the data download button.
+    func setLoadIndicator() {
+        indicator.isUserInteractionEnabled = false
+        indicator.startAnimating()
+        view.addSubview(indicator)
+        
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            indicator.widthAnchor.constraint(equalToConstant: 20),
+            indicator.heightAnchor.constraint(equalToConstant: 20),
+            indicator.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            indicator.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -20)])
+    }
+    
     func setDownloadButton() {
         downloadButton.layer.cornerRadius = 5
         downloadButton.backgroundColor = .white
@@ -155,9 +170,9 @@ class MapViewController: UIViewController {
         view.addSubview(downloadButton)
         
         downloadButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([downloadButton.widthAnchor.constraint(equalToConstant: 45),
-                                     downloadButton.heightAnchor.constraint(equalToConstant: 45),
-                                     downloadButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
+        NSLayoutConstraint.activate([downloadButton.widthAnchor.constraint(equalToConstant: 40),
+                                     downloadButton.heightAnchor.constraint(equalToConstant: 40),
+                                     downloadButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
                                      downloadButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)])
     }
     
@@ -188,21 +203,6 @@ class MapViewController: UIViewController {
             downloadButton.circle.isHidden = true
         }
     }
-    
-    //  The indicator that appears in place of the data download button.
-    func setLoadIndicator() {
-        indicator.style = .large
-        indicator.color = .black
-        indicator.isUserInteractionEnabled = false
-        indicator.startAnimating()
-        view.addSubview(indicator)
-        
-        indicator.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([indicator.widthAnchor.constraint(equalToConstant: 45),
-                                     indicator.heightAnchor.constraint(equalToConstant: 45),
-                                     indicator.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
-                                     indicator.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)])
-    }
         
     func setupSettingsButton() {
         let settingsButton = UIButton()
@@ -213,8 +213,8 @@ class MapViewController: UIViewController {
         view.addSubview(settingsButton)
         
         settingsButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([settingsButton.widthAnchor.constraint(equalToConstant: 45),
-                                     settingsButton.heightAnchor.constraint(equalToConstant: 45),
+        NSLayoutConstraint.activate([settingsButton.widthAnchor.constraint(equalToConstant: 40),
+                                     settingsButton.heightAnchor.constraint(equalToConstant: 40),
                                      settingsButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 95),
                                      settingsButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)])
     }
@@ -251,9 +251,9 @@ class MapViewController: UIViewController {
         view.addSubview(locationButton)
         
         locationButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([locationButton.widthAnchor.constraint(equalToConstant: 45),
-                                     locationButton.heightAnchor.constraint(equalToConstant: 45),
-                                     locationButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 160),
+        NSLayoutConstraint.activate([locationButton.widthAnchor.constraint(equalToConstant: 40),
+                                     locationButton.heightAnchor.constraint(equalToConstant: 40),
+                                     locationButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 150),
                                      locationButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)])
     }
     
@@ -277,9 +277,9 @@ class MapViewController: UIViewController {
         savedNodesButton.addTarget(self, action: #selector(tapSavedNodesButton), for: .touchUpInside)
         view.addSubview(savedNodesButton)
         savedNodesButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([savedNodesButton.widthAnchor.constraint(equalToConstant: 45),
-                                     savedNodesButton.heightAnchor.constraint(equalToConstant: 45),
-                                     savedNodesButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 225),
+        NSLayoutConstraint.activate([savedNodesButton.widthAnchor.constraint(equalToConstant: 40),
+                                     savedNodesButton.heightAnchor.constraint(equalToConstant: 40),
+                                     savedNodesButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 205),
                                      savedNodesButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)])
     }
     
@@ -344,10 +344,10 @@ class MapViewController: UIViewController {
         addNodeButton.addTarget(self, action: #selector(tapAddNodeButton), for: .touchUpInside)
         view.addSubview(addNodeButton)
         addNodeButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([addNodeButton.widthAnchor.constraint(equalToConstant: 45),
-                                     addNodeButton.heightAnchor.constraint(equalToConstant: 45),
+        NSLayoutConstraint.activate([addNodeButton.widthAnchor.constraint(equalToConstant: 40),
+                                     addNodeButton.heightAnchor.constraint(equalToConstant: 40),
                                      addNodeButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
-                                     addNodeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 225)])
+                                     addNodeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 205)])
     }
     
     @objc func tapAddNodeButton() {
@@ -370,8 +370,8 @@ class MapViewController: UIViewController {
         testButton.addTarget(self, action: #selector(tapTestButton), for: .touchUpInside)
         view.addSubview(testButton)
         testButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([testButton.widthAnchor.constraint(equalToConstant: 45),
-                                     testButton.heightAnchor.constraint(equalToConstant: 45),
+        NSLayoutConstraint.activate([testButton.widthAnchor.constraint(equalToConstant: 40),
+                                     testButton.heightAnchor.constraint(equalToConstant: 40),
                                      testButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
                                      testButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)])
     }
@@ -554,7 +554,7 @@ extension MapViewController: MapClientProtocol {
     func endDownload() {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            self.removeIndicator(indicator: self.indicator)
+            self.indicator.stopAnimating()
         }
     }
 }
@@ -590,7 +590,7 @@ extension MapViewController: ShowTappedObject {
         mapClient.lastCenter = GLMapGeoPoint(lat: 0, lon: 0)
         Task {
             try await mapClient.getSourceBbox(mapCenter: mapView.mapGeoCenter)
-            removeIndicator(indicator: indicator)
+            indicator.stopAnimating()
         }
     }
     
