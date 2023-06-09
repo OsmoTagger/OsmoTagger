@@ -151,7 +151,7 @@ class MapViewController: UIViewController {
     //  The indicator that appears in place of the data download button.
     func setLoadIndicator() {
         indicator.isUserInteractionEnabled = false
-        indicator.startAnimating()
+        indicator.stopAnimating()
         view.addSubview(indicator)
         
         indicator.translatesAutoresizingMaskIntoConstraints = false
@@ -545,17 +545,11 @@ extension MapViewController: MapClientProtocol {
     }
     
     func startDownload() {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.setLoadIndicator()
-        }
+        indicator.startAnimating()
     }
     
     func endDownload() {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.indicator.stopAnimating()
-        }
+        indicator.stopAnimating()
     }
 }
 
