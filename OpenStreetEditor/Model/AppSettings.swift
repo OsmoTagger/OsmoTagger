@@ -170,6 +170,12 @@ final class AppSettings: NSObject {
         width: 1pt;
         color:brown;
         [fixme] {color:red;}
+        [bbox] {color:yellow;
+                width: 2pt;
+                dashes: 12,12;
+                dashes-color: red;
+                dashes-width: eval( zlinear( 16, 3pt, 4pt ) );
+                }
         |z17- {width: 3pt;}
     }
     area {
@@ -189,14 +195,12 @@ final class AppSettings: NSObject {
     }
     line {
         linecap: round;
-        width: 2pt;
+        width: 3pt;
         color:green;
-        |z17- {width: 3pt;}
     }
     area {
-        width:2pt;
+        width:3pt;
         color:green;
-        |z17- {width:3pt;}
     }
     """
     
@@ -228,12 +232,12 @@ final class AppSettings: NSObject {
         }
         line {
             linecap: round;
-            width: 1pt;
+            width: 2pt;
             color:orange;
             |z17- {width: 3pt;}
         }
         area {
-            width:1pt;
+            width:2pt;
             color:orange;
             |z17- {width:3pt;}
         }
