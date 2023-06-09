@@ -8,7 +8,6 @@
 import UIKit
 
 class TestViewController: UIViewController {
-    
     var tableView = UITableView()
     let cellId = "cell"
     var tableData: [SettingsCellData] = []
@@ -25,7 +24,7 @@ class TestViewController: UIViewController {
             let data = SettingsCellData(icon: category.icon, text: category.name, link: "")
             tableData.append(data)
             for item in category.item {
-                guard let icon = item.icon else {continue}
+                guard let icon = item.icon else { continue }
                 let data = SettingsCellData(icon: icon, text: item.name, link: "")
                 tableData.append(data)
             }
@@ -33,7 +32,7 @@ class TestViewController: UIViewController {
                 let data = SettingsCellData(icon: group.icon, text: group.name, link: "")
                 tableData.append(data)
                 for item in group.item {
-                    guard let icon = item.icon else {continue}
+                    guard let icon = item.icon else { continue }
                     let data = SettingsCellData(icon: icon, text: item.name, link: "")
                     tableData.append(data)
                 }
@@ -56,13 +55,13 @@ class TestViewController: UIViewController {
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
-    
 }
 
 extension TestViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
         return tableData.count
     }
+
     func tableView(_: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? SimpleCell else {
             let cellFail = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)

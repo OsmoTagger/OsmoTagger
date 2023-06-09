@@ -160,7 +160,8 @@ class MapViewController: UIViewController {
             indicator.widthAnchor.constraint(equalToConstant: 20),
             indicator.heightAnchor.constraint(equalToConstant: 20),
             indicator.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            indicator.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -20)])
+            indicator.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -20),
+        ])
     }
     
     func setDownloadButton() {
@@ -342,7 +343,7 @@ class MapViewController: UIViewController {
             drawButton.widthAnchor.constraint(equalToConstant: 40),
             drawButton.heightAnchor.constraint(equalToConstant: 40),
             drawButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 260),
-            drawButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)
+            drawButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
         ])
     }
     
@@ -355,14 +356,14 @@ class MapViewController: UIViewController {
                 tapDownloadButton()
             }
             UIView.animate(withDuration: 0.3, animations: { [weak self] in
-                guard let self = self else {return}
+                guard let self = self else { return }
                 self.addNodeButtonTopConstraint.constant = 310
                 self.view.layoutIfNeeded()
             })
         } else {
             centerIcon.removeFromSuperview()
             UIView.animate(withDuration: 0.3, animations: { [weak self] in
-                guard let self = self else {return}
+                guard let self = self else { return }
                 self.addNodeButtonTopConstraint.constant = 260
                 self.view.layoutIfNeeded()
             })
@@ -540,12 +541,12 @@ class MapViewController: UIViewController {
             navController?.dismissClosure = { [weak self] in
                 guard let self = self else { return }
                 self.mapView.animate({ [weak self] animation in
-                    guard let self = self else {return}
+                    guard let self = self else { return }
                     animation.duration = self.animationDuration
                     animation.transition = .linear
                     self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.5)
                 }, withCompletion: { [weak self] _ in
-                    guard let self = self else {return}
+                    guard let self = self else { return }
                     self.navController = nil
                     self.mapView.remove(self.editDrawble)
                 })

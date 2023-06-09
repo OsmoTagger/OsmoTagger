@@ -45,7 +45,7 @@ class DownloadIndicatorView: UIView {
         addSubview(indicator)
         NSLayoutConstraint.activate([
             indicator.centerXAnchor.constraint(equalTo: centerXAnchor),
-            indicator.centerYAnchor.constraint(equalTo: centerYAnchor)
+            indicator.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
     }
     
@@ -54,7 +54,7 @@ class DownloadIndicatorView: UIView {
             return
         }
         DispatchQueue.main.async { [weak self] in
-            guard let self = self else {return}
+            guard let self = self else { return }
             self.indicator.isHidden = false
             let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation.z")
             rotationAnimation.toValue = NSNumber(value: Double.pi * 2)
@@ -66,7 +66,7 @@ class DownloadIndicatorView: UIView {
     
     func stopAnimating() {
         DispatchQueue.main.async { [weak self] in
-            guard let self = self else {return}
+            guard let self = self else { return }
             self.indicator.layer.removeAnimation(forKey: "rotationAnimation")
             self.indicator.isHidden = true
         }
