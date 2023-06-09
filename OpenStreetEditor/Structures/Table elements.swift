@@ -10,6 +10,19 @@ import UIKit
 
 //  MARK: SOME UI ELEMENTS
 
+// DrawButton on MapViewController
+class DrawButton: UIButton {
+    var isActive = false {
+        didSet {
+            if isActive {
+                backgroundColor = .systemGray3
+            } else {
+                backgroundColor = .white
+            }
+        }
+    }
+}
+
 // Custom download indicator for MapVC
 class DownloadIndicatorView: UIView {
     private let indicator: UIImageView = {

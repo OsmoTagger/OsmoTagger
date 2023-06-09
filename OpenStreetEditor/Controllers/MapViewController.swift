@@ -32,6 +32,7 @@ class MapViewController: UIViewController {
     let indicator = DownloadIndicatorView()
     let centerIcon = UIImageView()
     let addNodeButton = UIButton()
+    var addNodeButtonTopConstraint = NSLayoutConstraint()
     
     //  Displays the object that was tapped and whose properties are currently being edited (yellow).
     var editDrawble = GLMapVectorLayer(drawOrder: 4)
@@ -63,11 +64,6 @@ class MapViewController: UIViewController {
         oneTap.delegate = self
         oneTap.require(toFail: doubleTap)
         mapView.addGestureRecognizer(oneTap)
-        let pressTap = UILongPressGestureRecognizer(target: self, action: #selector(createPoint))
-        pressTap.minimumPressDuration = 0.5
-        oneTap.require(toFail: pressTap)
-        pressTap.delegate = self
-        mapView.addGestureRecognizer(pressTap)
         let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(pinchGesture))
         pinchGesture.delegate = self
         mapView.addGestureRecognizer(pinchGesture)
@@ -78,6 +74,9 @@ class MapViewController: UIViewController {
         setupSettingsButton()
         setupLocationButton()
         setSavedNodesButton()
+        addNodeButtonTopConstraint = NSLayoutConstraint(item: addNodeButton, attribute: .top, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .top, multiplier: 1, constant: 260)
+        setAddNodeButton()
+        setDrawButton()
 //      The test button in the lower right corner of the screen is often needed during development.
 //        setTestButton()
     }
@@ -142,8 +141,10 @@ class MapViewController: UIViewController {
             if zoom > beginLoadZoom {
                 self.downloadButton.circle.backgroundColor = .systemGreen
                 self.checkMapCenter()
+                self.addNodeButton.alpha = 1
             } else {
                 self.downloadButton.circle.backgroundColor = .systemRed
+                self.addNodeButton.alpha = 0.5
             }
         }
     }
@@ -328,6 +329,46 @@ class MapViewController: UIViewController {
         }
     }
     
+    func setDrawButton() {
+        let drawButton = DrawButton()
+        drawButton.layer.cornerRadius = 5
+        drawButton.backgroundColor = .white
+        drawButton.setImage(UIImage(systemName: "paintbrush.pointed.fill"), for: .normal)
+        drawButton.tintColor = .black
+        drawButton.addTarget(self, action: #selector(tapDrawButton), for: .touchUpInside)
+        drawButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(drawButton)
+        NSLayoutConstraint.activate([
+            drawButton.widthAnchor.constraint(equalToConstant: 40),
+            drawButton.heightAnchor.constraint(equalToConstant: 40),
+            drawButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 260),
+            drawButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)
+        ])
+    }
+    
+    @objc func tapDrawButton(_ sender: DrawButton) {
+        sender.isActive = !sender.isActive
+        if sender.isActive {
+            setCenterMap()
+            checkMapCenter()
+            if isDownloadSource == false {
+                tapDownloadButton()
+            }
+            UIView.animate(withDuration: 0.3, animations: { [weak self] in
+                guard let self = self else {return}
+                self.addNodeButtonTopConstraint.constant = 310
+                self.view.layoutIfNeeded()
+            })
+        } else {
+            centerIcon.removeFromSuperview()
+            UIView.animate(withDuration: 0.3, animations: { [weak self] in
+                guard let self = self else {return}
+                self.addNodeButtonTopConstraint.constant = 260
+                self.view.layoutIfNeeded()
+            })
+        }
+    }
+    
     //  A red cross that appears when creating a new point (to clarify the position of the point).
     func setCenterMap() {
         centerIcon.image = UIImage(systemName: "plus")?.withTintColor(.red, renderingMode: .alwaysOriginal)
@@ -339,7 +380,7 @@ class MapViewController: UIViewController {
     
     func setAddNodeButton() {
         addNodeButton.layer.cornerRadius = 5
-        addNodeButton.backgroundColor = .green
+        addNodeButton.backgroundColor = .white
         addNodeButton.setImage(UIImage(named: "addnode"), for: .normal)
         addNodeButton.addTarget(self, action: #selector(tapAddNodeButton), for: .touchUpInside)
         view.addSubview(addNodeButton)
@@ -347,12 +388,14 @@ class MapViewController: UIViewController {
         NSLayoutConstraint.activate([addNodeButton.widthAnchor.constraint(equalToConstant: 40),
                                      addNodeButton.heightAnchor.constraint(equalToConstant: 40),
                                      addNodeButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
-                                     addNodeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 205)])
+                                     addNodeButtonTopConstraint])
     }
     
     @objc func tapAddNodeButton() {
-        centerIcon.removeFromSuperview()
-        addNodeButton.removeFromSuperview()
+        guard mapView.mapZoomLevel > 16 else {
+            showAction(message: "Zoom in for a more accurate location determination!", addAlerts: [])
+            return
+        }
         let geoPoint = mapView.makeGeoPoint(fromDisplay: mapView.center)
         let glPoint = GLMapPoint(geoPoint: geoPoint)
         // To send the created objects to the server, you need to assign them an id < 0. To prevent duplicate IDs, the AppSettings.settings.nextId variable has been created, which reduces the id by 1 each time.
@@ -496,13 +539,16 @@ class MapViewController: UIViewController {
 //          When the user closes the tag editing controller, the backlight of the tapped object is removed.
             navController?.dismissClosure = { [weak self] in
                 guard let self = self else { return }
-                self.navController = nil
-                self.mapView.remove(self.editDrawble)
-                self.mapView.animate { animation in
+                self.mapView.animate({ [weak self] animation in
+                    guard let self = self else {return}
                     animation.duration = self.animationDuration
                     animation.transition = .linear
                     self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.5)
-                }
+                }, withCompletion: { [weak self] _ in
+                    guard let self = self else {return}
+                    self.navController = nil
+                    self.mapView.remove(self.editDrawble)
+                })
             }
             if let sheetPresentationController = navController?.presentationController as? UISheetPresentationController {
                 sheetPresentationController.detents = [.medium(), .large()]
@@ -513,22 +559,6 @@ class MapViewController: UIViewController {
             if navController != nil {
                 present(navController!, animated: true, completion: nil)
             }
-        }
-    }
-        
-    //  The method of creating a new point by a long tap.
-    @objc func createPoint(sender: UILongPressGestureRecognizer) {
-        if sender.state.rawValue == 1 {
-            sender.state = .ended
-            let location = sender.location(in: mapView)
-            let newMapCenter = mapView.makeGeoPoint(fromDisplay: CGPoint(x: location.x, y: location.y))
-            mapView.animate { animation in
-                animation.duration = animationDuration
-                animation.transition = .linear
-                mapView.mapGeoCenter = newMapCenter
-            }
-            setAddNodeButton()
-            setCenterMap()
         }
     }
 }
