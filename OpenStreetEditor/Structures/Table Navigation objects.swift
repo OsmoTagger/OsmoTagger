@@ -219,11 +219,12 @@ class ItemCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-
-    var valueLable: UILabel = {
+    
+    var valueLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
         label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -235,28 +236,12 @@ class ItemCell: UITableViewCell {
         return checkBox
     }()
 
-    var checkLable: UILabel = {
-        let label = UILabel()
-        label.textAlignment = .left
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    var selectValueButton: SelectButton = {
+    var button: SelectButton = {
         let button = SelectButton()
         button.backgroundColor = .systemBackground
         button.setTitleColor(.label, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
-    }()
-
-    var valueField: ValueField = {
-        let field = ValueField()
-        field.textAlignment = .left
-        field.borderStyle = .roundedRect
-        field.placeholder = "Enter value"
-        field.translatesAutoresizingMaskIntoConstraints = false
-        return field
     }()
 
     var label: UILabel = {
@@ -271,12 +256,10 @@ class ItemCell: UITableViewCell {
     func setupConstrains() {
         contentView.addSubview(icon)
         contentView.addSubview(keyLabel)
-        contentView.addSubview(valueLable)
+        contentView.addSubview(valueLabel)
         contentView.addSubview(checkBox)
-        contentView.addSubview(selectValueButton)
-        contentView.addSubview(valueField)
+        contentView.addSubview(button)
         contentView.addSubview(label)
-        contentView.addSubview(checkLable)
         NSLayoutConstraint.activate([
             icon.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             icon.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -286,29 +269,23 @@ class ItemCell: UITableViewCell {
             keyLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             keyLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
             keyLabel.rightAnchor.constraint(equalTo: contentView.centerXAnchor),
-            valueLable.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
-            valueLable.rightAnchor.constraint(equalTo: checkBox.leftAnchor),
-            valueLable.topAnchor.constraint(equalTo: contentView.topAnchor),
-            valueLable.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            keyLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 44),
+            valueLabel.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
+            valueLabel.rightAnchor.constraint(equalTo: checkBox.leftAnchor),
+            valueLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            valueLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            valueLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 44),
             checkBox.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             checkBox.widthAnchor.constraint(equalToConstant: 50),
             checkBox.heightAnchor.constraint(equalTo: contentView.heightAnchor),
             checkBox.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            checkLable.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
-            checkLable.topAnchor.constraint(equalTo: contentView.topAnchor),
-            checkLable.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            checkLable.rightAnchor.constraint(equalTo: checkBox.leftAnchor, constant: -10),
-            selectValueButton.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
-            selectValueButton.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            selectValueButton.topAnchor.constraint(equalTo: contentView.topAnchor),
-            selectValueButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            valueField.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
-            valueField.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -3),
-            valueField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 3),
-            valueField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3),
+            button.widthAnchor.constraint(equalToConstant: 50),
+            button.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            button.topAnchor.constraint(equalTo: contentView.topAnchor),
+            button.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             label.topAnchor.constraint(equalTo: contentView.topAnchor),
-            label.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 10),
-            label.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -10),
+            label.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
+            label.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
@@ -331,29 +308,28 @@ class ItemCell: UITableViewCell {
         label.isHidden = true
         keyLabel.text = nil
         keyLabel.isHidden = true
-        valueLable.text = nil
-        valueLable.isHidden = true
-        valueField.text = nil
-        valueField.isHidden = true
-        selectValueButton.menu = nil
-        selectValueButton.isHidden = true
-        selectValueButton.key = ""
-        selectValueButton.values = []
+        valueLabel.text = nil
+        valueLabel.isHidden = true
+        button.menu = nil
+        button.isHidden = true
+        button.setImage(nil, for: .normal)
+        button.key = ""
+        button.values = []
         checkBox.isHidden = true
         checkBox.isChecked = false
-        checkLable.text = nil
-        checkLable.isHidden = true
         accessoryType = .none
     }
     
     //  The method configures the button to select a value from the list (use on ItemVC and EditObjectVC)
     func configureButton(values: [String]) {
         guard let key = keyLabel.text else { return }
-        let optionClosure = { (action: UIAction) in
+        let optionClosure = { [weak self] (action: UIAction) in
+            guard let self = self else {return}
             if action.title == "" {
                 AppSettings.settings.newProperties.removeValue(forKey: key)
             } else {
                 AppSettings.settings.newProperties[key] = action.title
+                self.valueLabel.text = action.title
             }
         }
         var optionsArray = [UIAction]()
@@ -370,8 +346,8 @@ class ItemCell: UITableViewCell {
         }
         optionsArray.append(nilAction)
         let optionsMenu = UIMenu(title: "", image: nil, identifier: nil, options: .singleSelection, children: optionsArray)
-        selectValueButton.menu = optionsMenu
-        selectValueButton.showsMenuAsPrimaryAction = true
-        selectValueButton.changesSelectionAsPrimaryAction = true
+        button.menu = optionsMenu
+        button.showsMenuAsPrimaryAction = true
+        button.changesSelectionAsPrimaryAction = false
     }
 }

@@ -9,7 +9,7 @@ import SafariServices
 import UIKit
 
 //  Object tag editing controller.
-class EditObjectViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
+class EditObjectViewController: UIViewController {
     //  Called when the object is completely deleted from the server. Used only on SavedNodesVC.
     var deleteObjectClosure: ((Int) -> Void)?
     // Closure that is called when the controller is deinitialized
@@ -24,29 +24,18 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     
     var tableData: [EditSectionData] = []
     
-    //  The enum that is needed to change the view when the keyboard is called. The behavior when editing a table cell and a UITextField on a manual tag input view is different.
-    enum EditableObject {
-        case table
-        case addView
-    }
-
-    var editObject: EditableObject = .table
-    
     //  RightBarItems:
     var infoBar = UIBarButtonItem()
     var iconTypeBar = UIBarButtonItem()
     var cancelBar = UIBarButtonItem()
 
     var tableView = UITableView()
-    var tableConstraints = [NSLayoutConstraint]()
     var cellId = "cell"
-    //  Saves the indexPath of the cell where the text is being edited.
-    var editingIndexPath: IndexPath?
+
     //  The view that is displayed when manually entering text.
     var addTagView = AddTagManuallyView()
-    var addViewConstrains = [NSLayoutConstraint]()
-    
-    var tap = UIGestureRecognizer()
+    var addViewBottomConstraint = NSLayoutConstraint()
+    var addViewTopConstraint = NSLayoutConstraint()
     
     init(object: OSMAnyObject) {
         self.object = object
@@ -68,7 +57,7 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         
 //      If the point is newly created and no tags are specified, the preset selection controller is called.
         if object.tag.count == 0 {
@@ -80,13 +69,9 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         
-        tableConstraints = [tableView.topAnchor.constraint(equalTo: view.topAnchor),
-                            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-                            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
-                            tableView.leftAnchor.constraint(equalTo: view.leftAnchor)]
-        
         setRightBarItems()
         setTableView()
+        setEnterTagManuallyView()
         setToolBar(fromSavedNodesVC: true)
         navigationController?.setToolbarHidden(false, animated: false)
     }
@@ -455,8 +440,93 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
         tableView.register(ItemCell.self, forCellReuseIdentifier: cellId)
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate(tableConstraints)
+        NSLayoutConstraint.activate([tableView.topAnchor.constraint(equalTo: view.topAnchor),
+                                     tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                                     tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
+                                     tableView.leftAnchor.constraint(equalTo: view.leftAnchor)])
     }
+    
+    @objc func tapKeyBoard(_ sender: SelectButton) {
+        guard let key = sender.key else {return}
+        addTagView.keyField.text = key
+        addTagView.valueField.text = AppSettings.settings.newProperties[key]
+        addTagView.isHidden = false
+        addTagView.valueField.becomeFirstResponder()
+    }
+    
+    func setEnterTagManuallyView() {
+        //  When the tag is entered manually, addView.callbackClosure is triggered, which passes the entered tag=value pair. The table data is updated.
+        addTagView.callbackClosure = { [weak self] addedTag in
+            guard let self = self else { return }
+            self.view.endEditing(true)
+            self.addTagView.isHidden = true
+            for (key, value) in addedTag {
+                if key == "" || value == "" {
+                    let text = """
+                    Key or value cannot be empty!
+                    Key = "\(key)"
+                    Value = "\(value)"
+                    """
+                    self.showAction(message: text, addAlerts: [])
+                    return
+                }
+            }
+            AppSettings.settings.newProperties.merge(addedTag, uniquingKeysWith: { _, new in new })
+            self.fillData()
+            self.tableView.reloadData()
+        }
+        addViewTopConstraint = NSLayoutConstraint(item: addTagView, attribute: .top, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .top, multiplier: 1, constant: 0)
+        addViewBottomConstraint = NSLayoutConstraint(item: addTagView, attribute: .bottom, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .bottom, multiplier: 1, constant: 0)
+        addTagView.isHidden = true
+        addTagView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(addTagView)
+        NSLayoutConstraint.activate([
+            addTagView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            addTagView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            addViewTopConstraint,
+            addViewBottomConstraint
+        ])
+    }
+    
+    //  Tap on the checkbox.
+    @objc func tapCheckBox(_ sender: CheckBox) {
+        sender.isChecked = !sender.isChecked
+        let data = tableData[sender.indexPath.section].items[sender.indexPath.row]
+        switch data {
+        case let .check(key, _, valueOn):
+            let defValue = valueOn ?? "yes"
+            if sender.isChecked {
+                AppSettings.settings.newProperties[key] = defValue
+            } else {
+                AppSettings.settings.newProperties.removeValue(forKey: key)
+            }
+        default:
+            return
+        }
+        tableView.reloadData()
+    }
+    
+    //  Updating the view when the keyboard appears.
+    @objc func keyboardWillShow(notification: NSNotification) {
+        guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
+        if keyboardSize.height > 0 {
+            UIView.animate(withDuration: 0.3, animations: { [weak self] in
+                guard let self = self else {return}
+                self.addViewBottomConstraint.constant = -keyboardSize.height + self.view.safeAreaInsets.bottom
+            })
+        }
+    }
+    
+    //  Updating the view when hiding the keyboard.
+    @objc func keyboardWillHide(notification _: NSNotification) {
+        UIView.animate(withDuration: 0.3, animations: { [weak self] in
+            guard let self = self else {return}
+            self.addViewBottomConstraint.constant = 0
+        })
+    }
+}
+
+extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in _: UITableView) -> Int {
         return tableData.count
@@ -483,44 +553,38 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.icon.backView.backgroundColor = .systemBackground
             cell.keyLabel.text = key
             cell.keyLabel.isHidden = false
-            cell.valueField.text = value
-            cell.valueField.isHidden = false
-            cell.valueField.key = key
-            cell.valueLable.isHidden = true
-            cell.valueField.delegate = self
-            cell.checkBox.isHidden = true
-            cell.checkLable.isHidden = true
-            cell.selectValueButton.isHidden = true
+            cell.valueLabel.text = value
+            cell.valueLabel.isHidden = false
             cell.label.isHidden = true
+            cell.button.isHidden = true
+            cell.checkBox.isHidden = true
             cell.accessoryType = .none
         case let .link(wiki):
             cell.icon.icon.image = UIImage(named: "osm_wiki_logo")
-            cell.icon.backView.backgroundColor = .systemBackground
+            cell.icon.backView.backgroundColor = .white
             cell.icon.isHidden = false
             cell.keyLabel.text = wiki
             cell.keyLabel.isHidden = true
-            cell.valueLable.isHidden = true
-            cell.valueField.isHidden = true
-            cell.label.isHidden = true
-            cell.checkLable.isHidden = false
-            cell.checkLable.text = "Open wiki"
+            cell.valueLabel.isHidden = true
+            cell.label.isHidden = false
+            cell.label.text = "Open wiki"
             cell.checkBox.isHidden = true
-            cell.selectValueButton.isHidden = true
-            cell.accessoryType = .none
+            cell.button.isHidden = true
+            cell.accessoryType = .disclosureIndicator
         case let .text(_, key):
             cell.icon.icon.image = UIImage(systemName: "tag")
             cell.icon.backView.backgroundColor = .systemBackground
             cell.icon.isHidden = false
             cell.keyLabel.text = key
             cell.keyLabel.isHidden = false
-            cell.valueLable.isHidden = true
-            cell.valueField.text = AppSettings.settings.newProperties[key]
-            cell.valueField.isHidden = false
-            cell.valueField.key = key
-            cell.valueField.delegate = self
-            cell.checkLable.isHidden = true
+            cell.valueLabel.text = AppSettings.settings.newProperties[key]
+            cell.valueLabel.isHidden = false
+            cell.label.isHidden = true
             cell.checkBox.isHidden = true
-            cell.selectValueButton.isHidden = true
+            cell.button.isHidden = false
+            cell.button.setImage(UIImage(systemName: "keyboard"), for: .normal)
+            cell.button.key = key
+            cell.button.addTarget(self, action: #selector(tapKeyBoard), for: .touchUpInside)
             cell.accessoryType = .none
         case let .combo(key, values, _):
             cell.icon.icon.image = UIImage(systemName: "tag")
@@ -528,39 +592,32 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.icon.isHidden = false
             cell.keyLabel.text = key
             cell.keyLabel.isHidden = false
-            cell.valueLable.isHidden = true
-            cell.valueField.isHidden = true
-            cell.checkLable.isHidden = true
-            cell.checkBox.isHidden = true
-            cell.selectValueButton.isHidden = false
+            cell.valueLabel.text = AppSettings.settings.newProperties[key]
+            cell.valueLabel.isHidden = false
+            cell.label.isHidden = true
+            cell.button.isHidden = false
+            cell.button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
             cell.configureButton(values: values)
+            cell.checkBox.isHidden = true
             cell.accessoryType = .none
-        case let .check(key, text, valueOn):
+        case let .check(key, text, _):
             cell.icon.icon.image = UIImage(systemName: "tag")
             cell.icon.backView.backgroundColor = .systemBackground
             cell.icon.isHidden = false
-            cell.keyLabel.text = key
-            if text == nil {
-                cell.keyLabel.isHidden = false
-                cell.checkLable.isHidden = true
-            } else {
-                cell.keyLabel.isHidden = true
-                cell.checkLable.text = text
-                cell.checkLable.isHidden = false
-            }
-            cell.valueLable.isHidden = true
-            cell.valueField.isHidden = true
+            let keyValue = text ?? key
+            cell.keyLabel.text = keyValue
+            cell.keyLabel.isHidden = false
+            cell.valueLabel.isHidden = true
+            cell.label.isHidden = true
             cell.checkBox.isHidden = false
             cell.checkBox.indexPath = indexPath
             cell.checkBox.addTarget(self, action: #selector(tapCheckBox), for: .touchUpInside)
-            let defValue = valueOn ?? "yes"
-            if AppSettings.settings.newProperties[key] == defValue {
+            if AppSettings.settings.newProperties[key] != nil {
                 cell.checkBox.isChecked = true
             } else {
                 cell.checkBox.isChecked = false
             }
-            cell.label.isHidden = true
-            cell.selectValueButton.isHidden = true
+            cell.button.isHidden = true
             cell.accessoryType = .none
         case let .presetLink(presetName):
             if presetName == "Show other presets" {
@@ -583,13 +640,11 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
                 }
             }
             cell.keyLabel.isHidden = true
-            cell.valueLable.isHidden = true
-            cell.valueField.isHidden = true
-            cell.checkLable.text = presetName
-            cell.checkLable.isHidden = false
+            cell.valueLabel.isHidden = true
+            cell.label.isHidden = false
+            cell.label.text = presetName
             cell.checkBox.isHidden = true
-            cell.label.isHidden = true
-            cell.selectValueButton.isHidden = true
+            cell.button.isHidden = true
             cell.accessoryType = .disclosureIndicator
         case let .multiselect(key, _, _):
             cell.icon.icon.image = UIImage(systemName: "tag")
@@ -597,123 +652,48 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.icon.isHidden = false
             cell.keyLabel.text = key
             cell.keyLabel.isHidden = false
-            cell.valueLable.isHidden = false
+            cell.valueLabel.isHidden = false
             if var valuesString = AppSettings.settings.newProperties[key] {
                 valuesString = valuesString.replacingOccurrences(of: ";", with: ", ")
-                cell.valueLable.text = valuesString
+                cell.valueLabel.text = valuesString
             } else {
-                cell.valueLable.text = nil
+                cell.valueLabel.text = nil
             }
-            cell.valueField.isHidden = true
-            cell.checkLable.isHidden = true
+            cell.valueLabel.isHidden = false
+            cell.label.isHidden = true
             cell.checkBox.isHidden = true
-            cell.selectValueButton.isHidden = true
+            cell.button.isHidden = true
             cell.accessoryType = .disclosureIndicator
         case let .label(text):
             cell.icon.isHidden = true
             cell.keyLabel.isHidden = true
-            cell.valueLable.isHidden = true
-            cell.valueField.isHidden = true
-            cell.checkLable.isHidden = true
+            cell.valueLabel.isHidden = true
             cell.checkBox.isHidden = true
             cell.label.text = text
             cell.label.isHidden = false
-            cell.selectValueButton.isHidden = true
+            cell.button.isHidden = true
             cell.accessoryType = .none
         default:
             cell.icon.isHidden = true
             cell.keyLabel.isHidden = true
-            cell.valueLable.isHidden = true
-            cell.valueField.isHidden = true
-            cell.checkLable.isHidden = true
+            cell.valueLabel.isHidden = true
             cell.checkBox.isHidden = true
             cell.label.isHidden = true
-            cell.selectValueButton.isHidden = true
+            cell.button.isHidden = true
             cell.accessoryType = .none
             cell.backgroundColor = .red
         }
         return cell
     }
     
-//    Tap on the cell is used only for 4 actions:
-//    1) Opening links to wiki.openstreetmap.org
-//    2) Adding a preset
-//    3) Entering the tag manually.
-//    4) Switching to the suggested preset.
-    func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let elem = tableData[indexPath.section].items[indexPath.row]
-        switch elem {
-        case let .link(wiki):
-            let str = "https://wiki.openstreetmap.org/wiki/" + wiki
-            guard let url = URL(string: str) else { return }
-            let svc = CustomSafari(url: url)
-            AppSettings.settings.saveAllowed = false
-            svc.callbackClosure = { [weak self] in
-                AppSettings.settings.saveAllowed = true
-            }
-            present(svc, animated: true, completion: nil)
-        case let .presetLink(presetName):
-            if presetName == "Show other presets" {
-                tapTitleButton()
-            } else if presetName == "Add tag manually" {
-                editObject = .addView
-                //  When the tag is entered manually, addView.callbackClosure is triggered, which passes the entered tag=value pair. The table data is updated.
-                addTagView.callbackClosure = { [weak self] addedTag in
-                    guard let self = self else { return }
-                    self.navigationController?.setToolbarHidden(false, animated: false)
-                    self.editObject = .table
-                    for (key, value) in addedTag {
-                        if key == "" || value == "" {
-                            let text = """
-                            Key or value cannot be empty!
-                            Key = "\(key)"
-                            Value = "\(value)"
-                            """
-                            self.showAction(message: text, addAlerts: [])
-                            return
-                        }
-                    }
-                    AppSettings.settings.newProperties.merge(addedTag, uniquingKeysWith: { _, new in new })
-                    self.fillData()
-                    self.tableView.reloadData()
-                }
-                addTagView.translatesAutoresizingMaskIntoConstraints = false
-                addTagView.backgroundColor = .systemBackground
-                addTagView.alpha = 0.95
-                addTagView.keyField.becomeFirstResponder()
-                view.addSubview(addTagView)
-            } else {
-                guard let item = getItemFromName(name: presetName) else { return }
-                let itemVC = ItemTagsViewController(item: item)
-                let navVC = CategoryNavigationController(rootViewController: itemVC)
-                navVC.callbackClosure = {
-                    self.addProperties()
-                }
-                present(navVC, animated: true, completion: nil)
-            }
-        case let .multiselect(key, values, _):
-            let vc = MultiSelectViewController(values: values, key: key)
-            vc.callbackClosure = { [weak self] in
-                guard let self = self else { return }
-                self.navigationController?.setToolbarHidden(false, animated: false)
-                self.saveObject()
-                self.fillData()
-                self.tableView.reloadData()
-            }
-            navigationController?.setToolbarHidden(true, animated: false)
-            navigationController?.pushViewController(vc, animated: true)
-        default:
-            tableView.deselectRow(at: indexPath, animated: true)
-        }
-    }
-    
     //  Deleting a previously entered tag.
     func tableView(_: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard tableData[indexPath.section].name == "Filled tags" else { return nil }
+        
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, completionHandler in
-            guard let self = self else { return }
-            guard let cell = self.tableView.cellForRow(at: indexPath) as? ItemCell else { return }
-            guard let key = cell.keyLabel.text else { return }
+            guard let self = self,
+                  let cell = self.tableView.cellForRow(at: indexPath) as? ItemCell,
+                  let key = cell.keyLabel.text else { return }
             AppSettings.settings.newProperties.removeValue(forKey: key)
             let tags = self.generateTags(properties: AppSettings.settings.newProperties)
             self.object.tag = tags
@@ -721,110 +701,70 @@ class EditObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             self.tableView.reloadData()
             completionHandler(true)
         }
-        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
+        let editAction = UIContextualAction(style: .normal, title: "Edit", handler: { [weak self] _, _, completionHandler in
+            guard let self = self,
+                  let cell = self.tableView.cellForRow(at: indexPath) as? ItemCell,
+                  let key = cell.keyLabel.text,
+                  let value = cell.valueLabel.text else { return }
+            self.addTagView.keyField.text = key
+            self.addTagView.valueField.text = value
+            self.addTagView.isHidden = false
+            self.addTagView.valueField.becomeFirstResponder()
+            completionHandler(true)
+        })
+        
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
         return configuration
     }
     
-    //  Tap on the checkbox.
-    @objc func tapCheckBox(_ sender: CheckBox) {
-        sender.isChecked = !sender.isChecked
-        let data = tableData[sender.indexPath.section].items[sender.indexPath.row]
-        switch data {
-        case let .check(key, _, valueOn):
-            let defValue = valueOn ?? "yes"
-            if sender.isChecked {
-                AppSettings.settings.newProperties[key] = defValue
-            } else {
-                AppSettings.settings.newProperties.removeValue(forKey: key)
-            }
-        default:
-            return
-        }
-    }
-    
-    //  Several methods that are triggered when you finish typing. The finishEdit method is called, which assigns the entered value to the tag.
-    func textFieldShouldReturn(_: UITextField) -> Bool {
-        view.endEditing(true)
-        return true
-    }
-    
-    func textFieldDidBeginEditing(_: UITextField) {
-        tap = UITapGestureRecognizer(target: self, action: #selector(endEdit))
-        tap.delegate = self
-        view.addGestureRecognizer(tap)
-    }
-    
-    @objc func endEdit(sender _: UIGestureRecognizer) {
-        view.endEditing(true)
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        editingIndexPath = nil
-        finishEdit(textField)
-        view.removeGestureRecognizer(tap)
-    }
-    
-    func finishEdit(_ textField: UITextField) {
-        if let textField = textField as? ValueField {
-            guard let key = textField.key else {
-                showAction(message: "Error get key", addAlerts: [])
-                return
-            }
-            if textField.text == "" {
-                AppSettings.settings.newProperties.removeValue(forKey: key)
-            } else {
-                AppSettings.settings.newProperties[key] = textField.text
+    //    Tap on the cell is used only for 4 actions:
+    //    1) Opening links to wiki.openstreetmap.org
+    //    2) Adding a preset
+    //    3) Entering the tag manually.
+    //    4) Switching to the suggested preset.
+        func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
+            let elem = tableData[indexPath.section].items[indexPath.row]
+            switch elem {
+            case let .link(wiki):
+                let str = "https://wiki.openstreetmap.org/wiki/" + wiki
+                guard let url = URL(string: str) else { return }
+                let svc = CustomSafari(url: url)
+                AppSettings.settings.saveAllowed = false
+                svc.callbackClosure = { [weak self] in
+                    AppSettings.settings.saveAllowed = true
+                }
+                present(svc, animated: true, completion: nil)
+            case let .presetLink(presetName):
+                if presetName == "Show other presets" {
+                    tapTitleButton()
+                } else if presetName == "Add tag manually" {
+                    addTagView.keyField.text = nil
+                    addTagView.valueField.text = nil
+                    addTagView.isHidden = false
+                    addTagView.keyField.becomeFirstResponder()
+                } else {
+                    guard let item = getItemFromName(name: presetName) else { return }
+                    let itemVC = ItemTagsViewController(item: item)
+                    let navVC = CategoryNavigationController(rootViewController: itemVC)
+                    navVC.callbackClosure = {
+                        self.addProperties()
+                    }
+                    present(navVC, animated: true, completion: nil)
+                }
+            case let .multiselect(key, values, _):
+                let vc = MultiSelectViewController(values: values, key: key)
+                vc.callbackClosure = { [weak self] in
+                    guard let self = self else { return }
+                    self.navigationController?.setToolbarHidden(false, animated: false)
+                    self.saveObject()
+                    self.fillData()
+                    self.tableView.reloadData()
+                }
+                navigationController?.setToolbarHidden(true, animated: false)
+                navigationController?.pushViewController(vc, animated: true)
+            default:
+                tableView.deselectRow(at: indexPath, animated: true)
             }
         }
-        tableView.reloadData()
-    }
     
-    //  Updating the view when the keyboard appears.
-    @objc func keyboardWillShow(notification: NSNotification) {
-        guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-        if keyboardSize.height > 0 {
-            switch editObject {
-            case .table:
-                NSLayoutConstraint.deactivate(tableConstraints)
-                tableConstraints = [tableView.topAnchor.constraint(equalTo: view.topAnchor),
-                                    tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -keyboardSize.height),
-                                    tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
-                                    tableView.leftAnchor.constraint(equalTo: view.leftAnchor)]
-                NSLayoutConstraint.activate(tableConstraints)
-            case .addView:
-                addViewConstrains = [
-                    addTagView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -keyboardSize.height),
-                    addTagView.leftAnchor.constraint(equalTo: view.leftAnchor),
-                    addTagView.rightAnchor.constraint(equalTo: view.rightAnchor),
-                    addTagView.topAnchor.constraint(equalTo: view.topAnchor),
-                ]
-                NSLayoutConstraint.activate(addViewConstrains)
-            }
-        }
-    }
-    
-    //  Updating the view when hiding the keyboard.
-    @objc func keyboardWillHide(notification _: NSNotification) {
-        switch editObject {
-        case .table:
-            NSLayoutConstraint.deactivate(tableConstraints)
-            tableConstraints = [tableView.topAnchor.constraint(equalTo: view.topAnchor),
-                                tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-                                tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
-                                tableView.leftAnchor.constraint(equalTo: view.leftAnchor)]
-            NSLayoutConstraint.activate(tableConstraints)
-        case .addView:
-            NSLayoutConstraint.deactivate(addViewConstrains)
-            navigationController?.setToolbarHidden(true, animated: false)
-            addViewConstrains = [
-                addTagView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-                addTagView.leftAnchor.constraint(equalTo: view.leftAnchor),
-                addTagView.rightAnchor.constraint(equalTo: view.rightAnchor),
-                addTagView.topAnchor.constraint(equalTo: view.topAnchor),
-            ]
-            NSLayoutConstraint.activate(addViewConstrains)
-        }
-    }
-    
-    func gestureRecognizer(_: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer) -> Bool { return true }
 }

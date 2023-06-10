@@ -282,13 +282,11 @@ class AddTagManuallyView: UIView {
               let value = valueField.text else { return }
         key = key.lowercased()
         clouser([key: value])
-        removeFromSuperview()
     }
     
     @objc func cancelButtonTapped() {
         guard let clouser = callbackClosure else { return }
         clouser([:])
-        removeFromSuperview()
     }
     
     var callbackClosure: (([String: String]) -> Void)?
@@ -296,6 +294,8 @@ class AddTagManuallyView: UIView {
     convenience init() {
         self.init(frame: .zero)
         setupConstrains()
+        backgroundColor = .systemBackground
+        alpha = 0.95
     }
     
     func setupConstrains() {
@@ -310,16 +310,15 @@ class AddTagManuallyView: UIView {
             toolbar.heightAnchor.constraint(equalToConstant: 50),
             keyField.heightAnchor.constraint(equalToConstant: 50),
             keyField.leftAnchor.constraint(equalTo: leftAnchor, constant: 15),
-            keyField.rightAnchor.constraint(equalTo: centerXAnchor, constant: -7),
-            keyField.bottomAnchor.constraint(equalTo: toolbar.topAnchor, constant: -20),
-            valueField.leftAnchor.constraint(equalTo: centerXAnchor, constant: 7),
+            keyField.rightAnchor.constraint(equalTo: rightAnchor, constant: -15),
+            keyField.bottomAnchor.constraint(equalTo: valueField.topAnchor, constant: -20),
+            valueField.leftAnchor.constraint(equalTo: leftAnchor, constant: 15),
             valueField.heightAnchor.constraint(equalToConstant: 50),
             valueField.rightAnchor.constraint(equalTo: rightAnchor, constant: -15),
             valueField.bottomAnchor.constraint(equalTo: toolbar.topAnchor, constant: -20),
             messageLabel.bottomAnchor.constraint(equalTo: keyField.topAnchor, constant: -20),
             messageLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 15),
             messageLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -15),
-            messageLabel.heightAnchor.constraint(equalToConstant: 50),
         ])
     }
 }
@@ -547,43 +546,8 @@ class BulbButton: UIButton {
 
 //  The button that is used to select the tag values from the list. Used on the tag editing controller and ItemVC
 class SelectButton: UIButton {
-    let button: UIButton = {
-        let but = UIButton()
-        but.translatesAutoresizingMaskIntoConstraints = false
-        return but
-    }()
-
-    private let icon: UIImageView = {
-        let image = UIImageView(image: UIImage(systemName: "chevron.down"))
-        image.translatesAutoresizingMaskIntoConstraints = false
-        return image
-    }()
-
     var key: String?
     var values: [String] = []
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setUpConstrains()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func setUpConstrains() {
-        addSubview(button)
-        addSubview(icon)
-        NSLayoutConstraint.activate([
-            button.leftAnchor.constraint(equalTo: leftAnchor),
-            button.topAnchor.constraint(equalTo: topAnchor),
-            button.rightAnchor.constraint(equalTo: rightAnchor),
-            button.bottomAnchor.constraint(equalTo: bottomAnchor),
-            icon.rightAnchor.constraint(equalTo: button.rightAnchor, constant: -10),
-            icon.centerYAnchor.constraint(equalTo: button.centerYAnchor),
-        ])
-    }
 }
 
 //  Custom UITextField for entering the text value of the tag. Use in ItemVC and EditObjectVC
