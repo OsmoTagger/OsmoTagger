@@ -24,8 +24,6 @@ class NavigationController: UINavigationController {
     var dismissClosure: (() -> Void)?
     
     override func viewDidDisappear(_: Bool) {
-        AppSettings.settings.saveAllowed = false
-        AppSettings.settings.newProperties = [:]
         guard let clouser = dismissClosure else { return }
         clouser()
     }

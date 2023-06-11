@@ -514,7 +514,6 @@ class MapViewController: UIViewController {
             if let controllers = navController?.viewControllers {
                 for controller in controllers where controller is InfoObjectViewController {
                     if let newInfoVC = controller as? InfoObjectViewController {
-                        AppSettings.settings.saveAllowed = false
                         AppSettings.settings.newProperties = [:]
                         for tag in object.tag {
                             AppSettings.settings.newProperties[tag.k] = tag.v

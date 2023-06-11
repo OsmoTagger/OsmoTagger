@@ -310,8 +310,6 @@ final class AppSettings: NSObject {
     
 //    MARK: PUBLUC BUFFER VARIABLES
 
-    //  When changing newProperties, a closure is triggered, which saves the object to memory on the tag editing controller. In some cases, there is no need to do this, then saveAllowed changes.
-    var saveAllowed = false
     //  Stores new object tags. Reset to zero when the tag editing controller is closed.
     var newProperties: [String: String] = [:] {
         didSet {
