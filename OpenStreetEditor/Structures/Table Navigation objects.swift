@@ -260,9 +260,8 @@ class ItemCell: UITableViewCell {
         contentView.addSubview(label)
         NSLayoutConstraint.activate([
             icon.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            icon.topAnchor.constraint(equalTo: contentView.topAnchor),
             icon.widthAnchor.constraint(equalTo: icon.backView.widthAnchor),
-            icon.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            icon.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             keyLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             keyLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             keyLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
