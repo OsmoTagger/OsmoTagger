@@ -237,8 +237,11 @@ class EditObjectViewController: UIViewController {
             }
         }
         var filledTags = EditSectionData(name: "Filled tags", items: [addTagsFromPresetButton, addTagManually])
-        for (tagKey, tagValue) in AppSettings.settings.newProperties {
-            let elem = ItemElements.key(key: tagKey, value: tagValue)
+        var keys = Array(AppSettings.settings.newProperties.keys)
+        keys = keys.sorted()
+        for key in keys {
+            guard let value = AppSettings.settings.newProperties[key] else {continue}
+            let elem = ItemElements.key(key: key, value: value)
             filledTags.items.append(elem)
         }
         tableData.append(filledTags)
