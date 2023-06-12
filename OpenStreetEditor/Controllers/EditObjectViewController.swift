@@ -12,8 +12,6 @@ import UIKit
 class EditObjectViewController: UIViewController {
     //  Called when the object is completely deleted from the server. Used only on SavedNodesVC.
     var deleteObjectClosure: ((Int) -> Void)?
-    // Closure that is called when the controller is deinitialized
-    var deinitClouser: (() -> Void)?
     
     var object: OSMAnyObject
     
@@ -53,9 +51,6 @@ class EditObjectViewController: UIViewController {
     
     deinit {
         AppSettings.settings.newProperties = [:]
-        if let clouser = deinitClouser {
-            clouser()
-        }
     }
     
     override func viewDidLoad() {
