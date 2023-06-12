@@ -283,7 +283,7 @@ class ItemCell: UITableViewCell {
             button.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             label.topAnchor.constraint(equalTo: contentView.topAnchor),
             label.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
-            label.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            label.rightAnchor.constraint(equalTo: checkBox.rightAnchor),
             label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
@@ -322,7 +322,7 @@ class ItemCell: UITableViewCell {
     func configureButton(values: [String]) {
         guard let key = keyLabel.text else { return }
         let optionClosure = { [weak self] (action: UIAction) in
-            guard let self = self else {return}
+            guard let self = self else { return }
             if action.title == "" {
                 AppSettings.settings.newProperties.removeValue(forKey: key)
             } else {

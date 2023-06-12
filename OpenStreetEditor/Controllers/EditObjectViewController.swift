@@ -155,7 +155,7 @@ class EditObjectViewController: UIViewController {
     //  Called every time the object tags are changed (AppSettings.settings.saveObjectClouser)
     func saveObject() {
         updateRightBarItems()
-        guard saveAllowed == true else {return}
+        guard saveAllowed == true else { return }
 //      It is not always necessary to save changes in memory. For correct operation, the saveAllowed variable is introduced, which becomes false at the right moment and the changes are not written to memory.
         if object.id < 0 {
 //              If the point is newly created, id < 0.
@@ -448,7 +448,7 @@ class EditObjectViewController: UIViewController {
     }
     
     @objc func tapKeyBoard(_ sender: SelectButton) {
-        guard let key = sender.key else {return}
+        guard let key = sender.key else { return }
         addTagView.keyField.text = key
         addTagView.keyField.isUserInteractionEnabled = false
         addTagView.valueField.text = AppSettings.settings.newProperties[key]
@@ -485,7 +485,7 @@ class EditObjectViewController: UIViewController {
             addTagView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             addTagView.leftAnchor.constraint(equalTo: view.leftAnchor),
             addTagView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            addViewBottomConstraint
+            addViewBottomConstraint,
         ])
     }
     
@@ -512,7 +512,7 @@ class EditObjectViewController: UIViewController {
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
         if keyboardSize.height > 0 {
             UIView.animate(withDuration: 0.3, animations: { [weak self] in
-                guard let self = self else {return}
+                guard let self = self else { return }
                 self.addViewBottomConstraint.constant = -keyboardSize.height + self.view.safeAreaInsets.bottom
             })
         }
@@ -521,14 +521,13 @@ class EditObjectViewController: UIViewController {
     //  Updating the view when hiding the keyboard.
     @objc func keyboardWillHide(notification _: NSNotification) {
         UIView.animate(withDuration: 0.3, animations: { [weak self] in
-            guard let self = self else {return}
+            guard let self = self else { return }
             self.addViewBottomConstraint.constant = 0
         })
     }
 }
 
 extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
-    
     func numberOfSections(in _: UITableView) -> Int {
         return tableData.count
     }
@@ -725,46 +724,45 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
     //    2) Adding a preset
     //    3) Entering the tag manually.
     //    4) Switching to the suggested preset.
-        func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
-            let elem = tableData[indexPath.section].items[indexPath.row]
-            switch elem {
-            case let .link(wiki):
-                let str = "https://wiki.openstreetmap.org/wiki/" + wiki
-                guard let url = URL(string: str) else { return }
-                let svc = CustomSafari(url: url)
-                present(svc, animated: true, completion: nil)
-            case let .presetLink(presetName):
-                if presetName == "Show other presets" {
-                    tapTitleButton()
-                } else if presetName == "Add tag manually" {
-                    addTagView.keyField.text = nil
-                    addTagView.keyField.isUserInteractionEnabled = true
-                    addTagView.valueField.text = nil
-                    addTagView.isHidden = false
-                    addTagView.keyField.becomeFirstResponder()
-                } else {
-                    guard let item = getItemFromName(name: presetName) else { return }
-                    let itemVC = ItemTagsViewController(item: item)
-                    let navVC = CategoryNavigationController(rootViewController: itemVC)
-                    navVC.callbackClosure = {
-                        self.addProperties()
-                    }
-                    present(navVC, animated: true, completion: nil)
+    func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let elem = tableData[indexPath.section].items[indexPath.row]
+        switch elem {
+        case let .link(wiki):
+            let str = "https://wiki.openstreetmap.org/wiki/" + wiki
+            guard let url = URL(string: str) else { return }
+            let svc = CustomSafari(url: url)
+            present(svc, animated: true, completion: nil)
+        case let .presetLink(presetName):
+            if presetName == "Show other presets" {
+                tapTitleButton()
+            } else if presetName == "Add tag manually" {
+                addTagView.keyField.text = nil
+                addTagView.keyField.isUserInteractionEnabled = true
+                addTagView.valueField.text = nil
+                addTagView.isHidden = false
+                addTagView.keyField.becomeFirstResponder()
+            } else {
+                guard let item = getItemFromName(name: presetName) else { return }
+                let itemVC = ItemTagsViewController(item: item)
+                let navVC = CategoryNavigationController(rootViewController: itemVC)
+                navVC.callbackClosure = {
+                    self.addProperties()
                 }
-            case let .multiselect(key, values, _):
-                let vc = MultiSelectViewController(values: values, key: key)
-                vc.callbackClosure = { [weak self] in
-                    guard let self = self else { return }
-                    self.navigationController?.setToolbarHidden(false, animated: false)
-                    self.saveObject()
-                    self.fillData()
-                    self.tableView.reloadData()
-                }
-                navigationController?.setToolbarHidden(true, animated: false)
-                navigationController?.pushViewController(vc, animated: true)
-            default:
-                tableView.deselectRow(at: indexPath, animated: true)
+                present(navVC, animated: true, completion: nil)
             }
+        case let .multiselect(key, values, _):
+            let vc = MultiSelectViewController(values: values, key: key)
+            vc.callbackClosure = { [weak self] in
+                guard let self = self else { return }
+                self.navigationController?.setToolbarHidden(false, animated: false)
+                self.saveObject()
+                self.fillData()
+                self.tableView.reloadData()
+            }
+            navigationController?.setToolbarHidden(true, animated: false)
+            navigationController?.pushViewController(vc, animated: true)
+        default:
+            tableView.deselectRow(at: indexPath, animated: true)
         }
-    
+    }
 }

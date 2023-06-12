@@ -49,7 +49,7 @@ class ItemTagsViewController: UIViewController {
         setEnterTagManuallyView()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_: Bool) {
         // Notifications when calling and hiding the keyboard.
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -88,7 +88,7 @@ class ItemTagsViewController: UIViewController {
             addTagView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             addTagView.leftAnchor.constraint(equalTo: view.leftAnchor),
             addTagView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            addViewBottomConstraint
+            addViewBottomConstraint,
         ])
     }
     
@@ -171,7 +171,7 @@ class ItemTagsViewController: UIViewController {
     }
     
     @objc func tapKeyBoard(_ sender: SelectButton) {
-        guard let key = sender.key else {return}
+        guard let key = sender.key else { return }
         addTagView.keyField.text = key
         addTagView.keyField.isUserInteractionEnabled = false
         addTagView.valueField.text = AppSettings.settings.newProperties[key]
@@ -206,7 +206,7 @@ class ItemTagsViewController: UIViewController {
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
         if keyboardSize.height > 0 {
             UIView.animate(withDuration: 0.3, animations: { [weak self] in
-                guard let self = self else {return}
+                guard let self = self else { return }
                 self.addViewBottomConstraint.constant = -keyboardSize.height + self.view.safeAreaInsets.bottom
             })
         }
@@ -214,14 +214,13 @@ class ItemTagsViewController: UIViewController {
 
     @objc func keyboardWillHide(notification _: NSNotification) {
         UIView.animate(withDuration: 0.3, animations: { [weak self] in
-            guard let self = self else {return}
+            guard let self = self else { return }
             self.addViewBottomConstraint.constant = 0
         })
     }
 }
 
 extension ItemTagsViewController: UITableViewDataSource, UITableViewDelegate {
-    
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
         return item.elements.count
     }
@@ -392,5 +391,4 @@ extension ItemTagsViewController: UITableViewDataSource, UITableViewDelegate {
             return
         }
     }
-    
 }
