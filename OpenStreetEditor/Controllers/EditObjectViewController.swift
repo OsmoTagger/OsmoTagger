@@ -282,10 +282,33 @@ class EditObjectViewController: UIViewController {
         }
         
         if presets.count > 0 {
+            var names: [String] = []
             let elem: ItemElements = .label(text: "Add tags from other presets:")
-            var uniquePresets = Array(Set(presets))
-            uniquePresets.insert(elem, at: 0)
-            elements += uniquePresets
+            let uniquePresets = Array(Set(presets))
+            var sortedPresets: [ItemElements] = []
+            for preset in uniquePresets {
+                switch preset {
+                case let .presetLink(presetName):
+                    names.append(presetName)
+                default:
+                    continue
+                }
+            }
+            names = names.sorted()
+            for name in names {
+                for preset in uniquePresets {
+                    switch preset {
+                    case .presetLink(let presetName):
+                        if presetName == name {
+                            sortedPresets.append(preset)
+                        }
+                    default:
+                        continue
+                    }
+                }
+            }
+            sortedPresets.insert(elem, at: 0)
+            elements += sortedPresets
             tableData[0].items = elements
         } else {
             tableData[0].items = elements
