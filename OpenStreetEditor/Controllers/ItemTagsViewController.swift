@@ -205,18 +205,12 @@ class ItemTagsViewController: UIViewController {
     @objc func keyboardWillShow(notification: NSNotification) {
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
         if keyboardSize.height > 0 {
-            UIView.animate(withDuration: 0.3, animations: { [weak self] in
-                guard let self = self else { return }
-                self.addViewBottomConstraint.constant = -keyboardSize.height + self.view.safeAreaInsets.bottom
-            })
+            addViewBottomConstraint.constant = -keyboardSize.height + view.safeAreaInsets.bottom
         }
     }
 
     @objc func keyboardWillHide(notification _: NSNotification) {
-        UIView.animate(withDuration: 0.3, animations: { [weak self] in
-            guard let self = self else { return }
-            self.addViewBottomConstraint.constant = 0
-        })
+        addViewBottomConstraint.constant = 0
     }
 }
 
