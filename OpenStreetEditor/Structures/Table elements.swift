@@ -278,9 +278,8 @@ class AddTagManuallyView: UIView {
     
     @objc func doneButtonTapped() {
         guard let clouser = callbackClosure,
-              var key = keyField.text,
+              let key = keyField.text,
               let value = valueField.text else { return }
-        key = key.lowercased()
         clouser([key: value])
     }
     
