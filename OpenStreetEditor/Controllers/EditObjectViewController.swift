@@ -441,14 +441,15 @@ class EditObjectViewController: UIViewController {
         tableView.register(ItemCell.self, forCellReuseIdentifier: cellId)
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([tableView.topAnchor.constraint(equalTo: view.topAnchor),
-                                     tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        NSLayoutConstraint.activate([tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                                     tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
                                      tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
                                      tableView.leftAnchor.constraint(equalTo: view.leftAnchor)])
     }
     
     @objc func tapKeyBoard(_ sender: SelectButton) {
         guard let key = sender.key else { return }
+        navigationController?.setToolbarHidden(true, animated: true)
         addTagView.keyField.text = key
         addTagView.keyField.isUserInteractionEnabled = false
         addTagView.valueField.text = AppSettings.settings.newProperties[key]
@@ -460,6 +461,7 @@ class EditObjectViewController: UIViewController {
         //  When the tag is entered manually, addView.callbackClosure is triggered, which passes the entered tag=value pair. The table data is updated.
         addTagView.callbackClosure = { [weak self] addedTag in
             guard let self = self else { return }
+            self.navigationController?.setToolbarHidden(false, animated: true)
             self.view.endEditing(true)
             self.addTagView.isHidden = true
             for (key, value) in addedTag {
@@ -701,6 +703,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
                   let cell = self.tableView.cellForRow(at: indexPath) as? ItemCell,
                   let key = cell.keyLabel.text,
                   let value = cell.valueLabel.text else { return }
+            self.navigationController?.setToolbarHidden(true, animated: true)
             self.addTagView.keyField.text = key
             self.addTagView.keyField.isUserInteractionEnabled = true
             self.addTagView.valueField.text = value
@@ -730,6 +733,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             if presetName == "Show other presets" {
                 tapTitleButton()
             } else if presetName == "Add tag manually" {
+                navigationController?.setToolbarHidden(true, animated: true)
                 addTagView.keyField.text = nil
                 addTagView.keyField.isUserInteractionEnabled = true
                 addTagView.valueField.text = nil

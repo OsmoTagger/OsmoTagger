@@ -64,6 +64,7 @@ class ItemTagsViewController: UIViewController {
         //  When the tag is entered manually, addView.callbackClosure is triggered, which passes the entered tag=value pair. The table data is updated.
         addTagView.callbackClosure = { [weak self] addedTag in
             guard let self = self else { return }
+            self.navigationController?.setToolbarHidden(false, animated: true)
             self.view.endEditing(true)
             self.addTagView.isHidden = true
             for (key, value) in addedTag {
@@ -172,6 +173,7 @@ class ItemTagsViewController: UIViewController {
     
     @objc func tapKeyBoard(_ sender: SelectButton) {
         guard let key = sender.key else { return }
+        navigationController?.setToolbarHidden(true, animated: true)
         addTagView.keyField.text = key
         addTagView.keyField.isUserInteractionEnabled = false
         addTagView.valueField.text = AppSettings.settings.newProperties[key]
