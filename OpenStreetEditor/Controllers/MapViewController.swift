@@ -400,7 +400,7 @@ class MapViewController: UIViewController {
         let geoPoint = mapView.makeGeoPoint(fromDisplay: mapView.center)
         let glPoint = GLMapPoint(geoPoint: geoPoint)
         // To send the created objects to the server, you need to assign them an id < 0. To prevent duplicate IDs, the AppSettings.settings.nextId variable has been created, which reduces the id by 1 each time.
-        let point = GLMapVectorPoint(glPoint)
+        let point = GLMapVectorPoint(glPoint) as GLMapVectorObject
         let object = OSMAnyObject(type: .node, id: AppSettings.settings.nextID, version: 0, changeset: 0, lat: geoPoint.lat, lon: geoPoint.lon, tag: [], nd: [], nodes: [:], members: [], vector: point)
         goToPropertiesVC(object: object)
     }
