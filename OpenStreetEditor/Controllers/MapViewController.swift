@@ -67,9 +67,9 @@ class MapViewController: UIViewController {
         // To highlight the edited object, the vector object is written to singleton appSettings, on which the closure is triggered.
         // When this closure is called, the object is added to the map and the zoom is adjusted
         AppSettings.settings.showVectorObjectClosure = { [weak self] vectorObject in
-            guard let self = self else {return}
+            guard let self = self else { return }
             if let object = vectorObject {
-                guard let style = self.editStyle else {return}
+                guard let style = self.editStyle else { return }
                 self.editDrawble.setVectorObject(object, with: style, completion: nil)
                 self.mapView.add(self.editDrawble)
                 let newCenter = GLMapGeoPoint(point: object.bbox.center)
@@ -81,18 +81,17 @@ class MapViewController: UIViewController {
                 if objectZoom > userZoom {
                     objectZoom = userZoom
                 }
-                self.mapView.animate({ [weak self] animation in
-                    guard let self = self else {return}
+                self.mapView.animate { [weak self] animation in
+                    guard let self = self else { return }
                     animation.duration = self.animationDuration
                     animation.transition = .linear
                     self.mapView.mapGeoCenter = newCenter
                     self.mapView.mapZoom = objectZoom
-                })
+                }
             } else {
                 self.mapView.remove(self.editDrawble)
             }
         }
-        
         
 //      Add buttons
         setLoadIndicator()
@@ -323,7 +322,7 @@ class MapViewController: UIViewController {
             } else {
                 // dismiss and open new navController
                 navController?.dismiss(animated: true, completion: { [weak self] in
-                    guard let self = self else {return}
+                    guard let self = self else { return }
                     self.goToSAvedNodesVC()
                 })
             }
@@ -346,12 +345,12 @@ class MapViewController: UIViewController {
         navController?.dismissClosure = { [weak self] in
             guard let self = self else { return }
             self.navController = nil
-            self.mapView.animate({ [weak self] animation in
+            self.mapView.animate { [weak self] animation in
                 guard let self = self else { return }
                 animation.duration = self.animationDuration
                 animation.transition = .linear
                 self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.5)
-            })
+            }
         }
         if let sheetPresentationController = navController?.presentationController as? UISheetPresentationController {
             sheetPresentationController.detents = [.medium(), .large()]
@@ -492,7 +491,7 @@ class MapViewController: UIViewController {
                 }
             } else {
                 navController?.dismiss(animated: true, completion: { [weak self] in
-                    guard let self = self else {return}
+                    guard let self = self else { return }
                     self.goToSelectVC(objects: objects)
                 })
             }
@@ -516,11 +515,11 @@ class MapViewController: UIViewController {
             guard let self = self else { return }
             self.mapView.remove(self.tappedDrawble)
             self.navController = nil
-            self.mapView.animate({ animation in
+            self.mapView.animate { animation in
                 animation.duration = self.animationDuration
                 animation.transition = .linear
                 self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.5)
-            })
+            }
         }
         if let sheetPresentationController = navController?.presentationController as? UISheetPresentationController {
             sheetPresentationController.detents = [.medium(), .large()]
@@ -565,7 +564,7 @@ class MapViewController: UIViewController {
                     navController?.pushViewController(editVC, animated: true)
                 } else {
                     navController?.dismiss(animated: true, completion: { [weak self] in
-                        guard let self = self else {return}
+                        guard let self = self else { return }
                         self.goToPropertiesVC(object: object)
                     })
                 }
@@ -597,7 +596,7 @@ class MapViewController: UIViewController {
                     navController?.pushViewController(editVC, animated: true)
                 } else {
                     navController?.dismiss(animated: true, completion: { [weak self] in
-                        guard let self = self else {return}
+                        guard let self = self else { return }
                         self.goToPropertiesVC(object: object)
                     })
                 }
@@ -620,7 +619,7 @@ class MapViewController: UIViewController {
                 // editVC -------------------------------
             } else {
                 navController?.dismiss(animated: true, completion: { [weak self] in
-                    guard let self = self else {return}
+                    guard let self = self else { return }
                     self.goToPropertiesVC(object: object)
                 })
             }
@@ -645,12 +644,12 @@ class MapViewController: UIViewController {
         navController?.dismissClosure = { [weak self] in
             guard let self = self else { return }
             self.navController = nil
-            self.mapView.animate({ [weak self] animation in
+            self.mapView.animate { [weak self] animation in
                 guard let self = self else { return }
                 animation.duration = self.animationDuration
                 animation.transition = .linear
                 self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.5)
-            })
+            }
         }
         if let sheetPresentationController = navController?.presentationController as? UISheetPresentationController {
             sheetPresentationController.detents = [.medium(), .large()]

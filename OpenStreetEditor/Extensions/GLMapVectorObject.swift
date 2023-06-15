@@ -13,7 +13,7 @@ import GLMapCore
 extension GLMapVectorObject {
     func getObjectID() -> Int? {
         guard let str = value(forKey: "@id")?.asString(),
-              let double = Double(str) else {return nil}
+              let double = Double(str) else { return nil }
         return Int(double)
     }
 }

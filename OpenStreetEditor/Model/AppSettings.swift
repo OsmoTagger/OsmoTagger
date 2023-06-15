@@ -317,5 +317,4 @@ final class AppSettings: NSObject {
             deletedObjects = [:]
         }
     }
-
 }

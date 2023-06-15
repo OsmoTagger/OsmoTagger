@@ -113,7 +113,7 @@ class CategoryViewController: UIViewController, UITableViewDelegate, UITableView
     
     //  Depending on what the cell stores - a category, a group, or a preset, a tap on it is processed.
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let navController = navigationController as? CategoryNavigationController else {return}
+        guard let navController = navigationController as? CategoryNavigationController else { return }
         let data = tableData[indexPath.row]
         switch data.type {
         case .category:

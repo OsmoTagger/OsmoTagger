@@ -10,7 +10,6 @@ import UIKit
 
 //  The controller that is called when you click on the tag value selection button, which allows you to save multiple values, for example sports=swimming;volleyball.
 class MultiSelectViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
     var values: [String]
     var inputValue: String?
     let key: String

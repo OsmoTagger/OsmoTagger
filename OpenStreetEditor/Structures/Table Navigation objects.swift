@@ -27,6 +27,7 @@ class NavigationController: UINavigationController {
         guard let closure = dismissClosure else { return }
         closure()
     }
+
     func setViewControllers(_ viewControllers: [UIViewController], animated: Bool, completion: (() -> Void)?) {
         CATransaction.begin()
         CATransaction.setCompletionBlock(completion)
@@ -37,8 +38,8 @@ class NavigationController: UINavigationController {
 
 //  UINavigationController for navigating presets
 class CategoryNavigationController: UINavigationController {
-    var callbackClosure: (([String:String]) -> Void)?
-    var objectProperties: [String:String] = [:]
+    var callbackClosure: (([String: String]) -> Void)?
+    var objectProperties: [String: String] = [:]
     
     override func viewDidDisappear(_: Bool) {
         guard let clouser = callbackClosure else { return }
@@ -328,7 +329,7 @@ class ItemCell: UITableViewCell {
     //  The method configures the button to select a value from the list (use on ItemVC and EditObjectVC)
     func configureButton(values: [String], curentValue: String?) {
         let optionClosure = { [weak self] (action: UIAction) in
-            guard let self = self else {return}
+            guard let self = self else { return }
             if let closure = self.button.selectClosure {
                 closure(action.title)
             }

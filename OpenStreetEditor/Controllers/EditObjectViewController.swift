@@ -18,7 +18,8 @@ class EditObjectViewController: UIViewController {
             AppSettings.settings.editableObject = object.vector
         }
     }
-    var newProperties: [String:String] = [:] {
+
+    var newProperties: [String: String] = [:] {
         didSet {
             saveObject()
         }
@@ -82,7 +83,7 @@ class EditObjectViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_: Bool) {
         AppSettings.settings.editableObject = object.vector
     }
     
@@ -176,7 +177,7 @@ class EditObjectViewController: UIViewController {
     }
     
     func fillNewProperties() {
-        var properties: [String:String] = [:]
+        var properties: [String: String] = [:]
         for tag in object.tag {
             properties[tag.k] = tag.v
         }
@@ -237,7 +238,7 @@ class EditObjectViewController: UIViewController {
         var keys = Array(newProperties.keys)
         keys = keys.sorted()
         for key in keys {
-            guard let value = newProperties[key] else {continue}
+            guard let value = newProperties[key] else { continue }
             let elem = ItemElements.key(key: key, value: value)
             filledTags.items.append(elem)
         }
@@ -298,7 +299,7 @@ class EditObjectViewController: UIViewController {
             for name in names {
                 for preset in uniquePresets {
                     switch preset {
-                    case .presetLink(let presetName):
+                    case let .presetLink(presetName):
                         if presetName == name {
                             sortedPresets.append(preset)
                         }
@@ -344,7 +345,7 @@ class EditObjectViewController: UIViewController {
     @objc func tapTitleButton() {
         let navVC = CategoryNavigationController()
         navVC.callbackClosure = { [weak self] updatedProperties in
-            guard let self = self else {return}
+            guard let self = self else { return }
             self.newProperties = updatedProperties
             self.fillData()
             self.tableView.reloadData()
@@ -616,7 +617,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
             cell.configureButton(values: values, curentValue: newProperties[key])
             cell.button.selectClosure = { [weak self] newValue in
-                guard let self = self else {return}
+                guard let self = self else { return }
                 if newValue == "" {
                     self.newProperties.removeValue(forKey: key)
                     cell.valueLabel.text = nil
@@ -766,7 +767,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
                 let navVC = CategoryNavigationController(rootViewController: itemVC)
                 navVC.objectProperties = newProperties
                 navVC.callbackClosure = { [weak self] updatedProperties in
-                    guard let self = self else {return}
+                    guard let self = self else { return }
                     self.newProperties = updatedProperties
                     self.fillData()
                     self.tableView.reloadData()
@@ -789,9 +790,9 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             }
             navigationController?.setToolbarHidden(true, animated: false)
             navigationController?.pushViewController(vc, animated: true)
-        case .combo(_, _, _), .text(_, _), .key(_, _):
+        case .combo(_, _, _), .text(_, _), .key:
             guard let cell = tableView.cellForRow(at: indexPath) as? ItemCell,
-                  let key = cell.keyLabel.text else {return}
+                  let key = cell.keyLabel.text else { return }
             navigationController?.setToolbarHidden(true, animated: true)
             addTagView.keyField.text = key
             addTagView.keyField.isUserInteractionEnabled = false
@@ -799,7 +800,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             addTagView.isHidden = false
             addTagView.valueField.becomeFirstResponder()
         case let .check(key, _, _):
-            guard let cell = tableView.cellForRow(at: indexPath) as? ItemCell else {return}
+            guard let cell = tableView.cellForRow(at: indexPath) as? ItemCell else { return }
             navigationController?.setToolbarHidden(true, animated: true)
             addTagView.keyField.text = key
             addTagView.keyField.isUserInteractionEnabled = false

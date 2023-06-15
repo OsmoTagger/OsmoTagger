@@ -187,7 +187,7 @@ class ItemTagsViewController: UIViewController {
     
     @objc func tapCheckBox(sender: CheckBox) {
         guard let navController = navigationController as? CategoryNavigationController,
-              let cell = tableView.cellForRow(at: sender.indexPath) as? ItemCell else {return}
+              let cell = tableView.cellForRow(at: sender.indexPath) as? ItemCell else { return }
         sender.isChecked = !sender.isChecked
         let elem = item.elements[sender.indexPath.row]
         switch elem {
@@ -234,9 +234,10 @@ extension ItemTagsViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? ItemCell,
-              let navController = navigationController as? CategoryNavigationController else {
-                  return UITableViewCell()
-              }
+              let navController = navigationController as? CategoryNavigationController
+        else {
+            return UITableViewCell()
+        }
         let data = item.elements[indexPath.row]
         switch data {
         case let .key(key, value):
@@ -299,7 +300,7 @@ extension ItemTagsViewController: UITableViewDataSource, UITableViewDelegate {
             cell.button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
             cell.configureButton(values: values, curentValue: navController.objectProperties[key])
             cell.button.selectClosure = { [weak self] newValue in
-                guard let self = self else {return}
+                guard let self = self else { return }
                 if newValue == "" {
                     navController.objectProperties.removeValue(forKey: key)
                     cell.valueLabel.text = nil
@@ -393,7 +394,7 @@ extension ItemTagsViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let navController = navigationController as? CategoryNavigationController,
-              let cell = tableView.cellForRow(at: indexPath) as? ItemCell else {return}
+              let cell = tableView.cellForRow(at: indexPath) as? ItemCell else { return }
         let data = item.elements[indexPath.row]
         switch data {
         case let .link(wiki):
@@ -420,8 +421,8 @@ extension ItemTagsViewController: UITableViewDataSource, UITableViewDelegate {
             }
             navigationController?.setToolbarHidden(true, animated: false)
             navigationController?.pushViewController(vc, animated: true)
-        case .combo(_, _, _), .text(_, _), .key(_, _):
-            guard let key = cell.keyLabel.text else {return}
+        case .combo(_, _, _), .text(_, _), .key:
+            guard let key = cell.keyLabel.text else { return }
             navigationController?.setToolbarHidden(true, animated: true)
             addTagView.keyField.text = key
             addTagView.keyField.isUserInteractionEnabled = false
