@@ -240,7 +240,6 @@ class AddTagManuallyView: UIView {
         field.clearButtonMode = .always
         field.autocorrectionType = .no
         field.autocapitalizationType = .none
-        field.inputView = UIView()
         field.placeholder = "Enter key"
         return field
     }()
@@ -252,7 +251,6 @@ class AddTagManuallyView: UIView {
         field.clearButtonMode = .always
         field.autocapitalizationType = .none
         field.autocorrectionType = .no
-        field.inputView = UIView()
         field.placeholder = "Enter value"
         return field
     }()
@@ -547,6 +545,7 @@ class BulbButton: UIButton {
 
 //  The button that is used to select the tag values from the list. Used on the tag editing controller and ItemVC
 class SelectButton: UIButton {
+    var selectClosure: ((String) -> Void)?
     var key: String?
     var values: [String] = []
 }

@@ -12,10 +12,8 @@ import GLMapCore
 //  The method gets an Int(id), which is stored in the "properties" of each GLMapVectorObject.
 extension GLMapVectorObject {
     func getObjectID() -> Int? {
-        guard let str = properties[AnyHashable("@id")] as? String,
-              let double = Double(str) else { return nil }
-        let id = Int(double)
-        return id
+        guard let str = value(forKey: "@id")?.asString() else {return nil}
+        return Int(str)
     }
 }
 

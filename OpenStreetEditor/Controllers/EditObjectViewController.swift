@@ -330,6 +330,12 @@ class EditObjectViewController: UIViewController {
     //  When tapping on the titleView, we open the CategoryNavigationController, to which we add all the stages of selecting the preset.
     @objc func tapTitleButton() {
         let navVC = CategoryNavigationController()
+        navVC.callbackClosure = { [weak self] updatedProperties in
+            guard let self = self else {return}
+            self.newProperties = updatedProperties
+            self.fillData()
+            self.tableView.reloadData()
+        }
         if let path = titlePath {
             let vc0 = CategoryViewController(categoryName: nil, groupName: nil, lastPreset: activePath, elementType: object.type)
             navVC.viewControllers.append(vc0)
@@ -342,9 +348,6 @@ class EditObjectViewController: UIViewController {
         } else {
             let firstVC = CategoryViewController(categoryName: nil, groupName: nil, lastPreset: activePath, elementType: object.type)
             navVC.viewControllers.append(firstVC)
-        }
-        navVC.callbackClosure = {
-            self.addProperties()
         }
         present(navVC, animated: true, completion: nil)
     }
@@ -383,14 +386,6 @@ class EditObjectViewController: UIViewController {
             self.navigationController?.setToolbarHidden(false, animated: true)
         }
         navigationController?.pushViewController(vc, animated: true)
-    }
-
-    //  The method is called from the closure when the CategoryNavigationController is collapsed. The tags entered in it are immediately saved in AppSettings.settings.newProperties, and the method updates the table.
-    func addProperties() {
-        object.tag = generateTags(properties: newProperties)
-        tableData = []
-        fillData()
-        tableView.reloadData()
     }
     
     func dismissViewController() {
@@ -562,6 +557,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.valueLabel.isHidden = false
             cell.label.isHidden = true
             cell.button.isHidden = true
+            cell.button.selectClosure = nil
             cell.checkBox.isHidden = true
             cell.accessoryType = .none
         case let .link(wiki):
@@ -575,6 +571,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.label.text = "Open wiki"
             cell.checkBox.isHidden = true
             cell.button.isHidden = true
+            cell.button.selectClosure = nil
             cell.accessoryType = .disclosureIndicator
         case let .text(_, key):
             cell.icon.icon.image = UIImage(systemName: "tag")
@@ -589,6 +586,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.button.isHidden = false
             cell.button.setImage(UIImage(systemName: "keyboard"), for: .normal)
             cell.button.key = key
+            cell.button.selectClosure = nil
             cell.button.addTarget(self, action: #selector(tapKeyBoard), for: .touchUpInside)
             cell.accessoryType = .none
         case let .combo(key, values, _):
@@ -603,7 +601,18 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.label.isHidden = true
             cell.button.isHidden = false
             cell.button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
-            cell.configureButton(values: values)
+            cell.configureButton(values: values, curentValue: newProperties[key])
+            cell.button.selectClosure = { [weak self] newValue in
+                guard let self = self else {return}
+                if newValue == "" {
+                    self.newProperties.removeValue(forKey: key)
+                    cell.valueLabel.text = nil
+                } else {
+                    self.newProperties[key] = newValue
+                    cell.valueLabel.text = newValue
+                }
+                self.tableView.reloadData()
+            }
             cell.checkBox.isHidden = true
             cell.accessoryType = .none
         case let .check(key, text, _):
@@ -625,6 +634,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
                 cell.checkBox.isChecked = false
             }
             cell.button.isHidden = true
+            cell.button.selectClosure = nil
             cell.accessoryType = .none
         case let .presetLink(presetName):
             if presetName == "Show other presets" {
@@ -652,6 +662,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.label.text = presetName
             cell.checkBox.isHidden = true
             cell.button.isHidden = true
+            cell.button.selectClosure = nil
             cell.accessoryType = .disclosureIndicator
         case let .multiselect(key, _, _):
             cell.icon.icon.image = UIImage(systemName: "tag")
@@ -670,6 +681,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.label.isHidden = true
             cell.checkBox.isHidden = true
             cell.button.isHidden = true
+            cell.button.selectClosure = nil
             cell.accessoryType = .disclosureIndicator
         case let .label(text):
             cell.icon.isHidden = true
@@ -687,6 +699,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.checkBox.isHidden = true
             cell.label.isHidden = true
             cell.button.isHidden = true
+            cell.button.selectClosure = nil
             cell.accessoryType = .none
             cell.backgroundColor = .red
         }
@@ -738,8 +751,12 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
                 guard let item = getItemFromName(name: presetName) else { return }
                 let itemVC = ItemTagsViewController(item: item)
                 let navVC = CategoryNavigationController(rootViewController: itemVC)
-                navVC.callbackClosure = {
-                    self.addProperties()
+                navVC.objectProperties = newProperties
+                navVC.callbackClosure = { [weak self] updatedProperties in
+                    guard let self = self else {return}
+                    self.newProperties = updatedProperties
+                    self.fillData()
+                    self.tableView.reloadData()
                 }
                 present(navVC, animated: true, completion: nil)
             }

@@ -24,18 +24,25 @@ class NavigationController: UINavigationController {
     var dismissClosure: (() -> Void)?
     
     override func viewDidDisappear(_: Bool) {
-        guard let clouser = dismissClosure else { return }
-        clouser()
+        guard let closure = dismissClosure else { return }
+        closure()
+    }
+    func setViewControllers(_ viewControllers: [UIViewController], animated: Bool, completion: (() -> Void)?) {
+        CATransaction.begin()
+        CATransaction.setCompletionBlock(completion)
+        setViewControllers(viewControllers, animated: animated)
+        CATransaction.commit()
     }
 }
 
 //  UINavigationController for navigating presets
 class CategoryNavigationController: UINavigationController {
-    var callbackClosure: (() -> Void)?
+    var callbackClosure: (([String:String]) -> Void)?
+    var objectProperties: [String:String] = [:]
     
     override func viewDidDisappear(_: Bool) {
         guard let clouser = callbackClosure else { return }
-        clouser()
+        clouser(objectProperties)
     }
 }
 
@@ -312,28 +319,25 @@ class ItemCell: UITableViewCell {
         button.setImage(nil, for: .normal)
         button.key = ""
         button.values = []
+        button.selectClosure = nil
         checkBox.isHidden = true
         checkBox.isChecked = false
         accessoryType = .none
     }
     
     //  The method configures the button to select a value from the list (use on ItemVC and EditObjectVC)
-    func configureButton(values: [String]) {
-        guard let key = keyLabel.text else { return }
+    func configureButton(values: [String], curentValue: String?) {
         let optionClosure = { [weak self] (action: UIAction) in
-            guard let self = self else { return }
-            if action.title == "" {
-                AppSettings.settings.newProperties.removeValue(forKey: key)
-            } else {
-                AppSettings.settings.newProperties[key] = action.title
-                self.valueLabel.text = action.title
+            guard let self = self else {return}
+            if let closure = self.button.selectClosure {
+                closure(action.title)
             }
         }
         var optionsArray = [UIAction]()
         let nilAction = UIAction(title: "", state: .off, handler: optionClosure)
         for value in values {
             let action = UIAction(title: value, state: .off, handler: optionClosure)
-            if value == AppSettings.settings.newProperties[key] {
+            if value == curentValue {
                 nilAction.state = .off
                 action.state = .on
             } else {
