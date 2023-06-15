@@ -9,8 +9,6 @@ import Foundation
 import GLMap
 
 //  The protocol is used to highlight tapped objects from the screen of saved objects, or the screen that is displayed if the tap was performed on several objects at once: SelectObjectVC.
-protocol ShowTappedObject: NSObject {
-    func showTapObject(object: GLMapVectorObject)
+protocol UpdateSourceDataProtocol: NSObject {
     func updateSourceData()
-    func removeEditDrawble()
 }

@@ -69,13 +69,6 @@ class SavedNodeCell: UITableViewCell {
         checkBox.translatesAutoresizingMaskIntoConstraints = false
         return checkBox
     }()
-
-    var bulb: BulbButton = {
-        let bulb = BulbButton()
-        bulb.setImage(UIImage(systemName: "lightbulb")?.withTintColor(.systemYellow, renderingMode: .alwaysOriginal), for: .normal)
-        bulb.translatesAutoresizingMaskIntoConstraints = false
-        return bulb
-    }()
     
     func setupConstrains() {
         contentView.addSubview(iconItem)
@@ -83,7 +76,6 @@ class SavedNodeCell: UITableViewCell {
         contentView.addSubview(itemLabel)
         contentView.addSubview(idLabel)
         contentView.addSubview(checkBox)
-        contentView.addSubview(bulb)
         NSLayoutConstraint.activate([
             iconItem.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             iconItem.widthAnchor.constraint(equalToConstant: 44),
@@ -100,13 +92,9 @@ class SavedNodeCell: UITableViewCell {
             idLabel.topAnchor.constraint(equalTo: contentView.centerYAnchor),
             idLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             idLabel.rightAnchor.constraint(equalTo: checkBox.leftAnchor),
-            checkBox.rightAnchor.constraint(equalTo: bulb.leftAnchor),
+            checkBox.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             checkBox.widthAnchor.constraint(equalToConstant: 50),
             checkBox.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            bulb.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            bulb.widthAnchor.constraint(equalToConstant: 45),
-            bulb.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            bulb.rightAnchor.constraint(equalTo: contentView.rightAnchor),
         ])
     }
     
@@ -127,6 +115,5 @@ class SavedNodeCell: UITableViewCell {
         itemLabel.text = nil
         idLabel.text = nil
         checkBox.isChecked = false
-        bulb.id = nil
     }
 }

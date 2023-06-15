@@ -9,10 +9,7 @@ import UIKit
 
 //  A controller that displays objects stored in memory (created or modified).
 class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    weak var delegate: ShowTappedObject?
-    
-    //  The variable in which the reference to the last pressed button "Bulb" is written, which highlights the tapped object. When you click on another object, the backlight is removed, the link changes.
-    private var activeBulb: BulbButton?
+    weak var delegate: UpdateSourceDataProtocol?
     
     var tableView = UITableView()
     var cellId = "cell"
@@ -280,8 +277,6 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.checkBox.isChecked = false
         }
         cell.checkBox.addTarget(self, action: #selector(tapCheckBox), for: .touchUpInside)
-        cell.bulb.id = Int(data.idLabel)
-        cell.bulb.addTarget(self, action: #selector(tapBulb), for: .touchUpInside)
         return cell
     }
     
@@ -296,7 +291,6 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         }
         guard let object = nilObject else { return }
         let vector = object.vector
-        delegate?.showTapObject(object: vector)
         let vc = EditObjectViewController(object: object)
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -341,29 +335,6 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         }
         enterCommentView.placeholder = generateComment()
         setToolBar()
-    }
-    
-    //  The method that is called when the "Bulb" backlight button is pressed.
-    @objc func tapBulb(_ sender: BulbButton) {
-        if activeBulb == sender {
-            // Resetting the active button and color when pressed again.
-            activeBulb?.backgroundColor = .clear
-            activeBulb = nil
-        } else {
-            // Resetting the color for the currently active button.
-            activeBulb?.backgroundColor = .clear
-
-            // Installing a new active button and changing its color.
-            sender.backgroundColor = .lightGray
-            activeBulb = sender
-        }
-        guard let id = sender.id else { return }
-              
-        if let object = AppSettings.settings.savedObjects[id] {
-            delegate?.showTapObject(object: object.vector)
-        } else if let object = AppSettings.settings.deletedObjects[id] {
-            delegate?.showTapObject(object: object.vector)
-        }
     }
     
     //  The method of sending data to the server.

@@ -18,6 +18,18 @@ final class AppSettings: NSObject {
     var mapVCClouser: (() -> Void)?
     //  It is called in case of writing a token upon successful authorization, for uploading user data.
     var userInfoClouser: ((OSMUserInfo) -> Void)?
+    // Closure that is called in the MapClient class to display or delete a vector object
+    var showVectorObjectClosure: ((GLMapVectorObject?) -> Void)?
+    
+    // A vector object is written to this variable, which must be displayed on the map at the time of editing (the editStyle style is yellow).
+    // When opening EditObjectVC, a vector object is written, and through a variable is passed to mapClient, which adds and deletes the object
+    var editableObject: GLMapVectorObject? {
+        didSet {
+            if let closure = showVectorObjectClosure {
+                closure(editableObject)
+            }
+        }
+    }
     
 //    MARK: OSM VARIABLES
     

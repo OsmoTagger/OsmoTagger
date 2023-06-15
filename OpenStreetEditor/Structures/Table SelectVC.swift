@@ -47,20 +47,12 @@ class SelectObjectCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-
-    var bulb: BulbButton = {
-        let bulb = BulbButton()
-        bulb.setImage(UIImage(systemName: "lightbulb")?.withTintColor(.systemYellow, renderingMode: .alwaysOriginal), for: .normal)
-        bulb.translatesAutoresizingMaskIntoConstraints = false
-        return bulb
-    }()
     
     func setupConstrains() {
         contentView.addSubview(iconItem)
         contentView.addSubview(iconType)
         contentView.addSubview(itemLabel)
         contentView.addSubview(idLabel)
-        contentView.addSubview(bulb)
         let iconTypeWidth = iconType.image?.size.width ?? 25
         let iconTypeHeight = iconType.image?.size.height ?? 25
         NSLayoutConstraint.activate([
@@ -73,16 +65,12 @@ class SelectObjectCell: UITableViewCell {
             iconType.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             itemLabel.leftAnchor.constraint(equalTo: iconType.rightAnchor, constant: 10),
             itemLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
-            itemLabel.rightAnchor.constraint(equalTo: bulb.leftAnchor, constant: -10),
+            itemLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
             itemLabel.bottomAnchor.constraint(equalTo: contentView.centerYAnchor),
             idLabel.leftAnchor.constraint(equalTo: iconType.rightAnchor, constant: 10),
             idLabel.topAnchor.constraint(equalTo: contentView.centerYAnchor),
             idLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            idLabel.rightAnchor.constraint(equalTo: bulb.leftAnchor, constant: -10),
-            bulb.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -1),
-            bulb.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            bulb.widthAnchor.constraint(equalToConstant: 50),
-            bulb.topAnchor.constraint(equalTo: contentView.topAnchor),
+            idLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
         ])
     }
     
@@ -102,6 +90,5 @@ class SelectObjectCell: UITableViewCell {
         iconType.image = nil
         itemLabel.text = nil
         idLabel.text = nil
-        bulb.id = nil
     }
 }

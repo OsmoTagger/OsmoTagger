@@ -13,7 +13,11 @@ class EditObjectViewController: UIViewController {
     //  Called when the object is completely deleted from the server. Used only on SavedNodesVC.
     var deleteObjectClosure: ((Int) -> Void)?
     
-    var object: OSMAnyObject
+    var object: OSMAnyObject {
+        didSet {
+            AppSettings.settings.editableObject = object.vector
+        }
+    }
     var newProperties: [String:String] = [:] {
         didSet {
             saveObject()
@@ -44,8 +48,13 @@ class EditObjectViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         fillNewProperties()
         fillData()
+        AppSettings.settings.editableObject = object.vector
     }
-
+    
+    deinit {
+        AppSettings.settings.editableObject = nil
+    }
+    
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -71,6 +80,10 @@ class EditObjectViewController: UIViewController {
         // Notifications about calling and hiding the keyboard.
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        AppSettings.settings.editableObject = object.vector
     }
     
     override func viewDidDisappear(_: Bool) {
@@ -400,8 +413,8 @@ class EditObjectViewController: UIViewController {
         }
     }
     
-    func updateViewController(newObjects: OSMAnyObject) {
-        object = newObjects
+    func updateViewController(newObject: OSMAnyObject) {
+        object = newObject
         fillNewProperties()
         fillData()
         setToolBar(fromSavedNodesVC: false)

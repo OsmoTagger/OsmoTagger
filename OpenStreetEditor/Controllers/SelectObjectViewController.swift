@@ -9,13 +9,10 @@ import UIKit
 
 //  The controller that is called if several objects are detected under the tap to provide a choice.
 class SelectObjectViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    weak var delegate: ShowTappedObject?
+    weak var delegate: UpdateSourceDataProtocol?
     
     //  Called when the controller is closed, to remove the backlight of the tapped objects.
     var callbackClosure: (() -> Void)?
-    
-    //  A link to the pressed Bulb backlight button. When you click on another button, the link changes.
-    private var activeBulb: BulbButton?
     
     var objects: [OSMAnyObject]
     
@@ -40,7 +37,6 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
     
     override func viewWillAppear(_: Bool) {
         navigationController?.setToolbarHidden(true, animated: true)
-        delegate?.removeEditDrawble()
     }
     
     override func viewDidDisappear(_: Bool) {
@@ -119,31 +115,8 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
         let itemText = data.itemLabel ?? "Unknown"
         cell.itemLabel.text = itemText
         cell.idLabel.text = "id: " + data.idLabel
-        cell.bulb.id = Int(data.idLabel)
         cell.accessoryType = .disclosureIndicator
-        cell.bulb.addTarget(self, action: #selector(tapBulb), for: .touchUpInside)
         return cell
-    }
-    
-    @objc func tapBulb(_ sender: BulbButton) {
-        if activeBulb == sender {
-//          Resetting the active button and color when pressed again
-            activeBulb?.backgroundColor = .clear
-            activeBulb = nil
-        } else {
-//          Resetting the color for the currently active button
-            activeBulb?.backgroundColor = .clear
-//          Installing a new active button and changing its color
-            sender.backgroundColor = .lightGray
-            activeBulb = sender
-        }
-        guard let id = sender.id else { return }
-              
-        for object in objects where object.id == id {
-            let vector = object.vector
-//          We highlight the object.
-            delegate?.showTapObject(object: vector)
-        }
     }
     
     //  Opening the object for editing by tap.
@@ -152,7 +125,6 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
         guard let id = Int(idString) else { return }
         for object in objects where object.id == id {
             let vc = EditObjectViewController(object: object)
-            delegate?.showTapObject(object: object.vector)
             navigationController?.pushViewController(vc, animated: true)
         }
     }

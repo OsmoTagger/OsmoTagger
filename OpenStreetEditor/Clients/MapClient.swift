@@ -209,6 +209,9 @@ class MapClient {
         // Add new objects to array for tap
         lock.lock()
         tapObjects = newObjects
+        for (_, object) in AppSettings.settings.savedObjects {
+            tapObjects.add(object.vector)
+        }
         if openOperations[id] == nil {
             print("7-", id)
             lock.unlock()

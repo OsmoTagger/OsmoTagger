@@ -533,16 +533,6 @@ class SelectValuesCell: UITableViewCell {
     }
 }
 
-class BulbButton: UIButton {
-    let button: UIButton = {
-        let but = UIButton()
-        but.translatesAutoresizingMaskIntoConstraints = false
-        return but
-    }()
-
-    var id: Int?
-}
-
 //  The button that is used to select the tag values from the list. Used on the tag editing controller and ItemVC
 class SelectButton: UIButton {
     var selectClosure: ((String) -> Void)?
