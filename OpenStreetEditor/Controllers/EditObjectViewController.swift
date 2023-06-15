@@ -14,6 +14,11 @@ class EditObjectViewController: UIViewController {
     var deleteObjectClosure: ((Int) -> Void)?
     
     var object: OSMAnyObject
+    var newProperties: [String:String] = [:] {
+        didSet {
+            saveObject()
+        }
+    }
     
     //  A variable necessary for a quick transition to the desired category if the preset of the object is defined. It is not reset to zero, even if you delete the preset tags, all the same, when tapping on the titleView, the transition is made to the last category.
     var titlePath: ItemPath?
@@ -34,9 +39,6 @@ class EditObjectViewController: UIViewController {
     var addTagView = AddTagManuallyView()
     var addViewBottomConstraint = NSLayoutConstraint()
     
-    //  When changing newProperties, a closure is triggered, which saves the object to memory on the tag editing controller. In some cases, there is no need to do this, then saveAllowed changes.
-    var saveAllowed = false
-    
     init(object: OSMAnyObject) {
         self.object = object
         super.init(nibName: nil, bundle: nil)
@@ -48,11 +50,7 @@ class EditObjectViewController: UIViewController {
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    deinit {
-        AppSettings.settings.newProperties = [:]
-    }
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -70,20 +68,12 @@ class EditObjectViewController: UIViewController {
     }
     
     override func viewWillAppear(_: Bool) {
-        saveAllowed = true
         // Notifications about calling and hiding the keyboard.
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-        // Closure that is performed every time the object tags are changed - AppSettings.settings.newProperties
-        AppSettings.settings.saveObjectClouser = { [weak self] in
-            guard let self = self else { return }
-            self.saveObject()
-        }
     }
     
     override func viewDidDisappear(_: Bool) {
-        saveAllowed = false
-        AppSettings.settings.saveObjectClouser = nil
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
@@ -93,7 +83,7 @@ class EditObjectViewController: UIViewController {
         let tags = generateTags(properties: object.oldTags)
         AppSettings.settings.savedObjects.removeValue(forKey: object.id)
         object.tag = tags
-        AppSettings.settings.newProperties = object.oldTags
+        newProperties = object.oldTags
         fillData()
         tableView.reloadData()
     }
@@ -140,7 +130,7 @@ class EditObjectViewController: UIViewController {
     
     //  Removes or shows the undo tag changes button.
     func updateRightBarItems() {
-        if NSDictionary(dictionary: object.oldTags).isEqual(to: AppSettings.settings.newProperties) {
+        if NSDictionary(dictionary: object.oldTags).isEqual(to: newProperties) {
             navigationItem.setRightBarButtonItems([infoBar, iconTypeBar], animated: false)
         } else {
             navigationItem.setRightBarButtonItems([infoBar, iconTypeBar, cancelBar], animated: false)
@@ -150,21 +140,20 @@ class EditObjectViewController: UIViewController {
     //  Called every time the object tags are changed (AppSettings.settings.saveObjectClouser)
     func saveObject() {
         updateRightBarItems()
-        guard saveAllowed == true else { return }
-//      It is not always necessary to save changes in memory. For correct operation, the saveAllowed variable is introduced, which becomes false at the right moment and the changes are not written to memory.
+        // It is not always necessary to save changes in memory. For correct operation, the saveAllowed variable is introduced, which becomes false at the right moment and the changes are not written to memory.
         if object.id < 0 {
-//              If the point is newly created, id < 0.
+            // If the point is newly created, id < 0.
             var newObject = object
-            let tags = generateTags(properties: AppSettings.settings.newProperties)
+            let tags = generateTags(properties: newProperties)
             newObject.tag = tags
             AppSettings.settings.savedObjects[newObject.id] = newObject
         } else {
-//              If id > 0, then the previously created object is being edited. If the new tags differ from the original ones, the object is stored in memory, if they are equal, then it is deleted from memory, because there are no changes.
-            if NSDictionary(dictionary: object.oldTags).isEqual(to: AppSettings.settings.newProperties) || AppSettings.settings.newProperties.count == 0 {
+            // If id > 0, then the previously created object is being edited. If the new tags differ from the original ones, the object is stored in memory, if they are equal, then it is deleted from memory, because there are no changes.
+            if NSDictionary(dictionary: object.oldTags).isEqual(to: newProperties) || newProperties.count == 0 {
                 AppSettings.settings.savedObjects.removeValue(forKey: object.id)
-            } else if NSDictionary(dictionary: object.oldTags).isEqual(to: AppSettings.settings.newProperties) == false && AppSettings.settings.newProperties.count > 0 {
+            } else if NSDictionary(dictionary: object.oldTags).isEqual(to: newProperties) == false && newProperties.count > 0 {
                 var newObject = object
-                let tags = generateTags(properties: AppSettings.settings.newProperties)
+                let tags = generateTags(properties: newProperties)
                 newObject.tag = tags
                 AppSettings.settings.savedObjects[newObject.id] = newObject
             }
@@ -174,17 +163,17 @@ class EditObjectViewController: UIViewController {
     }
     
     func fillNewProperties() {
-        var newProperties: [String: String] = [:]
+        var properties: [String:String] = [:]
         for tag in object.tag {
-            newProperties[tag.k] = tag.v
+            properties[tag.k] = tag.v
         }
-        AppSettings.settings.newProperties = newProperties
+        newProperties = properties
     }
     
     func fillData() {
         tableData = []
 //      We define a list of presets that fall under the object tags and use the first one in the array.
-        var pathes = getItemsFromTags(properties: AppSettings.settings.newProperties)
+        var pathes = getItemsFromTags(properties: newProperties)
         if pathes.count > 0 {
 //            If presets are detected.
             let path = pathes.removeFirst()
@@ -223,7 +212,7 @@ class EditObjectViewController: UIViewController {
             if data.name == "Filled tags" {
                 var filledTags = tableData.remove(at: index)
                 filledTags.items = [addTagsFromPresetButton, addTagManually]
-                for (tagKey, tagValue) in AppSettings.settings.newProperties {
+                for (tagKey, tagValue) in newProperties {
                     let elem = ItemElements.key(key: tagKey, value: tagValue)
                     filledTags.items.append(elem)
                 }
@@ -232,10 +221,10 @@ class EditObjectViewController: UIViewController {
             }
         }
         var filledTags = EditSectionData(name: "Filled tags", items: [addTagsFromPresetButton, addTagManually])
-        var keys = Array(AppSettings.settings.newProperties.keys)
+        var keys = Array(newProperties.keys)
         keys = keys.sorted()
         for key in keys {
-            guard let value = AppSettings.settings.newProperties[key] else {continue}
+            guard let value = newProperties[key] else {continue}
             let elem = ItemElements.key(key: key, value: value)
             filledTags.items.append(elem)
         }
@@ -386,7 +375,7 @@ class EditObjectViewController: UIViewController {
     //  Tap on the button to display brief information about the object (RightBarItems).
     @objc func tapInfo() {
         var newObject = object
-        newObject.tag = generateTags(properties: AppSettings.settings.newProperties)
+        newObject.tag = generateTags(properties: newProperties)
         let vc = InfoObjectViewController(object: newObject)
         navigationController?.setToolbarHidden(true, animated: false)
         vc.dismissClosure = { [weak self] in
@@ -398,7 +387,7 @@ class EditObjectViewController: UIViewController {
 
     //  The method is called from the closure when the CategoryNavigationController is collapsed. The tags entered in it are immediately saved in AppSettings.settings.newProperties, and the method updates the table.
     func addProperties() {
-        object.tag = generateTags(properties: AppSettings.settings.newProperties)
+        object.tag = generateTags(properties: newProperties)
         tableData = []
         fillData()
         tableView.reloadData()
@@ -416,11 +405,10 @@ class EditObjectViewController: UIViewController {
         }
     }
     
-    func updateViewController() {
-        saveAllowed = false
+    func updateViewController(newObjects: OSMAnyObject) {
+        object = newObjects
         fillNewProperties()
         fillData()
-        saveAllowed = true
         setToolBar(fromSavedNodesVC: false)
         tableView.reloadData()
     }
@@ -473,7 +461,7 @@ class EditObjectViewController: UIViewController {
         navigationController?.setToolbarHidden(true, animated: true)
         addTagView.keyField.text = key
         addTagView.keyField.isUserInteractionEnabled = false
-        addTagView.valueField.text = AppSettings.settings.newProperties[key]
+        addTagView.valueField.text = newProperties[key]
         addTagView.isHidden = false
         addTagView.valueField.becomeFirstResponder()
     }
@@ -496,7 +484,7 @@ class EditObjectViewController: UIViewController {
                     return
                 }
             }
-            AppSettings.settings.newProperties.merge(addedTag, uniquingKeysWith: { _, new in new })
+            self.newProperties.merge(addedTag, uniquingKeysWith: { _, new in new })
             self.fillData()
             self.tableView.reloadData()
         }
@@ -520,9 +508,9 @@ class EditObjectViewController: UIViewController {
         case let .check(key, _, valueOn):
             let defValue = valueOn ?? "yes"
             if sender.isChecked {
-                AppSettings.settings.newProperties[key] = defValue
+                newProperties[key] = defValue
             } else {
-                AppSettings.settings.newProperties.removeValue(forKey: key)
+                newProperties.removeValue(forKey: key)
             }
         default:
             return
@@ -594,7 +582,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.icon.isHidden = false
             cell.keyLabel.text = key
             cell.keyLabel.isHidden = false
-            cell.valueLabel.text = AppSettings.settings.newProperties[key]
+            cell.valueLabel.text = newProperties[key]
             cell.valueLabel.isHidden = false
             cell.label.isHidden = true
             cell.checkBox.isHidden = true
@@ -609,8 +597,9 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.icon.isHidden = false
             cell.keyLabel.text = key
             cell.keyLabel.isHidden = false
-            cell.valueLabel.text = AppSettings.settings.newProperties[key]
+            cell.valueLabel.text = newProperties[key]
             cell.valueLabel.isHidden = false
+            cell.isUserInteractionEnabled = true
             cell.label.isHidden = true
             cell.button.isHidden = false
             cell.button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
@@ -624,12 +613,13 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             let keyValue = text ?? key
             cell.keyLabel.text = keyValue
             cell.keyLabel.isHidden = false
-            cell.valueLabel.isHidden = true
+            cell.valueLabel.isHidden = false
+            cell.valueLabel.text = newProperties[key]
             cell.label.isHidden = true
             cell.checkBox.isHidden = false
             cell.checkBox.indexPath = indexPath
             cell.checkBox.addTarget(self, action: #selector(tapCheckBox), for: .touchUpInside)
-            if AppSettings.settings.newProperties[key] != nil {
+            if newProperties[key] != nil {
                 cell.checkBox.isChecked = true
             } else {
                 cell.checkBox.isChecked = false
@@ -670,7 +660,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.keyLabel.text = key
             cell.keyLabel.isHidden = false
             cell.valueLabel.isHidden = false
-            if var valuesString = AppSettings.settings.newProperties[key] {
+            if var valuesString = newProperties[key] {
                 valuesString = valuesString.replacingOccurrences(of: ";", with: ", ")
                 cell.valueLabel.text = valuesString
             } else {
@@ -712,42 +702,26 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             guard let self = self,
                   let cell = self.tableView.cellForRow(at: indexPath) as? ItemCell,
                   let key = cell.keyLabel.text else { return }
-            AppSettings.settings.newProperties.removeValue(forKey: key)
-            let tags = self.generateTags(properties: AppSettings.settings.newProperties)
+            self.newProperties.removeValue(forKey: key)
+            let tags = self.generateTags(properties: self.newProperties)
             self.object.tag = tags
             self.fillData()
             self.tableView.reloadData()
             completionHandler(true)
         }
-        let editAction = UIContextualAction(style: .normal, title: "Edit", handler: { [weak self] _, _, completionHandler in
-            guard let self = self,
-                  let cell = self.tableView.cellForRow(at: indexPath) as? ItemCell,
-                  let key = cell.keyLabel.text,
-                  let value = cell.valueLabel.text else { return }
-            self.navigationController?.setToolbarHidden(true, animated: true)
-            self.addTagView.keyField.text = key
-            self.addTagView.keyField.isUserInteractionEnabled = true
-            self.addTagView.valueField.text = value
-            self.addTagView.isHidden = false
-            self.addTagView.valueField.becomeFirstResponder()
-            completionHandler(true)
-        })
-        
-        let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
         return configuration
     }
     
-    //    Tap on the cell is used only for 4 actions:
-    //    1) Opening links to wiki.openstreetmap.org
-    //    2) Adding a preset
-    //    3) Entering the tag manually.
-    //    4) Switching to the suggested preset.
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         let elem = tableData[indexPath.section].items[indexPath.row]
         switch elem {
         case let .link(wiki):
             let str = "https://wiki.openstreetmap.org/wiki/" + wiki
-            guard let url = URL(string: str) else { return }
+            guard let url = URL(string: str) else {
+                showAction(message: "Error generate URL: \(wiki)", addAlerts: [])
+                return
+            }
             let svc = CustomSafari(url: url)
             present(svc, animated: true, completion: nil)
         case let .presetLink(presetName):
@@ -780,6 +754,23 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             }
             navigationController?.setToolbarHidden(true, animated: false)
             navigationController?.pushViewController(vc, animated: true)
+        case .combo(_, _, _), .text(_, _), .key(_, _):
+            guard let cell = tableView.cellForRow(at: indexPath) as? ItemCell,
+                  let key = cell.keyLabel.text else {return}
+            navigationController?.setToolbarHidden(true, animated: true)
+            addTagView.keyField.text = key
+            addTagView.keyField.isUserInteractionEnabled = false
+            addTagView.valueField.text = cell.valueLabel.text
+            addTagView.isHidden = false
+            addTagView.valueField.becomeFirstResponder()
+        case let .check(key, _, _):
+            guard let cell = tableView.cellForRow(at: indexPath) as? ItemCell else {return}
+            navigationController?.setToolbarHidden(true, animated: true)
+            addTagView.keyField.text = key
+            addTagView.keyField.isUserInteractionEnabled = false
+            addTagView.valueField.text = cell.valueLabel.text
+            addTagView.isHidden = false
+            addTagView.valueField.becomeFirstResponder()
         default:
             tableView.deselectRow(at: indexPath, animated: true)
         }
