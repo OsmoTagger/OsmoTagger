@@ -238,7 +238,9 @@ class AddTagManuallyView: UIView {
         field.translatesAutoresizingMaskIntoConstraints = false
         field.borderStyle = .roundedRect
         field.clearButtonMode = .always
+        field.autocorrectionType = .no
         field.autocapitalizationType = .none
+        field.inputView = UIView()
         field.placeholder = "Enter key"
         return field
     }()
@@ -249,6 +251,8 @@ class AddTagManuallyView: UIView {
         field.borderStyle = .roundedRect
         field.clearButtonMode = .always
         field.autocapitalizationType = .none
+        field.autocorrectionType = .no
+        field.inputView = UIView()
         field.placeholder = "Enter value"
         return field
     }()
