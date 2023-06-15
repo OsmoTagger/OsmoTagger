@@ -14,8 +14,6 @@ import XMLCoder
 final class AppSettings: NSObject {
     static let settings = AppSettings()
     
-    //  Called when changing newProperties - new object tags
-    var saveObjectClouser: (() -> Void)?
     //  Called when changing savedObjects - to update the map
     var mapVCClouser: (() -> Void)?
     //  It is called in case of writing a token upon successful authorization, for uploading user data.
@@ -307,15 +305,5 @@ final class AppSettings: NSObject {
             deletedObjects = [:]
         }
     }
-    
-//    MARK: PUBLUC BUFFER VARIABLES
 
-    //  Stores new object tags. Reset to zero when the tag editing controller is closed.
-    var newProperties: [String: String] = [:] {
-        didSet {
-            if let clouser = saveObjectClouser {
-                clouser()
-            }
-        }
-    }
 }
