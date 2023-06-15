@@ -10,16 +10,19 @@ import UIKit
 
 //  The controller that is called when you click on the tag value selection button, which allows you to save multiple values, for example sports=swimming;volleyball.
 class MultiSelectViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
     var values: [String]
+    var inputValue: String?
     let key: String
     
     var tableView = UITableView()
     var cellId = "cell"
     
-    var callbackClosure: (() -> Void)?
+    var callbackClosure: ((String?) -> Void)?
     
-    init(values: [String], key: String) {
+    init(values: [String], key: String, inputValue: String?) {
         self.values = values
+        self.inputValue = inputValue
         self.key = key
         super.init(nibName: nil, bundle: nil)
     }
@@ -37,7 +40,7 @@ class MultiSelectViewController: UIViewController, UITableViewDelegate, UITableV
     
     override func viewDidDisappear(_: Bool) {
         if let clouser = callbackClosure {
-            clouser()
+            clouser(inputValue)
         }
         dismiss(animated: true, completion: nil)
     }
@@ -52,7 +55,7 @@ class MultiSelectViewController: UIViewController, UITableViewDelegate, UITableV
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? SelectValuesCell else { return cellFail }
         let value = values[indexPath.row]
         cell.label.text = value
-        if let inputValues = AppSettings.settings.newProperties[key] {
+        if let inputValues = inputValue {
             if inputValues.contains(value) {
                 cell.checkBox.isChecked = true
             } else {
@@ -69,28 +72,28 @@ class MultiSelectViewController: UIViewController, UITableViewDelegate, UITableV
     @objc func tapCheckBox(sender: CheckBox) {
         sender.isChecked = !sender.isChecked
         if sender.isChecked {
-            if var inputValuesString = AppSettings.settings.newProperties[key] {
+            if var inputValuesString = inputValue {
                 inputValuesString += ";" + values[sender.indexPath.row]
-                AppSettings.settings.newProperties[key] = inputValuesString
+                inputValue = inputValuesString
             } else {
-                AppSettings.settings.newProperties[key] = values[sender.indexPath.row]
+                inputValue = values[sender.indexPath.row]
             }
         } else {
-            if var inputValuesString = AppSettings.settings.newProperties[key] {
+            if var inputValuesString = inputValue {
                 var inputValues = inputValuesString.components(separatedBy: ";")
                 guard let i = inputValues.firstIndex(of: values[sender.indexPath.row]) else { return }
                 inputValues.remove(at: i)
                 if inputValues.count == 0 {
-                    AppSettings.settings.newProperties.removeValue(forKey: key)
+                    inputValue = nil
                 } else if inputValues.count == 1 {
-                    AppSettings.settings.newProperties[key] = inputValues[0]
+                    inputValue = inputValues[0]
                 } else {
                     inputValuesString = inputValues[0]
                     for i in 1 ... inputValues.count - 1 {
                         let value = inputValues[i]
                         inputValuesString += ";" + value
                     }
-                    AppSettings.settings.newProperties[key] = inputValuesString
+                    inputValue = inputValuesString
                 }
             }
         }

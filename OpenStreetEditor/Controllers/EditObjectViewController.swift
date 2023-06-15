@@ -744,10 +744,15 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
                 present(navVC, animated: true, completion: nil)
             }
         case let .multiselect(key, values, _):
-            let vc = MultiSelectViewController(values: values, key: key)
-            vc.callbackClosure = { [weak self] in
+            let vc = MultiSelectViewController(values: values, key: key, inputValue: newProperties[key])
+            vc.callbackClosure = { [weak self] newValue in
                 guard let self = self else { return }
                 self.navigationController?.setToolbarHidden(false, animated: false)
+                if let value = newValue {
+                    self.newProperties[key] = value
+                } else {
+                    self.newProperties.removeValue(forKey: key)
+                }
                 self.saveObject()
                 self.fillData()
                 self.tableView.reloadData()
