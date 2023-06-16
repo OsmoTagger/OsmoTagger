@@ -9,7 +9,6 @@ import UIKit
 
 //  The navigation controller for the preset catalog. It is used repeatedly with different names of categories and groups.
 class CategoryViewController: UIViewController {
-    
     let searchController = UISearchController(searchResultsController: nil)
     
     var categoryName: String?
@@ -110,7 +109,7 @@ class CategoryViewController: UIViewController {
             tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
             tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableViewBottomConstraint
+            tableViewBottomConstraint,
         ])
     }
     
@@ -189,11 +188,11 @@ class CategoryViewController: UIViewController {
     @objc func keyboardWillHide(notification _: NSNotification) {
         tableViewBottomConstraint.constant = 0
     }
-    
 }
+
 // MARK: UITableViewDelegate
+
 extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
-    
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
         if searchController.isActive {
             return filteredTableData.count
@@ -263,27 +262,28 @@ extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
                 navigationController?.dismiss(animated: true, completion: nil)
             } else {
                 guard let path = data.path,
-                      let item = getItemFromPath(path: path) else {
-                          showAction(message: "Coudn't find item in presets: \(data.path)", addAlerts: [])
-                          return
-                      }
+                      let item = getItemFromPath(path: path)
+                else {
+                    showAction(message: "Coudn't find item in presets: \(data.path)", addAlerts: [])
+                    return
+                }
                 let vc = ItemTagsViewController(item: item)
                 navigationController?.pushViewController(vc, animated: true)
             }
         }
     }
-    
 }
 
 // MARK: UISearchBarDelegate
+
 extension CategoryViewController: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    func searchBar(_: UISearchBar, textDidChange searchText: String) {
         filteredTableData = []
         for category in AppSettings.settings.categories {
             for group in category.group {
                 for item in group.item {
                     if item.name.lowercased().contains(searchText.lowercased()) {
-                        guard let path = item.path else {continue}
+                        guard let path = item.path else { continue }
                         let data = CategoryTableData(type: .item(tags: getItemTags(item: item)), icon: item.icon, text: item.name, path: path)
                         filteredTableData.append(data)
                     }
@@ -291,7 +291,7 @@ extension CategoryViewController: UISearchBarDelegate {
             }
             for item in category.item {
                 if item.name.lowercased().contains(searchText.lowercased()) {
-                    guard let path = item.path else {continue}
+                    guard let path = item.path else { continue }
                     let data = CategoryTableData(type: .item(tags: getItemTags(item: item)), icon: item.icon, text: item.name, path: path)
                     filteredTableData.append(data)
                 }
@@ -300,9 +300,11 @@ extension CategoryViewController: UISearchBarDelegate {
         tableView.reloadData()
     }
 }
+
 // MARK: UISearchControllerDelegate
+
 extension CategoryViewController: UISearchControllerDelegate {
-    func didDismissSearchController(_ searchController: UISearchController) {
+    func didDismissSearchController(_: UISearchController) {
         tableView.reloadData()
     }
 }
