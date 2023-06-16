@@ -9,7 +9,7 @@ import Foundation
 import XMLCoder
 
 //  Stores the path to the preset for a quick transition to it
-struct ItemPath {
+struct ItemPath: Codable, Equatable {
     var category: String
     var group: String?
     var item: String
@@ -152,11 +152,13 @@ struct Item: Codable, DynamicNodeEncoding {
     let icon: String?
     let type: [OSMObjectType]
     var elements: [ItemElements]
+    var path: ItemPath? = nil
     enum CodingKeys: String, CodingKey {
         case name
         case icon
         case type
         case elements
+        case path
     }
     
     init(from decoder: Decoder) throws {

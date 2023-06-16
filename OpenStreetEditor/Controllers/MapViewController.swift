@@ -455,10 +455,7 @@ class MapViewController: UIViewController {
                                      testButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)])
     }
     
-    @objc func tapTestButton() {
-        let vc = TestViewController()
-        present(vc, animated: true, completion: nil)
-    }
+    @objc func tapTestButton() {}
     
 //    MARK: FUNCTIONS
     

@@ -58,6 +58,7 @@ struct CategoryTableData {
     var type: CategoryCellType
     var icon: String?
     var text: String
+    var path: ItemPath?
 }
 
 class IconView: UIView {

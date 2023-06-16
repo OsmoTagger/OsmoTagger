@@ -330,6 +330,8 @@ extension PresetElementsParser: XMLParserDelegate {
         if didEndElement == "item" {
             itemOpen = false
             item.elements = result
+            let path = ItemPath(category: lastCategory, group: lastGroup, item: itemName)
+            item.path = path
             result = []
             preset.updateItem(categoryName: lastCategory, groupName: lastGroup, itemName: itemName, newItem: item)
         }

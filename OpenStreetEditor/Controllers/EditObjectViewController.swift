@@ -344,6 +344,7 @@ class EditObjectViewController: UIViewController {
     //  When tapping on the titleView, we open the CategoryNavigationController, to which we add all the stages of selecting the preset.
     @objc func tapTitleButton() {
         let navVC = CategoryNavigationController()
+        navVC.objectProperties = newProperties
         navVC.callbackClosure = { [weak self] updatedProperties in
             guard let self = self else { return }
             self.newProperties = updatedProperties
@@ -479,9 +480,9 @@ class EditObjectViewController: UIViewController {
         //  When the tag is entered manually, addView.callbackClosure is triggered, which passes the entered tag=value pair. The table data is updated.
         addTagView.callbackClosure = { [weak self] addedTag in
             guard let self = self else { return }
-            self.navigationController?.setToolbarHidden(false, animated: true)
-            self.view.endEditing(true)
             self.addTagView.isHidden = true
+            self.view.endEditing(true)
+            self.navigationController?.setToolbarHidden(false, animated: true)
             for (key, value) in addedTag {
                 if key == "" || value == "" {
                     let text = """
