@@ -327,6 +327,10 @@ extension CategoryViewController: UISearchBarDelegate {
 // MARK: UISearchControllerDelegate
 
 extension CategoryViewController: UISearchControllerDelegate {
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchController.isActive = true
+        tableView.reloadData()
+    }
     func didDismissSearchController(_: UISearchController) {
         tableView.reloadData()
     }
