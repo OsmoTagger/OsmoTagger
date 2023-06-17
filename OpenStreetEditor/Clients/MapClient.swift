@@ -38,6 +38,9 @@ class MapClient {
     //  Displays objects that have been modified but not sent to the server (green).
     let savedDrawable = GLMapVectorLayer(drawOrder: 1)
     let savedStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.savedStyle)
+    //  Highlights objects that fell under the tap, if there was not one object under the tap, but several.
+    let tappedDrawble = GLMapVectorLayer(drawOrder: 3)
+    let tappedStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.tappedStyle)
     
     // Link to SavedNodesButton on MapViewController to update counter
     var savedNodeButtonLink: SavedObjectButton?
@@ -320,7 +323,23 @@ class MapClient {
                 result.append(object)
             }
         }
+        if result.count > 1 {
+            highLightTappedObjects(objects: result)
+        }
         return result
+    }
+    
+    //  Calls the object selection controller if there are several of them under the tap.
+    func highLightTappedObjects(objects: [OSMAnyObject]) {
+        delegate?.removeDrawble(layer: tappedDrawble)
+        let tappedObjects = GLMapVectorObjectArray()
+        for object in objects {
+            tappedObjects.add(object.vector)
+        }
+        if let style = tappedStyle {
+            tappedDrawble.setVectorObjects(tappedObjects, with: style, completion: nil)
+        }
+        delegate?.addDrawble(layer: tappedDrawble)
     }
     
     //  Displays created and modified objects.

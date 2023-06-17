@@ -33,9 +33,6 @@ class MapViewController: UIViewController {
     let addNodeButton = UIButton()
     var addNodeButtonTopConstraint = NSLayoutConstraint()
     
-    //  Highlights objects that fell under the tap, if there was not one object under the tap, but several.
-    let tappedDrawble = GLMapVectorLayer(drawOrder: 3)
-    let tappedStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.tappedStyle)
     //  Displays the object that was tapped and whose properties are currently being edited (yellow).
     var editDrawble = GLMapVectorLayer(drawOrder: 4)
     let editStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.editStyle)
@@ -64,35 +61,6 @@ class MapViewController: UIViewController {
         oneTap.require(toFail: doubleTap)
         mapView.addGestureRecognizer(oneTap)
         
-        // To highlight the edited object, the vector object is written to singleton appSettings, on which the closure is triggered.
-        // When this closure is called, the object is added to the map and the zoom is adjusted
-        AppSettings.settings.showVectorObjectClosure = { [weak self] vectorObject in
-            guard let self = self else { return }
-            if let object = vectorObject {
-                guard let style = self.editStyle else { return }
-                self.editDrawble.setVectorObject(object, with: style, completion: nil)
-                self.mapView.add(self.editDrawble)
-                let newCenter = GLMapGeoPoint(point: object.bbox.center)
-                let userZoom = self.mapView.mapZoom
-                var viewSize = self.view.bounds.size
-                viewSize.width = viewSize.width * 0.98
-                viewSize.height = viewSize.height / 2.2
-                var objectZoom = self.mapView.mapZoom(for: object.bbox, viewSize: viewSize)
-                if objectZoom > userZoom {
-                    objectZoom = userZoom
-                }
-                self.mapView.animate { [weak self] animation in
-                    guard let self = self else { return }
-                    animation.duration = self.animationDuration
-                    animation.transition = .linear
-                    self.mapView.mapGeoCenter = newCenter
-                    self.mapView.mapZoom = objectZoom
-                }
-            } else {
-                self.mapView.remove(self.editDrawble)
-            }
-        }
-        
 //      Add buttons
         setLoadIndicator()
         setDownloadButton()
@@ -111,6 +79,9 @@ class MapViewController: UIViewController {
         setMapLocation()
         // After setting the starting position, all offsets are stored in memory. Clouser download source data while map did move.
         setDidMapMoveClouser()
+        // To highlight the edited object, the vector object is written to singleton appSettings, on which the closure is triggered.
+        // When this closure is called, the object is added to the map and the zoom is adjusted
+        setShowVectorObjectClosure()
         mapClient.showSavedObjects()
     }
     
@@ -170,6 +141,35 @@ class MapViewController: UIViewController {
             } else {
                 self.downloadButton.circle.backgroundColor = .systemRed
                 self.addNodeButton.alpha = 0.5
+            }
+        }
+    }
+    
+    func setShowVectorObjectClosure() {
+        AppSettings.settings.showVectorObjectClosure = { [weak self] vectorObject in
+            guard let self = self else { return }
+            if let object = vectorObject {
+                guard let style = self.editStyle else { return }
+                self.editDrawble.setVectorObject(object, with: style, completion: nil)
+                self.mapView.add(self.editDrawble)
+                let newCenter = GLMapGeoPoint(point: object.bbox.center)
+                let userZoom = self.mapView.mapZoom
+                var viewSize = self.view.bounds.size
+                viewSize.width = viewSize.width * 0.98
+                viewSize.height = viewSize.height / 2.2
+                var objectZoom = self.mapView.mapZoom(for: object.bbox, viewSize: viewSize)
+                if objectZoom > userZoom {
+                    objectZoom = userZoom
+                }
+                self.mapView.animate { [weak self] animation in
+                    guard let self = self else { return }
+                    animation.duration = self.animationDuration
+                    animation.transition = .linear
+                    self.mapView.mapGeoCenter = newCenter
+                    self.mapView.mapZoom = objectZoom
+                }
+            } else {
+                self.mapView.remove(self.editDrawble)
             }
         }
     }
@@ -458,21 +458,6 @@ class MapViewController: UIViewController {
     @objc func tapTestButton() {}
     
 //    MARK: FUNCTIONS
-    
-    //  Calls the object selection controller if there are several of them under the tap.
-    func highLightTappedObjects(objects: [OSMAnyObject]) {
-        mapView.remove(tappedDrawble)
-        let tappedObjects = GLMapVectorObjectArray()
-        for object in objects {
-            let vector = object.vector
-            tappedObjects.add(vector)
-        }
-        if let style = tappedStyle {
-            tappedDrawble.setVectorObjects(tappedObjects, with: style, completion: nil)
-        }
-        mapView.add(tappedDrawble)
-    }
-    
     func openObjects(objects: [OSMAnyObject]) {
         if let viewControllers = navController?.viewControllers {
             // navController != nil
@@ -510,7 +495,7 @@ class MapViewController: UIViewController {
         navController = NavigationController(rootViewController: selectVC)
         navController?.dismissClosure = { [weak self] in
             guard let self = self else { return }
-            self.mapView.remove(self.tappedDrawble)
+            self.mapView.remove(self.mapClient.tappedDrawble)
             self.navController = nil
             self.mapView.animate { animation in
                 animation.duration = self.animationDuration
@@ -713,8 +698,7 @@ extension MapViewController: UIGestureRecognizerDelegate {
                 openObject(object: first)
             }
         default:
-//          Moves the tapped object to the visible part of the map.
-            highLightTappedObjects(objects: tapObjects)
+            // Moves the tapped object to the visible part of the map.
             let centerPoint = mapView.makeGeoPoint(fromDisplay: touchPoint)
             mapView.animate({ animation in
                 animation.duration = animationDuration
