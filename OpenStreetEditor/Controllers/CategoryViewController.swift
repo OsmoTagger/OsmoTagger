@@ -219,7 +219,30 @@ extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
         } else {
             cell.icon.isHidden = true
         }
-        cell.nameLabel.text = data.text
+        if searchController.isActive {
+            cell.bigLabel.isHidden = true
+            cell.smallLabel.text = data.text
+            cell.smallLabel.isHidden = false
+            if let path = data.path {
+                var pathText = path.category
+                if let group = path.group {
+                    pathText += " -> " + group
+                }
+                cell.pathLabel.text = pathText
+                cell.pathLabel.isHidden = false
+            } else {
+                cell.pathLabel.text = nil
+                cell.pathLabel.isHidden = true
+            }
+        } else {
+            cell.smallLabel.text = nil
+            cell.smallLabel.isHidden = true
+            cell.pathLabel.text = nil
+            cell.pathLabel.isHidden = true
+            cell.bigLabel.text = data.text
+            cell.bigLabel.isHidden = false
+        }
+        cell.bigLabel.text = data.text
         cell.type = data.type
         switch data.type {
         case let .item(tags):

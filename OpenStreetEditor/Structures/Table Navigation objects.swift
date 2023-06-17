@@ -156,10 +156,28 @@ class CategoryCell: UITableViewCell {
         return view
     }()
     
-    var nameLabel: UILabel = {
+    var bigLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
         label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    var smallLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .left
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    var pathLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .left
+        label.numberOfLines = 0
+        label.textColor = .systemGray
+        label.font = UIFont.systemFont(ofSize: 12)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -168,16 +186,26 @@ class CategoryCell: UITableViewCell {
     
     func setupConstrains() {
         contentView.addSubview(icon)
-        contentView.addSubview(nameLabel)
+        contentView.addSubview(bigLabel)
+        contentView.addSubview(smallLabel)
+        contentView.addSubview(pathLabel)
         NSLayoutConstraint.activate([
             icon.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             icon.topAnchor.constraint(equalTo: contentView.topAnchor),
             icon.widthAnchor.constraint(equalTo: contentView.heightAnchor),
             icon.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            nameLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
-            nameLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50),
-            nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
-            nameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            bigLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
+            bigLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50),
+            bigLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            bigLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            smallLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
+            smallLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            smallLabel.bottomAnchor.constraint(equalTo: contentView.centerYAnchor),
+            smallLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50),
+            pathLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
+            pathLabel.topAnchor.constraint(equalTo: contentView.centerYAnchor),
+            pathLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            pathLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50)
         ])
     }
     
@@ -194,7 +222,12 @@ class CategoryCell: UITableViewCell {
     
     override func prepareForReuse() {
         icon.icon.image = nil
-        nameLabel.text = nil
+        bigLabel.text = nil
+        bigLabel.isHidden = true
+        smallLabel.text = nil
+        smallLabel.isHidden = true
+        pathLabel.text = nil
+        pathLabel.isHidden = true
         accessoryType = .none
         type = nil
     }
