@@ -38,7 +38,7 @@ class CategoryViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         
         setSearchController()
         
@@ -304,7 +304,7 @@ extension CategoryViewController: UISearchBarDelegate {
         filteredTableData = []
         for category in AppSettings.settings.categories {
             for group in category.group {
-                for item in group.item {
+                for item in group.item where item.type.contains(elementType) {
                     if item.name.lowercased().contains(searchText.lowercased()) {
                         guard let path = item.path else { continue }
                         let data = CategoryTableData(type: .item(tags: getItemTags(item: item)), icon: item.icon, text: item.name, path: path)
@@ -312,7 +312,7 @@ extension CategoryViewController: UISearchBarDelegate {
                     }
                 }
             }
-            for item in category.item {
+            for item in category.item where item.type.contains(elementType) {
                 if item.name.lowercased().contains(searchText.lowercased()) {
                     guard let path = item.path else { continue }
                     let data = CategoryTableData(type: .item(tags: getItemTags(item: item)), icon: item.icon, text: item.name, path: path)
