@@ -31,11 +31,6 @@ class EditObjectViewController: UIViewController {
     var activePath: ItemPath?
     
     var tableData: [EditSectionData] = []
-    
-    //  RightBarItems:
-    var infoBar = UIBarButtonItem()
-    var iconTypeBar = UIBarButtonItem()
-    var cancelBar = UIBarButtonItem()
 
     var tableView = UITableView()
     var cellId = "cell"
@@ -73,7 +68,7 @@ class EditObjectViewController: UIViewController {
         setRightBarItems()
         setTableView()
         setEnterTagManuallyView()
-        setToolBar(fromSavedNodesVC: true)
+        setToolBar()
         navigationController?.setToolbarHidden(false, animated: false)
     }
     
@@ -92,18 +87,8 @@ class EditObjectViewController: UIViewController {
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
-    //  Actions when clicking "undo" tag changes. Tags are reset to the initial state.
-    @objc func tapCancel() {
-        let tags = generateTags(properties: object.oldTags)
-        AppSettings.settings.savedObjects.removeValue(forKey: object.id)
-        object.tag = tags
-        newProperties = object.oldTags
-        fillData()
-        tableView.reloadData()
-    }
-    
     func setRightBarItems() {
-//      A button for viewing brief information about the object being edited.
+        // A button for viewing brief information about the object being edited.
         let infoView = UIImageView(image: UIImage(named: "info"))
         let tapInfo = UITapGestureRecognizer(target: self, action: #selector(tapInfo))
         infoView.addGestureRecognizer(tapInfo)
@@ -111,8 +96,8 @@ class EditObjectViewController: UIViewController {
             infoView.widthAnchor.constraint(equalToConstant: 25),
             infoView.heightAnchor.constraint(equalToConstant: 25),
         ])
-        infoBar = UIBarButtonItem(customView: infoView)
-//      The icon of the object type is a point, way, closedway.
+        let infoBar = UIBarButtonItem(customView: infoView)
+        // The icon of the object type is a point, way, closedway.
         var iconTypeName = ""
         switch object.type {
         case .node:
@@ -129,31 +114,12 @@ class EditObjectViewController: UIViewController {
             iconType.widthAnchor.constraint(equalToConstant: 25),
             iconType.heightAnchor.constraint(equalToConstant: 25),
         ])
-        iconTypeBar = UIBarButtonItem(customView: iconType)
-//      A button to cancel tag changes.
-        let cancelImage = UIImageView(image: UIImage(systemName: "arrowshape.turn.up.backward.fill"))
-        let cancelTap = UITapGestureRecognizer(target: self, action: #selector(tapCancel))
-        cancelImage.addGestureRecognizer(cancelTap)
-        cancelImage.addConstraints([
-            cancelImage.widthAnchor.constraint(equalToConstant: 25),
-            cancelImage.heightAnchor.constraint(equalToConstant: 25),
-        ])
-        cancelBar = UIBarButtonItem(customView: cancelImage)
-        updateRightBarItems()
-    }
-    
-    //  Removes or shows the undo tag changes button.
-    func updateRightBarItems() {
-        if NSDictionary(dictionary: object.oldTags).isEqual(to: newProperties) {
-            navigationItem.setRightBarButtonItems([infoBar, iconTypeBar], animated: false)
-        } else {
-            navigationItem.setRightBarButtonItems([infoBar, iconTypeBar, cancelBar], animated: false)
-        }
+        let iconTypeBar = UIBarButtonItem(customView: iconType)
+        navigationItem.setRightBarButtonItems([infoBar, iconTypeBar], animated: true)
     }
     
     //  Called every time the object tags are changed (AppSettings.settings.saveObjectClouser)
     func saveObject() {
-        updateRightBarItems()
         // It is not always necessary to save changes in memory. For correct operation, the saveAllowed variable is introduced, which becomes false at the right moment and the changes are not written to memory.
         if object.id < 0 {
             // If the point is newly created, id < 0.
@@ -174,6 +140,7 @@ class EditObjectViewController: UIViewController {
         }
         fillData()
         tableView.reloadData()
+        setToolBar()
     }
     
     func fillNewProperties() {
@@ -214,7 +181,6 @@ class EditObjectViewController: UIViewController {
         fillLastSection()
 //      We arrange the preset elements in the right order.
         prepareElements()
-        updateRightBarItems()
     }
     
     //  Fill in the section of the table with all the tags filled in.
@@ -367,24 +333,13 @@ class EditObjectViewController: UIViewController {
         present(navVC, animated: true, completion: nil)
     }
     
-    func setToolBar(fromSavedNodesVC: Bool) {
+    func setToolBar() {
         let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let deleteButton = UIBarButtonItem(title: "Delete object", style: .plain, target: self, action: #selector(tapDeleteButton))
+        deleteButton.tintColor = .systemRed
         let discardButton = UIBarButtonItem(title: "Discard changes", style: .plain, target: self, action: #selector(tapDiscard))
-        guard let controllers = navigationController?.viewControllers else {
-            toolbarItems = [flexibleSpace, deleteButton, flexibleSpace]
-            return
-        }
-        if fromSavedNodesVC {
-            if controllers.count > 1 {
-                if controllers[controllers.count - 2] is SavedNodesViewController {
-                    toolbarItems = [flexibleSpace, discardButton, flexibleSpace]
-                } else {
-                    toolbarItems = [flexibleSpace, deleteButton, flexibleSpace]
-                }
-            } else {
-                toolbarItems = [flexibleSpace, deleteButton, flexibleSpace]
-            }
+        if AppSettings.settings.savedObjects[object.id] != nil || AppSettings.settings.deletedObjects[object.id] != nil {
+            toolbarItems = [flexibleSpace, discardButton, flexibleSpace]
         } else {
             toolbarItems = [flexibleSpace, deleteButton, flexibleSpace]
         }
@@ -419,14 +374,18 @@ class EditObjectViewController: UIViewController {
         object = newObject
         fillNewProperties()
         fillData()
-        setToolBar(fromSavedNodesVC: false)
+        setToolBar()
         tableView.reloadData()
     }
     
     @objc func tapDiscard() {
         AppSettings.settings.savedObjects.removeValue(forKey: object.id)
         AppSettings.settings.deletedObjects.removeValue(forKey: object.id)
-        dismissViewController()
+        let tags = generateTags(properties: object.oldTags)
+        object.tag = tags
+        newProperties = object.oldTags
+        fillData()
+        tableView.reloadData()
     }
     
     //  By tap the delete button, you can delete tag changes or the entire object from the server (if it is not referenced by other objects).
