@@ -67,7 +67,6 @@ class MapViewController: UIViewController {
         setupSettingsButton()
         setupLocationButton()
         setSavedNodesButton()
-        addNodeButtonTopConstraint = NSLayoutConstraint(item: addNodeButton, attribute: .top, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .top, multiplier: 1, constant: 260)
         setAddNodeButton()
         setDrawButton()
 //      The test button in the lower right corner of the screen is often needed during development.
@@ -419,6 +418,7 @@ class MapViewController: UIViewController {
         addNodeButton.addTarget(self, action: #selector(tapAddNodeButton), for: .touchUpInside)
         view.addSubview(addNodeButton)
         addNodeButton.translatesAutoresizingMaskIntoConstraints = false
+        addNodeButtonTopConstraint = NSLayoutConstraint(item: addNodeButton, attribute: .top, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .top, multiplier: 1, constant: 260)
         NSLayoutConstraint.activate([addNodeButton.widthAnchor.constraint(equalToConstant: 40),
                                      addNodeButton.heightAnchor.constraint(equalToConstant: 40),
                                      addNodeButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
