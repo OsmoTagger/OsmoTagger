@@ -15,7 +15,15 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
     var cellId = "cell"
     var tableData: [SaveNodeTableData] = []
     //  An array in which the IDs of the selected objects are stored.
-    var selectedIDs: [SavedSelectedIndex] = []
+    var selectedIDs: [SavedSelectedIndex] = [] {
+        didSet {
+            if selectedIDs.count == 0 {
+                enterCommentView.placeholder = nil
+            } else {
+                enterCommentView.placeholder = generateComment()
+            }
+        }
+    }
     // View for enter comment to chageset
     var enterCommentView = UITextField()
     
@@ -83,10 +91,8 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
                 let path = SavedSelectedIndex(type: .deleted, id: id)
                 selectedIDs.append(path)
             }
-            enterCommentView.placeholder = generateComment()
         } else {
             selectedIDs = []
-            enterCommentView.placeholder = ""
         }
         tableView.reloadData()
         setToolBar()
@@ -333,7 +339,6 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             }
             selectedIDs.remove(at: i)
         }
-        enterCommentView.placeholder = generateComment()
         setToolBar()
     }
     
@@ -401,7 +406,6 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
                 removeIndicator(indicator: indicator)
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
-                    self.enterCommentView.placeholder = nil
                     self.enterCommentView.text = nil
                     AppSettings.settings.changeSetComment = nil
                 }
