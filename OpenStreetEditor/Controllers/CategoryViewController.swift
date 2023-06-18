@@ -333,5 +333,6 @@ extension CategoryViewController: UISearchControllerDelegate {
     }
     func didDismissSearchController(_: UISearchController) {
         tableView.reloadData()
+        filteredTableData = []
     }
 }
