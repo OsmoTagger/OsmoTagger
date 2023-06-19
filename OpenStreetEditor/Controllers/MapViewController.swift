@@ -96,7 +96,7 @@ class MapViewController: UIViewController {
             locationImage = UIImage(systemName: "circle.fill")
         }
         mapView.setUserLocationImage(locationImage, movementImage: nil)
-//      We specify that the map titles are always loaded.
+        // We specify that the map titles are always loaded.
         GLMapManager.shared.tileDownloadingAllowed = true
         mapView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(mapView)
