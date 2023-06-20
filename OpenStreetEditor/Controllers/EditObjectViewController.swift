@@ -520,6 +520,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             return UITableViewCell()
         }
         let elem = tableData[indexPath.section].items[indexPath.row]
+        cell.selectionStyle = .none
         switch elem {
         case let .key(key, value):
             cell.icon.isHidden = false
@@ -581,9 +582,13 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.configureButton(values: values, curentValue: newProperties[key])
             cell.button.selectClosure = { [weak self] newValue in
                 guard let self = self else { return }
-                if newValue == "" {
-                    self.newProperties.removeValue(forKey: key)
-                    cell.valueLabel.text = nil
+                if newValue == "Custom value" {
+                    self.navigationController?.setToolbarHidden(true, animated: true)
+                    self.addTagView.keyField.text = key
+                    self.addTagView.keyField.isUserInteractionEnabled = false
+                    self.addTagView.valueField.text = self.newProperties[key]
+                    self.addTagView.isHidden = false
+                    self.addTagView.valueField.becomeFirstResponder()
                 } else {
                     self.newProperties[key] = newValue
                     cell.valueLabel.text = newValue
@@ -748,12 +753,12 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             addTagView.isHidden = false
             addTagView.valueField.becomeFirstResponder()
         case .key(_, _):
-            guard tableData[indexPath.section].name == "Field tags",
+            guard tableData[indexPath.section].name == "Filled tags",
                   let key = cell.keyLabel.text,
                   let value = cell.valueLabel.text else {return}
             navigationController?.setToolbarHidden(true, animated: true)
             addTagView.keyField.text = key
-            addTagView.keyField.isUserInteractionEnabled = false
+            addTagView.keyField.isUserInteractionEnabled = true
             addTagView.valueField.text = value
             addTagView.isHidden = false
             addTagView.valueField.becomeFirstResponder()
@@ -774,13 +779,25 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
     
     //  Deleting a previously entered tag.
     func tableView(_: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        guard tableData[indexPath.section].name == "Filled tags",
-              indexPath.row > 1 else { return nil }
-        
+        var tagKey: String? = nil
+        let data = tableData[indexPath.section].items[indexPath.row]
+        switch data {
+        case .link(_), .label(_), .presetLink(_), .reference(_):
+            return nil
+        case let .key(key, _):
+            tagKey = key
+        case let .check(key, _, _):
+            tagKey = key
+        case let .combo(key, _, _):
+            tagKey = key
+        case let .multiselect(key, _, _):
+            tagKey = key
+        case let .text(_, key):
+            tagKey = key
+        }
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, completionHandler in
             guard let self = self,
-                  let cell = self.tableView.cellForRow(at: indexPath) as? ItemCell,
-                  let key = cell.keyLabel.text else { return }
+            let key = tagKey else { return }
             self.newProperties.removeValue(forKey: key)
             let tags = self.generateTags(properties: self.newProperties)
             self.object.tag = tags

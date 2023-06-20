@@ -400,21 +400,15 @@ class ItemCell: UITableViewCell {
             }
         }
         var optionsArray = [UIAction]()
-        let nilAction = UIAction(title: "", state: .off, handler: optionClosure)
-//        let customAction = UIAction(title: "Custom", state: .off, handler: optionClosure)
-        let customAction = UIAction(title: "Custom", image: UIImage(systemName: "pencil"), identifier: nil, discoverabilityTitle: "nil", attributes: .destructive, state: .off, handler: optionClosure)
+        let customAction = UIAction(title: "Custom value", image: UIImage(systemName: "pencil"), identifier: nil, discoverabilityTitle: "nil", attributes: .destructive, state: .off, handler: optionClosure)
         for value in values {
             let action = UIAction(title: value, state: .off, handler: optionClosure)
             if value == curentValue {
-                nilAction.state = .off
                 action.state = .on
-            } else {
-                nilAction.state = .on
             }
             optionsArray.append(action)
         }
         optionsArray.append(customAction)
-        optionsArray.append(nilAction)
         let optionsMenu = UIMenu(title: "", image: nil, identifier: nil, options: .singleSelection, children: optionsArray)
         button.menu = optionsMenu
         button.showsMenuAsPrimaryAction = true
