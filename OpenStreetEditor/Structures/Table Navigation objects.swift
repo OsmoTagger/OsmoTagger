@@ -61,6 +61,39 @@ struct CategoryTableData {
     var path: ItemPath?
 }
 
+class RightIconView: UIView {
+    var backView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .white
+        return view
+    }()
+
+    var icon: UIImageView = {
+        let image = UIImageView()
+        image.translatesAutoresizingMaskIntoConstraints = false
+        return image
+    }()
+
+    convenience init() {
+        self.init(frame: .zero)
+        setupConstrains()
+    }
+    
+    func setupConstrains() {
+        addSubview(backView)
+        addSubview(icon)
+        NSLayoutConstraint.activate([
+            backView.leftAnchor.constraint(equalTo: leftAnchor, constant: 5),
+            backView.widthAnchor.constraint(equalToConstant: 38),
+            backView.heightAnchor.constraint(equalToConstant: 38),
+            backView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            icon.centerXAnchor.constraint(equalTo: backView.centerXAnchor),
+            icon.centerYAnchor.constraint(equalTo: backView.centerYAnchor),
+        ])
+    }
+}
+
 class IconView: UIView {
     var backView: UIView = {
         let view = UIView()
@@ -269,17 +302,8 @@ class ItemCell: UITableViewCell {
         return label
     }()
 
-    var checkBox: CheckBox = {
-        let checkBox = CheckBox()
-        checkBox.isChecked = false
-        checkBox.translatesAutoresizingMaskIntoConstraints = false
-        return checkBox
-    }()
-
     var button: SelectButton = {
         let button = SelectButton()
-        button.backgroundColor = .systemBackground
-        button.setTitleColor(.label, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -292,14 +316,21 @@ class ItemCell: UITableViewCell {
         lab.translatesAutoresizingMaskIntoConstraints = false
         return lab
     }()
+    
+    var rightIcon: RightIconView = {
+        let icon = RightIconView()
+        icon.backView.backgroundColor = .systemBackground
+        icon.translatesAutoresizingMaskIntoConstraints = false
+        return icon
+    }()
         
     func setupConstrains() {
         contentView.addSubview(icon)
         contentView.addSubview(keyLabel)
         contentView.addSubview(valueLabel)
-        contentView.addSubview(checkBox)
         contentView.addSubview(button)
         contentView.addSubview(label)
+        contentView.addSubview(rightIcon)
         NSLayoutConstraint.activate([
             icon.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             icon.widthAnchor.constraint(equalTo: icon.backView.widthAnchor),
@@ -310,22 +341,21 @@ class ItemCell: UITableViewCell {
             keyLabel.rightAnchor.constraint(equalTo: contentView.centerXAnchor, constant: -2),
             keyLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 44),
             valueLabel.leftAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 2),
-            valueLabel.rightAnchor.constraint(equalTo: checkBox.leftAnchor),
+            valueLabel.rightAnchor.constraint(equalTo: rightIcon.leftAnchor),
             valueLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             valueLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             valueLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 44),
-            checkBox.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            checkBox.widthAnchor.constraint(equalToConstant: 50),
-            checkBox.heightAnchor.constraint(equalTo: contentView.heightAnchor),
-            checkBox.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            button.widthAnchor.constraint(equalToConstant: 50),
-            button.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            button.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             button.topAnchor.constraint(equalTo: contentView.topAnchor),
+            button.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             button.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             label.topAnchor.constraint(equalTo: contentView.topAnchor),
             label.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
-            label.rightAnchor.constraint(equalTo: checkBox.rightAnchor),
+            label.rightAnchor.constraint(equalTo: rightIcon.rightAnchor),
             label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            rightIcon.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -10),
+            rightIcon.widthAnchor.constraint(equalTo: rightIcon.backView.widthAnchor),
+            rightIcon.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
     
@@ -355,8 +385,9 @@ class ItemCell: UITableViewCell {
         button.key = ""
         button.values = []
         button.selectClosure = nil
-        checkBox.isHidden = true
-        checkBox.isChecked = false
+        button.indexPath = nil
+        rightIcon.icon.image = nil
+        rightIcon.isHidden = true
         accessoryType = .none
     }
     
@@ -370,6 +401,8 @@ class ItemCell: UITableViewCell {
         }
         var optionsArray = [UIAction]()
         let nilAction = UIAction(title: "", state: .off, handler: optionClosure)
+//        let customAction = UIAction(title: "Custom", state: .off, handler: optionClosure)
+        let customAction = UIAction(title: "Custom", image: UIImage(systemName: "pencil"), identifier: nil, discoverabilityTitle: "nil", attributes: .destructive, state: .off, handler: optionClosure)
         for value in values {
             let action = UIAction(title: value, state: .off, handler: optionClosure)
             if value == curentValue {
@@ -380,6 +413,7 @@ class ItemCell: UITableViewCell {
             }
             optionsArray.append(action)
         }
+        optionsArray.append(customAction)
         optionsArray.append(nilAction)
         let optionsMenu = UIMenu(title: "", image: nil, identifier: nil, options: .singleSelection, children: optionsArray)
         button.menu = optionsMenu

@@ -425,15 +425,15 @@ class EditObjectViewController: UIViewController {
                                      tableView.leftAnchor.constraint(equalTo: view.leftAnchor)])
     }
     
-    @objc func tapKeyBoard(_ sender: SelectButton) {
-        guard let key = sender.key else { return }
-        navigationController?.setToolbarHidden(true, animated: true)
-        addTagView.keyField.text = key
-        addTagView.keyField.isUserInteractionEnabled = false
-        addTagView.valueField.text = newProperties[key]
-        addTagView.isHidden = false
-        addTagView.valueField.becomeFirstResponder()
-    }
+//    @objc func tapKeyBoard(_ sender: SelectButton) {
+//        guard let key = sender.key else { return }
+//        navigationController?.setToolbarHidden(true, animated: true)
+//        addTagView.keyField.text = key
+//        addTagView.keyField.isUserInteractionEnabled = false
+//        addTagView.valueField.text = newProperties[key]
+//        addTagView.isHidden = false
+//        addTagView.valueField.becomeFirstResponder()
+//    }
     
     func setEnterTagManuallyView() {
         //  When the tag is entered manually, addView.callbackClosure is triggered, which passes the entered tag=value pair. The table data is updated.
@@ -470,22 +470,22 @@ class EditObjectViewController: UIViewController {
     }
     
     //  Tap on the checkbox.
-    @objc func tapCheckBox(_ sender: CheckBox) {
-        sender.isChecked = !sender.isChecked
-        let data = tableData[sender.indexPath.section].items[sender.indexPath.row]
-        switch data {
-        case let .check(key, _, valueOn):
-            let defValue = valueOn ?? "yes"
-            if sender.isChecked {
-                newProperties[key] = defValue
-            } else {
-                newProperties.removeValue(forKey: key)
-            }
-        default:
-            return
-        }
-        tableView.reloadData()
-    }
+//    @objc func tapCheckBox(_ sender: CheckBox) {
+//        sender.isChecked = !sender.isChecked
+//        let data = tableData[sender.indexPath.section].items[sender.indexPath.row]
+//        switch data {
+//        case let .check(key, _, valueOn):
+//            let defValue = valueOn ?? "yes"
+//            if sender.isChecked {
+//                newProperties[key] = defValue
+//            } else {
+//                newProperties.removeValue(forKey: key)
+//            }
+//        default:
+//            return
+//        }
+//        tableView.reloadData()
+//    }
     
     //  Updating the view when the keyboard appears.
     @objc func keyboardWillShow(notification: NSNotification) {
@@ -530,9 +530,11 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.valueLabel.text = value
             cell.valueLabel.isHidden = false
             cell.label.isHidden = true
-            cell.button.isHidden = true
             cell.button.selectClosure = nil
-            cell.checkBox.isHidden = true
+            cell.button.addTarget(self, action: #selector(tapButton), for: .touchUpInside)
+            cell.button.indexPath = indexPath
+            cell.button.isHidden = false
+            cell.rightIcon.isHidden = true
             cell.accessoryType = .none
         case let .link(wiki):
             cell.icon.icon.image = UIImage(named: "osm_wiki_logo")
@@ -543,9 +545,12 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.valueLabel.isHidden = true
             cell.label.isHidden = false
             cell.label.text = "Open wiki"
-            cell.checkBox.isHidden = true
-            cell.button.isHidden = true
+            cell.button.isHidden = false
             cell.button.selectClosure = nil
+            cell.button.addTarget(self, action: #selector(tapButton), for: .touchUpInside)
+            cell.button.indexPath = indexPath
+            cell.button.isHidden = false
+            cell.rightIcon.isHidden = true
             cell.accessoryType = .disclosureIndicator
         case let .text(_, key):
             cell.icon.icon.image = UIImage(systemName: "tag")
@@ -556,12 +561,12 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.valueLabel.text = newProperties[key]
             cell.valueLabel.isHidden = false
             cell.label.isHidden = true
-            cell.checkBox.isHidden = true
-            cell.button.isHidden = false
-            cell.button.setImage(UIImage(systemName: "keyboard"), for: .normal)
-            cell.button.key = key
             cell.button.selectClosure = nil
-            cell.button.addTarget(self, action: #selector(tapKeyBoard), for: .touchUpInside)
+            cell.button.addTarget(self, action: #selector(tapButton), for: .touchUpInside)
+            cell.button.isHidden = false
+            cell.button.indexPath = indexPath
+            cell.rightIcon.icon.image = UIImage(systemName: "keyboard")
+            cell.rightIcon.isHidden = false
             cell.accessoryType = .none
         case let .combo(key, values, _):
             cell.icon.icon.image = UIImage(systemName: "tag")
@@ -571,10 +576,8 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.keyLabel.isHidden = false
             cell.valueLabel.text = newProperties[key]
             cell.valueLabel.isHidden = false
-            cell.isUserInteractionEnabled = true
             cell.label.isHidden = true
             cell.button.isHidden = false
-            cell.button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
             cell.configureButton(values: values, curentValue: newProperties[key])
             cell.button.selectClosure = { [weak self] newValue in
                 guard let self = self else { return }
@@ -587,7 +590,8 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
                 }
                 self.tableView.reloadData()
             }
-            cell.checkBox.isHidden = true
+            cell.rightIcon.icon.image = UIImage(systemName: "chevron.down")
+            cell.rightIcon.isHidden = false
             cell.accessoryType = .none
         case let .check(key, text, _):
             cell.icon.icon.image = UIImage(systemName: "tag")
@@ -599,16 +603,16 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.valueLabel.isHidden = false
             cell.valueLabel.text = newProperties[key]
             cell.label.isHidden = true
-            cell.checkBox.isHidden = false
-            cell.checkBox.indexPath = indexPath
-            cell.checkBox.addTarget(self, action: #selector(tapCheckBox), for: .touchUpInside)
-            if newProperties[key] != nil {
-                cell.checkBox.isChecked = true
-            } else {
-                cell.checkBox.isChecked = false
-            }
-            cell.button.isHidden = true
+            cell.button.isHidden = false
             cell.button.selectClosure = nil
+            cell.button.addTarget(self, action: #selector(tapButton), for: .touchUpInside)
+            cell.button.indexPath = indexPath
+            if newProperties[key] != nil {
+                cell.rightIcon.icon.image = UIImage(systemName: "checkmark.square")
+            } else {
+                cell.rightIcon.icon.image = UIImage(systemName: "square")
+            }
+            cell.rightIcon.isHidden = false
             cell.accessoryType = .none
         case let .presetLink(presetName):
             if presetName == "Show other presets" {
@@ -634,9 +638,11 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.valueLabel.isHidden = true
             cell.label.isHidden = false
             cell.label.text = presetName
-            cell.checkBox.isHidden = true
-            cell.button.isHidden = true
+            cell.button.isHidden = false
             cell.button.selectClosure = nil
+            cell.button.addTarget(self, action: #selector(tapButton), for: .touchUpInside)
+            cell.button.indexPath = indexPath
+            cell.rightIcon.isHidden = true
             cell.accessoryType = .disclosureIndicator
         case let .multiselect(key, _, _):
             cell.icon.icon.image = UIImage(systemName: "tag")
@@ -651,56 +657,39 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             } else {
                 cell.valueLabel.text = nil
             }
-            cell.valueLabel.isHidden = false
             cell.label.isHidden = true
-            cell.checkBox.isHidden = true
-            cell.button.isHidden = true
+            cell.button.isHidden = false
+            cell.button.indexPath = indexPath
             cell.button.selectClosure = nil
+            cell.button.addTarget(self, action: #selector(tapButton), for: .touchUpInside)
+            cell.rightIcon.isHidden = true
             cell.accessoryType = .disclosureIndicator
         case let .label(text):
             cell.icon.isHidden = true
             cell.keyLabel.isHidden = true
             cell.valueLabel.isHidden = true
-            cell.checkBox.isHidden = true
             cell.label.text = text
             cell.label.isHidden = false
             cell.button.isHidden = true
+            cell.rightIcon.isHidden = true
             cell.accessoryType = .none
         default:
             cell.icon.isHidden = true
             cell.keyLabel.isHidden = true
             cell.valueLabel.isHidden = true
-            cell.checkBox.isHidden = true
             cell.label.isHidden = true
             cell.button.isHidden = true
             cell.button.selectClosure = nil
+            cell.rightIcon.isHidden = true
             cell.accessoryType = .none
             cell.backgroundColor = .red
         }
         return cell
     }
     
-    //  Deleting a previously entered tag.
-    func tableView(_: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        guard tableData[indexPath.section].name == "Filled tags",
-              indexPath.row > 1 else { return nil }
-        
-        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, completionHandler in
-            guard let self = self,
-                  let cell = self.tableView.cellForRow(at: indexPath) as? ItemCell,
-                  let key = cell.keyLabel.text else { return }
-            self.newProperties.removeValue(forKey: key)
-            let tags = self.generateTags(properties: self.newProperties)
-            self.object.tag = tags
-            self.fillData()
-            self.tableView.reloadData()
-            completionHandler(true)
-        }
-        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
-        return configuration
-    }
-    
-    func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
+    @objc func tapButton(sender: SelectButton) {
+        guard let indexPath = sender.indexPath,
+              let cell = tableView.cellForRow(at: indexPath) as? ItemCell else {return}
         let elem = tableData[indexPath.section].items[indexPath.row]
         switch elem {
         case let .link(wiki):
@@ -750,25 +739,61 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             }
             navigationController?.setToolbarHidden(true, animated: false)
             navigationController?.pushViewController(vc, animated: true)
-        case .combo(_, _, _), .text(_, _), .key:
-            guard let cell = tableView.cellForRow(at: indexPath) as? ItemCell,
-                  let key = cell.keyLabel.text else { return }
+        case .text(_, _):
+            guard let key = cell.keyLabel.text else {return}
             navigationController?.setToolbarHidden(true, animated: true)
             addTagView.keyField.text = key
             addTagView.keyField.isUserInteractionEnabled = false
             addTagView.valueField.text = cell.valueLabel.text
             addTagView.isHidden = false
             addTagView.valueField.becomeFirstResponder()
-        case let .check(key, _, _):
-            guard let cell = tableView.cellForRow(at: indexPath) as? ItemCell else { return }
+        case .key(_, _):
+            guard tableData[indexPath.section].name == "Field tags",
+                  let key = cell.keyLabel.text,
+                  let value = cell.valueLabel.text else {return}
             navigationController?.setToolbarHidden(true, animated: true)
             addTagView.keyField.text = key
             addTagView.keyField.isUserInteractionEnabled = false
-            addTagView.valueField.text = cell.valueLabel.text
+            addTagView.valueField.text = value
             addTagView.isHidden = false
             addTagView.valueField.becomeFirstResponder()
+        case let .check(key, _, valueOn):
+            let defValue = valueOn ?? "yes"
+            if newProperties[key] == nil {
+                newProperties[key] = defValue
+                cell.rightIcon.icon.image = UIImage(systemName: "checkmark.square")
+            } else {
+                newProperties.removeValue(forKey: key)
+                cell.rightIcon.icon.image = UIImage(systemName: "square")
+            }
         default:
-            tableView.deselectRow(at: indexPath, animated: true)
+            return
         }
+        tableView.reloadData()
     }
+    
+    //  Deleting a previously entered tag.
+    func tableView(_: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard tableData[indexPath.section].name == "Filled tags",
+              indexPath.row > 1 else { return nil }
+        
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, completionHandler in
+            guard let self = self,
+                  let cell = self.tableView.cellForRow(at: indexPath) as? ItemCell,
+                  let key = cell.keyLabel.text else { return }
+            self.newProperties.removeValue(forKey: key)
+            let tags = self.generateTags(properties: self.newProperties)
+            self.object.tag = tags
+            self.fillData()
+            self.tableView.reloadData()
+            completionHandler(true)
+        }
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
+        return configuration
+    }
+    
+//    func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        let elem = tableData[indexPath.section].items[indexPath.row]
+//
+//    }
 }

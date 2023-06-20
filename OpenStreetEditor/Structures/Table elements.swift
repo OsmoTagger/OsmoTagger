@@ -538,11 +538,6 @@ class SelectButton: UIButton {
     var selectClosure: ((String) -> Void)?
     var key: String?
     var values: [String] = []
-}
-
-//  Custom UITextField for entering the text value of the tag. Use in ItemVC and EditObjectVC
-class ValueField: UITextField, UITextFieldDelegate {
-    var key: String?
     var indexPath: IndexPath?
 }
 
