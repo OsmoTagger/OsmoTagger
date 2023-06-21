@@ -10,6 +10,7 @@ import UIKit
 //  The navigation controller for the preset catalog. It is used repeatedly with different names of categories and groups.
 class CategoryViewController: UIViewController {
     let searchController = UISearchController(searchResultsController: nil)
+    var isSearching = false
     
     var categoryName: String?
     var groupName: String?
@@ -194,7 +195,7 @@ class CategoryViewController: UIViewController {
 
 extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        if searchController.isActive {
+        if isSearching {
             return filteredTableData.count
         } else {
             return tableData.count
@@ -208,7 +209,7 @@ extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
             return cellFail
         }
         let data: CategoryTableData
-        if searchController.isActive {
+        if isSearching {
             data = filteredTableData[indexPath.row]
         } else {
             data = tableData[indexPath.row]
@@ -219,14 +220,14 @@ extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
         } else {
             cell.icon.isHidden = true
         }
-        if searchController.isActive {
+        if isSearching {
             cell.bigLabel.isHidden = true
             cell.smallLabel.text = data.text
             cell.smallLabel.isHidden = false
             if let path = data.path {
                 var pathText = path.category
                 if let group = path.group {
-                    pathText += " -> " + group
+                    pathText += " > " + group
                 }
                 cell.pathLabel.text = pathText
                 cell.pathLabel.isHidden = false
@@ -264,7 +265,7 @@ extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let navController = navigationController as? CategoryNavigationController else { return }
         let data: CategoryTableData
-        if searchController.isActive {
+        if isSearching {
             data = filteredTableData[indexPath.row]
         } else {
             data = tableData[indexPath.row]
@@ -287,7 +288,7 @@ extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
                 guard let path = data.path,
                       let item = getItemFromPath(path: path)
                 else {
-                    showAction(message: "Coudn't find item in presets: \(data.path)", addAlerts: [])
+                    showAction(message: "Coudn't find item in presets: \(data.path), \(searchController.searchBar.text)", addAlerts: [])
                     return
                 }
                 let vc = ItemTagsViewController(item: item)
@@ -302,10 +303,16 @@ extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
 extension CategoryViewController: UISearchBarDelegate {
     func searchBar(_: UISearchBar, textDidChange searchText: String) {
         filteredTableData = []
+        let searchText = searchText.lowercased()
+        if searchText == "" {
+            isSearching = false
+        } else {
+            isSearching = true
+        }
         for category in AppSettings.settings.categories {
             for group in category.group {
                 for item in group.item where item.type.contains(elementType) {
-                    if item.name.lowercased().contains(searchText.lowercased()) {
+                    if item.name.lowercased().contains(searchText) {
                         guard let path = item.path else { continue }
                         let data = CategoryTableData(type: .item(tags: getItemTags(item: item)), icon: item.icon, text: item.name, path: path)
                         filteredTableData.append(data)
@@ -313,7 +320,7 @@ extension CategoryViewController: UISearchBarDelegate {
                 }
             }
             for item in category.item where item.type.contains(elementType) {
-                if item.name.lowercased().contains(searchText.lowercased()) {
+                if item.name.lowercased().contains(searchText) {
                     guard let path = item.path else { continue }
                     let data = CategoryTableData(type: .item(tags: getItemTags(item: item)), icon: item.icon, text: item.name, path: path)
                     filteredTableData.append(data)
@@ -327,12 +334,8 @@ extension CategoryViewController: UISearchBarDelegate {
 // MARK: UISearchControllerDelegate
 
 extension CategoryViewController: UISearchControllerDelegate {
-    func searchBarTextDidBeginEditing(_: UISearchBar) {
-        searchController.isActive = true
-        tableView.reloadData()
-    }
-
     func didDismissSearchController(_: UISearchController) {
+        isSearching = false
         tableView.reloadData()
         filteredTableData = []
     }
