@@ -524,27 +524,34 @@ class MapViewController: UIViewController {
         return false
     }
     
+    func editVCUpdateObject(viewControllers: [UIViewController], newObject: OSMAnyObject) {
+        for controller in viewControllers {
+            if let infoVC = controller as? InfoObjectViewController {
+                infoVC.object = newObject
+                infoVC.fillData()
+                infoVC.tableView.reloadData()
+            }
+        }
+        for controller in viewControllers {
+            if let editVC = controller as? EditObjectViewController {
+                editVC.updateViewController(newObject: newObject)
+                return
+            }
+        }
+    }
+    
     func openObject(object: OSMAnyObject) {
         if let viewControllers = navController?.viewControllers {
             // navController != nil
             if let selectVC = viewControllers[0] as? SelectObjectViewController {
                 // selectVC -------------------------------
                 if checkObjectInSelectVC(id: object.id, objects: selectVC.objects) {
-                    for controller in viewControllers {
-                        if let infoVC = controller as? InfoObjectViewController {
-                            infoVC.object = object
-                            infoVC.fillData()
-                            infoVC.tableView.reloadData()
-                        }
+                    if viewControllers.count > 1 {
+                        editVCUpdateObject(viewControllers: viewControllers, newObject: object)
+                    } else {
+                        let editVC = EditObjectViewController(object: object)
+                        navController?.pushViewController(editVC, animated: true)
                     }
-                    for controller in viewControllers {
-                        if let editVC = controller as? EditObjectViewController {
-                            editVC.updateViewController(newObject: object)
-                            return
-                        }
-                    }
-                    let editVC = EditObjectViewController(object: object)
-                    navController?.pushViewController(editVC, animated: true)
                 } else {
                     navController?.dismiss(animated: true, completion: { [weak self] in
                         guard let self = self else { return }
@@ -562,21 +569,12 @@ class MapViewController: UIViewController {
                     savedObjects.append(object)
                 }
                 if checkObjectInSelectVC(id: object.id, objects: savedObjects) {
-                    for controller in viewControllers {
-                        if let infoVC = controller as? InfoObjectViewController {
-                            infoVC.object = object
-                            infoVC.fillData()
-                            infoVC.tableView.reloadData()
-                        }
+                    if viewControllers.count > 1 {
+                        editVCUpdateObject(viewControllers: viewControllers, newObject: object)
+                    } else {
+                        let editVC = EditObjectViewController(object: object)
+                        navController?.pushViewController(editVC, animated: true)
                     }
-                    for controller in viewControllers {
-                        if let editVC = controller as? EditObjectViewController {
-                            editVC.updateViewController(newObject: object)
-                            return
-                        }
-                    }
-                    let editVC = EditObjectViewController(object: object)
-                    navController?.pushViewController(editVC, animated: true)
                 } else {
                     navController?.dismiss(animated: true, completion: { [weak self] in
                         guard let self = self else { return }
@@ -585,21 +583,7 @@ class MapViewController: UIViewController {
                 }
                 // savedVC -------------------------------
             } else if viewControllers[0] is EditObjectViewController {
-                // editVC -------------------------------
-                for controller in viewControllers {
-                    if let infoVC = controller as? InfoObjectViewController {
-                        infoVC.object = object
-                        infoVC.fillData()
-                        infoVC.tableView.reloadData()
-                    }
-                }
-                for controller in viewControllers {
-                    if let editVC = controller as? EditObjectViewController {
-                        editVC.updateViewController(newObject: object)
-                        return
-                    }
-                }
-                // editVC -------------------------------
+                editVCUpdateObject(viewControllers: viewControllers, newObject: object)
             } else {
                 navController?.dismiss(animated: true, completion: { [weak self] in
                     guard let self = self else { return }

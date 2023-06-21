@@ -207,9 +207,6 @@ class InfoObjectViewController: UIViewController, UITableViewDelegate, UITableVi
             for tag in newTags {
                 newText += "\n" + tag
             }
-            if newText.count > 0 {
-                newText.removeLast()
-            }
             tableData.append(InfoCellData(icon: "tag", text: newText))
         }
     }
