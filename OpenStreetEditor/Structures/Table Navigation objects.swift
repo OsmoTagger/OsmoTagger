@@ -238,7 +238,7 @@ class CategoryCell: UITableViewCell {
             pathLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
             pathLabel.topAnchor.constraint(equalTo: contentView.centerYAnchor),
             pathLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            pathLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50)
+            pathLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50),
         ])
     }
     
@@ -355,7 +355,7 @@ class ItemCell: UITableViewCell {
             label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             rightIcon.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -10),
             rightIcon.widthAnchor.constraint(equalTo: rightIcon.backView.widthAnchor),
-            rightIcon.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+            rightIcon.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
         ])
     }
     

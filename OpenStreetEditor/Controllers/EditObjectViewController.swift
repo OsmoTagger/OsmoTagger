@@ -712,7 +712,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
     
     @objc func tapButton(sender: SelectButton) {
         guard let indexPath = sender.indexPath,
-              let cell = tableView.cellForRow(at: indexPath) as? ItemCell else {return}
+              let cell = tableView.cellForRow(at: indexPath) as? ItemCell else { return }
         let elem = tableData[indexPath.section].items[indexPath.row]
         switch elem {
         case let .link(wiki):
@@ -762,18 +762,18 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             }
             navigationController?.setToolbarHidden(true, animated: false)
             navigationController?.pushViewController(vc, animated: true)
-        case .text(_, _):
-            guard let key = cell.keyLabel.text else {return}
+        case .text:
+            guard let key = cell.keyLabel.text else { return }
             navigationController?.setToolbarHidden(true, animated: true)
             addTagView.keyField.text = key
             addTagView.keyField.isUserInteractionEnabled = false
             addTagView.valueField.text = cell.valueLabel.text
             addTagView.isHidden = false
             addTagView.valueField.becomeFirstResponder()
-        case .key(_, _):
+        case .key:
             guard tableData[indexPath.section].name == "Filled tags",
                   let key = cell.keyLabel.text,
-                  let value = cell.valueLabel.text else {return}
+                  let value = cell.valueLabel.text else { return }
             navigationController?.setToolbarHidden(true, animated: true)
             addTagView.keyField.text = key
             addTagView.keyField.isUserInteractionEnabled = true
@@ -797,10 +797,10 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
     
     //  Deleting a previously entered tag.
     func tableView(_: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        var tagKey: String? = nil
+        var tagKey: String?
         let data = tableData[indexPath.section].items[indexPath.row]
         switch data {
-        case .link(_), .label(_), .presetLink(_), .reference(_):
+        case .link(_), .label(_), .presetLink(_), .reference:
             return nil
         case let .key(key, _):
             tagKey = key
@@ -815,7 +815,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
         }
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, completionHandler in
             guard let self = self,
-            let key = tagKey else { return }
+                  let key = tagKey else { return }
             self.newProperties.removeValue(forKey: key)
             let tags = self.generateTags(properties: self.newProperties)
             self.object.tag = tags
@@ -826,5 +826,4 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
         return configuration
     }
-    
 }

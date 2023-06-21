@@ -13,4 +13,3 @@ struct EditSectionData {
     let name: String
     var items: [ItemElements]
 }
-

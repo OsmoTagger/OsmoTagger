@@ -235,7 +235,7 @@ extension ItemTagsViewController: UITableViewDataSource, UITableViewDelegate {
     @objc func tapButton(sender: SelectButton) {
         guard let navController = navigationController as? CategoryNavigationController,
               let indexPath = sender.indexPath,
-              let cell = tableView.cellForRow(at: indexPath) as? ItemCell else {return}
+              let cell = tableView.cellForRow(at: indexPath) as? ItemCell else { return }
         let elem = item.elements[indexPath.row]
         switch elem {
         case let .link(wiki):
@@ -438,7 +438,8 @@ extension ItemTagsViewController: UITableViewDataSource, UITableViewDelegate {
             cell.accessoryType = .none
         case let .presetLink(presetName):
             if let item = getItemFromName(name: presetName),
-               let icon = item.icon {
+               let icon = item.icon
+            {
                 cell.icon.icon.image = UIImage(named: icon)
                 cell.icon.backView.backgroundColor = .white
                 cell.icon.isHidden = false
@@ -478,10 +479,10 @@ extension ItemTagsViewController: UITableViewDataSource, UITableViewDelegate {
     
     //  Deleting a previously entered tag.
     func tableView(_: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        var tagKey: String? = nil
+        var tagKey: String?
         let data = item.elements[indexPath.row]
         switch data {
-        case .link(_), .label(_), .presetLink(_), .reference(_):
+        case .link(_), .label(_), .presetLink(_), .reference:
             return nil
         case let .key(key, _):
             tagKey = key
@@ -497,7 +498,7 @@ extension ItemTagsViewController: UITableViewDataSource, UITableViewDelegate {
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, completionHandler in
             guard let self = self,
                   let key = tagKey,
-                  let navController = self.navigationController as? CategoryNavigationController  else { return }
+                  let navController = self.navigationController as? CategoryNavigationController else { return }
             navController.objectProperties.removeValue(forKey: key)
             self.tableView.reloadData()
             completionHandler(true)

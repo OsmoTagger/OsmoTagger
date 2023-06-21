@@ -458,6 +458,7 @@ class MapViewController: UIViewController {
     @objc func tapTestButton() {}
     
 //    MARK: FUNCTIONS
+
     func openObjects(objects: [OSMAnyObject]) {
         if let viewControllers = navController?.viewControllers {
             // navController != nil

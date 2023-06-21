@@ -24,6 +24,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             }
         }
     }
+
     // View for enter comment to chageset
     var enterCommentView = UITextField()
     
