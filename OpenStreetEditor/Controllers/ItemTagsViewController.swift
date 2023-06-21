@@ -232,186 +232,28 @@ extension ItemTagsViewController: UITableViewDataSource, UITableViewDelegate {
         return item.elements.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? ItemCell,
-              let navController = navigationController as? CategoryNavigationController
-        else {
-            return UITableViewCell()
-        }
-        let data = item.elements[indexPath.row]
-//        switch data {
-//        case let .key(key, value):
-//            cell.icon.isHidden = false
-//            cell.icon.icon.image = UIImage(systemName: "tag")
-//            cell.icon.backView.backgroundColor = .systemBackground
-//            cell.keyLabel.text = key
-//            cell.keyLabel.isHidden = false
-//            cell.valueLabel.text = value
-//            cell.valueLabel.isHidden = false
-//            cell.label.isHidden = true
-//            cell.checkBox.isHidden = false
-//            cell.checkBox.addTarget(self, action: #selector(tapCheckBox), for: .touchUpInside)
-//            cell.checkBox.indexPath = indexPath
-//            if navController.objectProperties[key] == value {
-//                cell.checkBox.isChecked = true
-//            }
-//            cell.button.isHidden = true
-//            cell.button.selectClosure = nil
-//            cell.accessoryType = .none
-//        case let .link(wiki):
-//            cell.icon.icon.image = UIImage(named: "osm_wiki_logo")
-//            cell.icon.backView.backgroundColor = .white
-//            cell.icon.isHidden = false
-//            cell.keyLabel.text = wiki
-//            cell.keyLabel.isHidden = true
-//            cell.valueLabel.isHidden = true
-//            cell.label.isHidden = false
-//            cell.label.text = "Open wiki"
-//            cell.checkBox.isHidden = true
-//            cell.button.isHidden = true
-//            cell.button.selectClosure = nil
-//            cell.accessoryType = .disclosureIndicator
-//        case let .text(_, key):
-//            cell.icon.icon.image = UIImage(systemName: "tag")
-//            cell.icon.backView.backgroundColor = .systemBackground
-//            cell.icon.isHidden = false
-//            cell.keyLabel.text = key
-//            cell.keyLabel.isHidden = false
-//            cell.valueLabel.isHidden = false
-//            cell.valueLabel.text = navController.objectProperties[key]
-//            cell.label.isHidden = true
-//            cell.checkBox.isHidden = true
-//            cell.button.setImage(UIImage(systemName: "keyboard"), for: .normal)
-//            cell.button.key = key
-//            cell.button.addTarget(self, action: #selector(tapKeyBoard), for: .touchUpInside)
-//            cell.button.isHidden = false
-//            cell.button.selectClosure = nil
-//            cell.accessoryType = .none
-//        case let .combo(key, values, _):
-//            cell.icon.icon.image = UIImage(systemName: "tag")
-//            cell.icon.backView.backgroundColor = .systemBackground
-//            cell.icon.isHidden = false
-//            cell.keyLabel.text = key
-//            cell.keyLabel.isHidden = false
-//            cell.valueLabel.isHidden = false
-//            cell.valueLabel.text = navController.objectProperties[key]
-//            cell.checkBox.isHidden = true
-//            cell.button.isHidden = false
-//            cell.button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
-//            cell.configureButton(values: values, curentValue: navController.objectProperties[key])
-//            cell.button.selectClosure = { [weak self] newValue in
-//                guard let self = self else { return }
-//                if newValue == "" {
-//                    navController.objectProperties.removeValue(forKey: key)
-//                    cell.valueLabel.text = nil
-//                } else {
-//                    navController.objectProperties[key] = newValue
-//                    cell.valueLabel.text = newValue
-//                }
-//                self.tableView.reloadData()
-//            }
-//            cell.accessoryType = .none
-//        case let .multiselect(key, _, _):
-//            cell.icon.icon.image = UIImage(systemName: "tag")
-//            cell.icon.backView.backgroundColor = .systemBackground
-//            cell.icon.isHidden = false
-//            cell.keyLabel.text = key
-//            cell.keyLabel.isHidden = false
-//            cell.valueLabel.isHidden = false
-//            if var valuesString = navController.objectProperties[key] {
-//                valuesString = valuesString.replacingOccurrences(of: ";", with: ", ")
-//                cell.valueLabel.text = valuesString
-//            } else {
-//                cell.valueLabel.text = nil
-//            }
-//            cell.valueLabel.isHidden = false
-//            cell.label.isHidden = true
-//            cell.checkBox.isHidden = true
-//            cell.button.isHidden = true
-//            cell.button.selectClosure = nil
-//            cell.accessoryType = .disclosureIndicator
-//        case let .check(key, text, _):
-//            cell.icon.icon.image = UIImage(systemName: "tag")
-//            cell.icon.backView.backgroundColor = .systemBackground
-//            cell.icon.isHidden = false
-//            let keyValue = text ?? key
-//            cell.keyLabel.text = keyValue
-//            cell.keyLabel.isHidden = false
-//            cell.valueLabel.isHidden = false
-//            cell.valueLabel.text = navController.objectProperties[key]
-//            cell.label.isHidden = true
-//            cell.checkBox.isHidden = false
-//            cell.checkBox.indexPath = indexPath
-//            cell.checkBox.addTarget(self, action: #selector(tapCheckBox), for: .touchUpInside)
-//            if navController.objectProperties[key] != nil {
-//                cell.checkBox.isChecked = true
-//            } else {
-//                cell.checkBox.isChecked = false
-//            }
-//            cell.button.isHidden = true
-//            cell.button.selectClosure = nil
-//            cell.accessoryType = .none
-//        case let .label(text):
-//            cell.icon.isHidden = true
-//            cell.keyLabel.isHidden = true
-//            cell.valueLabel.isHidden = true
-//            cell.checkBox.isHidden = true
-//            cell.label.text = text
-//            cell.label.isHidden = false
-//            cell.button.isHidden = true
-//            cell.accessoryType = .none
-//        case let .presetLink(presetName):
-//            if let item = getItemFromName(name: presetName) {
-//                if let icon = item.icon {
-//                    cell.icon.icon.image = UIImage(named: icon)
-//                    cell.icon.backView.backgroundColor = .white
-//                    cell.icon.isHidden = false
-//                } else {
-//                    cell.icon.isHidden = true
-//                }
-//            }
-//            cell.keyLabel.isHidden = true
-//            cell.valueLabel.isHidden = true
-//            cell.label.isHidden = false
-//            cell.label.text = presetName
-//            cell.checkBox.isHidden = true
-//            cell.button.isHidden = true
-//            cell.button.selectClosure = nil
-//            cell.accessoryType = .disclosureIndicator
-//        default:
-//            cell.icon.isHidden = true
-//            cell.keyLabel.isHidden = true
-//            cell.valueLabel.isHidden = true
-//            cell.checkBox.isHidden = true
-//            cell.label.isHidden = true
-//            cell.button.isHidden = true
-//            cell.button.selectClosure = nil
-//            cell.accessoryType = .none
-//            cell.backgroundColor = .red
-//        }
-        return cell
-    }
-    
-    func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
+    @objc func tapButton(sender: SelectButton) {
         guard let navController = navigationController as? CategoryNavigationController,
-              let cell = tableView.cellForRow(at: indexPath) as? ItemCell else { return }
-        let data = item.elements[indexPath.row]
-        switch data {
+              let indexPath = sender.indexPath,
+              let cell = tableView.cellForRow(at: indexPath) as? ItemCell else {return}
+        let elem = item.elements[indexPath.row]
+        switch elem {
         case let .link(wiki):
             let str = "https://wiki.openstreetmap.org/wiki/" + wiki
-            guard let url = URL(string: str) else { return }
-            let svc = SFSafariViewController(url: url)
-            tableView.deselectRow(at: indexPath, animated: true)
+            guard let url = URL(string: str) else {
+                showAction(message: "Error generate URL: \(wiki)", addAlerts: [])
+                return
+            }
+            let svc = CustomSafari(url: url)
             present(svc, animated: true, completion: nil)
         case let .presetLink(presetName):
             guard let item = getItemFromName(name: presetName) else { return }
-            let vc = ItemTagsViewController(item: item)
-            navigationController?.pushViewController(vc, animated: true)
+            let itemVC = ItemTagsViewController(item: item)
+            navController.pushViewController(itemVC, animated: true)
         case let .multiselect(key, values, _):
             let vc = MultiSelectViewController(values: values, key: key, inputValue: navController.objectProperties[key])
             vc.callbackClosure = { [weak self] newValue in
                 guard let self = self else { return }
-                self.navigationController?.setToolbarHidden(false, animated: false)
                 if let value = newValue {
                     navController.objectProperties[key] = value
                 } else {
@@ -419,26 +261,298 @@ extension ItemTagsViewController: UITableViewDataSource, UITableViewDelegate {
                 }
                 self.tableView.reloadData()
             }
-            navigationController?.setToolbarHidden(true, animated: false)
             navigationController?.pushViewController(vc, animated: true)
-        case .combo(_, _, _), .text(_, _), .key:
-            guard let key = cell.keyLabel.text else { return }
-            navigationController?.setToolbarHidden(true, animated: true)
+        case let .text(_, key):
             addTagView.keyField.text = key
             addTagView.keyField.isUserInteractionEnabled = false
-            addTagView.valueField.text = cell.valueLabel.text
+            addTagView.valueField.text = navController.objectProperties[key]
             addTagView.isHidden = false
             addTagView.valueField.becomeFirstResponder()
-        case let .check(key, _, _):
-            navigationController?.setToolbarHidden(true, animated: true)
-            addTagView.keyField.text = key
-            addTagView.keyField.isUserInteractionEnabled = false
-            addTagView.valueField.text = cell.valueLabel.text
-            addTagView.isHidden = false
-            addTagView.valueField.becomeFirstResponder()
+        case let .check(key, _, valueOn):
+            let defValue = valueOn ?? "yes"
+            if navController.objectProperties[key] == nil {
+                navController.objectProperties[key] = defValue
+                cell.rightIcon.icon.image = UIImage(systemName: "checkmark.square")
+            } else {
+                navController.objectProperties.removeValue(forKey: key)
+                cell.rightIcon.icon.image = UIImage(systemName: "square")
+            }
         default:
-            tableView.deselectRow(at: indexPath, animated: true)
             return
         }
+        tableView.reloadData()
     }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? ItemCell,
+              let navController = navigationController as? CategoryNavigationController
+        else {
+            return UITableViewCell()
+        }
+        let data = item.elements[indexPath.row]
+        switch data {
+        case let .key(key, value):
+            cell.icon.isHidden = false
+            cell.icon.icon.image = UIImage(systemName: "tag")
+            cell.icon.backView.backgroundColor = .systemBackground
+            cell.keyLabel.text = key
+            cell.keyLabel.isHidden = false
+            cell.valueLabel.text = value
+            cell.valueLabel.isHidden = false
+            cell.label.isHidden = true
+            cell.label.text = nil
+            cell.button.isHidden = false
+            cell.button.selectClosure = nil
+            cell.button.indexPath = indexPath
+            cell.button.addTarget(self, action: #selector(tapButton), for: .touchUpInside)
+            if navController.objectProperties[key] == value {
+                cell.rightIcon.icon.image = UIImage(systemName: "checkmark.square")
+            } else {
+                cell.rightIcon.icon.image = UIImage(systemName: "square")
+            }
+            cell.rightIcon.isHidden = false
+            cell.accessoryType = .none
+        case let .link(wiki):
+            cell.icon.icon.image = UIImage(named: "osm_wiki_logo")
+            cell.icon.backView.backgroundColor = .white
+            cell.icon.isHidden = false
+            cell.keyLabel.text = wiki
+            cell.keyLabel.isHidden = true
+            cell.valueLabel.isHidden = true
+            cell.valueLabel.text = nil
+            cell.label.isHidden = false
+            cell.label.text = "Open wiki"
+            cell.button.isHidden = false
+            cell.button.selectClosure = nil
+            cell.button.indexPath = indexPath
+            cell.button.addTarget(self, action: #selector(tapButton), for: .touchUpInside)
+            cell.rightIcon.icon.image = nil
+            cell.rightIcon.isHidden = true
+            cell.accessoryType = .disclosureIndicator
+        case let .text(_, key):
+            cell.icon.icon.image = UIImage(systemName: "tag")
+            cell.icon.backView.backgroundColor = .systemBackground
+            cell.icon.isHidden = false
+            cell.keyLabel.text = key
+            cell.keyLabel.isHidden = false
+            cell.valueLabel.isHidden = false
+            cell.valueLabel.text = navController.objectProperties[key]
+            cell.label.isHidden = true
+            cell.label.text = nil
+            cell.button.indexPath = indexPath
+            cell.button.selectClosure = nil
+            cell.button.addTarget(self, action: #selector(tapButton), for: .touchUpInside)
+            cell.button.isHidden = false
+            cell.rightIcon.icon.image = UIImage(systemName: "keyboard")
+            cell.rightIcon.isHidden = false
+            cell.accessoryType = .none
+        case let .combo(key, values, _):
+            cell.icon.icon.image = UIImage(systemName: "tag")
+            cell.icon.backView.backgroundColor = .systemBackground
+            cell.icon.isHidden = false
+            cell.keyLabel.text = key
+            cell.keyLabel.isHidden = false
+            cell.valueLabel.isHidden = false
+            cell.valueLabel.text = navController.objectProperties[key]
+            cell.label.text = nil
+            cell.label.isHidden = true
+            cell.button.isHidden = false
+            cell.button.indexPath = indexPath
+            cell.configureButton(values: values, curentValue: navController.objectProperties[key])
+            cell.button.selectClosure = { [weak self] newValue in
+                guard let self = self else { return }
+                if newValue == "Custom value" {
+                    self.addTagView.keyField.text = key
+                    self.addTagView.keyField.isUserInteractionEnabled = false
+                    self.addTagView.valueField.text = navController.objectProperties[key]
+                    self.addTagView.isHidden = false
+                    self.addTagView.valueField.becomeFirstResponder()
+                } else {
+                    navController.objectProperties[key] = newValue
+                    cell.valueLabel.text = newValue
+                }
+                self.tableView.reloadData()
+            }
+            cell.rightIcon.icon.image = UIImage(systemName: "chevron.down")
+            cell.rightIcon.isHidden = false
+            cell.accessoryType = .none
+        case let .multiselect(key, _, _):
+            cell.icon.icon.image = UIImage(systemName: "tag")
+            cell.icon.backView.backgroundColor = .systemBackground
+            cell.icon.isHidden = false
+            cell.keyLabel.text = key
+            cell.keyLabel.isHidden = false
+            cell.valueLabel.isHidden = false
+            if var valuesString = navController.objectProperties[key] {
+                valuesString = valuesString.replacingOccurrences(of: ";", with: ", ")
+                cell.valueLabel.text = valuesString
+            } else {
+                cell.valueLabel.text = nil
+            }
+            cell.valueLabel.isHidden = false
+            cell.label.isHidden = true
+            cell.label.text = nil
+            cell.button.indexPath = indexPath
+            cell.button.addTarget(self, action: #selector(tapButton), for: .touchUpInside)
+            cell.button.isHidden = false
+            cell.button.selectClosure = nil
+            cell.rightIcon.icon.image = nil
+            cell.rightIcon.isHidden = true
+            cell.accessoryType = .disclosureIndicator
+        case let .check(key, text, _):
+            cell.icon.icon.image = UIImage(systemName: "tag")
+            cell.icon.backView.backgroundColor = .systemBackground
+            cell.icon.isHidden = false
+            let keyValue = text ?? key
+            cell.keyLabel.text = keyValue
+            cell.keyLabel.isHidden = false
+            cell.valueLabel.isHidden = false
+            cell.valueLabel.text = navController.objectProperties[key]
+            cell.label.isHidden = true
+            cell.label.text = nil
+            cell.button.isHidden = false
+            cell.button.selectClosure = nil
+            cell.button.indexPath = indexPath
+            cell.button.addTarget(self, action: #selector(tapButton), for: .touchUpInside)
+            if navController.objectProperties[key] != nil {
+                cell.rightIcon.icon.image = UIImage(systemName: "checkmark.square")
+            } else {
+                cell.rightIcon.icon.image = UIImage(systemName: "square")
+            }
+            cell.rightIcon.isHidden = false
+            cell.accessoryType = .none
+        case let .label(text):
+            cell.icon.isHidden = true
+            cell.icon.icon.image = nil
+            cell.keyLabel.isHidden = true
+            cell.keyLabel.text = nil
+            cell.valueLabel.isHidden = true
+            cell.valueLabel.text = nil
+            cell.label.text = text
+            cell.label.isHidden = false
+            cell.button.isHidden = false
+            cell.button.indexPath = indexPath
+            cell.button.addTarget(self, action: #selector(tapButton), for: .touchUpInside)
+            cell.rightIcon.icon.image = nil
+            cell.rightIcon.isHidden = true
+            cell.accessoryType = .none
+        case let .presetLink(presetName):
+            if let item = getItemFromName(name: presetName),
+               let icon = item.icon {
+                cell.icon.icon.image = UIImage(named: icon)
+                cell.icon.backView.backgroundColor = .white
+                cell.icon.isHidden = false
+            } else {
+                cell.icon.isHidden = true
+                cell.icon.icon.image = nil
+            }
+            cell.keyLabel.isHidden = true
+            cell.keyLabel.text = nil
+            cell.valueLabel.isHidden = true
+            cell.valueLabel.text = nil
+            cell.label.isHidden = false
+            cell.label.text = presetName
+            cell.button.isHidden = false
+            cell.button.selectClosure = nil
+            cell.button.indexPath = indexPath
+            cell.button.addTarget(self, action: #selector(tapButton), for: .touchUpInside)
+            cell.rightIcon.icon.image = nil
+            cell.rightIcon.isHidden = true
+            cell.accessoryType = .disclosureIndicator
+        default:
+            cell.icon.isHidden = true
+            cell.icon.icon.image = nil
+            cell.keyLabel.isHidden = true
+            cell.keyLabel.text = nil
+            cell.valueLabel.isHidden = true
+            cell.valueLabel.text = nil
+            cell.label.isHidden = true
+            cell.label.text = nil
+            cell.button.isHidden = true
+            cell.button.selectClosure = nil
+            cell.accessoryType = .none
+            cell.backgroundColor = .red
+        }
+        return cell
+    }
+    
+    //  Deleting a previously entered tag.
+    func tableView(_: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        var tagKey: String? = nil
+        let data = item.elements[indexPath.row]
+        switch data {
+        case .link(_), .label(_), .presetLink(_), .reference(_):
+            return nil
+        case let .key(key, _):
+            tagKey = key
+        case let .check(key, _, _):
+            tagKey = key
+        case let .combo(key, _, _):
+            tagKey = key
+        case let .multiselect(key, _, _):
+            tagKey = key
+        case let .text(_, key):
+            tagKey = key
+        }
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, completionHandler in
+            guard let self = self,
+                  let key = tagKey,
+                  let navController = self.navigationController as? CategoryNavigationController  else { return }
+            navController.objectProperties.removeValue(forKey: key)
+            self.tableView.reloadData()
+            completionHandler(true)
+        }
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
+        return configuration
+    }
+    
+//    func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        guard let navController = navigationController as? CategoryNavigationController,
+//              let cell = tableView.cellForRow(at: indexPath) as? ItemCell else { return }
+//        let data = item.elements[indexPath.row]
+//        switch data {
+//        case let .link(wiki):
+//            let str = "https://wiki.openstreetmap.org/wiki/" + wiki
+//            guard let url = URL(string: str) else { return }
+//            let svc = SFSafariViewController(url: url)
+//            tableView.deselectRow(at: indexPath, animated: true)
+//            present(svc, animated: true, completion: nil)
+//        case let .presetLink(presetName):
+//            guard let item = getItemFromName(name: presetName) else { return }
+//            let vc = ItemTagsViewController(item: item)
+//            navigationController?.pushViewController(vc, animated: true)
+//        case let .multiselect(key, values, _):
+//            let vc = MultiSelectViewController(values: values, key: key, inputValue: navController.objectProperties[key])
+//            vc.callbackClosure = { [weak self] newValue in
+//                guard let self = self else { return }
+//                self.navigationController?.setToolbarHidden(false, animated: false)
+//                if let value = newValue {
+//                    navController.objectProperties[key] = value
+//                } else {
+//                    navController.objectProperties.removeValue(forKey: key)
+//                }
+//                self.tableView.reloadData()
+//            }
+//            navigationController?.setToolbarHidden(true, animated: false)
+//            navigationController?.pushViewController(vc, animated: true)
+//        case .combo(_, _, _), .text(_, _), .key:
+//            guard let key = cell.keyLabel.text else { return }
+//            navigationController?.setToolbarHidden(true, animated: true)
+//            addTagView.keyField.text = key
+//            addTagView.keyField.isUserInteractionEnabled = false
+//            addTagView.valueField.text = cell.valueLabel.text
+//            addTagView.isHidden = false
+//            addTagView.valueField.becomeFirstResponder()
+//        case let .check(key, _, _):
+//            navigationController?.setToolbarHidden(true, animated: true)
+//            addTagView.keyField.text = key
+//            addTagView.keyField.isUserInteractionEnabled = false
+//            addTagView.valueField.text = cell.valueLabel.text
+//            addTagView.isHidden = false
+//            addTagView.valueField.becomeFirstResponder()
+//        default:
+//            tableView.deselectRow(at: indexPath, animated: true)
+//            return
+//        }
+//    }
 }

@@ -827,8 +827,4 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
         return configuration
     }
     
-//    func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        let elem = tableData[indexPath.section].items[indexPath.row]
-//
-//    }
 }
