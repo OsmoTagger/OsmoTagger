@@ -531,11 +531,13 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.valueLabel.text = value
             cell.valueLabel.isHidden = false
             cell.label.isHidden = true
+            cell.label.text = nil
             cell.button.selectClosure = nil
             cell.button.addTarget(self, action: #selector(tapButton), for: .touchUpInside)
             cell.button.indexPath = indexPath
             cell.button.isHidden = false
             cell.rightIcon.isHidden = true
+            cell.rightIcon.icon.image = nil
             cell.accessoryType = .none
         case let .link(wiki):
             cell.icon.icon.image = UIImage(named: "osm_wiki_logo")
@@ -544,6 +546,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.keyLabel.text = wiki
             cell.keyLabel.isHidden = true
             cell.valueLabel.isHidden = true
+            cell.valueLabel.text = nil
             cell.label.isHidden = false
             cell.label.text = "Open wiki"
             cell.button.isHidden = false
@@ -552,6 +555,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.button.indexPath = indexPath
             cell.button.isHidden = false
             cell.rightIcon.isHidden = true
+            cell.rightIcon.icon.image = nil
             cell.accessoryType = .disclosureIndicator
         case let .text(_, key):
             cell.icon.icon.image = UIImage(systemName: "tag")
@@ -562,6 +566,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.valueLabel.text = newProperties[key]
             cell.valueLabel.isHidden = false
             cell.label.isHidden = true
+            cell.label.text = nil
             cell.button.selectClosure = nil
             cell.button.addTarget(self, action: #selector(tapButton), for: .touchUpInside)
             cell.button.isHidden = false
@@ -578,7 +583,9 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.valueLabel.text = newProperties[key]
             cell.valueLabel.isHidden = false
             cell.label.isHidden = true
+            cell.label.text = nil
             cell.button.isHidden = false
+            cell.button.indexPath = indexPath
             cell.configureButton(values: values, curentValue: newProperties[key])
             cell.button.selectClosure = { [weak self] newValue in
                 guard let self = self else { return }
@@ -608,6 +615,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.valueLabel.isHidden = false
             cell.valueLabel.text = newProperties[key]
             cell.label.isHidden = true
+            cell.label.text = nil
             cell.button.isHidden = false
             cell.button.selectClosure = nil
             cell.button.addTarget(self, action: #selector(tapButton), for: .touchUpInside)
@@ -640,7 +648,9 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
                 }
             }
             cell.keyLabel.isHidden = true
+            cell.keyLabel.text = nil
             cell.valueLabel.isHidden = true
+            cell.valueLabel.text = nil
             cell.label.isHidden = false
             cell.label.text = presetName
             cell.button.isHidden = false
@@ -648,6 +658,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.button.addTarget(self, action: #selector(tapButton), for: .touchUpInside)
             cell.button.indexPath = indexPath
             cell.rightIcon.isHidden = true
+            cell.rightIcon.icon.image = nil
             cell.accessoryType = .disclosureIndicator
         case let .multiselect(key, _, _):
             cell.icon.icon.image = UIImage(systemName: "tag")
@@ -663,20 +674,26 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
                 cell.valueLabel.text = nil
             }
             cell.label.isHidden = true
+            cell.label.text = nil
             cell.button.isHidden = false
             cell.button.indexPath = indexPath
             cell.button.selectClosure = nil
             cell.button.addTarget(self, action: #selector(tapButton), for: .touchUpInside)
             cell.rightIcon.isHidden = true
+            cell.rightIcon.icon.image = nil
             cell.accessoryType = .disclosureIndicator
         case let .label(text):
             cell.icon.isHidden = true
+            cell.icon.icon.image = nil
             cell.keyLabel.isHidden = true
+            cell.keyLabel.text = nil
             cell.valueLabel.isHidden = true
+            cell.valueLabel.text = nil
             cell.label.text = text
             cell.label.isHidden = false
             cell.button.isHidden = true
             cell.rightIcon.isHidden = true
+            cell.rightIcon.icon.image = nil
             cell.accessoryType = .none
         default:
             cell.icon.isHidden = true
@@ -686,6 +703,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
             cell.button.isHidden = true
             cell.button.selectClosure = nil
             cell.rightIcon.isHidden = true
+            cell.rightIcon.icon.image = nil
             cell.accessoryType = .none
             cell.backgroundColor = .red
         }
