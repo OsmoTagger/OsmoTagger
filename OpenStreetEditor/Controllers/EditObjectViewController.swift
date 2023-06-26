@@ -425,16 +425,6 @@ class EditObjectViewController: UIViewController {
                                      tableView.leftAnchor.constraint(equalTo: view.leftAnchor)])
     }
     
-//    @objc func tapKeyBoard(_ sender: SelectButton) {
-//        guard let key = sender.key else { return }
-//        navigationController?.setToolbarHidden(true, animated: true)
-//        addTagView.keyField.text = key
-//        addTagView.keyField.isUserInteractionEnabled = false
-//        addTagView.valueField.text = newProperties[key]
-//        addTagView.isHidden = false
-//        addTagView.valueField.becomeFirstResponder()
-//    }
-    
     func setEnterTagManuallyView() {
         //  When the tag is entered manually, addView.callbackClosure is triggered, which passes the entered tag=value pair. The table data is updated.
         addTagView.callbackClosure = { [weak self] addedTag in
@@ -469,24 +459,6 @@ class EditObjectViewController: UIViewController {
         ])
     }
     
-    //  Tap on the checkbox.
-//    @objc func tapCheckBox(_ sender: CheckBox) {
-//        sender.isChecked = !sender.isChecked
-//        let data = tableData[sender.indexPath.section].items[sender.indexPath.row]
-//        switch data {
-//        case let .check(key, _, valueOn):
-//            let defValue = valueOn ?? "yes"
-//            if sender.isChecked {
-//                newProperties[key] = defValue
-//            } else {
-//                newProperties.removeValue(forKey: key)
-//            }
-//        default:
-//            return
-//        }
-//        tableView.reloadData()
-//    }
-    
     //  Updating the view when the keyboard appears.
     @objc func keyboardWillShow(notification: NSNotification) {
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
@@ -509,7 +481,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_: UITableView, titleForHeaderInSection section: Int) -> String? {
         return tableData[section].name
     }
-    
+
     func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tableData[section].items.count
     }

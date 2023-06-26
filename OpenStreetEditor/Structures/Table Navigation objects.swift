@@ -233,10 +233,10 @@ class CategoryCell: UITableViewCell {
             bigLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             smallLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
             smallLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
-            smallLabel.bottomAnchor.constraint(equalTo: contentView.centerYAnchor),
+            smallLabel.bottomAnchor.constraint(equalTo: contentView.centerYAnchor, constant: 10),
             smallLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50),
             pathLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
-            pathLabel.topAnchor.constraint(equalTo: contentView.centerYAnchor),
+            pathLabel.topAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -3),
             pathLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             pathLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50),
         ])

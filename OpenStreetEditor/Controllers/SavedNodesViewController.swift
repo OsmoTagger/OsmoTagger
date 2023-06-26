@@ -243,7 +243,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
         }
         return result
     }
-
+    
     func numberOfSections(in _: UITableView) -> Int {
         return tableData.count
     }

@@ -45,7 +45,6 @@
 		2CA6A40A29CAC87D004233E2 /* defaultPresets.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2CA6A3F329CAB63F004233E2 /* defaultPresets.xml */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2CA74E96291EE1BD00413930 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA74E95291EE1BD00413930 /* AppSettings.swift */; };
 		2CB58A6329ECF01800FD0E59 /* QuickGuideViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB58A6229ECF01800FD0E59 /* QuickGuideViewController.swift */; };
-		2CBA844E2A1492E500CE687F /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = 2CBA844D2A1492E500CE687F /* XMLCoder */; };
 		2CCB304229D4553100C8E5E7 /* SelectObjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB304129D4553100C8E5E7 /* SelectObjectViewController.swift */; };
 		2CD2E7AC29D30D150042D36E /* MultiSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD2E7AB29D30D150042D36E /* MultiSelectViewController.swift */; };
 		2CD4B48429C6DC2B00040018 /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD4B48329C6DC2B00040018 /* CategoryViewController.swift */; };
@@ -54,7 +53,6 @@
 		2CD9133C29AB972E00A4A853 /* Table elements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD9133B29AB972E00A4A853 /* Table elements.swift */; };
 		2CDEA6D729862C2B00E5219D /* GLMapVectorObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CDEA6D629862C2B00E5219D /* GLMapVectorObject.swift */; };
 		2CE00A812A253DA5008A6119 /* MapClientProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE00A802A253DA5008A6119 /* MapClientProtocol.swift */; };
-		2CECC4B92A30AB25002B41EC /* GLMap in Frameworks */ = {isa = PBXBuildFile; productRef = 2CECC4B82A30AB25002B41EC /* GLMap */; };
 		2CF9E7732A0C9FFC003DB2CC /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF9E7722A0C9FFC003DB2CC /* UIColor.swift */; };
 		2CFF98E4299BE44D0045D6B8 /* SavedNodesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFF98E3299BE44D0045D6B8 /* SavedNodesViewController.swift */; };
 		6C76E75928EC12AE0048C378 /* FastHash.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C76E75828EC12AE0048C378 /* FastHash.m */; };
@@ -66,6 +64,8 @@
 		6CF514DB28FB4B1F001D2758 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 6CF514DA28FB4B1F001D2758 /* libz.tbd */; };
 		6CF514DF28FB4C14001D2758 /* libexpat.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 6CF514DE28FB4C14001D2758 /* libexpat.tbd */; };
 		6CF5D93928FB485F001D2758 /* osmium.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6CF5D93828FB485F001D2758 /* osmium.mm */; };
+		E3B9A5CD2A463E0400C6839A /* GLMap in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CC2A463E0400C6839A /* GLMap */; };
+		E3B9A5CF2A463E1800C6839A /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CE2A463E1800C6839A /* XMLCoder */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -164,9 +164,9 @@
 			files = (
 				6CF514DF28FB4C14001D2758 /* libexpat.tbd in Frameworks */,
 				6CF514DB28FB4B1F001D2758 /* libz.tbd in Frameworks */,
-				2CBA844E2A1492E500CE687F /* XMLCoder in Frameworks */,
+				E3B9A5CF2A463E1800C6839A /* XMLCoder in Frameworks */,
+				E3B9A5CD2A463E0400C6839A /* GLMap in Frameworks */,
 				6CF514D928FB4B05001D2758 /* libbz2.tbd in Frameworks */,
-				2CECC4B92A30AB25002B41EC /* GLMap in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -405,8 +405,8 @@
 			);
 			name = OpenStreetEditor;
 			packageProductDependencies = (
-				2CBA844D2A1492E500CE687F /* XMLCoder */,
-				2CECC4B82A30AB25002B41EC /* GLMap */,
+				E3B9A5CC2A463E0400C6839A /* GLMap */,
+				E3B9A5CE2A463E1800C6839A /* XMLCoder */,
 			);
 			productName = "OSM editor";
 			productReference = 2042BCE7289C696E0026514E /* OpenStreetEditor.app */;
@@ -856,15 +856,15 @@
 			package = 2C529E3629102F8400F46972 /* XCRemoteSwiftPackageReference "XMLCoder" */;
 			productName = XMLCoder;
 		};
-		2CBA844D2A1492E500CE687F /* XMLCoder */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2C529E3629102F8400F46972 /* XCRemoteSwiftPackageReference "XMLCoder" */;
-			productName = XMLCoder;
-		};
-		2CECC4B82A30AB25002B41EC /* GLMap */ = {
+		E3B9A5CC2A463E0400C6839A /* GLMap */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2CFB66C82A29269D00E474A3 /* XCRemoteSwiftPackageReference "GLMapSwift" */;
 			productName = GLMap;
+		};
+		E3B9A5CE2A463E1800C6839A /* XMLCoder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C529E3629102F8400F46972 /* XCRemoteSwiftPackageReference "XMLCoder" */;
+			productName = XMLCoder;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
