@@ -153,7 +153,7 @@ class MapViewController: UIViewController {
             animation.duration = self.animationDuration
             animation.transition = .linear
             self.mapView.mapGeoCenter = center
-            self.mapView.mapZoom = 11
+            self.mapView.mapZoomLevel = 5
         }
     }
     
