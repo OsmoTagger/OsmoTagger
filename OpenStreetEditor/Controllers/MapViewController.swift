@@ -118,9 +118,42 @@ class MapViewController: UIViewController {
                 mapView.mapGeoCenter = GLMapGeoPoint(lat: location.coordinate.latitude, lon: location.coordinate.longitude)
                 mapView.mapZoomLevel = 15
             } else {
-                mapView.mapGeoCenter = GLMapGeoPoint(lat: 52.5212, lon: 13.4057)
-                mapView.mapZoomLevel = 10
+                let alert1 = UIAlertAction(title: "USA", style: .default, handler: { [weak self] _ in
+                    let center = GLMapGeoPoint(lat: 40.396764, lon: -99.360352)
+                    self?.moveMap(center: center)
+                })
+                let alert2 = UIAlertAction(title: "South America", style: .default, handler: { [weak self] _ in
+                    let center = GLMapGeoPoint(lat: -8.537565, lon: -58.886719)
+                    self?.moveMap(center: center)
+                })
+                let alert3 = UIAlertAction(title: "Western Europe", style: .default, handler: { [weak self] _ in
+                    let center = GLMapGeoPoint(lat: 52.5212, lon: 13.4057)
+                    self?.moveMap(center: center)
+                })
+                let alert4 = UIAlertAction(title: "Eastern Europe", style: .default, handler: { [weak self] _ in
+                    let center = GLMapGeoPoint(lat: 55.736389, lon: 37.694092)
+                    self?.moveMap(center: center)
+                })
+                let alert5 = UIAlertAction(title: "Asia", style: .default, handler: { [weak self] _ in
+                    let center = GLMapGeoPoint(lat: 36.527295, lon: 127.968750)
+                    self?.moveMap(center: center)
+                })
+                let alert6 = UIAlertAction(title: "Africa", style: .default, handler: { [weak self] _ in
+                    let center = GLMapGeoPoint(lat: 6.402648, lon: 22.148438)
+                    self?.moveMap(center: center)
+                })
+                showAction(message: "Select a region", addAlerts: [alert1, alert2, alert3, alert4, alert5, alert6])
             }
+        }
+    }
+    
+    func moveMap(center: GLMapGeoPoint) {
+        mapView.animate { [weak self] animation in
+            guard let self = self else { return }
+            animation.duration = self.animationDuration
+            animation.transition = .linear
+            self.mapView.mapGeoCenter = center
+            self.mapView.mapZoom = 10
         }
     }
     
