@@ -50,11 +50,11 @@ class DownloadIndicatorView: UIView {
     }
     
     func startAnimating() {
-        if indicator.isHidden == false {
-            return
-        }
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
+            if indicator.isHidden == false {
+                return
+            }
             self.indicator.isHidden = false
             let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation.z")
             rotationAnimation.toValue = NSNumber(value: Double.pi * 2)
