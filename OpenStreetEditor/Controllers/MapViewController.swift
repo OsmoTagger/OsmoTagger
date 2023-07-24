@@ -84,7 +84,7 @@ class MapViewController: UIViewController {
         mapClient.showSavedObjects()
     }
     
-//        MARK: ELEMENTS AND ACTIONS
+    // MARK: MapView and layers
     
     func setMapView() {
         mapView = GLMapView()
@@ -206,6 +206,7 @@ class MapViewController: UIViewController {
         }
     }
     
+    // MARK: Set screen elements
     //  The indicator that appears in place of the data download button.
     func setLoadIndicator() {
         indicator.isUserInteractionEnabled = false
@@ -490,7 +491,7 @@ class MapViewController: UIViewController {
     
     @objc func tapTestButton() {}
     
-//    MARK: FUNCTIONS
+//    MARK: Open objects and screens
 
     func openObjects(objects: [OSMAnyObject]) {
         if let viewControllers = navController?.viewControllers {
