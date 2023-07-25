@@ -39,8 +39,8 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         let channelText = "Telegram channel"
         let gitText = "Source code."
         let support = SettingsTableData(name: "Support and development", items: [
-            SettingsCellData(icon: "chatIcon.png", text: telegramText, link: "https://t.me/OpenStreetEditor_chat"),
-            SettingsCellData(icon: "channelIcon.png", text: channelText, link: "https://t.me/OpenStreetEditor"),
+            SettingsCellData(icon: "chatIcon.png", text: telegramText, link: "https://t.me/OsmoTagger_chat"),
+            SettingsCellData(icon: "channelIcon.png", text: channelText, link: "https://t.me/OsmoTagger"),
             SettingsCellData(icon: "gitIcon.png", text: gitText, link: "https://github.com/OpenStreetEditor/OpenStreetEditor"),
         ])
         tableData.append(support)

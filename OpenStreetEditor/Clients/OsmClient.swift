@@ -55,11 +55,11 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
     }
     
     func authSessionStart(handler: @escaping (URL?) -> Void) {
-        guard let authURL = URL(string: "\(AppSettings.settings.authServer)/oauth2/authorize?client_id=\(AppSettings.settings.clienID)&redirect_uri=openstreeteditor:/&response_type=code&scope=read_prefs%20write_api") else {
+        guard let authURL = URL(string: "\(AppSettings.settings.authServer)/oauth2/authorize?client_id=\(AppSettings.settings.clienID)&redirect_uri=osmotagger:/&response_type=code&scope=read_prefs%20write_api") else {
             handler(nil)
             return
         }
-        let scheme = "openstreeteditor"
+        let scheme = "osmotagger"
         let authSession = ASWebAuthenticationSession(url: authURL, callbackURLScheme: scheme) { callbackURL, error in
             if error != nil {
                 handler(nil)
@@ -78,7 +78,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         guard let url = URL(string: "\(AppSettings.settings.authServer)/oauth2/token") else {
             throw "Error generate auth URL for get access token. Code: \(code)"
         }
-        let stringBody = "grant_type=authorization_code&code=\(code)&redirect_uri=openstreeteditor:/&client_secret=\(AppSettings.settings.clientSecret)&client_id=\(AppSettings.settings.clienID)"
+        let stringBody = "grant_type=authorization_code&code=\(code)&redirect_uri=osmotagger:/&client_secret=\(AppSettings.settings.clientSecret)&client_id=\(AppSettings.settings.clienID)"
         let dataBody = stringBody.data(using: .utf8)
         var request = URLRequest(url: url)
         request.httpBody = dataBody
@@ -163,7 +163,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
                 continue
             }
         }
-        var changeset = osmChange(version: "0.6", generator: "OpenstreetEditor", modify: Modify(node: [], way: [], relation: []), create: Create(node: [], way: []), delete: delete)
+        var changeset = osmChange(version: "0.6", generator: "OsmoTagger", modify: Modify(node: [], way: [], relation: []), create: Create(node: [], way: []), delete: delete)
         for object in sendObjs {
             if object.id < 0 {
                 switch object.type {
@@ -250,8 +250,8 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         let requestData = """
         <osm>
             <changeset>
-                <tag k="created_by" v="OpenStreetEditor \(appVersion)(\(buildNumber))"/>
-                <tag k="contact:telegram" v="https://t.me/OpenStreetEditor"/>
+                <tag k="created_by" v="OsmoTagger \(appVersion)(\(buildNumber))"/>
+                <tag k="contact:telegram" v="https://t.me/OsmoTagger_chat"/>
                 <tag k="comment" v="\(comment)"/>
             </changeset>
         </osm>

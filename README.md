@@ -1,6 +1,6 @@
 # README
 
-OpenStreetEditor is an open-source project for editing OpenStreetMap maps on iOS, utilizing the fast and powerful [GLMap framework](https://globus.software) for displaying OpenStreetMap maps.
+OsmoTagger is an open-source project for editing OpenStreetMap maps on iOS, utilizing the fast and powerful [GLMap framework](https://globus.software) for displaying OpenStreetMap maps.
 
 ## Resources
 
@@ -9,11 +9,11 @@ OpenStreetEditor is an open-source project for editing OpenStreetMap maps on iOS
 
 ## Installation
 
-Follow these steps to build and run OpenStreetEditor:
+Follow these steps to build and run OsmoTagger:
 
 1. Clone the repository.
 2. Register an account on the [GLMap developer's website](https://user.getyourmap.com/) and obtain an API key to access the functionality.
-3. In the [settings](https://www.openstreetmap.org/oauth2/applications) of your personal account, register a new OAuth 2.0 application. Specify an unoccupied URI, for example, "myOpenStreetMapEditor", and save the received client ID and client secret. OpenStreetEditor allows you to work on a test server, so if you want to use it, register the same application in your [personal account](https://master.apis.dev.openstreetmap.org/oauth2/applications) on the test server (the accounts of the working and test server are not linked, you will need to register a new account). Don't forget that there is no data on the test server by default. You can upload data to the region you need using a simple [Python script](https://github.com/Zverik/osm_to_sandbox).
+3. In the [settings](https://www.openstreetmap.org/oauth2/applications) of your personal account, register a new OAuth 2.0 application. Specify an unoccupied URI, for example, "myOpenStreetMapEditor", and save the received client ID and client secret. OsmoTagger allows you to work on a test server, so if you want to use it, register the same application in your [personal account](https://master.apis.dev.openstreetmap.org/oauth2/applications) on the test server (the accounts of the working and test server are not linked, you will need to register a new account). Don't forget that there is no data on the test server by default. You can upload data to the region you need using a simple [Python script](https://github.com/Zverik/osm_to_sandbox).
 4. Specify your URI in the OsmClient class in the authorization methods.
 5. Create a new ApiKeys.swift file and put it in the repository. This file has been added to .gitignore and will not be made publicly available. Create a structure in it:
 
@@ -29,5 +29,5 @@ Follow these steps to build and run OpenStreetEditor:
 
 ## Discussion and help
 
-* You can ask all questions and suggestions in the OpenStreetEditor [telegram chat](https://t.me/OpenStreetEditor_chat).
-* You can follow the news in the [telegram channel](https://t.me/OpenStreetEditor).
+* You can ask all questions and suggestions in the OsmoTagger [telegram chat](https://t.me/OsmoTagger_chat).
+* You can follow the news in the [telegram channel](https://t.me/OsmoTagger).
