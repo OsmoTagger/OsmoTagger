@@ -701,7 +701,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/OpenStreetEditor/third_party";
 				INFOPLIST_FILE = OpenStreetEditor/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = OpenStreetEditor;
+				INFOPLIST_KEY_CFBundleDisplayName = OsmoTagger;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Разрешите доступ";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -740,7 +740,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/OpenStreetEditor/third_party";
 				INFOPLIST_FILE = OpenStreetEditor/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = OpenStreetEditor;
+				INFOPLIST_KEY_CFBundleDisplayName = OsmoTagger;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Разрешите доступ";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
