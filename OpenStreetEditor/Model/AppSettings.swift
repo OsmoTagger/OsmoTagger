@@ -317,4 +317,40 @@ final class AppSettings: NSObject {
             deletedObjects = [:]
         }
     }
+    
+    // These objects do not exist in reality, they are used for automatic program screenshot capturing.
+    let testGeojson = """
+    {"type":"Feature","properties":{"surface":"asphalt","version":"8.000000","cutting":"yes","highway":"unclassified","access":"private","maxspeed":"15 mph","oneway":"yes","lanes":"3","name":"Apple Park Way","access:employee":"designated","@id":"518088852.000000"},"geometry":{"type":"MultiLineString","coordinates":[[[-122.0118963,37.3340807],[-122.0121857,37.3344344],[-122.0124375,37.3347389]]]}}
+    """
+    
+    var screenShotEditedObject: OSMAnyObject {
+        let vector = try? GLMapVectorObject.createVectorObjects(fromGeoJSON: testGeojson)
+        let tags: [Tag] = [Tag(k: "highway", v: "motorway_link", value: "")]
+        var object = OSMAnyObject(type: .closedway, id: 518088852, version: 3, changeset: 3, lat: nil, lon: nil, tag: tags, nd: [], nodes: [:], members: [], vector: vector![0])
+        object.oldTags = [:]
+        return object
+    }
+    
+    var screenShotCreatedObject: OSMAnyObject {
+        let vector = try? GLMapVectorObject.createVectorObjects(fromGeoJSON: testGeojson)
+        let tags = [Tag(k: "amenity", v: "charging_station", value: "")]
+        let object = OSMAnyObject(type: .node, id: -15, version: 1, changeset: 1, lat: 1, lon: 1, tag: tags, nd: [], nodes: [:], members: [], vector: vector![0])
+        return object
+    }
+    
+    var screenShotDeletedObject: OSMAnyObject {
+        let vector = try? GLMapVectorObject.createVectorObjects(fromGeoJSON: testGeojson)
+        let tags = [Tag(k: "highway", v: "crossing", value: "")]
+        let object = OSMAnyObject(type: .node, id: 274810764, version: 3, changeset: 3, lat: nil, lon: nil, tag: tags, nd: [], nodes: [:], members: [], vector: vector![0])
+        return object
+    }
+    
+    // The method is executed to populate data when taking screenshots
+    func fillScreenShotData() {
+        savedObjects = [:]
+        deletedObjects = [:]
+        savedObjects[screenShotEditedObject.id] = screenShotEditedObject
+        savedObjects[screenShotCreatedObject.id] = screenShotCreatedObject
+        deletedObjects[screenShotDeletedObject.id] = screenShotDeletedObject
+    }
 }

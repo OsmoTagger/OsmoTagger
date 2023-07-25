@@ -69,8 +69,8 @@ class MapViewController: UIViewController {
         setSavedNodesButton()
         setAddNodeButton()
         setDrawButton()
-//      The test button in the lower right corner of the screen is often needed during development.
-//        setTestButton()
+        // The test button in the lower right corner of the screen is often needed during development.
+        // setTestButton()
     }
     
     override func viewDidAppear(_: Bool) {
@@ -82,6 +82,34 @@ class MapViewController: UIViewController {
         // When this closure is called, the object is added to the map and the zoom is adjusted
         setShowVectorObjectClosure()
         mapClient.showSavedObjects()
+        
+        // Uncomment when you need to take screenshots.
+        // getScreenShots()
+    }
+    
+    // Function that customizes the appearance of the screen for taking screenshots. Not used in the app's regular operation.
+    func getScreenShots() {
+        AppSettings.settings.fillScreenShotData()
+        mapView.animate({ animation in
+            mapView.mapGeoCenter = GLMapGeoPoint(lat: 37.3344, lon: -122.01215)
+            mapView.mapZoomLevel = 17
+        }, withCompletion: {_ in
+            self.tapDownloadButton()
+            guard let object = AppSettings.settings.savedObjects[518088852] else {return}
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                self.goToPropertiesVC(object: object)
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                self.navController?.dismiss(animated: false) {
+                    self.tapSavedNodesButton()
+                }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
+                self.navController?.dismiss(animated: false) {
+                    self.tapSettingsButton()
+                }
+            }
+        } )
     }
     
     // MARK: MapView and layers
