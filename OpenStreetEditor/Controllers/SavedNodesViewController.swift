@@ -297,7 +297,6 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             nilObject = AppSettings.settings.deletedObjects[data.idLabel]
         }
         guard let object = nilObject else { return }
-        let vector = object.vector
         let vc = EditObjectViewController(object: object)
         navigationController?.pushViewController(vc, animated: true)
     }
