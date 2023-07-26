@@ -1,25 +1,82 @@
 //
-//  PropertiesTable.swift
-//  OSM editor
+//  CustomViews.swift
+//  OpenStreetEditor
 //
-//  Created by Arkadiy on 26.02.2023.
+//  Created by Аркадий Торвальдс on 26.07.2023.
 //
 
 import Foundation
 import UIKit
 
-//  MARK: SOME UI ELEMENTS
 
-// DrawButton on MapViewController
-class DrawButton: UIButton {
-    var isActive = false {
-        didSet {
-            if isActive {
-                backgroundColor = .systemGray3
-            } else {
-                backgroundColor = .white
-            }
-        }
+class RightIconView: UIView {
+    var backView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .white
+        return view
+    }()
+
+    var icon: UIImageView = {
+        let image = UIImageView()
+        image.translatesAutoresizingMaskIntoConstraints = false
+        return image
+    }()
+
+    convenience init() {
+        self.init(frame: .zero)
+        setupConstrains()
+    }
+    
+    func setupConstrains() {
+        addSubview(backView)
+        addSubview(icon)
+        NSLayoutConstraint.activate([
+            backView.leftAnchor.constraint(equalTo: leftAnchor, constant: 5),
+            backView.widthAnchor.constraint(equalToConstant: 38),
+            backView.heightAnchor.constraint(equalToConstant: 38),
+            backView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            icon.centerXAnchor.constraint(equalTo: backView.centerXAnchor),
+            icon.centerYAnchor.constraint(equalTo: backView.centerYAnchor),
+        ])
+    }
+}
+
+class IconView: UIView {
+    var backView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 19
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .white
+        return view
+    }()
+
+    var icon: UIImageView = {
+        let image = UIImageView()
+        image.translatesAutoresizingMaskIntoConstraints = false
+        return image
+    }()
+
+    convenience init() {
+        self.init(frame: .zero)
+        setupConstrains()
+    }
+    
+    func setupConstrains() {
+        addSubview(backView)
+        addSubview(icon)
+        let iconWidth = icon.image?.size.width ?? 25
+        let iconHeight = icon.image?.size.height ?? 25
+        NSLayoutConstraint.activate([
+            backView.leftAnchor.constraint(equalTo: leftAnchor, constant: 5),
+            backView.widthAnchor.constraint(equalToConstant: 38),
+            backView.heightAnchor.constraint(equalToConstant: 38),
+            backView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            icon.centerXAnchor.constraint(equalTo: backView.centerXAnchor),
+            icon.centerYAnchor.constraint(equalTo: backView.centerYAnchor),
+            icon.widthAnchor.constraint(equalToConstant: iconWidth),
+            icon.heightAnchor.constraint(equalToConstant: iconHeight),
+        ])
     }
 }
 
@@ -71,11 +128,6 @@ class DownloadIndicatorView: UIView {
             self.indicator.isHidden = true
         }
     }
-}
-
-struct InfoCellData {
-    let icon: String?
-    let text: String
 }
 
 //  View for displaying user data
@@ -373,172 +425,42 @@ class EditTitleView: UIView {
     }
 }
 
-// Custom button for download button on the map
-class DownloadButton: UIButton {
-    let circle: UIView = {
-        let view = UIView()
-        view.layer.cornerRadius = 6
-        view.isHidden = true
-        view.backgroundColor = .systemGreen
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
+class SettingsTitleView: UIView {
+    var icon: UIImageView = {
+        let image = UIImageView()
+        image.translatesAutoresizingMaskIntoConstraints = false
+        return image
     }()
 
-    init() {
-        super.init(frame: .zero)
-        setupConstrains()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setupConstrains() {
-        addSubview(circle)
-        NSLayoutConstraint.activate([
-            circle.widthAnchor.constraint(equalToConstant: 12),
-            circle.heightAnchor.constraint(equalToConstant: 12),
-            circle.centerXAnchor.constraint(equalTo: rightAnchor, constant: -8),
-            circle.centerYAnchor.constraint(equalTo: topAnchor, constant: 8),
-        ])
-    }
-}
-
-//  Custom button for switching to the controller of saved objects
-class SavedObjectButton: UIButton {
-    private let circle: UIView = {
-        let view = UIView()
-        let counts = AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count
-        if counts == 0 {
-            view.isHidden = true
-        } else {
-            view.isHidden = false
-            view.backgroundColor = .systemRed
-        }
-        view.layer.cornerRadius = 9
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
-    private let label: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 14)
-        label.text = String(AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count)
-        label.textColor = .white
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    private var lastCount = AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count
-
-    init() {
-        super.init(frame: .zero)
-        setupConstrains()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setupConstrains() {
-        addSubview(circle)
-        addSubview(label)
-        NSLayoutConstraint.activate([
-            circle.widthAnchor.constraint(equalToConstant: 18),
-            circle.heightAnchor.constraint(equalToConstant: 18),
-            circle.centerXAnchor.constraint(equalTo: rightAnchor, constant: -3),
-            circle.centerYAnchor.constraint(equalTo: topAnchor, constant: 3),
-            label.centerXAnchor.constraint(equalTo: circle.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: circle.centerYAnchor),
-        ])
-    }
-    
-    // Method update count and of saved, created and deleted objects
-    func update() {
-        let counts = AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count
-        guard lastCount != counts else { return }
-        if lastCount == 0 {
-            circle.isHidden = false
-        }
-        lastCount = counts
-        UIView.animate(withDuration: 0.4, animations: {
-            self.circle.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
-            self.label.transform = CGAffineTransform(rotationAngle: -.pi)
-        }) { _ in
-            UIView.animate(withDuration: 0.4) {
-                self.circle.transform = .identity
-                self.label.transform = .identity
-            } completion: { _ in
-                if counts == 0 {
-                    self.circle.isHidden = true
-                    self.label.text = nil
-                } else {
-                    self.circle.backgroundColor = .systemRed
-                    self.label.text = String(counts)
-                }
-            }
-        }
-    }
-}
-
-//  Custom cell for a tag value selection controller that allows multiple values
-class SelectValuesCell: UITableViewCell {
     var label: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.adjustsFontSizeToFitWidth = true
+        label.font = UIFont.systemFont(ofSize: 18)
+        label.baselineAdjustment = .alignCenters
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-
-    var checkBox: CheckBox = {
-        let checkBox = CheckBox()
-        checkBox.isChecked = false
-        checkBox.translatesAutoresizingMaskIntoConstraints = false
-        return checkBox
-    }()
     
-    func setupConstrains() {
-        contentView.addSubview(label)
-        contentView.addSubview(checkBox)
-        NSLayoutConstraint.activate([
-            checkBox.rightAnchor.constraint(equalTo: rightAnchor),
-            checkBox.widthAnchor.constraint(equalToConstant: 50),
-            checkBox.heightAnchor.constraint(equalTo: heightAnchor),
-            checkBox.centerYAnchor.constraint(equalTo: centerYAnchor),
-            label.rightAnchor.constraint(equalTo: checkBox.leftAnchor),
-            label.bottomAnchor.constraint(equalTo: bottomAnchor),
-            label.leftAnchor.constraint(equalTo: leftAnchor, constant: 10),
-            label.topAnchor.constraint(equalTo: topAnchor),
-        ])
-    }
-    
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.isUserInteractionEnabled = true
+    convenience init() {
+        self.init(frame: .zero)
         setupConstrains()
     }
-        
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
-    override func prepareForReuse() {
-        checkBox.isChecked = false
-        label.text = nil
+    func setupConstrains() {
+        addSubview(icon)
+        addSubview(label)
+        let iconSize = CGFloat(18)
+        NSLayoutConstraint.activate([
+            icon.leftAnchor.constraint(equalTo: leftAnchor, constant: 7),
+            icon.centerYAnchor.constraint(equalTo: centerYAnchor),
+            icon.heightAnchor.constraint(equalToConstant: iconSize),
+            icon.widthAnchor.constraint(equalToConstant: iconSize),
+            label.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 5),
+            label.topAnchor.constraint(equalTo: topAnchor),
+            label.bottomAnchor.constraint(equalTo: bottomAnchor),
+            label.rightAnchor.constraint(equalTo: rightAnchor, constant: -7),
+        ])
     }
-}
-
-//  The button that is used to select the tag values from the list. Used on the tag editing controller and ItemVC
-class SelectButton: UIButton {
-    var selectClosure: ((String) -> Void)?
-    var key: String?
-    var values: [String] = []
-    var indexPath: IndexPath?
 }
 
 class CheckBox: UIButton {

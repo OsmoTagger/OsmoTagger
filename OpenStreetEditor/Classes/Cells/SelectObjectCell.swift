@@ -1,12 +1,13 @@
 //
-//  Table SelectVC.swift
-//  OSM editor
+//  SelectObjectCell.swift
+//  OpenStreetEditor
 //
-//  Created by Arkadiy on 31.03.2023.
+//  Created by Аркадий Торвальдс on 26.07.2023.
 //
 
 import Foundation
 import UIKit
+
 
 // Structures for SelectObjectVC
 struct SelectObjectCellData {
@@ -92,3 +93,4 @@ class SelectObjectCell: UITableViewCell {
         idLabel.text = nil
     }
 }
+

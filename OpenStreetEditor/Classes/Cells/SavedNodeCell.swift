@@ -1,12 +1,13 @@
 //
-//  Table saved objects.swift
-//  OSM editor
+//  SavedNodeCell.swift
+//  OpenStreetEditor
 //
-//  Created by Arkadiy on 31.03.2023.
+//  Created by Аркадий Торвальдс on 26.07.2023.
 //
 
 import Foundation
 import UIKit
+
 
 // Structures for SavedNodesVC (controller for displaying saved objects)
 struct SaveNodeTableData {
