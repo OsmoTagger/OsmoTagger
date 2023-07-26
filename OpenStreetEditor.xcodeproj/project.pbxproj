@@ -486,7 +486,6 @@
 			);
 			mainGroup = 2042BCDE289C696E0026514E;
 			packageReferences = (
-				2C50297C28FC98EE00DC1DC8 /* XCRemoteSwiftPackageReference "GeoJSON" */,
 				2C529E3629102F8400F46972 /* XCRemoteSwiftPackageReference "XMLCoder" */,
 				2CFB66C82A29269D00E474A3 /* XCRemoteSwiftPackageReference "GLMapSwift" */,
 			);
@@ -854,14 +853,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		2C50297C28FC98EE00DC1DC8 /* XCRemoteSwiftPackageReference "GeoJSON" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/kiliankoe/GeoJSON";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		2C529E3629102F8400F46972 /* XCRemoteSwiftPackageReference "XMLCoder" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CoreOffice/XMLCoder";
