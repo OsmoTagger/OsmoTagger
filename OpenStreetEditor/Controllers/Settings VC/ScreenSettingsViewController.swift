@@ -62,8 +62,8 @@ class ScreenSettingsViewController: UIViewController, UITableViewDelegate, UITab
     }
     
     func fillData() {
-        tableData = [ScreenSettingsCellData(icon: "mapButtons.png", mainText: "Show map buttons", toogleIsOn: AppSettings.settings.mapButtonsIsHidden),
-                     ScreenSettingsCellData(icon: "sourceFrame.png", mainText: "Show source data frame", toogleIsOn: AppSettings.settings.sourceFrameisHidden)]
+        tableData = [ScreenSettingsCellData(icon: "mapButtons.png", mainText: "Show navigation buttons", toogleIsOn: AppSettings.settings.mapButtonsIsHidden),
+                     ScreenSettingsCellData(icon: "sourceFrame.png", mainText: "Show the boundary of loaded data", toogleIsOn: AppSettings.settings.sourceFrameisHidden)]
     }
     
     func setTableView() {
