@@ -140,3 +140,27 @@ class SelectButton: UIButton {
     var values: [String] = []
     var indexPath: IndexPath?
 }
+
+// Angle button in MapButtonsView on MapVC
+class AngleButton: UIView {
+    var image: UIImageView = {
+        let icon = UIImageView()
+        icon.image = UIImage(systemName: "location.north.line.fill")?.withTintColor(.black, renderingMode: .alwaysOriginal)
+        icon.translatesAutoresizingMaskIntoConstraints = false
+        return icon
+    }()
+    
+    convenience init() {
+        self.init(frame: .zero)
+        translatesAutoresizingMaskIntoConstraints = false
+        setupConstrains()
+    }
+    
+    func setupConstrains() {
+        addSubview(image)
+        NSLayoutConstraint.activate([
+            image.centerXAnchor.constraint(equalTo: centerXAnchor),
+            image.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
+    }
+}

@@ -31,8 +31,7 @@ final class AppSettings: NSObject {
         }
     }
     
-//    MARK: OSM VARIABLES
-    
+    // MARK: MAIN SCREEN SETTINGS
     //  The variable into which the last MapView bbox is saved
     var lastBbox: GLMapBBox? {
         get {
@@ -57,7 +56,32 @@ final class AppSettings: NSObject {
             UserDefaults.standard.set(newBbox.size.y, forKey: "bboxSizeY")
         }
     }
-
+    
+    // Called when the user changes the display or hide settings for zoom buttons.
+    var showMapButtonsClosure: ((Bool) -> Void)?
+    // Variable for displaying navigation buttons on MapVC
+    var mapButtonsIsHidden: Bool {
+        get {
+            let value = UserDefaults.standard.bool(forKey: "mapButtonsIsHidden")
+            return value
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "mapButtonsIsHidden")
+            showMapButtonsClosure?(newValue)
+        }
+    }
+    // Variable for displaying the border of loaded data.
+    var sourceFrameisHidden: Bool {
+        get {
+            let value = UserDefaults.standard.bool(forKey: "sourceFrameisHidden")
+            return value
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "sourceFrameisHidden")
+        }
+    }
+    
+    // MARK: OSM VARIABLES
     //  Specifies which server to work with - working or test
     var isDevServer: Bool {
         get {

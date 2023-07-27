@@ -31,6 +31,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     func fillData() {
         let general = SettingsTableData(name: nil, items: [
             SettingsCellData(icon: "person.crop.circle", text: "Authorization", link: ""),
+            SettingsCellData(icon: "smartphone.png", text: "Main screen", link: ""),
             SettingsCellData(icon: "questionmark.circle", text: "Quick guide", link: ""),
         ])
         tableData.append(general)
@@ -108,6 +109,9 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
                 let vc = AuthViewController()
                 navigationController?.pushViewController(vc, animated: true)
             case 1:
+                let vc = ScreenSettingsViewController()
+                navigationController?.pushViewController(vc, animated: true)
+            case 2:
                 let vc = QuickGuideViewController()
                 navigationController?.pushViewController(vc, animated: true)
             default:

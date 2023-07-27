@@ -24,6 +24,9 @@ class MapViewController: UIViewController {
     //  Simple tap
     var oneTap = UIGestureRecognizer()
     
+    // plus zoom, minus zoom, map angle
+    let mapButtons = MapButtonsView()
+    
     //  Buttons
     let downloadButton = DownloadButton()
     // Variable activates the source data loading mode
@@ -61,7 +64,7 @@ class MapViewController: UIViewController {
         oneTap.require(toFail: doubleTap)
         mapView.addGestureRecognizer(oneTap)
         
-//      Add buttons
+//      Add system buttons
         setLoadIndicator()
         setDownloadButton()
         setupSettingsButton()
@@ -71,6 +74,11 @@ class MapViewController: UIViewController {
         setDrawButton()
         // The test button in the lower right corner of the screen is often needed during development.
         // setTestButton()
+        
+        // Zoom in and zoom out buttons, map rotation button
+        setMapButtons()
+        // set a closure that hides or shows mapButtons
+        setShowMapButtonsClosure()
     }
     
     override func viewDidAppear(_: Bool) {
@@ -188,6 +196,11 @@ class MapViewController: UIViewController {
     func setDidMapMoveClouser() {
         mapView.mapDidMoveBlock = { [weak self] _ in
             guard let self = self else { return }
+            // rotate mapButtons.angleButton image
+            let angle = CGFloat(self.mapView.mapAngle)
+            let radian = angle * .pi / 180
+            mapButtons.angleButton.image.transform = CGAffineTransform(rotationAngle: -radian)
+            
             if self.navController == nil {
                 AppSettings.settings.lastBbox = self.mapView.bbox
             }
@@ -202,6 +215,14 @@ class MapViewController: UIViewController {
                 self.downloadButton.circle.backgroundColor = .systemRed
                 self.addNodeButton.alpha = 0.5
             }
+        }
+    }
+    
+    // set a closure that hides or shows mapButtons
+    func setShowMapButtonsClosure() {
+        AppSettings.settings.showMapButtonsClosure = { [weak self] newValue in
+            guard let self = self else {return}
+            self.mapButtons.isHidden = newValue
         }
     }
     
@@ -235,6 +256,48 @@ class MapViewController: UIViewController {
     }
     
     // MARK: Set screen elements
+    // Zoom in and zoom out buttons, map rotation button
+    func setMapButtons() {
+        mapButtons.plusButton.addTarget(self, action: #selector(tapPlusButton), for: .touchUpInside)
+        mapButtons.minusButton.addTarget(self, action: #selector(tapMinusButton), for: .touchUpInside)
+        let angleTap = UITapGestureRecognizer()
+        angleTap.delegate = self
+        angleTap.addTarget(self, action: #selector(tapAngleButton))
+        mapButtons.angleButton.addGestureRecognizer(angleTap)
+        mapButtons.isHidden = AppSettings.settings.mapButtonsIsHidden
+        view.addSubview(mapButtons)
+        NSLayoutConstraint.activate([
+            mapButtons.heightAnchor.constraint(equalToConstant: 150),
+            mapButtons.widthAnchor.constraint(equalToConstant: 40),
+            mapButtons.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            mapButtons.bottomAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+    
+    @objc func tapPlusButton() {
+        mapView.animate { [weak self] animation in
+            guard let self = self else {return}
+            animation.duration = animationDuration
+            self.mapView.mapZoomLevel += 1
+        }
+    }
+    
+    @objc func tapMinusButton() {
+        mapView.animate { [weak self] animation in
+            guard let self = self else {return}
+            animation.duration = animationDuration
+            self.mapView.mapZoomLevel -= 1
+        }
+    }
+    
+    @objc func tapAngleButton() {
+        mapView.animate { [weak self] animation in
+            guard let self = self else {return}
+            animation.duration = animationDuration
+            self.mapView.mapAngle = 0
+        }
+    }
+    
     //  The indicator that appears in place of the data download button.
     func setLoadIndicator() {
         indicator.isUserInteractionEnabled = false
