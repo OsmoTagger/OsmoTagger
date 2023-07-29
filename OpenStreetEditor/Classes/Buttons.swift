@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 
-
 // DrawButton on MapViewController
 class DrawButton: UIButton {
     var isActive = false {
@@ -160,7 +159,7 @@ class AngleButton: UIView {
         addSubview(image)
         NSLayoutConstraint.activate([
             image.centerXAnchor.constraint(equalTo: centerXAnchor),
-            image.centerYAnchor.constraint(equalTo: centerYAnchor)
+            image.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
     }
 }

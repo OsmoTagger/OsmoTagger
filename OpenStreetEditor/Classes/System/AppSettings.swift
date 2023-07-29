@@ -32,6 +32,7 @@ final class AppSettings: NSObject {
     }
     
     // MARK: MAIN SCREEN SETTINGS
+
     //  The variable into which the last MapView bbox is saved
     var lastBbox: GLMapBBox? {
         get {
@@ -70,6 +71,7 @@ final class AppSettings: NSObject {
             showMapButtonsClosure?(newValue)
         }
     }
+
     // Variable for displaying the border of loaded data.
     var sourceFrameisHidden: Bool {
         get {
@@ -82,6 +84,7 @@ final class AppSettings: NSObject {
     }
     
     // MARK: OSM VARIABLES
+
     //  Specifies which server to work with - working or test
     var isDevServer: Bool {
         get {
@@ -350,7 +353,7 @@ final class AppSettings: NSObject {
     var screenShotEditedObject: OSMAnyObject {
         let vector = try? GLMapVectorObject.createVectorObjects(fromGeoJSON: testGeojson)
         let tags: [Tag] = [Tag(k: "highway", v: "motorway_link", value: "")]
-        var object = OSMAnyObject(type: .closedway, id: 518088852, version: 3, changeset: 3, lat: nil, lon: nil, tag: tags, nd: [], nodes: [:], members: [], vector: vector![0])
+        var object = OSMAnyObject(type: .closedway, id: 518_088_852, version: 3, changeset: 3, lat: nil, lon: nil, tag: tags, nd: [], nodes: [:], members: [], vector: vector![0])
         object.oldTags = [:]
         return object
     }
@@ -365,7 +368,7 @@ final class AppSettings: NSObject {
     var screenShotDeletedObject: OSMAnyObject {
         let vector = try? GLMapVectorObject.createVectorObjects(fromGeoJSON: testGeojson)
         let tags = [Tag(k: "highway", v: "crossing", value: "")]
-        let object = OSMAnyObject(type: .node, id: 274810764, version: 3, changeset: 3, lat: nil, lon: nil, tag: tags, nd: [], nodes: [:], members: [], vector: vector![0])
+        let object = OSMAnyObject(type: .node, id: 274_810_764, version: 3, changeset: 3, lat: nil, lon: nil, tag: tags, nd: [], nodes: [:], members: [], vector: vector![0])
         return object
     }
     

@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 
-
 // Structures for SavedNodesVC (controller for displaying saved objects)
 struct SaveNodeTableData {
     var name: String?

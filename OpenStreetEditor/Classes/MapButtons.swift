@@ -44,7 +44,7 @@ class MapButtonsView: UIView {
         // When the parameter is changed in the settings, a closure is triggered in which we modify isHidden.
         isHidden = AppSettings.settings.mapButtonsIsHidden
         AppSettings.settings.showMapButtonsClosure = { [weak self] newValue in
-            guard let self = self else {return}
+            guard let self = self else { return }
             self.isHidden = newValue
         }
     }
@@ -62,8 +62,7 @@ class MapButtonsView: UIView {
             minusButton.topAnchor.constraint(equalTo: plusButton.bottomAnchor, constant: 15),
             angleButton.widthAnchor.constraint(equalToConstant: 40),
             angleButton.heightAnchor.constraint(equalToConstant: 40),
-            angleButton.topAnchor.constraint(equalTo: minusButton.bottomAnchor, constant: 15)
+            angleButton.topAnchor.constraint(equalTo: minusButton.bottomAnchor, constant: 15),
         ])
     }
-    
 }

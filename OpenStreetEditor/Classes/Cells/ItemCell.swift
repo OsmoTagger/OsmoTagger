@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 
-
 class ItemCell: UITableViewCell {
     var icon: IconView = {
         let view = IconView()

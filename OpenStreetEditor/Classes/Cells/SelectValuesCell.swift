@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 
-
 //  Custom cell for a tag value selection controller that allows multiple values
 class SelectValuesCell: UITableViewCell {
     var label: UILabel = {
@@ -57,4 +56,3 @@ class SelectValuesCell: UITableViewCell {
         label.text = nil
     }
 }
-

@@ -57,7 +57,7 @@ class ScreenSettingsCell: UITableViewCell {
             mainLabel.trailingAnchor.constraint(equalTo: toogle.leadingAnchor, constant: -5),
             toogle.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5),
             toogle.widthAnchor.constraint(equalToConstant: 50),
-            toogle.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+            toogle.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
         ])
     }
     
@@ -77,5 +77,4 @@ class ScreenSettingsCell: UITableViewCell {
         mainLabel.text = nil
         toogle.isOn = false
     }
-    
 }

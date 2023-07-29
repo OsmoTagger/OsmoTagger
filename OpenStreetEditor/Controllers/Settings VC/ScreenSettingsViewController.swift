@@ -9,12 +9,10 @@ import UIKit
 
 // Main screen settings controller
 class ScreenSettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
     let tableView = UITableView()
     let cellId = "cell"
     var tableData: [ScreenSettingsCellData] = []
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -28,13 +26,12 @@ class ScreenSettingsViewController: UIViewController, UITableViewDelegate, UITab
         return 1
     }
     
-    
-    func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
         return tableData.count
     }
     
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let cell = tableView.cellForRow(at: indexPath) as? ScreenSettingsCell else {return}
+        guard let cell = tableView.cellForRow(at: indexPath) as? ScreenSettingsCell else { return }
         let newValue = cell.toogle.isOn
         switch indexPath.row {
         case 0:
@@ -80,5 +77,4 @@ class ScreenSettingsViewController: UIViewController, UITableViewDelegate, UITab
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
-    
 }

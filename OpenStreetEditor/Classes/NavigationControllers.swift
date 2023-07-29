@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 
-
 //  Custom UINavigationController. It opens controllers for displaying saved objects, selecting an object in the case of tapping on several objects, and a tag editing controller.
 class NavigationController: UINavigationController {
     var dismissClosure: (() -> Void)?

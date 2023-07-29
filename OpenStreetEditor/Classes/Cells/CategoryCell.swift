@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 
-
 class CategoryCell: UITableViewCell {
     var icon: IconView = {
         let view = IconView()

@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 
-
 class RightIconView: UIView {
     var backView: UIView = {
         let view = UIView()

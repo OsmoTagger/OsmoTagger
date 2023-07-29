@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 
-
 // Structures for SelectObjectVC
 struct SelectObjectCellData {
     var iconItem: String?
@@ -93,4 +92,3 @@ class SelectObjectCell: UITableViewCell {
         idLabel.text = nil
     }
 }
-

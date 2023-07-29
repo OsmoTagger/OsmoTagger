@@ -96,12 +96,12 @@ class MapViewController: UIViewController {
     // Function that customizes the appearance of the screen for taking screenshots. Not used in the app's regular operation.
     func getScreenShots() {
         AppSettings.settings.fillScreenShotData()
-        mapView.animate({ animation in
+        mapView.animate({ _ in
             mapView.mapGeoCenter = GLMapGeoPoint(lat: 37.3344, lon: -122.01215)
             mapView.mapZoomLevel = 17
-        }, withCompletion: {_ in
+        }, withCompletion: { _ in
             self.tapDownloadButton()
-            guard let object = AppSettings.settings.savedObjects[518088852] else {return}
+            guard let object = AppSettings.settings.savedObjects[518_088_852] else { return }
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 self.goToPropertiesVC(object: object)
             }
@@ -115,7 +115,7 @@ class MapViewController: UIViewController {
                     self.tapSettingsButton()
                 }
             }
-        } )
+        })
     }
     
     // MARK: MapView and layers
@@ -246,6 +246,7 @@ class MapViewController: UIViewController {
     }
     
     // MARK: Set screen elements
+
     // Zoom in and zoom out buttons, map rotation button
     func setMapButtons() {
         mapButtons.plusButton.addTarget(self, action: #selector(tapPlusButton), for: .touchUpInside)
@@ -259,13 +260,13 @@ class MapViewController: UIViewController {
             mapButtons.heightAnchor.constraint(equalToConstant: 150),
             mapButtons.widthAnchor.constraint(equalToConstant: 40),
             mapButtons.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            mapButtons.bottomAnchor.constraint(equalTo: view.centerYAnchor)
+            mapButtons.bottomAnchor.constraint(equalTo: view.centerYAnchor),
         ])
     }
     
     @objc func tapPlusButton() {
         mapView.animate { [weak self] animation in
-            guard let self = self else {return}
+            guard let self = self else { return }
             animation.duration = animationDuration
             self.mapView.mapZoomLevel += 1
         }
@@ -273,7 +274,7 @@ class MapViewController: UIViewController {
     
     @objc func tapMinusButton() {
         mapView.animate { [weak self] animation in
-            guard let self = self else {return}
+            guard let self = self else { return }
             animation.duration = animationDuration
             self.mapView.mapZoomLevel -= 1
         }
@@ -281,7 +282,7 @@ class MapViewController: UIViewController {
     
     @objc func tapAngleButton() {
         mapView.animate { [weak self] animation in
-            guard let self = self else {return}
+            guard let self = self else { return }
             animation.duration = animationDuration
             self.mapView.mapAngle = 0
         }
