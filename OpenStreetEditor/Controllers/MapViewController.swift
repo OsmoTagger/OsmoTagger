@@ -260,7 +260,7 @@ class MapViewController: UIViewController {
             mapButtons.heightAnchor.constraint(equalToConstant: 150),
             mapButtons.widthAnchor.constraint(equalToConstant: 40),
             mapButtons.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            mapButtons.bottomAnchor.constraint(equalTo: view.centerYAnchor),
+            mapButtons.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -60),
         ])
     }
     
