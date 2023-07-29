@@ -77,8 +77,6 @@ class MapViewController: UIViewController {
         
         // Zoom in and zoom out buttons, map rotation button
         setMapButtons()
-        // set a closure that hides or shows mapButtons
-        setShowMapButtonsClosure()
     }
     
     override func viewDidAppear(_: Bool) {
@@ -218,14 +216,6 @@ class MapViewController: UIViewController {
         }
     }
     
-    // set a closure that hides or shows mapButtons
-    func setShowMapButtonsClosure() {
-        AppSettings.settings.showMapButtonsClosure = { [weak self] newValue in
-            guard let self = self else {return}
-            self.mapButtons.isHidden = newValue
-        }
-    }
-    
     func setShowVectorObjectClosure() {
         AppSettings.settings.showVectorObjectClosure = { [weak self] vectorObject in
             guard let self = self else { return }
@@ -264,7 +254,6 @@ class MapViewController: UIViewController {
         angleTap.delegate = self
         angleTap.addTarget(self, action: #selector(tapAngleButton))
         mapButtons.angleButton.addGestureRecognizer(angleTap)
-        mapButtons.isHidden = AppSettings.settings.mapButtonsIsHidden
         view.addSubview(mapButtons)
         NSLayoutConstraint.activate([
             mapButtons.heightAnchor.constraint(equalToConstant: 150),

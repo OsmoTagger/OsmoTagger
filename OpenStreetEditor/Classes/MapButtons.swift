@@ -40,6 +40,13 @@ class MapButtonsView: UIView {
         self.init(frame: .zero)
         translatesAutoresizingMaskIntoConstraints = false
         setupConstrains()
+        
+        // When the parameter is changed in the settings, a closure is triggered in which we modify isHidden.
+        isHidden = AppSettings.settings.mapButtonsIsHidden
+        AppSettings.settings.showMapButtonsClosure = { [weak self] newValue in
+            guard let self = self else {return}
+            self.isHidden = newValue
+        }
     }
     
     private func setupConstrains() {
