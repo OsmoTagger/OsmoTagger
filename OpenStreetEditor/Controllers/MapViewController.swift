@@ -84,6 +84,8 @@ class MapViewController: UIViewController {
         setMapLocation()
         // After setting the starting position, all offsets are stored in memory. Clouser download source data while map did move.
         setDidMapMoveClouser()
+        // After configuring the map, we enable/disable the addNodeButton depending on the zoom level.
+        updateAddNodeButton()
         // To highlight the edited object, the vector object is written to singleton appSettings, on which the closure is triggered.
         // When this closure is called, the object is added to the map and the zoom is adjusted
         setShowVectorObjectClosure()
@@ -259,8 +261,8 @@ class MapViewController: UIViewController {
         NSLayoutConstraint.activate([
             mapButtons.heightAnchor.constraint(equalToConstant: 150),
             mapButtons.widthAnchor.constraint(equalToConstant: 40),
-            mapButtons.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            mapButtons.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -60),
+            mapButtons.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            mapButtons.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
         ])
     }
     
@@ -422,6 +424,14 @@ class MapViewController: UIViewController {
                                      savedNodesButton.heightAnchor.constraint(equalToConstant: 40),
                                      savedNodesButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 205),
                                      savedNodesButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)])
+    }
+    
+    func updateAddNodeButton() {
+        if mapView.mapZoomLevel > 16.0 {
+            self.addNodeButton.alpha = 1
+        } else {
+            self.addNodeButton.alpha = 0.5
+        }
     }
     
     @objc func tapSavedNodesButton() {
