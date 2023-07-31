@@ -15,24 +15,35 @@
 
 default_platform(:ios)
 
-platform :ios do
+lane :metadata do
+  deliver(metadata_path: "fastlane/meta",
+    skip_metadata: false)
+end
 
-  desc "Deploy a OpenStreetEditor to the Testflight"
-  lane :beta_free do
-    sync_code_signing(type: "appstore", app_identifier: ["com.bodunov.galileo", "com.bodunov.galileo.SiriIntents"], readonly: true)
-    # snapshot
-    build_ios_app(
-      scheme: "OpenStreetEditor",
-      destination: 'generic/platform=iOS',
-    ) # Build your app - more options available
-    upload_to_testflight(skip_submission:true,
-      skip_waiting_for_build_processing:true,
-      app_identifier: "com.openstreet.editor"
-    )
-    # sentry_upload_dsym(
-    #   org_slug: 'guru',
-    #   project_slug: 'guru-maps-ios',
-    # )
-  end
+lane :beta do
+  sync_code_signing(type: "appstore", readonly: true)
+  # snapshot
+  build_ios_app(
+    scheme: "OsmoTagger",
+    destination: 'generic/platform=iOS',
+  ) # Build your app - more options available
+  upload_to_testflight(skip_submission:true,
+    skip_waiting_for_build_processing:true
+  )
+end
 
+lane :screenshots do
+  deliver(
+    skip_screenshots: false,
+    overwrite_screenshots: true)
+end
+
+lane :load_profiles do
+  match(type: "development", readonly: true)
+  match(type: "appstore", readonly: true)
+end
+
+lane :refresh_profiles do
+  match(type: "development", force_for_new_devices: true)
+  match(type: "appstore")
 end
