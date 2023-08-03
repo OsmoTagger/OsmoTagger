@@ -14,7 +14,6 @@
 		2042BCF4289C697A0026514E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2042BCF3289C697A0026514E /* Assets.xcassets */; };
 		2042BCF7289C697A0026514E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2042BCF5289C697A0026514E /* LaunchScreen.storyboard */; };
 		2C1676EE29A7D50C004DD9D3 /* MapClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1676ED29A7D50B004DD9D3 /* MapClient.swift */; };
-		2C1707072A06E2AA003ECB39 /* ApiKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1707062A06E2A9003ECB39 /* ApiKeys.swift */; };
 		2C1A361229B0674400AF3BEB /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1A361129B0674400AF3BEB /* String.swift */; };
 		2C21058929F095C6005A0B46 /* LineTool settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C21058829F095C6005A0B46 /* LineTool settings.swift */; };
 		2C21058D29F098F1005A0B46 /* OSM structures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5662C02912788600E5B4D5 /* OSM structures.swift */; };
@@ -72,6 +71,7 @@
 		E3540B0D2A71BDA100649564 /* MapButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540B0C2A71BDA100649564 /* MapButtonsView.swift */; };
 		E3540B132A71D1FA00649564 /* ScreenSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540B122A71D1FA00649564 /* ScreenSettingsViewController.swift */; };
 		E3540B152A71DAFE00649564 /* SecreenSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540B142A71DAFE00649564 /* SecreenSettingsCell.swift */; };
+		E3AA63A82A7BBD14008BFBD5 /* ApiKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */; };
 		E3B9A5CD2A463E0400C6839A /* GLMap in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CC2A463E0400C6839A /* GLMap */; };
 		E3B9A5CF2A463E1800C6839A /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CE2A463E1800C6839A /* XMLCoder */; };
 /* End PBXBuildFile section */
@@ -90,7 +90,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2042BCE7289C696E0026514E /* OpenStreetEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenStreetEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2042BCE7289C696E0026514E /* OsmoTagger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OsmoTagger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2042BCEA289C696E0026514E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2042BCEC289C696E0026514E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		2042BCEE289C696E0026514E /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
@@ -99,7 +99,6 @@
 		2042BCF6289C697A0026514E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2042BCF8289C697A0026514E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2C1676ED29A7D50B004DD9D3 /* MapClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapClient.swift; sourceTree = "<group>"; };
-		2C1707062A06E2A9003ECB39 /* ApiKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ApiKeys.swift; path = OpenStreetEditor/ApiKeys.swift; sourceTree = SOURCE_ROOT; };
 		2C1A361129B0674400AF3BEB /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		2C21058829F095C6005A0B46 /* LineTool settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LineTool settings.swift"; sourceTree = "<group>"; };
 		2C24FA4F2A0AFA6300C9ACA3 /* circle_location.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = circle_location.svg; sourceTree = "<group>"; };
@@ -172,6 +171,7 @@
 		E3540B0C2A71BDA100649564 /* MapButtonsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapButtonsView.swift; sourceTree = "<group>"; };
 		E3540B122A71D1FA00649564 /* ScreenSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSettingsViewController.swift; sourceTree = "<group>"; };
 		E3540B142A71DAFE00649564 /* SecreenSettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecreenSettingsCell.swift; sourceTree = "<group>"; };
+		E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ApiKeys.swift; path = ../../../Downloads/ApiKeys.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -205,7 +205,7 @@
 				2CAEF13D29FAD50B00894DED /* README.md */,
 				2C5D72E72A1B979C00074F23 /* work_plane.md */,
 				2C27010B2A01AB6000A65363 /* Terms of service.md */,
-				2042BCE9289C696E0026514E /* OpenStreetEditor */,
+				2042BCE9289C696E0026514E /* OsmoTagger */,
 				2042BCE8289C696E0026514E /* Products */,
 				6CF514D728FB4B05001D2758 /* Frameworks */,
 			);
@@ -214,13 +214,13 @@
 		2042BCE8289C696E0026514E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2042BCE7289C696E0026514E /* OpenStreetEditor.app */,
+				2042BCE7289C696E0026514E /* OsmoTagger.app */,
 				2CA6A3E829CAB373004233E2 /* LineTool */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		2042BCE9289C696E0026514E /* OpenStreetEditor */ = {
+		2042BCE9289C696E0026514E /* OsmoTagger */ = {
 			isa = PBXGroup;
 			children = (
 				2C24FA4E2A0AFA4700C9ACA3 /* Resources */,
@@ -231,14 +231,14 @@
 				6C76E74928EC11110048C378 /* bridges */,
 				2C1A361929B157FC00AF3BEB /* Structures */,
 				2042BCEC289C696E0026514E /* SceneDelegate.swift */,
-				2C1707062A06E2A9003ECB39 /* ApiKeys.swift */,
+				E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */,
 				2042BCEA289C696E0026514E /* AppDelegate.swift */,
 				2042BCF0289C696E0026514E /* Main.storyboard */,
 				2042BCF3289C697A0026514E /* Assets.xcassets */,
 				2042BCF5289C697A0026514E /* LaunchScreen.storyboard */,
 				2042BCF8289C697A0026514E /* Info.plist */,
 			);
-			path = OpenStreetEditor;
+			path = OsmoTagger;
 			sourceTree = "<group>";
 		};
 		2C0F05BC2921B393009BE3C1 /* Controllers */ = {
@@ -425,9 +425,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2042BCE6289C696E0026514E /* OpenStreetEditor */ = {
+		2042BCE6289C696E0026514E /* OsmoTagger */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2042BCFB289C697A0026514E /* Build configuration list for PBXNativeTarget "OpenStreetEditor" */;
+			buildConfigurationList = 2042BCFB289C697A0026514E /* Build configuration list for PBXNativeTarget "OsmoTagger" */;
 			buildPhases = (
 				2042BCE3289C696E0026514E /* Sources */,
 				2042BCE4289C696E0026514E /* Frameworks */,
@@ -437,13 +437,13 @@
 			);
 			dependencies = (
 			);
-			name = OpenStreetEditor;
+			name = OsmoTagger;
 			packageProductDependencies = (
 				E3B9A5CC2A463E0400C6839A /* GLMap */,
 				E3B9A5CE2A463E1800C6839A /* XMLCoder */,
 			);
 			productName = "OSM editor";
-			productReference = 2042BCE7289C696E0026514E /* OpenStreetEditor.app */;
+			productReference = 2042BCE7289C696E0026514E /* OsmoTagger.app */;
 			productType = "com.apple.product-type.application";
 		};
 		2CA6A3E729CAB373004233E2 /* LineTool */ = {
@@ -502,7 +502,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				2042BCE6289C696E0026514E /* OpenStreetEditor */,
+				2042BCE6289C696E0026514E /* OsmoTagger */,
 				2CA6A3E729CAB373004233E2 /* LineTool */,
 			);
 		};
@@ -543,6 +543,7 @@
 				E3540AFE2A71AFB400649564 /* CustomViews.swift in Sources */,
 				E3540B0B2A71B2D600649564 /* AnyStructs.swift in Sources */,
 				E3540AFC2A71AF7D00649564 /* ItemCell.swift in Sources */,
+				E3AA63A82A7BBD14008BFBD5 /* ApiKeys.swift in Sources */,
 				2C450A762A326EFF001D73A9 /* TestViewController.swift in Sources */,
 				6C8B010C28FC030B00C9238D /* option_clean.cpp in Sources */,
 				6C8B010D28FC030B00C9238D /* util.cpp in Sources */,
@@ -569,7 +570,6 @@
 				2042BCEB289C696E0026514E /* AppDelegate.swift in Sources */,
 				2C2F972829D53DB200A994C8 /* UpdateSourceDataProtocol.swift in Sources */,
 				2CF9E7732A0C9FFC003DB2CC /* UIColor.swift in Sources */,
-				2C1707072A06E2AA003ECB39 /* ApiKeys.swift in Sources */,
 				E3540B072A71B1DB00649564 /* Buttons.swift in Sources */,
 				6CF5D93928FB485F001D2758 /* osmium.mm in Sources */,
 				6C8B011128FC030B00C9238D /* export_handler.cpp in Sources */,
@@ -740,8 +740,8 @@
 				DEVELOPMENT_TEAM = AS56W2YHKU;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/OpenStreetEditor/third_party";
-				INFOPLIST_FILE = OpenStreetEditor/Info.plist;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/OsmoTagger/third_party";
+				INFOPLIST_FILE = OsmoTagger/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = OsmoTagger;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Разрешите доступ";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -759,7 +759,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "OpenStreetEditor/bridges/OpenStreetEditor-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "OsmoTagger/bridges/OpenStreetEditor-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -779,8 +779,8 @@
 				DEVELOPMENT_TEAM = AS56W2YHKU;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/OpenStreetEditor/third_party";
-				INFOPLIST_FILE = OpenStreetEditor/Info.plist;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/OsmoTagger/third_party";
+				INFOPLIST_FILE = OsmoTagger/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = OsmoTagger;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Разрешите доступ";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -798,7 +798,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "OpenStreetEditor/bridges/OpenStreetEditor-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "OsmoTagger/bridges/OpenStreetEditor-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -844,7 +844,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2042BCFB289C697A0026514E /* Build configuration list for PBXNativeTarget "OpenStreetEditor" */ = {
+		2042BCFB289C697A0026514E /* Build configuration list for PBXNativeTarget "OsmoTagger" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2042BCFC289C697A0026514E /* Debug */,
