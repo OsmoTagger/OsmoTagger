@@ -485,7 +485,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 2042BCE2289C696E0026514E /* Build configuration list for PBXProject "OpenStreetEditor" */;
+			buildConfigurationList = 2042BCE2289C696E0026514E /* Build configuration list for PBXProject "OsmoTagger" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -835,7 +835,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2042BCE2289C696E0026514E /* Build configuration list for PBXProject "OpenStreetEditor" */ = {
+		2042BCE2289C696E0026514E /* Build configuration list for PBXProject "OsmoTagger" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2042BCF9289C697A0026514E /* Debug */,

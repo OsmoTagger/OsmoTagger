@@ -17,7 +17,7 @@
                BlueprintIdentifier = "2042BCE6289C696E0026514E"
                BuildableName = "OsmoTagger.app"
                BlueprintName = "OsmoTagger"
-               ReferencedContainer = "container:OpenStreetEditor.xcodeproj">
+               ReferencedContainer = "container:OsmoTagger.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -47,7 +47,7 @@
             BlueprintIdentifier = "2042BCE6289C696E0026514E"
             BuildableName = "OsmoTagger.app"
             BlueprintName = "OsmoTagger"
-            ReferencedContainer = "container:OpenStreetEditor.xcodeproj">
+            ReferencedContainer = "container:OsmoTagger.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -64,7 +64,7 @@
             BlueprintIdentifier = "2042BCE6289C696E0026514E"
             BuildableName = "OsmoTagger.app"
             BlueprintName = "OsmoTagger"
-            ReferencedContainer = "container:OpenStreetEditor.xcodeproj">
+            ReferencedContainer = "container:OsmoTagger.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
