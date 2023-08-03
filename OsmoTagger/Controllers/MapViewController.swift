@@ -224,7 +224,7 @@ class MapViewController: UIViewController {
             mapButtons.heightAnchor.constraint(equalToConstant: 150),
             mapButtons.widthAnchor.constraint(equalToConstant: 40),
             mapButtons.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            mapButtons.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
+            mapButtons.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 300),
         ])
     }
     
