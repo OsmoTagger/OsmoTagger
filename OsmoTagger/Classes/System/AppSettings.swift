@@ -347,13 +347,15 @@ final class AppSettings: NSObject {
     
     // These objects do not exist in reality, they are used for automatic program screenshot capturing.
     let testGeojson = """
-    {"type":"Feature","properties":{"surface":"asphalt","version":"8.000000","cutting":"yes","highway":"unclassified","access":"private","maxspeed":"15 mph","oneway":"yes","lanes":"3","name":"Apple Park Way","access:employee":"designated","@id":"518088852.000000"},"geometry":{"type":"MultiLineString","coordinates":[[[-122.0118963,37.3340807],[-122.0121857,37.3344344],[-122.0124375,37.3347389]]]}}
+    {"type":"Feature","properties":{"version":"1.000000","highway":"bus_stop","public_transport":"platform","bus":"yes","network":"SamTrans","name":"Beach Park Boulevard & Sanderling Street","@id":"6621472241.000000"},"geometry":{"type":"Point","coordinates":[-122.2542389,37.5683927]}}
     """
     
     var screenShotEditedObject: OSMAnyObject {
         let vector = try? GLMapVectorObject.createVectorObjects(fromGeoJSON: testGeojson)
-        let tags: [Tag] = [Tag(k: "highway", v: "motorway_link", value: "")]
-        var object = OSMAnyObject(type: .closedway, id: 518_088_852, version: 3, changeset: 3, lat: nil, lon: nil, tag: tags, nd: [], nodes: [:], members: [], vector: vector![0])
+        let tags: [Tag] = [Tag(k: "highway", v: "bus_stop", value: ""),
+                           Tag(k: "public_transport", v: "platform", value: ""),
+                           Tag(k: "name", v: "Beach Park Boulevard & Sanderling Street", value: "")]
+        var object = OSMAnyObject(type: .node, id: 6621472241, version: 3, changeset: 3, lat: nil, lon: nil, tag: tags, nd: [], nodes: [:], members: [], vector: vector![0])
         object.oldTags = [:]
         return object
     }

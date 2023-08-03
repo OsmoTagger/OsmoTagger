@@ -99,23 +99,17 @@ class MapViewController: UIViewController {
     func getScreenShots() {
         AppSettings.settings.fillScreenShotData()
         mapView.animate({ _ in
-            mapView.mapGeoCenter = GLMapGeoPoint(lat: 37.3344, lon: -122.01215)
-            mapView.mapZoomLevel = 17
+            mapView.mapGeoCenter = GLMapGeoPoint(lat: 37.568391, lon: -122.254233)
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                mapView.mapZoomLevel = 19
+            } else if UIDevice.current.userInterfaceIdiom == .phone {
+                mapView.mapZoomLevel = 17
+            }
         }, withCompletion: { _ in
             self.tapDownloadButton()
-            guard let object = AppSettings.settings.savedObjects[518_088_852] else { return }
+            guard let object = AppSettings.settings.savedObjects[6621472241] else { return }
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 self.goToPropertiesVC(object: object)
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                self.navController?.dismiss(animated: false) {
-                    self.tapSavedNodesButton()
-                }
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
-                self.navController?.dismiss(animated: false) {
-                    self.tapSettingsButton()
-                }
             }
         })
     }
