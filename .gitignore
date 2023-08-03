@@ -2,3 +2,4 @@ OSM editor.xcodeproj/project.xcworkspace/xcuserdata
 .DS_Store
 xcuserdata
 ApiKeys.swift
+fastlane/report.xml

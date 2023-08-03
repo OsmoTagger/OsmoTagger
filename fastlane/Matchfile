@@ -1,0 +1,10 @@
+
+git_url "git@gitlab.com:GetYourMap/ios_certs.git"
+
+type "development" # The default type, can be: appstore, adhoc or development
+clone_branch_directly true
+
+platform 'ios'
+app_identifier [
+  "com.globus.osmotagger"
+]
