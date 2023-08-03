@@ -42,7 +42,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         let support = SettingsTableData(name: "Support and development", items: [
             SettingsCellData(icon: "chatIcon.png", text: telegramText, link: "https://t.me/OsmoTagger_chat"),
             SettingsCellData(icon: "channelIcon.png", text: channelText, link: "https://t.me/OsmoTagger"),
-            SettingsCellData(icon: "gitIcon.png", text: gitText, link: "https://github.com/OpenStreetEditor/OpenStreetEditor"),
+            SettingsCellData(icon: "gitIcon.png", text: gitText, link: "https://github.com/OsmoTagger/OsmoTagger"),
         ])
         tableData.append(support)
         let osmText = "Map data (c) Openstreetmap contributors"
