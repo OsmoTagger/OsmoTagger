@@ -1,0 +1,3 @@
+OsmoTagger - a new OpenStreetMap map editor for iOS platform, based on JOSM presets!
+Create new points, edit existing objects.
+Utilize JOSM presets for convenient modification and addition of tags.
