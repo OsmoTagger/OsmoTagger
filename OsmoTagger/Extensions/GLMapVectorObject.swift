@@ -18,7 +18,7 @@ extension GLMapVectorObject {
     }
 }
 
-enum GLMapVectoObjectType {
+enum GLMapVectorObjectType {
     case simple
     case polygon(line: GLMapVectorLine)
 }

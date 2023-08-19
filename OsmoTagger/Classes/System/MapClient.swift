@@ -253,7 +253,7 @@ class MapClient {
         delegate?.endDownload()
     }
     
-    func getObjectType(object: GLMapVectorObject) -> GLMapVectoObjectType? {
+    func getObjectType(object: GLMapVectorObject) -> GLMapVectorObjectType? {
         if object is GLMapVectorPoint || object is GLMapVectorLine {
             return .simple
         } else if let polygon = object as? GLMapVectorPolygon {
