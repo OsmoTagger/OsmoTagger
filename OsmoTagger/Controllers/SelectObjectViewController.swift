@@ -8,7 +8,7 @@
 import UIKit
 
 //  The controller that is called if several objects are detected under the tap to provide a choice.
-class SelectObjectViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class SelectObjectViewController: SheetViewController, UITableViewDelegate, UITableViewDataSource {
     weak var delegate: UpdateSourceDataProtocol?
     
     //  Called when the controller is closed, to remove the backlight of the tapped objects.
@@ -22,7 +22,7 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
     
     init(objects: [OSMAnyObject]) {
         self.objects = objects
-        super.init(nibName: nil, bundle: nil)
+        super.init()
     }
 
     @available(*, unavailable)

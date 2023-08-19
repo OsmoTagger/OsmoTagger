@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 //  The controller that is called when you click on the tag value selection button, which allows you to save multiple values, for example sports=swimming;volleyball.
-class MultiSelectViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class MultiSelectViewController: SheetViewController, UITableViewDelegate, UITableViewDataSource {
     var values: [String]
     var inputValue: String?
     let key: String
@@ -23,7 +23,7 @@ class MultiSelectViewController: UIViewController, UITableViewDelegate, UITableV
         self.values = values
         self.inputValue = inputValue
         self.key = key
-        super.init(nibName: nil, bundle: nil)
+        super.init()
     }
 
     @available(*, unavailable)

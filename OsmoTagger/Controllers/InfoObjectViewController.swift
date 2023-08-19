@@ -8,7 +8,7 @@
 import UIKit
 
 //  A simple controller for displaying brief information about the object being edited.
-class InfoObjectViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class InfoObjectViewController: SheetViewController, UITableViewDelegate, UITableViewDataSource {
     var object: OSMAnyObject
     
     var dismissClosure: EmptyBlock?
@@ -19,7 +19,7 @@ class InfoObjectViewController: UIViewController, UITableViewDelegate, UITableVi
     
     init(object: OSMAnyObject) {
         self.object = object
-        super.init(nibName: nil, bundle: nil)
+        super.init()
         fillData()
     }
 
