@@ -8,12 +8,14 @@
 import GLMap
 import UIKit
 
+typealias EmptyBlock = () -> Void
+
 //  Singleton for storing app settings
 final class AppSettings: NSObject {
     static let settings = AppSettings()
     
     //  Called when changing savedObjects - to update the map
-    var mapVCClouser: (() -> Void)?
+    var mapVCClouser: EmptyBlock?
     //  It is called in case of writing a token upon successful authorization, for uploading user data.
     var userInfoClouser: ((OSMUserInfo) -> Void)?
     // Closure that is called in the MapClient class to display or delete a vector object

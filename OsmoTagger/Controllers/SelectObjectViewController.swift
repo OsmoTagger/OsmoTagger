@@ -12,7 +12,7 @@ class SelectObjectViewController: UIViewController, UITableViewDelegate, UITable
     weak var delegate: UpdateSourceDataProtocol?
     
     //  Called when the controller is closed, to remove the backlight of the tapped objects.
-    var callbackClosure: (() -> Void)?
+    var callbackClosure: EmptyBlock?
     
     var objects: [OSMAnyObject]
     

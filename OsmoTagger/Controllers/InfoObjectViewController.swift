@@ -11,7 +11,7 @@ import UIKit
 class InfoObjectViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     var object: OSMAnyObject
     
-    var dismissClosure: (() -> Void)?
+    var dismissClosure: EmptyBlock?
     
     var tableView = UITableView()
     var cellId = "cell"
