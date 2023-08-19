@@ -430,12 +430,6 @@ class MapViewController: UIViewController {
                 self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.5)
             }
         }
-        if let sheetPresentationController = navController?.presentationController as? UISheetPresentationController {
-            sheetPresentationController.detents = [.medium(), .large()]
-            sheetPresentationController.prefersGrabberVisible = true
-            sheetPresentationController.prefersScrollingExpandsWhenScrolledToEdge = false
-            sheetPresentationController.largestUndimmedDetentIdentifier = .medium
-        }
         if navController != nil {
             present(navController!, animated: true, completion: nil)
         }
@@ -583,12 +577,6 @@ class MapViewController: UIViewController {
                 self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.5)
             }
         }
-        if let sheetPresentationController = navController?.presentationController as? UISheetPresentationController {
-            sheetPresentationController.detents = [.medium(), .large()]
-            sheetPresentationController.prefersGrabberVisible = true
-            sheetPresentationController.prefersScrollingExpandsWhenScrolledToEdge = false
-            sheetPresentationController.largestUndimmedDetentIdentifier = .medium
-        }
         if navController != nil {
             present(navController!, animated: true, completion: nil)
         }
@@ -696,12 +684,6 @@ class MapViewController: UIViewController {
                 animation.transition = .linear
                 self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.5)
             }
-        }
-        if let sheetPresentationController = navController?.presentationController as? UISheetPresentationController {
-            sheetPresentationController.detents = [.medium(), .large()]
-            sheetPresentationController.prefersGrabberVisible = true
-            sheetPresentationController.prefersScrollingExpandsWhenScrolledToEdge = false
-            sheetPresentationController.largestUndimmedDetentIdentifier = .medium
         }
         if navController != nil {
             present(navController!, animated: true, completion: nil)

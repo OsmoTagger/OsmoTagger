@@ -16,7 +16,21 @@ class SheetNavigationController: UINavigationController {
         guard let closure = dismissClosure else { return }
         closure()
     }
-
+    
+    override init(rootViewController: UIViewController) {
+        super.init(rootViewController: rootViewController)
+        if let sheetPresentationController = self.presentationController as? UISheetPresentationController {
+            sheetPresentationController.detents = [.medium(), .large()]
+            sheetPresentationController.prefersGrabberVisible = true
+            sheetPresentationController.prefersScrollingExpandsWhenScrolledToEdge = false
+            sheetPresentationController.largestUndimmedDetentIdentifier = .medium
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     func setViewControllers(_ viewControllers: [UIViewController], animated: Bool, completion: EmptyBlock?) {
         CATransaction.begin()
         CATransaction.setCompletionBlock(completion)
