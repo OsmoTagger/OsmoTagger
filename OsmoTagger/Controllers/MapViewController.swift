@@ -201,6 +201,24 @@ class MapViewController: UIViewController {
         }
     }
     
+    private func runOpenAnimation() {
+        mapView.animate { [weak self] animation in
+            guard let self = self else { return }
+            animation.duration = 0.3
+            animation.transition = .linear
+            self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.75)
+        }
+    }
+    
+    private func runCloseAnimation() {
+        mapView.animate { [weak self] animation in
+            guard let self = self else { return }
+            animation.duration = self.animationDuration
+            animation.transition = .linear
+            self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.5)
+        }
+    }
+    
     // MARK: Set screen elements
 
     // Zoom in and zoom out buttons, map rotation button
@@ -411,24 +429,14 @@ class MapViewController: UIViewController {
     }
     
     func goToSAvedNodesVC() {
-        mapView.animate { [weak self] animation in
-            guard let self = self else { return }
-            animation.duration = animationDuration
-            animation.transition = .linear
-            self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.75)
-        }
+        runOpenAnimation()
         let savedNodesVC = SavedNodesViewController()
         savedNodesVC.delegate = self
         navController = SheetNavigationController(rootViewController: savedNodesVC)
         navController?.dismissClosure = { [weak self] in
             guard let self = self else { return }
             self.navController = nil
-            self.mapView.animate { [weak self] animation in
-                guard let self = self else { return }
-                animation.duration = self.animationDuration
-                animation.transition = .linear
-                self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.5)
-            }
+            self.runCloseAnimation()
         }
         if navController != nil {
             present(navController!, animated: true, completion: nil)
@@ -558,12 +566,7 @@ class MapViewController: UIViewController {
     }
     
     func goToSelectVC(objects: [OSMAnyObject]) {
-        mapView.animate { [weak self] animation in
-            guard let self = self else { return }
-            animation.duration = animationDuration
-            animation.transition = .linear
-            self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.75)
-        }
+        runOpenAnimation()
         let selectVC = SelectObjectViewController(objects: objects)
         selectVC.delegate = self
         navController = SheetNavigationController(rootViewController: selectVC)
@@ -571,11 +574,7 @@ class MapViewController: UIViewController {
             guard let self = self else { return }
             self.mapView.remove(self.mapClient.tappedDrawble)
             self.navController = nil
-            self.mapView.animate { animation in
-                animation.duration = self.animationDuration
-                animation.transition = .linear
-                self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.5)
-            }
+            self.runCloseAnimation()
         }
         if navController != nil {
             present(navController!, animated: true, completion: nil)
@@ -666,24 +665,14 @@ class MapViewController: UIViewController {
     //  The method opens the tag editing controller.
     //  The user can tap on the object on the visible part of the map at the moment when the editing controller is already open. Then the editable object on the controller changes to a new one.
     func goToPropertiesVC(object: OSMAnyObject) {
-        mapView.animate { [weak self] animation in
-            guard let self = self else { return }
-            animation.duration = animationDuration
-            animation.transition = .linear
-            self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.75)
-        }
+        runOpenAnimation()
         let editVC = EditObjectViewController(object: object)
         navController = SheetNavigationController(rootViewController: editVC)
         // When the user closes the tag editing controller, the backlight of the tapped object is removed.
         navController?.dismissClosure = { [weak self] in
             guard let self = self else { return }
             self.navController = nil
-            self.mapView.animate { [weak self] animation in
-                guard let self = self else { return }
-                animation.duration = self.animationDuration
-                animation.transition = .linear
-                self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.5)
-            }
+            self.runCloseAnimation()
         }
         if navController != nil {
             present(navController!, animated: true, completion: nil)
