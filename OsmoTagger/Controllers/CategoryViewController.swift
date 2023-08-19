@@ -8,7 +8,7 @@
 import UIKit
 
 //  The navigation controller for the preset catalog. It is used repeatedly with different names of categories and groups.
-class CategoryViewController: UIViewController {
+class CategoryViewController: SheetViewController {
     let searchController = UISearchController(searchResultsController: nil)
     var isSearching = false
     
@@ -84,7 +84,7 @@ class CategoryViewController: UIViewController {
         }
         iconType.image = UIImage(named: iconName)
         let iconTypeForBar = UIBarButtonItem(customView: iconType)
-        navigationItem.setRightBarButtonItems([iconTypeForBar], animated: true)
+        rightButtons = [iconTypeForBar]
     }
         
     func setSearchController() {

@@ -9,6 +9,9 @@ import GLMap
 import UIKit
 
 typealias EmptyBlock = () -> Void
+var isLandscape: Bool {
+    return UIDevice.current.orientation.isLandscape
+}
 
 //  Singleton for storing app settings
 final class AppSettings: NSObject {
@@ -265,7 +268,7 @@ final class AppSettings: NSObject {
         let tags: [Tag] = [Tag(k: "highway", v: "bus_stop", value: ""),
                            Tag(k: "public_transport", v: "platform", value: ""),
                            Tag(k: "name", v: "Beach Park Boulevard & Sanderling Street", value: "")]
-        var object = OSMAnyObject(type: .node, id: 6621472241, version: 3, changeset: 3, lat: nil, lon: nil, tag: tags, nd: [], nodes: [:], members: [], vector: vector![0])
+        var object = OSMAnyObject(type: .node, id: 6_621_472_241, version: 3, changeset: 3, lat: nil, lon: nil, tag: tags, nd: [], nodes: [:], members: [], vector: vector![0])
         object.oldTags = [:]
         return object
     }

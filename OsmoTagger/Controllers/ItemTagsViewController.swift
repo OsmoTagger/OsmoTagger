@@ -10,7 +10,7 @@ import SafariServices
 import UIKit
 
 //  If the main preset tags are not found, the preset tags are opened for manual addition.
-class ItemTagsViewController: UIViewController {
+class ItemTagsViewController: SheetViewController {
     var item: Item
     
     var tableView = UITableView()
@@ -43,7 +43,7 @@ class ItemTagsViewController: UIViewController {
         doneButtonForBar = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(tapDoneButton))
         iconTypes = [doneButtonForBar]
         addIconTypes()
-        navigationItem.setRightBarButtonItems(iconTypes, animated: true)
+        rightButtons = iconTypes
         
         setTableView()
         setEnterTagManuallyView()

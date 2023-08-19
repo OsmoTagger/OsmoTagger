@@ -8,7 +8,7 @@
 import UIKit
 
 //  A controller that displays objects stored in memory (created or modified).
-class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class SavedNodesViewController: SheetViewController, UITableViewDelegate, UITableViewDataSource {
     weak var delegate: UpdateSourceDataProtocol?
     
     var tableView = UITableView()
@@ -17,11 +17,7 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
     //  An array in which the IDs of the selected objects are stored.
     var selectedIDs: [SavedSelectedIndex] = [] {
         didSet {
-            if selectedIDs.count == 0 {
-                enterCommentView.placeholder = nil
-            } else {
-                enterCommentView.placeholder = generateComment()
-            }
+            enterCommentView.placeholder = selectedIDs.count == 0 ? nil : generateComment()
         }
     }
 
@@ -69,10 +65,10 @@ class SavedNodesViewController: UIViewController, UITableViewDelegate, UITableVi
             checkAll.heightAnchor.constraint(equalToConstant: 25),
         ])
         let checkAllBar = UIBarButtonItem(customView: checkAll)
-        navigationItem.setRightBarButton(checkAllBar, animated: false)
+        rightButtons = [checkAllBar]
         setToolBar()
     }
-    
+        
     func setToolBar() {
         if selectedIDs.count == 0 {
             toolbarItems = [flexibleSpace, nilButton, flexibleSpace]

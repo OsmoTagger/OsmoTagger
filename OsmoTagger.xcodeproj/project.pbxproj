@@ -57,6 +57,7 @@
 		6CF514DF28FB4C14001D2758 /* libexpat.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 6CF514DE28FB4C14001D2758 /* libexpat.tbd */; };
 		6CF5D93928FB485F001D2758 /* osmium.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6CF5D93828FB485F001D2758 /* osmium.mm */; };
 		E3021DAC2A8FFF86000E789A /* MapStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3021DAB2A8FFF86000E789A /* MapStyles.swift */; };
+		E3021DB82A909249000E789A /* SheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3021DB72A909249000E789A /* SheetViewController.swift */; };
 		E3540AF42A71AE2E00649564 /* SavedNodeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540AF32A71AE2E00649564 /* SavedNodeCell.swift */; };
 		E3540AF62A71AE7400649564 /* SelectObjectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540AF52A71AE7400649564 /* SelectObjectCell.swift */; };
 		E3540AF82A71AF2000649564 /* SimpleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540AF72A71AF2000649564 /* SimpleCell.swift */; };
@@ -158,6 +159,7 @@
 		6CF514DE28FB4C14001D2758 /* libexpat.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libexpat.tbd; path = usr/lib/libexpat.tbd; sourceTree = SDKROOT; };
 		6CF5D93828FB485F001D2758 /* osmium.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = osmium.mm; sourceTree = "<group>"; };
 		E3021DAB2A8FFF86000E789A /* MapStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyles.swift; sourceTree = "<group>"; };
+		E3021DB72A909249000E789A /* SheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetViewController.swift; sourceTree = "<group>"; };
 		E3540AF32A71AE2E00649564 /* SavedNodeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedNodeCell.swift; sourceTree = "<group>"; };
 		E3540AF52A71AE7400649564 /* SelectObjectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectObjectCell.swift; sourceTree = "<group>"; };
 		E3540AF72A71AF2000649564 /* SimpleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleCell.swift; sourceTree = "<group>"; };
@@ -298,6 +300,7 @@
 				E3540AFD2A71AFB400649564 /* CustomViews.swift */,
 				E3540B042A71B1A300649564 /* CustomSafari.swift */,
 				E3540B0C2A71BDA100649564 /* MapButtonsView.swift */,
+				E3021DB72A909249000E789A /* SheetViewController.swift */,
 				E3540B062A71B1DB00649564 /* Buttons.swift */,
 				E3540B002A71B01300649564 /* NavigationControllers.swift */,
 			);
@@ -578,6 +581,7 @@
 				6CF5D93928FB485F001D2758 /* osmium.mm in Sources */,
 				6C8B011128FC030B00C9238D /* export_handler.cpp in Sources */,
 				E3540B0D2A71BDA100649564 /* MapButtonsView.swift in Sources */,
+				E3021DB82A909249000E789A /* SheetViewController.swift in Sources */,
 				2C478A9D29E6D558004E35E1 /* AuthViewController.swift in Sources */,
 				2C6F1CC429DD40380091784B /* InfoObjectViewController.swift in Sources */,
 				2CA6A3FD29CAB965004233E2 /* LineToolsMethods.swift in Sources */,

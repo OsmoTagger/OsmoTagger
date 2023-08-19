@@ -19,7 +19,7 @@ class SheetNavigationController: UINavigationController {
     
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
-        if let sheetPresentationController = self.presentationController as? UISheetPresentationController {
+        if let sheetPresentationController = presentationController as? UISheetPresentationController {
             sheetPresentationController.detents = [.medium(), .large()]
             sheetPresentationController.prefersGrabberVisible = true
             sheetPresentationController.prefersScrollingExpandsWhenScrolledToEdge = false
@@ -27,7 +27,8 @@ class SheetNavigationController: UINavigationController {
         }
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     

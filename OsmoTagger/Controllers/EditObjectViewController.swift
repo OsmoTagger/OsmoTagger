@@ -9,7 +9,7 @@ import SafariServices
 import UIKit
 
 //  Object tag editing controller.
-class EditObjectViewController: UIViewController {
+class EditObjectViewController: SheetViewController {
     //  Called when the object is completely deleted from the server. Used only on SavedNodesVC.
     var deleteObjectClosure: ((Int) -> Void)?
     
@@ -115,7 +115,7 @@ class EditObjectViewController: UIViewController {
             iconType.heightAnchor.constraint(equalToConstant: 25),
         ])
         let iconTypeBar = UIBarButtonItem(customView: iconType)
-        navigationItem.setRightBarButtonItems([infoBar, iconTypeBar], animated: true)
+        rightButtons = [infoBar, iconTypeBar]
     }
     
     //  Called every time the object tags are changed (AppSettings.settings.saveObjectClouser)

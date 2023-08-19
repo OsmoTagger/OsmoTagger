@@ -106,7 +106,7 @@ class MapViewController: UIViewController {
             }
         }, withCompletion: { _ in
             self.tapDownloadButton()
-            guard let object = AppSettings.settings.savedObjects[6621472241] else { return }
+            guard let object = AppSettings.settings.savedObjects[6_621_472_241] else { return }
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 self.goToPropertiesVC(object: object)
             }
@@ -400,9 +400,9 @@ class MapViewController: UIViewController {
     
     func updateAddNodeButton() {
         if mapView.mapZoomLevel > 16.0 {
-            self.addNodeButton.alpha = 1
+            addNodeButton.alpha = 1
         } else {
-            self.addNodeButton.alpha = 0.5
+            addNodeButton.alpha = 0.5
         }
     }
     
