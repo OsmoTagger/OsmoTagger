@@ -34,13 +34,10 @@ class MapClient {
     // Drawble objects and styles to display data on MapView
     // Layer with original OSM map data
     let sourceDrawble = GLMapVectorLayer(drawOrder: 0)
-    let sourceStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.defaultStyle)
     //  Displays objects that have been modified but not sent to the server (green).
     let savedDrawable = GLMapVectorLayer(drawOrder: 1)
-    let savedStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.savedStyle)
     //  Highlights objects that fell under the tap, if there was not one object under the tap, but several.
     let tappedDrawble = GLMapVectorLayer(drawOrder: 3)
-    let tappedStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.tappedStyle)
     
     // Link to SavedNodesButton on MapViewController to update counter
     var savedNodeButtonLink: SavedObjectButton?
@@ -226,12 +223,10 @@ class MapClient {
         lock.unlock()
         // Add layer on MapViewController
         delegate?.removeDrawble(layer: sourceDrawble)
-        if let style = sourceStyle {
-            lock.lock()
-            sourceDrawble.setVectorObjects(newObjects, with: style, completion: nil)
-            lock.unlock()
-            delegate?.addDrawble(layer: sourceDrawble)
-        }
+        lock.lock()
+        sourceDrawble.setVectorObjects(newObjects, with: MapStyles.sourceStyle, completion: nil)
+        lock.unlock()
+        delegate?.addDrawble(layer: sourceDrawble)
         lock.lock()
         lastCenter = mapCenter
         if openOperations[id] == nil {
@@ -339,9 +334,7 @@ class MapClient {
         for object in objects {
             tappedObjects.add(object.vector)
         }
-        if let style = tappedStyle {
-            tappedDrawble.setVectorObjects(tappedObjects, with: style, completion: nil)
-        }
+        tappedDrawble.setVectorObjects(tappedObjects, with: MapStyles.tappedStyle, completion: nil)
         delegate?.addDrawble(layer: tappedDrawble)
     }
     
@@ -361,9 +354,7 @@ class MapClient {
             }
         }
         delegate?.removeDrawble(layer: savedDrawable)
-        if let savedStyle = savedStyle {
-            savedDrawable.setVectorObjects(savedObjects, with: savedStyle, completion: nil)
-        }
+        savedDrawable.setVectorObjects(savedObjects, with: MapStyles.savedStyle, completion: nil)
         delegate?.addDrawble(layer: savedDrawable)
         // Update saveNodesButton counter
         if let button = savedNodeButtonLink {

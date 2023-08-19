@@ -38,7 +38,6 @@ class MapViewController: UIViewController {
     
     //  Displays the object that was tapped and whose properties are currently being edited (yellow).
     var editDrawble = GLMapVectorLayer(drawOrder: 4)
-    let editStyle = GLMapVectorCascadeStyle.createStyle(AppSettings.settings.editStyle)
     
     let animationDuration = 0.3
     
@@ -178,8 +177,7 @@ class MapViewController: UIViewController {
         AppSettings.settings.showVectorObjectClosure = { [weak self] vectorObject in
             guard let self = self else { return }
             if let object = vectorObject {
-                guard let style = self.editStyle else { return }
-                self.editDrawble.setVectorObject(object, with: style, completion: nil)
+                self.editDrawble.setVectorObject(object, with: MapStyles.editStyle, completion: nil)
                 self.mapView.add(self.editDrawble)
                 let newCenter = GLMapGeoPoint(point: object.bbox.center)
                 let userZoom = self.mapView.mapZoom
