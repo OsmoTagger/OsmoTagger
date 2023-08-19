@@ -23,8 +23,8 @@ struct osmChange: Decodable, Encodable, DynamicNodeEncoding {
         }
     }
 
-    let version: String
-    let generator: String
+    let version = "0.6"
+    let generator = "OsmoTagger"
     var modify: Modify
     var create: Create
     var delete: Delete
@@ -35,6 +35,84 @@ struct osmChange: Decodable, Encodable, DynamicNodeEncoding {
         case create
         case delete
     }
+    
+    init(sendObjs: [OSMAnyObject], deleteObjs: [OSMAnyObject]) {
+        var delete = Delete(node: [], way: [], relation: [])
+        for object in deleteObjs {
+            switch object.type {
+            case .node:
+                guard let node = object.getNode() else { continue }
+                delete.node.append(node)
+            case .way, .closedway:
+                let way = object.getWay()
+                delete.way.append(way)
+            case .multipolygon:
+                let relation = object.getRelation()
+                delete.relation.append(relation)
+            }
+        }
+        self.delete = delete
+        var create = Create(node: [], way: [])
+        var modify = Modify(node: [], way: [], relation: [])
+        for object in sendObjs {
+            if object.id < 0 {
+                switch object.type {
+                case .node:
+                    guard let node = object.getNode() else { continue }
+                    create.node.append(node)
+                case .way, .closedway:
+                    let way = object.getWay()
+                    create.way.append(way)
+                default:
+                    continue
+                }
+            } else {
+                switch object.type {
+                case .node:
+                    guard let node = object.getNode() else { continue }
+                    modify.node.append(node)
+                case .way, .closedway:
+                    let way = object.getWay()
+                    modify.way.append(way)
+                case .multipolygon:
+                    let relation = object.getRelation()
+                    modify.relation.append(relation)
+                }
+            }
+        }
+        self.create = create
+        self.modify = modify
+    }
+    
+    mutating func setChangesetID(id: Int) {
+        for index in modify.node.indices {
+            modify.node[index].changeset = id
+        }
+        for index in modify.way.indices {
+            modify.way[index].changeset = id
+        }
+        for index in modify.relation.indices {
+            modify.relation[index].changeset = id
+        }
+        
+        for index in create.node.indices {
+            create.node[index].changeset = id
+        }
+        for index in create.way.indices {
+            create.way[index].changeset = id
+        }
+        
+        for index in delete.node.indices {
+            delete.node[index].changeset = id
+        }
+        for index in delete.way.indices {
+            delete.way[index].changeset = id
+        }
+        for index in delete.relation.indices {
+            delete.relation[index].changeset = id
+        }
+    }
+    
 }
 
 struct Modify: Codable {
@@ -51,6 +129,7 @@ struct Create: Codable {
 struct Delete: Codable {
     var node: [Node]
     var way: [Way]
+    var relation: [Relation]
 }
 
 // MARK: OSM DATA STRUCTURES

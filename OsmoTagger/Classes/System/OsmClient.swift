@@ -111,11 +111,6 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         }
     }
     
-    //  The method of downloading data from the server. The latest bbox parameters are saved to update the data
-    var lastLongitudeDisplayMin: Double?
-    var lastLatitudeDisplayMin: Double?
-    var lasltLongitudeDisplayMax: Double?
-    var lastLatitudeDisplayMax: Double?
     func downloadOSMData(longitudeDisplayMin: Double, latitudeDisplayMin: Double, longitudeDisplayMax: Double, latitudeDisplayMax: Double) async throws -> (Data) {
         guard let url = URL(string: "\(AppSettings.settings.server)/api/0.6/map?bbox=\(longitudeDisplayMin),\(latitudeDisplayMin),\(longitudeDisplayMax),\(latitudeDisplayMax)") else {
             throw "Error generate URL for download data. Server: \(AppSettings.settings.server), Bbox: \(longitudeDisplayMin),\(latitudeDisplayMin),\(longitudeDisplayMax),\(latitudeDisplayMax)"
@@ -123,10 +118,6 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         let (data, response) = try await session.data(from: url)
         if let httpResponse = response as? HTTPURLResponse {
             if httpResponse.statusCode == 200 {
-                lastLongitudeDisplayMin = longitudeDisplayMin
-                lastLatitudeDisplayMin = latitudeDisplayMin
-                lasltLongitudeDisplayMax = longitudeDisplayMax
-                lastLatitudeDisplayMax = latitudeDisplayMax
                 return data
             } else if httpResponse.statusCode == 400 || httpResponse.statusCode == 509 {
                 throw OsmClientErrors.objectLimit
@@ -150,84 +141,11 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         if sendObjs.count == 0 && deleteObjs.count == 0 {
             throw "Point array is empty"
         }
-        var delete = Delete(node: [], way: [])
-        for object in deleteObjs {
-            switch object.type {
-            case .node:
-                guard let node = object.getNode() else { continue }
-                delete.node.append(node)
-            case .way, .closedway:
-                let way = object.getWay()
-                delete.way.append(way)
-            default:
-                continue
-            }
-        }
-        var changeset = osmChange(version: "0.6", generator: "OsmoTagger", modify: Modify(node: [], way: [], relation: []), create: Create(node: [], way: []), delete: delete)
-        for object in sendObjs {
-            if object.id < 0 {
-                switch object.type {
-                case .node:
-                    guard let node = object.getNode() else { continue }
-                    changeset.create.node.append(node)
-                case .way, .closedway:
-                    let way = object.getWay()
-                    changeset.create.way.append(way)
-                default:
-                    continue
-                }
-            } else {
-                switch object.type {
-                case .node:
-                    guard let node = object.getNode() else { continue }
-                    changeset.modify.node.append(node)
-                case .way, .closedway:
-                    let way = object.getWay()
-                    changeset.modify.way.append(way)
-                case .multipolygon:
-                    let relation = object.getRelation()
-                    changeset.modify.relation.append(relation)
-                }
-            }
-        }
+        var changeset = osmChange(sendObjs: sendObjs, deleteObjs: deleteObjs)
         var changesetID = 0
         do {
             changesetID = try await openChangeset()
-            if changeset.create.node.count != 0 {
-                for i in 0 ... changeset.create.node.count - 1 {
-                    changeset.create.node[i].changeset = changesetID
-                }
-            }
-            if changeset.create.way.count != 0 {
-                for i in 0 ... changeset.create.way.count - 1 {
-                    changeset.create.way[i].changeset = changesetID
-                }
-            }
-            if changeset.modify.node.count != 0 {
-                for i in 0 ... changeset.modify.node.count - 1 {
-                    changeset.modify.node[i].changeset = changesetID
-                }
-            }
-            if changeset.modify.way.count != 0 {
-                for i in 0 ... changeset.modify.way.count - 1 {
-                    changeset.modify.way[i].changeset = changesetID
-                }
-            }
-            if changeset.modify.relation.count != 0 {
-                for i in 0 ... changeset.modify.relation.count - 1 {
-                    changeset.modify.relation[i].changeset = changesetID
-                }
-            }
-            if changeset.delete.node.count != 0 {
-                for i in 0 ... changeset.delete.node.count - 1 {
-                    changeset.delete.node[i].changeset = changesetID
-                }
-            }
-            if changeset.delete.way.count != 0 {
-                for i in 0 ... changeset.delete.way.count - 1 {
-                    changeset.delete.way[i].changeset = changesetID
-                }
-            }
+            changeset.setChangesetID(id: changesetID)
         } catch {
             throw "Error open changeset: \(error)"
         }
