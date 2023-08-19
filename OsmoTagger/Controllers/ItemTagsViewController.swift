@@ -25,7 +25,7 @@ class ItemTagsViewController: SheetViewController {
     
     init(item: Item) {
         self.item = item
-        super.init(nibName: nil, bundle: nil)
+        super.init()
     }
     
     @available(*, unavailable)

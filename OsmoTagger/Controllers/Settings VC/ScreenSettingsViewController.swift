@@ -8,7 +8,7 @@
 import UIKit
 
 // Main screen settings controller
-class ScreenSettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ScreenSettingsViewController: SheetViewController, UITableViewDelegate, UITableViewDataSource {
     let tableView = UITableView()
     let cellId = "cell"
     var tableData: [ScreenSettingsCellData] = []

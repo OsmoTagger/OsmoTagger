@@ -41,7 +41,7 @@ class EditObjectViewController: SheetViewController {
     
     init(object: OSMAnyObject) {
         self.object = object
-        super.init(nibName: nil, bundle: nil)
+        super.init()
         fillNewProperties()
         fillData()
         AppSettings.settings.editableObject = object.vector

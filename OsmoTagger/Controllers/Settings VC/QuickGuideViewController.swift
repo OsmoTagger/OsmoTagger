@@ -8,7 +8,7 @@
 import UIKit
 
 //  The controller of a brief manual for use.
-class QuickGuideViewController: UIViewController {
+class QuickGuideViewController: SheetViewController {
     let scrollView = UIScrollView()
     let contentView = UIView()
     

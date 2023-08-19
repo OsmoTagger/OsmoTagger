@@ -24,6 +24,19 @@ class SheetViewController: UIViewController {
         }
     }
     
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        checkRightButtons()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewWillTransition(to _: CGSize, with _: UIViewControllerTransitionCoordinator) {
+        checkRightButtons()
+    }
+    
     private func checkRightButtons() {
         var items = navigationItem.rightBarButtonItems ?? []
         if isLandscape {
@@ -40,9 +53,5 @@ class SheetViewController: UIViewController {
     
     @objc private func tapCloseButton() {
         navigationController?.dismiss(animated: true)
-    }
-    
-    override func viewWillTransition(to _: CGSize, with _: UIViewControllerTransitionCoordinator) {
-        checkRightButtons()
     }
 }

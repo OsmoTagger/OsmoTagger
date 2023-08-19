@@ -8,7 +8,7 @@
 import UIKit
 
 //  Authorization ViewController
-class AuthViewController: UIViewController {
+class AuthViewController: SheetViewController {
     let warningLabel = UILabel()
     let toggle = UISwitch()
     let authResult = AuthResultView()

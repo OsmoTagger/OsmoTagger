@@ -29,7 +29,7 @@ class CategoryViewController: SheetViewController {
         self.groupName = groupName
         activePreset = lastPreset
         self.elementType = elementType
-        super.init(nibName: nil, bundle: nil)
+        super.init()
     }
     
     @available(*, unavailable)

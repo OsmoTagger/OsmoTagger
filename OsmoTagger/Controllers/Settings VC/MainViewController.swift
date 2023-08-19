@@ -9,7 +9,7 @@ import SafariServices
 import UIKit
 
 //  The main settings controller.
-class MainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class MainViewController: SheetViewController, UITableViewDelegate, UITableViewDataSource {
     var tableView = UITableView()
     var cellId = "cell"
     var tableData: [SettingsTableData] = []
