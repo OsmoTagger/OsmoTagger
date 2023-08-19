@@ -405,7 +405,7 @@ class EditObjectViewController: SheetViewController {
     func generateTags(properties: [String: String]) -> [Tag] {
         var tags: [Tag] = []
         for (key, value) in properties {
-            let tag = Tag(k: key, v: value, value: "")
+            let tag = Tag(k: key, v: value)
             tags.append(tag)
         }
         return tags

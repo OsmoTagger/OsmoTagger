@@ -265,9 +265,9 @@ final class AppSettings: NSObject {
     
     var screenShotEditedObject: OSMAnyObject {
         let vector = try? GLMapVectorObject.createVectorObjects(fromGeoJSON: testGeojson)
-        let tags: [Tag] = [Tag(k: "highway", v: "bus_stop", value: ""),
-                           Tag(k: "public_transport", v: "platform", value: ""),
-                           Tag(k: "name", v: "Beach Park Boulevard & Sanderling Street", value: "")]
+        let tags: [Tag] = [Tag(k: "highway", v: "bus_stop"),
+                           Tag(k: "public_transport", v: "platform"),
+                           Tag(k: "name", v: "Beach Park Boulevard & Sanderling Street")]
         var object = OSMAnyObject(type: .node, id: 6_621_472_241, version: 3, changeset: 3, lat: nil, lon: nil, tag: tags, nd: [], nodes: [:], members: [], vector: vector![0])
         object.oldTags = [:]
         return object
@@ -275,14 +275,14 @@ final class AppSettings: NSObject {
     
     var screenShotCreatedObject: OSMAnyObject {
         let vector = try? GLMapVectorObject.createVectorObjects(fromGeoJSON: testGeojson)
-        let tags = [Tag(k: "amenity", v: "charging_station", value: "")]
+        let tags = [Tag(k: "amenity", v: "charging_station")]
         let object = OSMAnyObject(type: .node, id: -15, version: 1, changeset: 1, lat: 1, lon: 1, tag: tags, nd: [], nodes: [:], members: [], vector: vector![0])
         return object
     }
     
     var screenShotDeletedObject: OSMAnyObject {
         let vector = try? GLMapVectorObject.createVectorObjects(fromGeoJSON: testGeojson)
-        let tags = [Tag(k: "highway", v: "crossing", value: "")]
+        let tags = [Tag(k: "highway", v: "crossing")]
         let object = OSMAnyObject(type: .node, id: 274_810_764, version: 3, changeset: 3, lat: nil, lon: nil, tag: tags, nd: [], nodes: [:], members: [], vector: vector![0])
         return object
     }

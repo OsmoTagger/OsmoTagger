@@ -187,7 +187,7 @@ extension OSMXmlParser: XMLParserDelegate {
         if elementName == "tag" {
             guard let key = attributeDict["k"],
                   let value = attributeDict["v"] else { return }
-            let tag = Tag(k: key, v: value, value: "")
+            let tag = Tag(k: key, v: value)
             if curNode != nil && curWay == nil && curRelation == nil {
                 // fill node
                 curNode?.tag.append(tag)

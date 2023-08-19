@@ -60,7 +60,7 @@ class InfoObjectViewController: SheetViewController, UITableViewDelegate, UITabl
             AppSettings.settings.savedObjects.removeValue(forKey: self.object.id)
             var tags: [Tag] = []
             for (key, value) in self.object.oldTags {
-                let tag = Tag(k: key, v: value, value: "")
+                let tag = Tag(k: key, v: value)
                 tags.append(tag)
             }
             self.object.tag = tags

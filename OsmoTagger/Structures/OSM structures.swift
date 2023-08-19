@@ -236,11 +236,9 @@ struct Tag: Codable, Equatable, DynamicNodeEncoding {
 
     var k: String
     var v: String
-    let value: String
     enum CodingKeys: String, CodingKey {
         case k
         case v
-        case value = ""
     }
 }
 
