@@ -19,7 +19,7 @@ class MapViewController: UIViewController {
     private let locationManager = CLLocationManager()
     
     //  The variable in which the reference to the open UINavigationController is stored. When initializing any controller, there is a check for nil, for example, in the goToSAvedNodesVC() method.
-    var navController: NavigationController?
+    var navController: SheetNavigationController?
     
     //  Simple tap
     var oneTap = UIGestureRecognizer()
@@ -329,7 +329,7 @@ class MapViewController: UIViewController {
     
     func goToSettingsVC() {
         let vc = MainViewController()
-        navController = NavigationController(rootViewController: vc)
+        navController = SheetNavigationController(rootViewController: vc)
         navController?.dismissClosure = { [weak self] in
             guard let self = self else { return }
             self.navController = nil
@@ -419,7 +419,7 @@ class MapViewController: UIViewController {
         }
         let savedNodesVC = SavedNodesViewController()
         savedNodesVC.delegate = self
-        navController = NavigationController(rootViewController: savedNodesVC)
+        navController = SheetNavigationController(rootViewController: savedNodesVC)
         navController?.dismissClosure = { [weak self] in
             guard let self = self else { return }
             self.navController = nil
@@ -572,7 +572,7 @@ class MapViewController: UIViewController {
         }
         let selectVC = SelectObjectViewController(objects: objects)
         selectVC.delegate = self
-        navController = NavigationController(rootViewController: selectVC)
+        navController = SheetNavigationController(rootViewController: selectVC)
         navController?.dismissClosure = { [weak self] in
             guard let self = self else { return }
             self.mapView.remove(self.mapClient.tappedDrawble)
@@ -685,7 +685,7 @@ class MapViewController: UIViewController {
             self.mapView.mapOrigin = CGPoint(x: 0.5, y: 0.75)
         }
         let editVC = EditObjectViewController(object: object)
-        navController = NavigationController(rootViewController: editVC)
+        navController = SheetNavigationController(rootViewController: editVC)
         // When the user closes the tag editing controller, the backlight of the tapped object is removed.
         navController?.dismissClosure = { [weak self] in
             guard let self = self else { return }
