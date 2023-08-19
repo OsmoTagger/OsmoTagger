@@ -8,7 +8,6 @@
 import GLMap
 import GLMapCore
 import UIKit
-import XMLCoder
 
 //  RootViewController with mapView
 class MapViewController: UIViewController {
@@ -20,9 +19,6 @@ class MapViewController: UIViewController {
     
     //  The variable in which the reference to the open UINavigationController is stored. When initializing any controller, there is a check for nil, for example, in the goToSAvedNodesVC() method.
     var navController: SheetNavigationController?
-    
-    //  Simple tap
-    var oneTap = UIGestureRecognizer()
     
     // plus zoom, minus zoom, map angle
     let mapButtons = MapButtonsView()
@@ -43,16 +39,16 @@ class MapViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//      Creating and adding MapView
+        // Creating and adding MapView
         setMapView()
         
         mapClient.delegate = self
         
-//      We run the definition of the geo position and check its resolution for the application in the settings.
+        // We run the definition of the geo position and check its resolution for the application in the settings.
         locationManager.startUpdatingLocation()
         chekAuthorization()
         
-//      Setting up taps.
+        // Setting up taps.
         let doubleTap = UITapGestureRecognizer(target: self, action: nil)
         doubleTap.numberOfTapsRequired = 2
         doubleTap.delegate = self
@@ -63,7 +59,7 @@ class MapViewController: UIViewController {
         oneTap.require(toFail: doubleTap)
         mapView.addGestureRecognizer(oneTap)
         
-//      Add system buttons
+        // Add system buttons
         setLoadIndicator()
         setDownloadButton()
         setupSettingsButton()
@@ -182,6 +178,7 @@ class MapViewController: UIViewController {
                 let newCenter = GLMapGeoPoint(point: object.bbox.center)
                 let userZoom = self.mapView.mapZoom
                 var viewSize = self.view.bounds.size
+                // Visible part of the screen
                 viewSize.width = viewSize.width * 0.98
                 viewSize.height = viewSize.height / 2.2
                 var objectZoom = self.mapView.mapZoom(for: object.bbox, viewSize: viewSize)
