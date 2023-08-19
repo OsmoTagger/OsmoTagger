@@ -60,7 +60,7 @@ class EditObjectViewController: SheetViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
-//      If the point is newly created and no tags are specified, the preset selection controller is called.
+        // If the point is newly created and no tags are specified, the preset selection controller is called.
         if object.tag.count == 0 {
             tapTitleButton()
         }
@@ -153,10 +153,10 @@ class EditObjectViewController: SheetViewController {
     
     func fillData() {
         tableData = []
-//      We define a list of presets that fall under the object tags and use the first one in the array.
+        // We define a list of presets that fall under the object tags and use the first one in the array.
         var pathes = getItemsFromTags(properties: newProperties)
         if pathes.count > 0 {
-//            If presets are detected.
+            // If presets are detected.
             let path = pathes.removeFirst()
             activePath = path
             setTitle(path: path)
@@ -173,19 +173,19 @@ class EditObjectViewController: SheetViewController {
                 }
             }
         } else {
-//          If no presets are detected.
+            // If no presets are detected.
             activePath = nil
             setTitle(path: nil)
         }
-//      Fill in the section of the table with all the tags filled in.
+        // Fill in the section of the table with all the tags filled in.
         fillLastSection()
-//      We arrange the preset elements in the right order.
+        // We arrange the preset elements in the right order.
         prepareElements()
     }
     
     //  Fill in the section of the table with all the tags filled in.
     func fillLastSection() {
-//      Immediately create cells that will be preset selection buttons and manually enter the tag.
+        // Immediately create cells that will be preset selection buttons and manually enter the tag.
         let addTagsFromPresetButton = ItemElements.presetLink(presetName: "Show other presets")
         let addTagManually = ItemElements.presetLink(presetName: "Add tag manually")
         for (index, data) in tableData.enumerated() {
@@ -219,25 +219,25 @@ class EditObjectViewController: SheetViewController {
         var presets: [ItemElements] = []
         var i = 0
         var isFinished = false
-//      The loop is executed until there are no chunk and references to other presets left in the array.
+        // The loop is executed until there are no chunk and references to other presets left in the array.
         while !isFinished && i < 20 {
             i += 1
             for (index, element) in elements.enumerated().reversed() {
                 switch element {
                 case let .reference(ref):
-//                  We remove the chunk from the array (reference) and insert its elements instead.
+                    // We remove the chunk from the array (reference) and insert its elements instead.
                     elements.remove(at: index)
                     guard let additionalTags = AppSettings.settings.chunks[ref] else { continue }
                     elements.insert(contentsOf: additionalTags, at: index)
                 case .presetLink:
-//                  We save links to other presets, which we attach to the end.
+                    // We save links to other presets, which we attach to the end.
                     let preset = elements.remove(at: index)
                     presets.append(preset)
                 default:
                     continue
                 }
             }
-//          Check if there are links to other presets or chunks in the array of elements.
+            // Check if there are links to other presets or chunks in the array of elements.
             isFinished = elements.allSatisfy { element -> Bool in
                 switch element {
                 case .presetLink(_), .reference:
@@ -283,7 +283,7 @@ class EditObjectViewController: SheetViewController {
     }
         
     func setTitle(path: ItemPath?) {
-//      If the preset is defined, we display its icon and name in the titleView, if not, then simply specify the type of object.
+        // If the preset is defined, we display its icon and name in the titleView, if not, then simply specify the type of object.
         guard let path = path,
               let item = getItemFromPath(path: path),
               let iconName = item.icon
@@ -307,7 +307,7 @@ class EditObjectViewController: SheetViewController {
         navigationItem.titleView = titleView
     }
     
-    //  When tapping on the titleView, we open the CategoryNavigationController, to which we add all the stages of selecting the preset.
+    // When tapping on the titleView, we open the CategoryNavigationController, to which we add all the stages of selecting the preset.
     @objc func tapTitleButton() {
         let navVC = CategoryNavigationController()
         navVC.objectProperties = newProperties
@@ -345,7 +345,7 @@ class EditObjectViewController: SheetViewController {
         }
     }
     
-    //  Tap on the button to display brief information about the object (RightBarItems).
+    // Tap on the button to display brief information about the object (RightBarItems).
     @objc func tapInfo() {
         var newObject = object
         newObject.tag = generateTags(properties: newProperties)
@@ -388,7 +388,7 @@ class EditObjectViewController: SheetViewController {
         tableView.reloadData()
     }
     
-    //  By tap the delete button, you can delete tag changes or the entire object from the server (if it is not referenced by other objects).
+    // By tap the delete button, you can delete tag changes or the entire object from the server (if it is not referenced by other objects).
     @objc func tapDeleteButton() {
         AppSettings.settings.savedObjects.removeValue(forKey: object.id)
         // When deleting an object, if the object selection controller from several objects was opened before, a closure is called, which updates the table to SelectObjectVC.
@@ -401,7 +401,7 @@ class EditObjectViewController: SheetViewController {
         dismissViewController()
     }
     
-    //  Generating an array of tags [Tag] from a dictionary with tags.
+    // Generating an array of tags [Tag] from a dictionary with tags.
     func generateTags(properties: [String: String]) -> [Tag] {
         var tags: [Tag] = []
         for (key, value) in properties {
@@ -426,7 +426,7 @@ class EditObjectViewController: SheetViewController {
     }
     
     func setEnterTagManuallyView() {
-        //  When the tag is entered manually, addView.callbackClosure is triggered, which passes the entered tag=value pair. The table data is updated.
+        // When the tag is entered manually, addView.callbackClosure is triggered, which passes the entered tag=value pair. The table data is updated.
         addTagView.callbackClosure = { [weak self] addedTag in
             guard let self = self else { return }
             self.addTagView.isHidden = true
@@ -459,7 +459,7 @@ class EditObjectViewController: SheetViewController {
         ])
     }
     
-    //  Updating the view when the keyboard appears.
+    // Updating the view when the keyboard appears.
     @objc func keyboardWillShow(notification: NSNotification) {
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
         if keyboardSize.height > 0 {
@@ -467,7 +467,7 @@ class EditObjectViewController: SheetViewController {
         }
     }
     
-    //  Updating the view when hiding the keyboard.
+    // Updating the view when hiding the keyboard.
     @objc func keyboardWillHide(notification _: NSNotification) {
         addViewBottomConstraint.constant = 0
     }
@@ -486,7 +486,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
         return tableData[section].items.count
     }
     
-    //  Creating a cell. See enum ItemElements, which presets consist of.
+    // Creating a cell. See enum ItemElements, which presets consist of.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? ItemCell else {
             return UITableViewCell()
@@ -767,7 +767,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.reloadData()
     }
     
-    //  Deleting a previously entered tag.
+    // Deleting a previously entered tag.
     func tableView(_: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         var tagKey: String?
         let data = tableData[indexPath.section].items[indexPath.row]
