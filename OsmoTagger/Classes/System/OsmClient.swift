@@ -10,11 +10,11 @@ import Foundation
 import UIKit
 import XMLCoder
 
-//  Class for working with the OSM API.  Later it is necessary to get rid of singleton
+// Class for working with the OSM API.  Later it is necessary to get rid of singleton
 class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
     let session = URLSession.shared
     
-//    MARK: OAuth 2.0
+    // MARK: OAuth 2.0
     
     //  The authorization verification method, and in case of its absence, the authorization is launched
     func checkAuth() async throws {
@@ -150,14 +150,8 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
             throw "Error open changeset: \(error)"
         }
         try await sendChangeset(osmChange: changeset, changesetID: changesetID)
-        removeObjectsFromSaved(objects: sendObjs)
+        AppSettings.settings.savedObjects.removeAll()
         await closeChangeset(changeSetID: changesetID)
-    }
-    
-    func removeObjectsFromSaved(objects: [OSMAnyObject]) {
-        for object in objects {
-            AppSettings.settings.savedObjects.removeValue(forKey: object.id)
-        }
     }
     
     //  open changeset
