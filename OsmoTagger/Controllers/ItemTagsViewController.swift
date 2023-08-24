@@ -247,7 +247,7 @@ extension ItemTagsViewController: UITableViewDataSource, UITableViewDelegate {
             let svc = CustomSafari(url: url)
             present(svc, animated: true, completion: nil)
         case let .presetLink(presetName):
-            guard let item = getItemFromName(name: presetName) else { return }
+            guard let item = PresetClient().getItemFromName(name: presetName) else { return }
             let itemVC = ItemTagsViewController(item: item)
             navController.pushViewController(itemVC, animated: true)
         case let .multiselect(key, values, _):
@@ -437,7 +437,7 @@ extension ItemTagsViewController: UITableViewDataSource, UITableViewDelegate {
             cell.rightIcon.isHidden = true
             cell.accessoryType = .none
         case let .presetLink(presetName):
-            if let item = getItemFromName(name: presetName),
+            if let item = PresetClient().getItemFromName(name: presetName),
                let icon = item.icon
             {
                 cell.icon.icon.image = UIImage(named: icon)

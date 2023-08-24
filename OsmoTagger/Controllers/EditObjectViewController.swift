@@ -154,18 +154,18 @@ class EditObjectViewController: SheetViewController {
     func fillData() {
         tableData = []
         // We define a list of presets that fall under the object tags and use the first one in the array.
-        var pathes = getItemsFromTags(properties: newProperties)
+        var pathes = PresetClient().getItemsFromTags(properties: newProperties)
         if pathes.count > 0 {
             // If presets are detected.
             let path = pathes.removeFirst()
             activePath = path
             setTitle(path: path)
-            if let item = getItemFromPath(path: path) {
+            if let item = PresetClient().getItemFromPath(path: path) {
                 let optionalTags = EditSectionData(name: "\(item.name) tags", items: item.elements)
                 tableData.append(optionalTags)
             }
             for path in pathes {
-                if let item = getItemFromPath(path: path) {
+                if let item = PresetClient().getItemFromPath(path: path) {
                     let elem = ItemElements.presetLink(presetName: item.name)
                     if tableData.isEmpty == false {
                         tableData[0].items.append(elem)
@@ -285,7 +285,7 @@ class EditObjectViewController: SheetViewController {
     func setTitle(path: ItemPath?) {
         // If the preset is defined, we display its icon and name in the titleView, if not, then simply specify the type of object.
         guard let path = path,
-              let item = getItemFromPath(path: path),
+              let item = PresetClient().getItemFromPath(path: path),
               let iconName = item.icon
         else {
             title = object.type.rawValue
@@ -609,7 +609,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
                 cell.icon.backView.backgroundColor = .systemBackground
                 cell.icon.isHidden = false
             } else {
-                if let item = getItemFromName(name: presetName) {
+                if let item = PresetClient().getItemFromName(name: presetName) {
                     if let icon = item.icon {
                         cell.icon.icon.image = UIImage(named: icon)
                         cell.icon.backView.backgroundColor = .white
@@ -706,7 +706,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
                 addTagView.isHidden = false
                 addTagView.keyField.becomeFirstResponder()
             } else {
-                guard let item = getItemFromName(name: presetName) else { return }
+                guard let item = PresetClient().getItemFromName(name: presetName) else { return }
                 let itemVC = ItemTagsViewController(item: item)
                 let navVC = CategoryNavigationController(rootViewController: itemVC)
                 navVC.objectProperties = newProperties

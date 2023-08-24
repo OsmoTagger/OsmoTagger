@@ -52,10 +52,10 @@ class SelectObjectViewController: SheetViewController, UITableViewDelegate, UITa
                 properties[tag.k] = tag.v
             }
             var data = SelectObjectCellData(iconItem: nil, type: object.type, itemLabel: nil, idLabel: String(object.id))
-            let pathes = getItemsFromTags(properties: properties)
+            let pathes = PresetClient().getItemsFromTags(properties: properties)
 //          Defining the preset of the object.
             if let path = pathes.first {
-                if let item = getItemFromPath(path: path) {
+                if let item = PresetClient().getItemFromPath(path: path) {
                     data.iconItem = item.icon
                     data.itemLabel = item.name
                 }

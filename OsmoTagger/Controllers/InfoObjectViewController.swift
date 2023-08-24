@@ -178,14 +178,10 @@ class InfoObjectViewController: SheetViewController, UITableViewDelegate, UITabl
         for tag in object.tag {
             newProperties[tag.k] = tag.v
         }
-        var pathes: [ItemPath] = []
-        if newProperties.count == 0 {
-            pathes = getItemsFromTags(properties: object.oldTags)
-        } else {
-            pathes = getItemsFromTags(properties: newProperties)
-        }
+        let properties: [String:String] = newProperties.count == 0 ? object.oldTags : newProperties
+        let pathes = PresetClient().getItemsFromTags(properties: properties)
         if let path = pathes.first {
-            if let item = getItemFromPath(path: path) {
+            if let item = PresetClient().getItemFromPath(path: path) {
                 var text = ""
                 if let group = path.group {
                     text = "Specific preset: " + group + " - " + path.item

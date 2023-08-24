@@ -117,9 +117,9 @@ class SavedNodesViewController: SheetViewController, UITableViewDelegate, UITabl
                 iconName = "osm_element_multipolygon"
             }
             var data = SaveNodeCellData(type: .saved, itemIcon: nil, typeIcon: iconName, itemLabel: nil, idLabel: object.id)
-            let pathes = getItemsFromTags(properties: properties)
+            let pathes = PresetClient().getItemsFromTags(properties: properties)
             if let path = pathes.first {
-                if let item = getItemFromPath(path: path) {
+                if let item = PresetClient().getItemFromPath(path: path) {
                     data.itemIcon = item.icon
                     data.itemLabel = item.name
                 }
@@ -153,9 +153,9 @@ class SavedNodesViewController: SheetViewController, UITableViewDelegate, UITabl
                 iconName = "osm_element_multipolygon"
             }
             var data = SaveNodeCellData(type: .saved, itemIcon: nil, typeIcon: iconName, itemLabel: nil, idLabel: object.id)
-            let pathes = getItemsFromTags(properties: properties)
+            let pathes = PresetClient().getItemsFromTags(properties: properties)
             if let path = pathes.first {
-                if let item = getItemFromPath(path: path) {
+                if let item = PresetClient().getItemFromPath(path: path) {
                     data.itemIcon = item.icon
                     data.itemLabel = item.name
                 }
@@ -188,9 +188,9 @@ class SavedNodesViewController: SheetViewController, UITableViewDelegate, UITabl
                 iconName = "osm_element_multipolygon"
             }
             var data = SaveNodeCellData(type: .deleted, itemIcon: nil, typeIcon: iconName, itemLabel: nil, idLabel: object.id)
-            let pathes = getItemsFromTags(properties: properties)
+            let pathes = PresetClient().getItemsFromTags(properties: properties)
             if let path = pathes.first {
-                if let item = getItemFromPath(path: path) {
+                if let item = PresetClient().getItemFromPath(path: path) {
                     data.itemIcon = item.icon
                     data.itemLabel = item.name
                 }

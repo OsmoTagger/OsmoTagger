@@ -286,7 +286,7 @@ extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
                 navigationController?.dismiss(animated: true, completion: nil)
             } else {
                 guard let path = data.path,
-                      let item = getItemFromPath(path: path)
+                      let item = PresetClient().getItemFromPath(path: path)
                 else {
                     showAction(message: "Coudn't find item in presets: \(data.path), \(searchController.searchBar.text)", addAlerts: [])
                     return
