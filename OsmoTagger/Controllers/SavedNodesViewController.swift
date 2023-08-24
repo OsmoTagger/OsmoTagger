@@ -14,15 +14,15 @@ class SavedNodesViewController: SheetViewController, UITableViewDelegate, UITabl
     var tableView = UITableView()
     var cellId = "cell"
     var tableData: [SaveNodeTableData] = []
+    
+    var enterCommentView = ChangesetCommentView()
+    
     //  An array in which the IDs of the selected objects are stored.
     var selectedIDs: [SavedSelectedIndex] = [] {
         didSet {
-            enterCommentView.placeholder = selectedIDs.count == 0 ? nil : generateComment()
+            enterCommentView.field.placeholder = selectedIDs.count == 0 ? nil : generateComment()
         }
     }
-
-    // View for enter comment to chageset
-    var enterCommentView = UITextField()
     
     var tap = UIGestureRecognizer()
     
@@ -44,7 +44,6 @@ class SavedNodesViewController: SheetViewController, UITableViewDelegate, UITabl
         
         fillData()
         createToolBar()
-        setEnterCommentView()
         setTableView()
         checkUniqInMemory()
         tapCheckAll()
@@ -361,10 +360,10 @@ class SavedNodesViewController: SheetViewController, UITableViewDelegate, UITabl
             showAction(message: "Attention! The listed objects are modified for submission and are marked for deletion at the same time: \(uniq). Fix it.", addAlerts: [])
             return
         }
-        if enterCommentView.text == "" {
-            AppSettings.settings.changeSetComment = enterCommentView.placeholder
+        if enterCommentView.field.text == "" {
+            AppSettings.settings.changeSetComment = enterCommentView.field.placeholder
         } else {
-            AppSettings.settings.changeSetComment = enterCommentView.text
+            AppSettings.settings.changeSetComment = enterCommentView.field.text
         }
         sendObjects()
     }
@@ -402,7 +401,7 @@ class SavedNodesViewController: SheetViewController, UITableViewDelegate, UITabl
                 removeIndicator(indicator: indicator)
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
-                    self.enterCommentView.text = nil
+                    self.enterCommentView.field.text = nil
                     AppSettings.settings.changeSetComment = nil
                 }
                 let alert0 = UIAlertAction(title: "Ok", style: .default, handler: { _ in
@@ -450,42 +449,19 @@ class SavedNodesViewController: SheetViewController, UITableViewDelegate, UITabl
         }
         return comment
     }
-    
-    // Method displays a comment input field of changeset
-    func setEnterCommentView() {
-        enterCommentView.layer.borderWidth = 2
-        enterCommentView.layer.cornerRadius = 5
-        enterCommentView.clearButtonMode = .always
-        enterCommentView.delegate = self
-        enterCommentView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(enterCommentView)
-        let commentTitle = UILabel()
-        commentTitle.text = "Comment"
-        commentTitle.backgroundColor = .systemBackground
-        commentTitle.font = UIFont.systemFont(ofSize: 14)
-        commentTitle.textColor = .systemGray
-        commentTitle.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(commentTitle)
-        NSLayoutConstraint.activate([
-            enterCommentView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            enterCommentView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            enterCommentView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -20),
-            enterCommentView.heightAnchor.constraint(equalToConstant: 40),
-            commentTitle.centerYAnchor.constraint(equalTo: enterCommentView.topAnchor),
-            commentTitle.leftAnchor.constraint(equalTo: enterCommentView.leftAnchor, constant: 10),
-        ])
-    }
 
     func setTableView() {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 50
         tableView.delegate = self
         tableView.dataSource = self
+        enterCommentView.field.delegate = self
+        tableView.tableHeaderView = enterCommentView
         tableView.register(SavedNodeCell.self, forCellReuseIdentifier: cellId)
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: enterCommentView.bottomAnchor),
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
             tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),

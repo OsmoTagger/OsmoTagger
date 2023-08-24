@@ -478,3 +478,46 @@ class CheckBox: UIButton {
     
     var indexPath = IndexPath()
 }
+
+// View for entering a comment for a changeset.
+class ChangesetCommentView: UIView {
+    private lazy var label: UILabel = {
+        let rv = UILabel()
+        rv.text = "Comment"
+        rv.backgroundColor = .systemBackground
+        rv.font = UIFont.systemFont(ofSize: 14)
+        rv.textColor = .systemGray
+        rv.translatesAutoresizingMaskIntoConstraints = false
+        return rv
+    }()
+
+    lazy var field: UITextField = {
+        let rv = UITextField()
+        rv.layer.borderWidth = 2
+        rv.layer.cornerRadius = 5
+        rv.clearButtonMode = .always
+        rv.translatesAutoresizingMaskIntoConstraints = false
+        return rv
+    }()
+    
+    // Since UITableView doesn't work properly with autolayout, views are added using frames. Only the height is specified.
+    convenience init() {
+        self.init(frame: .zero)
+        frame.size.height = 50
+        setupConstrains()
+    }
+    
+    private func setupConstrains() {
+        addSubview(field)
+        addSubview(label)
+        NSLayoutConstraint.activate([
+            field.topAnchor.constraint(equalTo: topAnchor, constant: 5),
+            field.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.95),
+            field.centerXAnchor.constraint(equalTo: centerXAnchor),
+            field.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -5),
+            
+            label.centerYAnchor.constraint(equalTo: field.topAnchor),
+            label.leadingAnchor.constraint(equalTo: field.leadingAnchor, constant: 10),
+        ])
+    }
+}
