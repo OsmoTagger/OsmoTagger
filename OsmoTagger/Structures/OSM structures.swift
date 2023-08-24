@@ -311,6 +311,20 @@ struct OSMAnyObject: Codable {
     var nodes: [Int: Node]
     var members: [Member]
     var vectorString: String
+    var iconType: UIImage? {
+        var iconName = ""
+        switch type {
+        case .node:
+            iconName = "osm_element_node"
+        case .way:
+            iconName = "osm_element_way"
+        case .closedway:
+            iconName = "osm_element_closedway"
+        case .multipolygon:
+            iconName = "osm_element_multipolygon"
+        }
+        return UIImage(named: iconName)
+    }
     var vector: GLMapVectorObject {
         get {
             do {
@@ -343,6 +357,14 @@ struct OSMAnyObject: Codable {
         }
         self.members = members
         vectorString = vector.asGeoJSON()
+    }
+    
+    func getNewTags() -> [String: String] {
+        var properties: [String: String] = [:]
+        for tag in tag {
+            properties[tag.k] = tag.v
+        }
+        return properties
     }
     
     func getRelation() -> Relation {

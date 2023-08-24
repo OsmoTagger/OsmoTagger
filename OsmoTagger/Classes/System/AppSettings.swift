@@ -9,9 +9,7 @@ import GLMap
 import UIKit
 
 typealias EmptyBlock = () -> Void
-//var isLandscape: Bool {
-//    return UIDevice.current.orientation.isLandscape
-//}
+typealias OSMAnyObjectBlock = (OSMAnyObject) -> Void
 
 //  Singleton for storing app settings
 final class AppSettings: NSObject {
