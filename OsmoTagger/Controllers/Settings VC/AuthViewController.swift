@@ -6,10 +6,11 @@
 //
 
 import UIKit
+import SafariServices
 
 //  Authorization ViewController
 class AuthViewController: SheetViewController {
-    let warningLabel = UILabel()
+    let removeLabel = UILabel()
     let toggle = UISwitch()
     let authResult = AuthResultView()
     let userView = UserInfoView()
@@ -61,19 +62,46 @@ class AuthViewController: SheetViewController {
     }
     
     func setWarningLabel() {
-        warningLabel.textAlignment = .center
-        warningLabel.numberOfLines = 0
         let text = """
         OsmoTagger uses OAuth 2.0 authentication, and does not have access to a login and password for authorization on the server openstreetmap.org.
         """
-        warningLabel.text = text
-        warningLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(warningLabel)
+        let label = UILabel()
+        label.text = text
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(label)
+        
+        let removeText = "Remove OsmoTagger from authorized OAuth 2.0 applications"
+        let underlineAttribute = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue]
+        let underlinedText = NSAttributedString(string: removeText, attributes: underlineAttribute)
+        removeLabel.isUserInteractionEnabled = true
+        removeLabel.textAlignment = .center
+        removeLabel.numberOfLines = 0
+        removeLabel.attributedText = underlinedText
+        removeLabel.textColor = .systemBlue
+        let removeTap = UITapGestureRecognizer(target: self, action: #selector(tapRemove))
+        removeTap.delegate = self
+        removeLabel.addGestureRecognizer(removeTap)
+        
+        removeLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(removeLabel)
         NSLayoutConstraint.activate([
-            warningLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
-            warningLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 30),
-            warningLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -30),
+            label.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 30),
+            label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -30),
+            
+            removeLabel.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 10),
+            removeLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 30),
+            removeLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -30),
         ])
+    }
+    
+    @objc private func tapRemove() {
+        let link = AppSettings.settings.server + "/oauth2/applications"
+        guard let url = URL(string: link) else {return}
+        let vc = SFSafariViewController(url: url)
+        present(vc, animated: true)
     }
     
     func setServerTogle() {
@@ -95,7 +123,7 @@ class AuthViewController: SheetViewController {
         rightLable.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([toggle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                                     toggle.topAnchor.constraint(equalTo: warningLabel.bottomAnchor, constant: 25),
+                                     toggle.topAnchor.constraint(equalTo: removeLabel.bottomAnchor, constant: 25),
                                      rightLable.centerYAnchor.constraint(equalTo: toggle.centerYAnchor),
                                      rightLable.leftAnchor.constraint(equalTo: toggle.rightAnchor, constant: 5),
                                      leftLable.centerYAnchor.constraint(equalTo: toggle.centerYAnchor),
@@ -185,4 +213,8 @@ class AuthViewController: SheetViewController {
         ])
         navigationItem.titleView = titleView
     }
+}
+
+extension AuthViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer) -> Bool { return true }
 }
