@@ -757,7 +757,7 @@
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/OsmoTagger/third_party";
 				INFOPLIST_FILE = OsmoTagger/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = OsmoTagger;
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Разрешите доступ";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "OsmoTagger uses your geolocation only during use to determine your location on the map.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -799,7 +799,7 @@
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/OsmoTagger/third_party";
 				INFOPLIST_FILE = OsmoTagger/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = OsmoTagger;
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Разрешите доступ";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "OsmoTagger uses your geolocation only during use to determine your location on the map.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
