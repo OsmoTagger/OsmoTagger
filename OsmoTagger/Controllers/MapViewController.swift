@@ -133,9 +133,6 @@ class MapViewController: UIViewController {
     func setDidMapMoveClouser() {
         mapView.mapDidMoveBlock = { [weak self] _ in
             guard let self = self else { return }
-            print(mapView.mapGeoCenter)
-            print(mapView.mapAngle)
-            print(mapView.mapZoomLevel)
             // rotate mapButtons.angleButton image
             let angle = CGFloat(self.mapView.mapAngle)
             let radian = angle * .pi / 180
