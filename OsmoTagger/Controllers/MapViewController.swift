@@ -85,28 +85,6 @@ class MapViewController: UIViewController {
         // When this closure is called, the object is added to the map and the zoom is adjusted
         setShowVectorObjectClosure()
         mapClient.showSavedObjects()
-        
-        // Uncomment when you need to take screenshots.
-        // getScreenShots()
-    }
-    
-    // Function that customizes the appearance of the screen for taking screenshots. Not used in the app's regular operation.
-    func getScreenShots() {
-        AppSettings.settings.fillScreenShotData()
-        mapView.animate({ _ in
-            mapView.mapGeoCenter = GLMapGeoPoint(lat: 37.568391, lon: -122.254233)
-            if UIDevice.current.userInterfaceIdiom == .pad {
-                mapView.mapZoomLevel = 19
-            } else if UIDevice.current.userInterfaceIdiom == .phone {
-                mapView.mapZoomLevel = 17
-            }
-        }, withCompletion: { _ in
-            self.tapDownloadButton()
-            guard let object = AppSettings.settings.savedObjects[6_621_472_241] else { return }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                self.goToPropertiesVC(object: object)
-            }
-        })
     }
     
     // MARK: MapView and layers
@@ -135,6 +113,14 @@ class MapViewController: UIViewController {
     
     //  Set the initial position of the map
     func setMapLocation() {
+        // Uncomment when you need to take screenshots. This is the Statue of Liberty in New York.
+        // Set your location in ios simulator to lat: 40,690825, lon: -74,045662
+        // comment the code block with if-else
+        // mapView.mapGeoCenter = GLMapGeoPoint(lat: 40.689739905669796, lon: -74.04507003627924)
+        // mapView.mapAngle = 145.5305633544922
+        // mapView.mapZoomLevel = 17.43877570923042
+        // AppSettings.settings.mapButtonsIsHidden = true
+        // AppSettings.settings.isDevServer = true
         if let bbox = AppSettings.settings.lastBbox {
             mapView.mapCenter = bbox.center
             mapView.mapZoom = mapView.mapZoom(for: bbox)
@@ -147,6 +133,9 @@ class MapViewController: UIViewController {
     func setDidMapMoveClouser() {
         mapView.mapDidMoveBlock = { [weak self] _ in
             guard let self = self else { return }
+            print(mapView.mapGeoCenter)
+            print(mapView.mapAngle)
+            print(mapView.mapZoomLevel)
             // rotate mapButtons.angleButton image
             let angle = CGFloat(self.mapView.mapAngle)
             let radian = angle * .pi / 180

@@ -49,8 +49,6 @@ class MapClient {
      
     init() {
         setAppSettingsClouser()
-        // Reading the modified and created objects into the AppSettings.settings.savedObjects variable.
-        AppSettings.settings.getSavedObjects()
         // In the background, we start parsing the file with Josm presets.
         loadPresets()
     }

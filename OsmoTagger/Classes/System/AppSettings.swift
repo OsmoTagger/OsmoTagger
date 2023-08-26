@@ -14,6 +14,22 @@ typealias EmptyBlock = () -> Void
 final class AppSettings: NSObject {
     static let settings = AppSettings()
     
+    // Reading the modified and created objects into the AppSettings.settings.savedObjects variable.
+    override init() {
+        do {
+            let data = try Data(contentsOf: savedNodesURL)
+            savedObjects = try JSONDecoder().decode([Int: OSMAnyObject].self, from: data)
+        } catch {
+            savedObjects = [:]
+        }
+        do {
+            let data = try Data(contentsOf: deletedNodesURL)
+            deletedObjects = try JSONDecoder().decode([Int: OSMAnyObject].self, from: data)
+        } catch {
+            deletedObjects = [:]
+        }
+    }
+    
     //  Called when changing savedObjects - to update the map
     var mapVCClouser: EmptyBlock?
     //  It is called in case of writing a token upon successful authorization, for uploading user data.
@@ -237,59 +253,5 @@ final class AppSettings: NSObject {
                 print("Error while write saved objects: ", error)
             }
         }
-    }
-    
-    //  Fills savedObjects and deletedObjects with objects from the file when the application starts
-    func getSavedObjects() {
-        do {
-            let data = try Data(contentsOf: savedNodesURL)
-            savedObjects = try JSONDecoder().decode([Int: OSMAnyObject].self, from: data)
-        } catch {
-            savedObjects = [:]
-        }
-        do {
-            let data = try Data(contentsOf: deletedNodesURL)
-            deletedObjects = try JSONDecoder().decode([Int: OSMAnyObject].self, from: data)
-        } catch {
-            deletedObjects = [:]
-        }
-    }
-    
-    // These objects do not exist in reality, they are used for automatic program screenshot capturing.
-    let testGeojson = """
-    {"type":"Feature","properties":{"version":"1.000000","highway":"bus_stop","public_transport":"platform","bus":"yes","network":"SamTrans","name":"Beach Park Boulevard & Sanderling Street","@id":"6621472241.000000"},"geometry":{"type":"Point","coordinates":[-122.2542389,37.5683927]}}
-    """
-    
-    var screenShotEditedObject: OSMAnyObject {
-        let vector = try? GLMapVectorObject.createVectorObjects(fromGeoJSON: testGeojson)
-        let tags: [Tag] = [Tag(k: "highway", v: "bus_stop"),
-                           Tag(k: "public_transport", v: "platform"),
-                           Tag(k: "name", v: "Beach Park Boulevard & Sanderling Street")]
-        var object = OSMAnyObject(type: .node, id: 6_621_472_241, version: 3, changeset: 3, lat: nil, lon: nil, tag: tags, nd: [], nodes: [:], members: [], vector: vector![0])
-        object.oldTags = [:]
-        return object
-    }
-    
-    var screenShotCreatedObject: OSMAnyObject {
-        let vector = try? GLMapVectorObject.createVectorObjects(fromGeoJSON: testGeojson)
-        let tags = [Tag(k: "amenity", v: "charging_station")]
-        let object = OSMAnyObject(type: .node, id: -15, version: 1, changeset: 1, lat: 1, lon: 1, tag: tags, nd: [], nodes: [:], members: [], vector: vector![0])
-        return object
-    }
-    
-    var screenShotDeletedObject: OSMAnyObject {
-        let vector = try? GLMapVectorObject.createVectorObjects(fromGeoJSON: testGeojson)
-        let tags = [Tag(k: "highway", v: "crossing")]
-        let object = OSMAnyObject(type: .node, id: 274_810_764, version: 3, changeset: 3, lat: nil, lon: nil, tag: tags, nd: [], nodes: [:], members: [], vector: vector![0])
-        return object
-    }
-    
-    // The method is executed to populate data when taking screenshots
-    func fillScreenShotData() {
-        savedObjects = [:]
-        deletedObjects = [:]
-        savedObjects[screenShotEditedObject.id] = screenShotEditedObject
-        savedObjects[screenShotCreatedObject.id] = screenShotCreatedObject
-        deletedObjects[screenShotDeletedObject.id] = screenShotDeletedObject
     }
 }
