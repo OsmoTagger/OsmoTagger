@@ -1,8 +1,14 @@
 # README
 
-OsmoTagger is an open-source project for editing OpenStreetMap maps on iOS, utilizing the fast and powerful [GLMap framework](https://globus.software) for displaying OpenStreetMap maps.
+## Discussion and help
+
+* You can ask all questions and suggestions in the OsmoTagger [telegram chat](https://t.me/OsmoTagger_chat).
+* You can follow the news in the [telegram channel](https://t.me/OsmoTagger).
+* You can create an issue in the repository using the [link](https://github.com/OsmoTagger/OsmoTagger/issues).
 
 ## Resources
+
+OsmoTagger is an open-source project for editing OpenStreetMap maps on iOS, utilizing the fast and powerful [GLMap framework](https://globus.software) for displaying OpenStreetMap maps.
 
 * Explore the [GLMap documentation](https://globus.software/docs/objc/api/latest/index.html) to familiarize yourself with its features.
 * Find the OpenStreetMap API documentation [here](https://wiki.openstreetmap.org/wiki/API_v0.6).
@@ -26,8 +32,3 @@ Follow these steps to build and run OsmoTagger:
         static let glAPIKey = "YOUR_API_KEY"
     }
 ```
-
-## Discussion and help
-
-* You can ask all questions and suggestions in the OsmoTagger [telegram chat](https://t.me/OsmoTagger_chat).
-* You can follow the news in the [telegram channel](https://t.me/OsmoTagger).
