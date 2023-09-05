@@ -496,6 +496,8 @@ class ChangesetCommentView: UIView {
         rv.layer.borderWidth = 2
         rv.layer.cornerRadius = 5
         rv.clearButtonMode = .always
+        rv.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 5))
+        rv.leftViewMode = .always
         rv.translatesAutoresizingMaskIntoConstraints = false
         return rv
     }()
