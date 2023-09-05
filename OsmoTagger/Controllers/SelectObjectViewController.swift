@@ -53,7 +53,7 @@ class SelectObjectViewController: SheetViewController, UITableViewDelegate, UITa
             }
             var data = SelectObjectCellData(iconItem: nil, type: object.type, itemLabel: nil, idLabel: String(object.id))
             let pathes = PresetClient().getItemsFromTags(properties: properties)
-//          Defining the preset of the object.
+            // Defining the preset of the object.
             if let path = pathes.first {
                 if let item = PresetClient().getItemFromPath(path: path) {
                     data.iconItem = item.icon
@@ -62,7 +62,7 @@ class SelectObjectViewController: SheetViewController, UITableViewDelegate, UITa
             }
             tableData.append(data)
         }
-//      Sorting objects by type.
+        // Sorting objects by type.
         tableData = tableData.sorted(by: { item1, item2 -> Bool in
             item1.type < item2.type
         })
