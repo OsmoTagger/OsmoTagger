@@ -67,6 +67,7 @@ class MapViewController: UIViewController {
         setSavedNodesButton()
         setAddNodeButton()
         setDrawButton()
+        setOverpasButton()
         // The test button in the lower right corner of the screen is often needed during development.
         // setTestButton()
         
@@ -505,6 +506,27 @@ class MapViewController: UIViewController {
         point.setValue(String(id), forKey: "@id")
         let object = OSMAnyObject(type: .node, id: id, version: 0, changeset: 0, lat: geoPoint.lat, lon: geoPoint.lon, tag: [], nd: [], nodes: [:], members: [], vector: point)
         goToPropertiesVC(object: object)
+    }
+    
+    private func setOverpasButton() {
+        let button = UIButton()
+        button.layer.cornerRadius = 5
+        button.backgroundColor = .white
+        button.setTitleColor(.black, for: .normal)
+        let image = UIImage(named: "overpas-logo")?.withTintColor(.black, renderingMode: .alwaysOriginal)
+        button.setImage(image, for: .normal)
+        button.addTarget(self, action: #selector(tapOverpas), for: .touchUpInside)
+        view.addSubview(button)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([button.widthAnchor.constraint(equalToConstant: 40),
+                                     button.heightAnchor.constraint(equalToConstant: 40),
+                                     button.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
+                                     button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)])
+    }
+    
+    @objc private func tapOverpas() {
+        let navVC = UINavigationController(rootViewController: OverpasViewController())
+        present(navVC, animated: true)
     }
     
     //  Test button and its target for debugging convenience.

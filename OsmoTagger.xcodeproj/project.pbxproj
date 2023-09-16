@@ -58,6 +58,7 @@
 		6CF5D93928FB485F001D2758 /* osmium.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6CF5D93828FB485F001D2758 /* osmium.mm */; };
 		E3021DAC2A8FFF86000E789A /* MapStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3021DAB2A8FFF86000E789A /* MapStyles.swift */; };
 		E3021DB82A909249000E789A /* SheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3021DB72A909249000E789A /* SheetViewController.swift */; };
+		E339501A2AB644EE00C1F888 /* OverpasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33950192AB644EE00C1F888 /* OverpasViewController.swift */; };
 		E34E4AE12A981ECD00D65A92 /* Presets.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34E4AE02A981ECD00D65A92 /* Presets.swift */; };
 		E3540AF42A71AE2E00649564 /* SavedNodeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540AF32A71AE2E00649564 /* SavedNodeCell.swift */; };
 		E3540AF62A71AE7400649564 /* SelectObjectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540AF52A71AE7400649564 /* SelectObjectCell.swift */; };
@@ -161,6 +162,7 @@
 		6CF5D93828FB485F001D2758 /* osmium.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = osmium.mm; sourceTree = "<group>"; };
 		E3021DAB2A8FFF86000E789A /* MapStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyles.swift; sourceTree = "<group>"; };
 		E3021DB72A909249000E789A /* SheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetViewController.swift; sourceTree = "<group>"; };
+		E33950192AB644EE00C1F888 /* OverpasViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverpasViewController.swift; sourceTree = "<group>"; };
 		E34E4AE02A981ECD00D65A92 /* Presets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Presets.swift; sourceTree = "<group>"; };
 		E3540AF32A71AE2E00649564 /* SavedNodeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedNodeCell.swift; sourceTree = "<group>"; };
 		E3540AF52A71AE7400649564 /* SelectObjectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectObjectCell.swift; sourceTree = "<group>"; };
@@ -256,6 +258,7 @@
 				2C450A752A326EFF001D73A9 /* TestViewController.swift */,
 				2042BCEE289C696E0026514E /* MapViewController.swift */,
 				2CD2E7AB29D30D150042D36E /* MultiSelectViewController.swift */,
+				E33950192AB644EE00C1F888 /* OverpasViewController.swift */,
 				2CCB304129D4553100C8E5E7 /* SelectObjectViewController.swift */,
 				2CD4B48329C6DC2B00040018 /* CategoryViewController.swift */,
 				2CD4B48529C7475100040018 /* ItemTagsViewController.swift */,
@@ -541,6 +544,7 @@
 				2CD4B48629C7475100040018 /* ItemTagsViewController.swift in Sources */,
 				2CE00A812A253DA5008A6119 /* MapClientProtocol.swift in Sources */,
 				2CD9133A29AB94F500A4A853 /* EditObjectViewController.swift in Sources */,
+				E339501A2AB644EE00C1F888 /* OverpasViewController.swift in Sources */,
 				2CCB304229D4553100C8E5E7 /* SelectObjectViewController.swift in Sources */,
 				2C5662C12912788600E5B4D5 /* OSM structures.swift in Sources */,
 				E3540B032A71B0DF00649564 /* SelectValuesCell.swift in Sources */,
