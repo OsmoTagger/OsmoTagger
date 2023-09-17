@@ -47,6 +47,19 @@ final class AppSettings: NSObject {
         }
     }
     
+    // MARK: OVERPAS API
+    // Request type in Overpass API. Def - .bbox
+    private let overpasRequestTypeKey = "overpasRequestType"
+    var overpasRequesType: OverpasRequestType {
+        get {
+            let i = UserDefaults.standard.integer(forKey: overpasRequestTypeKey)
+            return OverpasRequestType(rawValue: i) ?? .bbox
+        }
+        set {
+            UserDefaults.standard.set(newValue.rawValue, forKey: overpasRequestTypeKey)
+        }
+    }
+    
     // MARK: MAIN SCREEN SETTINGS
 
     //  The variable into which the last MapView bbox is saved

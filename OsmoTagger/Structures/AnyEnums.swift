@@ -24,3 +24,10 @@ enum ItemCellType {
     case link
     case space
 }
+
+// Request type in Overpass API
+enum OverpasRequestType: Int {
+    case bbox
+    case cityName
+    case manualy
+}
