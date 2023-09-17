@@ -10,6 +10,8 @@ import UIKit
 
 class OverpasViewController: ScrollViewController {
     
+    let overpasClient = OverpasClient()
+    
     var location: GLMapGeoPoint?
     
     let locationField = UITextField()
@@ -29,6 +31,8 @@ class OverpasViewController: ScrollViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .systemBackground
+        
+        overpasClient.delegate = self
         
         setHelpButton()
         setElemets()
@@ -74,9 +78,13 @@ class OverpasViewController: ScrollViewController {
         print("taptap")
         // curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d 'data=area[name="Köln"];nwr[amenity=cafe](area);out center;' https://overpass-api.de/api/interpreter
 
-        let urlStr = "https://overpass-api.de/api/interpreter?data=area[name=\"Радужный\"];nwr[amenity=cafe](area);out center;"
+        let urlStr = "https://overpass-api.de/api/interpreter?data=area[name=\"London\"];nwr[amenity=cafe](area);out center;"
         Task {
-            try? await OverpasClient().getData(urlStr: urlStr)
+            do {
+                try await overpasClient.getData(urlStr: urlStr)
+            } catch {
+                print(error)
+            }
         }
         
     }
@@ -98,5 +106,18 @@ class OverpasViewController: ScrollViewController {
     @objc func tapHelp(_ sender: UIBarItem) {
         print("tap")
     }
+    
+}
+
+extension OverpasViewController: OverpasProtocol {
+    func downloadProgress(_ loaded: Int64) {
+        let loadedMb = Double(loaded) / 1_048_576.0
+        print(String(format: "%.3f", loadedMb))
+    }
+    
+    func downloadCompleted(with result: URL) {
+        print(result.absoluteString)
+    }
+    
     
 }

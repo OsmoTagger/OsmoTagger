@@ -78,6 +78,7 @@
 		E3540B132A71D1FA00649564 /* ScreenSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540B122A71D1FA00649564 /* ScreenSettingsViewController.swift */; };
 		E3540B152A71DAFE00649564 /* SecreenSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540B142A71DAFE00649564 /* SecreenSettingsCell.swift */; };
 		E3AA63A82A7BBD14008BFBD5 /* ApiKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */; };
+		E3AD20022AB7072E00A92DAA /* OverpasProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AD20012AB7072E00A92DAA /* OverpasProtocol.swift */; };
 		E3B9A5CD2A463E0400C6839A /* GLMap in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CC2A463E0400C6839A /* GLMap */; };
 		E3B9A5CF2A463E1800C6839A /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CE2A463E1800C6839A /* XMLCoder */; };
 /* End PBXBuildFile section */
@@ -184,6 +185,7 @@
 		E3540B122A71D1FA00649564 /* ScreenSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSettingsViewController.swift; sourceTree = "<group>"; };
 		E3540B142A71DAFE00649564 /* SecreenSettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecreenSettingsCell.swift; sourceTree = "<group>"; };
 		E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ApiKeys.swift; path = ../../../Downloads/ApiKeys.swift; sourceTree = "<group>"; };
+		E3AD20012AB7072E00A92DAA /* OverpasProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverpasProtocol.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -333,6 +335,7 @@
 			children = (
 				2C2F972729D53DB100A994C8 /* UpdateSourceDataProtocol.swift */,
 				2CE00A802A253DA5008A6119 /* MapClientProtocol.swift */,
+				E3AD20012AB7072E00A92DAA /* OverpasProtocol.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -573,6 +576,7 @@
 				6C8B011028FC030B00C9238D /* export_format_json.cpp in Sources */,
 				E3540AFA2A71AF5A00649564 /* CategoryCell.swift in Sources */,
 				2CFF98E4299BE44D0045D6B8 /* SavedNodesViewController.swift in Sources */,
+				E3AD20022AB7072E00A92DAA /* OverpasProtocol.swift in Sources */,
 				E3540AF82A71AF2000649564 /* SimpleCell.swift in Sources */,
 				E3540B012A71B01300649564 /* NavigationControllers.swift in Sources */,
 				E3540B092A71B26D00649564 /* AnyEnums.swift in Sources */,
