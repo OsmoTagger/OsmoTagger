@@ -19,6 +19,7 @@ class OverpasViewController: ScrollViewController {
     let parameterLabel = UILabel()
     let parameterField = UITextView()
     let tagField = UITextField()
+    let requestLabel = UILabel()
     let sendButton = UIButton()
     
     init(location: GLMapGeoPoint) {
@@ -115,6 +116,22 @@ class OverpasViewController: ScrollViewController {
         tagField.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(tagField)
         
+        let requestDescription = UILabel()
+        requestDescription.numberOfLines = 0
+        requestDescription.font = .systemFont(ofSize: 14)
+        requestDescription.text = "Request:\nhttps://overpass-api.de/api/interpreter?"
+        requestDescription.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(requestDescription)
+        
+        requestLabel.layer.cornerRadius = 4
+        requestLabel.layer.borderColor = UIColor.systemGray.cgColor
+        requestLabel.layer.borderWidth = 2
+        requestLabel.numberOfLines = 0
+        requestLabel.font = .systemFont(ofSize: 16)
+        requestLabel.text = "skdjfh kjsdfh ksdjhf skdf hsjdf hskdfh sk"
+        requestLabel.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(requestLabel)
+        
         sendButton.backgroundColor = .systemBlue
         sendButton.setTitle("Send", for: .normal)
         sendButton.layer.cornerRadius = 16
@@ -165,7 +182,15 @@ class OverpasViewController: ScrollViewController {
             tagField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
             tagField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
             
-            sendButton.topAnchor.constraint(equalTo: tagField.bottomAnchor, constant: 50),
+            requestDescription.topAnchor.constraint(equalTo: tagField.bottomAnchor, constant: 20),
+            requestDescription.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            requestDescription.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
+            
+            requestLabel.topAnchor.constraint(equalTo: requestDescription.bottomAnchor, constant: 5),
+            requestLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            requestLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
+            
+            sendButton.topAnchor.constraint(equalTo: requestLabel.bottomAnchor, constant: 150),
             sendButton.widthAnchor.constraint(equalToConstant: 150),
             sendButton.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             
@@ -236,16 +261,32 @@ class OverpasViewController: ScrollViewController {
     
     @objc private func tapSend(_ sender: UIButton) {
         print("taptap")
-        // curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d 'data=area[name="Köln"];nwr[amenity=cafe](area);out center;' https://overpass-api.de/api/interpreter
-
-        let urlStr = "https://overpass-api.de/api/interpreter?data=area[name=\"London\"];nwr[amenity=cafe](area);out center;"
-        Task {
-            do {
-                try await overpasClient.getData(urlStr: urlStr)
-            } catch {
-                print(error)
+        let serverStr = "https://overpass-api.de/api/interpreter?"
+        var request: String
+        switch AppSettings.settings.overpasRequesType {
+        case .bbox:
+            return
+        case .cityName:
+            guard let town = parameterField.text,
+                  let tag = tagField.text else {
+                showAction(message: "Enter paraneters", addAlerts: [])
+                return
             }
+            request = "data=area[name=\"\(town)\"];nwr[\(tag)](area);out center;"
+        case .manualy:
+            return
         }
+
+        let urlStr = serverStr + request
+        print(urlStr)
+        
+//        Task {
+//            do {
+//                try await overpasClient.getData(urlStr: urlStr)
+//            } catch {
+//                print(error)
+//            }
+//        }
         
     }
     
@@ -323,7 +364,3 @@ extension OverpasViewController: OverpasProtocol {
     }
 }
 
-// MARK: UIGestureRecognizerDelegate
-extension OverpasViewController: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer) -> Bool { return true }
-}
