@@ -7,18 +7,21 @@
 
 import GLMap
 import UIKit
+import SafariServices
 
 class OverpasViewController: ScrollViewController {
     
     let overpasClient = OverpasClient()
     
-    var location: GLMapGeoPoint?
+    var location: GLMapGeoPoint
     
     let locationField = UITextField()
     let tagField = UITextField()
     let sendButton = UIButton()
     
-    init(location: GLMapGeoPoint?) {
+    let typeDescriptionLabel = UILabel()
+    
+    init(location: GLMapGeoPoint) {
         self.location = location
         super.init()
     }
@@ -30,6 +33,7 @@ class OverpasViewController: ScrollViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        title = "Overpas API"
         view.backgroundColor = .systemBackground
         
         overpasClient.delegate = self
@@ -39,10 +43,54 @@ class OverpasViewController: ScrollViewController {
     }
     
     private func setElemets() {
+        let infoLabel = UILabel()
+        infoLabel.text = "You can download data using the Overpass API. This can be done by specifying the map's bbox, the city name, or by generating the query manually."
+        infoLabel.textAlignment = .center
+        infoLabel.numberOfLines = 0
+        infoLabel.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(infoLabel)
+        
+        let helpLabel = UILabel()
+        let underlineAttribute = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue]
+        let text = "Overpass API help."
+        let underlinedText = NSAttributedString(string: text, attributes: underlineAttribute)
+        helpLabel.attributedText = underlinedText
+        helpLabel.textAlignment = .center
+        helpLabel.numberOfLines = 0
+        helpLabel.textColor = .systemBlue
+        helpLabel.isUserInteractionEnabled = true
+        helpLabel.translatesAutoresizingMaskIntoConstraints = false
+        let helpTap = UITapGestureRecognizer(target: self, action: #selector(tapAPIHelp))
+        helpTap.delegate = self
+        helpLabel.addGestureRecognizer(helpTap)
+        scrollView.addSubview(helpLabel)
+        
+        let typeLabel = UILabel()
+        typeLabel.textAlignment = .left
+        typeLabel.text = "Select the request type"
+        typeLabel.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(typeLabel)
+        
+        let typeButton = UIButton(configuration: .borderedTinted())
+        setTypeButton(button: typeButton)
+        scrollView.addSubview(typeButton)
+        
+        typeDescriptionLabel.numberOfLines = 0
+        typeDescriptionLabel.font = .systemFont(ofSize: 14)
+        setDescriptionLabelText()
+        typeDescriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(typeDescriptionLabel)
+        
+        let typeHelp = UIImageView()
+        typeHelp.image = UIImage(systemName: "questionmark.circle")?.withTintColor(.systemBlue, renderingMode: .alwaysOriginal)
+        let typeHelpTap = UITapGestureRecognizer(target: self, action: #selector(tapTypeHelp))
+        typeHelpTap.delegate = self
+        typeHelp.isUserInteractionEnabled = true
+        typeHelp.addGestureRecognizer(typeHelpTap)
+        typeHelp.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(typeHelp)
+        
         locationField.borderStyle = .roundedRect
-        if let location {
-            locationField.text = "lat: \(location.lat), lon: \(location.lon)"
-        }
         locationField.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(locationField)
         
@@ -52,13 +100,38 @@ class OverpasViewController: ScrollViewController {
         
         sendButton.backgroundColor = .systemBlue
         sendButton.setTitle("Send", for: .normal)
-        sendButton.configuration?.cornerStyle = .capsule
+        sendButton.layer.cornerRadius = 16
         sendButton.addTarget(self, action: #selector(tapSend), for: .touchUpInside)
         sendButton.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(sendButton)
         
         NSLayoutConstraint.activate([
-            locationField.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 10),
+            infoLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 10),
+            infoLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            infoLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
+            
+            helpLabel.topAnchor.constraint(equalTo: infoLabel.bottomAnchor, constant: 10),
+            helpLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            helpLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
+            
+            typeLabel.topAnchor.constraint(equalTo: helpLabel.bottomAnchor, constant: 20),
+            typeLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            
+            typeHelp.leadingAnchor.constraint(equalTo: typeLabel.trailingAnchor, constant: 5),
+            typeHelp.centerYAnchor.constraint(equalTo: typeLabel.centerYAnchor),
+            typeHelp.widthAnchor.constraint(equalToConstant: 24),
+            typeHelp.heightAnchor.constraint(equalToConstant: 24),
+            
+            typeButton.topAnchor.constraint(equalTo: typeLabel.bottomAnchor, constant: 10),
+            typeButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            typeButton.trailingAnchor.constraint(equalTo: view.centerXAnchor, constant: -10),
+            
+            typeDescriptionLabel.topAnchor.constraint(greaterThanOrEqualTo: typeHelp.bottomAnchor),
+            typeDescriptionLabel.centerYAnchor.constraint(equalTo: typeButton.centerYAnchor),
+            typeDescriptionLabel.leadingAnchor.constraint(equalTo: view.centerXAnchor, constant: 10),
+            typeDescriptionLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
+            
+            locationField.topAnchor.constraint(equalTo: typeLabel.bottomAnchor, constant: 100),
             locationField.widthAnchor.constraint(equalToConstant: 150),
             locationField.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             
@@ -74,7 +147,56 @@ class OverpasViewController: ScrollViewController {
         ])
     }
     
-    @objc private func tapSend() {
+    private func setDescriptionLabelText() {
+        let descText: String
+        switch AppSettings.settings.overpasRequesType {
+        case .bbox:
+            descText = "Search around the center of the map + 0.05°"
+        case .cityName:
+            descText = "cityName"
+        case .manualy:
+            descText = "Manualy"
+        }
+        typeDescriptionLabel.text = descText
+    }
+    
+    private func setTypeButton(button: UIButton) {
+        let optionClosure: UIActionHandler = { [weak self, weak button] (action: UIAction) in
+            button?.setTitle(action.title, for: .normal)
+        }
+        var optionsArray = [UIAction]()
+        let action0 = UIAction(title: "Bbox", image: UIImage(systemName: "square.dashed"), handler: optionClosure)
+        if AppSettings.settings.overpasRequesType == .bbox {
+            action0.state = .on
+            button.setTitle(action0.title, for: .normal)
+        }
+        optionsArray.append(action0)
+        let action1 = UIAction(title: "In the city", image: UIImage(systemName: "house.and.flag"), handler: optionClosure)
+        if AppSettings.settings.overpasRequesType == .cityName {
+            action1.state = .on
+            button.setTitle(action1.title, for: .normal)
+        }
+        optionsArray.append(action1)
+        let action2 = UIAction(title: "Manually", image: UIImage(systemName: "hand.raised"), handler: optionClosure)
+        if AppSettings.settings.overpasRequesType == .manualy {
+            action2.state = .on
+            button.setTitle(action2.title, for: .normal)
+        }
+        optionsArray.append(action2)
+        let optionsMenu = UIMenu(title: "", image: nil, identifier: nil, options: .singleSelection, children: optionsArray)
+        button.menu = optionsMenu
+        button.showsMenuAsPrimaryAction = true
+        button.changesSelectionAsPrimaryAction = false
+//        button.layer.cornerRadius = 4
+//        button.layer.borderColor = UIColor.systemGray.cgColor
+//        button.layer.borderWidth = 2
+        let image = UIImage(systemName: "chevron.down")?.withTintColor(.buttonColor, renderingMode: .alwaysOriginal)
+        button.setImage(image, for: .normal)
+        button.setTitleColor(.buttonColor, for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
+    @objc private func tapSend(_ sender: UIButton) {
         print("taptap")
         // curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d 'data=area[name="Köln"];nwr[amenity=cafe](area);out center;' https://overpass-api.de/api/interpreter
 
@@ -103,12 +225,26 @@ class OverpasViewController: ScrollViewController {
         rightButtons.append(barButton)
     }
     
-    @objc func tapHelp(_ sender: UIBarItem) {
+    // MARK: User actions
+    
+    @objc private func tapHelp(_ sender: UIBarItem) {
         print("tap")
+    }
+    
+    @objc private func tapAPIHelp() {
+        let link = "https://dev.overpass-api.de/overpass-doc/en/index.html"
+        guard let url = URL(string: link) else {return}
+        let vc = SFSafariViewController(url: url)
+        present(vc, animated: true)
+    }
+    
+    @objc private func tapTypeHelp(_ sender: UIGestureRecognizer) {
+        print("tapTypeHelp")
     }
     
 }
 
+// MARK: OverpasProtocol
 extension OverpasViewController: OverpasProtocol {
     func downloadProgress(_ loaded: Int64) {
         let loadedMb = Double(loaded) / 1_048_576.0
@@ -118,6 +254,9 @@ extension OverpasViewController: OverpasProtocol {
     func downloadCompleted(with result: URL) {
         print(result.absoluteString)
     }
-    
-    
+}
+
+// MARK: UIGestureRecognizerDelegate
+extension OverpasViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer) -> Bool { return true }
 }

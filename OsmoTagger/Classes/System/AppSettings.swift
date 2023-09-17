@@ -8,8 +8,6 @@
 import GLMap
 import UIKit
 
-typealias EmptyBlock = () -> Void
-
 //  Singleton for storing app settings
 final class AppSettings: NSObject {
     static let settings = AppSettings()

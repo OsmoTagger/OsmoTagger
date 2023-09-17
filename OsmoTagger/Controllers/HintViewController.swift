@@ -11,7 +11,7 @@ class HintViewController: UIViewController {
     
     var hint: String
     
-    let label = UILabel()
+    let label = UILabel(frame: .zero)
     
     init(hint: String) {
         self.hint = hint
@@ -30,8 +30,8 @@ class HintViewController: UIViewController {
         view.backgroundColor = .systemGray
         label.text = hint
         label.numberOfLines = 0
-        label.font = .systemFont(ofSize: 12)
         label.textAlignment = .center
+        label.backgroundColor = .green
         label.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(label)
         NSLayoutConstraint.activate([
@@ -40,20 +40,21 @@ class HintViewController: UIViewController {
             label.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -spacing),
             label.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -spacing)
         ])
-//        preferredContentSize = CGSize(width: 100, height: 100)
     }
     
-    private func setupPopover(parent: UIViewController, sourceView: UIView) {
+    private func setupPopover(parent: UIViewController, sourceView: UIView, size: CGSize) {
         modalPresentationStyle = .popover
+        preferredContentSize = size
         guard let presentationVC = popoverPresentationController else {return}
         presentationVC.delegate = self
         presentationVC.sourceView = sourceView
+        presentationVC.permittedArrowDirections = []
         parent.present(self, animated: true)
     }
     
-    static func showHint(parent: UIViewController, sourceView: UIView, hint: String) {
+    static func showHint(parent: UIViewController, sourceView: UIView, hint: String, size: CGSize) {
         let rv = HintViewController(hint: hint)
-        rv.setupPopover(parent: parent, sourceView: sourceView)
+        rv.setupPopover(parent: parent, sourceView: sourceView, size: size)
     }
     
 }

@@ -80,6 +80,7 @@
 		E3AA63A82A7BBD14008BFBD5 /* ApiKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */; };
 		E3AD20022AB7072E00A92DAA /* OverpasProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AD20012AB7072E00A92DAA /* OverpasProtocol.swift */; };
 		E3AD20042AB766C300A92DAA /* HintViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AD20032AB766C300A92DAA /* HintViewController.swift */; };
+		E3AD20082AB7808F00A92DAA /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AD20072AB7808F00A92DAA /* Common.swift */; };
 		E3B9A5CD2A463E0400C6839A /* GLMap in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CC2A463E0400C6839A /* GLMap */; };
 		E3B9A5CF2A463E1800C6839A /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CE2A463E1800C6839A /* XMLCoder */; };
 /* End PBXBuildFile section */
@@ -188,6 +189,7 @@
 		E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ApiKeys.swift; path = ../../../Downloads/ApiKeys.swift; sourceTree = "<group>"; };
 		E3AD20012AB7072E00A92DAA /* OverpasProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverpasProtocol.swift; sourceTree = "<group>"; };
 		E3AD20032AB766C300A92DAA /* HintViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HintViewController.swift; sourceTree = "<group>"; };
+		E3AD20072AB7808F00A92DAA /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -439,6 +441,7 @@
 				2C5662BC291275FA00E5B4D5 /* OsmClient.swift */,
 				E339501E2AB6522300C1F888 /* OverpasClient.swift */,
 				E34E4AE02A981ECD00D65A92 /* Presets.swift */,
+				E3AD20072AB7808F00A92DAA /* Common.swift */,
 				2C1676ED29A7D50B004DD9D3 /* MapClient.swift */,
 				E3021DAB2A8FFF86000E789A /* MapStyles.swift */,
 				2CA74E95291EE1BD00413930 /* AppSettings.swift */,
@@ -565,6 +568,7 @@
 				2C5662BD291275FA00E5B4D5 /* OsmClient.swift in Sources */,
 				2C9DEBD429B526980058CCC2 /* JSOM presets.swift in Sources */,
 				E3540B052A71B1A300649564 /* CustomSafari.swift in Sources */,
+				E3AD20082AB7808F00A92DAA /* Common.swift in Sources */,
 				2CB58A6329ECF01800FD0E59 /* QuickGuideViewController.swift in Sources */,
 				E3540AFE2A71AFB400649564 /* CustomViews.swift in Sources */,
 				E339501D2AB64D9F00C1F888 /* ScrollViewController.swift in Sources */,
