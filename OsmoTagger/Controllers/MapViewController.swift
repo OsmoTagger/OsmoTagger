@@ -501,7 +501,12 @@ class MapViewController: UIViewController {
     }
     
     @objc private func tapOverpas() {
-        let navVC = UINavigationController(rootViewController: OverpasViewController())
+        var location: GLMapGeoPoint? = nil
+        if let lastLocation = locationManager.location {
+            location = GLMapGeoPoint(lat: lastLocation.coordinate.latitude, lon: lastLocation.coordinate.longitude)
+        }
+        let vc = OverpasViewController(location: location)
+        let navVC = UINavigationController(rootViewController: vc)
         present(navVC, animated: true)
     }
     

@@ -9,11 +9,7 @@ import Foundation
 import UIKit
 
 extension UIColor {
-    static let backColor0 = UIColor { (traitCollection: UITraitCollection) -> UIColor in
-        traitCollection.userInterfaceStyle == .dark ? UIColor.systemGray2 : UIColor.white
-    }
-
-    static let serparatorColor = UIColor { (traitCollection: UITraitCollection) -> UIColor in
-        traitCollection.userInterfaceStyle == .dark ? UIColor.black : UIColor.systemGray3
+    static let buttonColor = UIColor { traitCollection -> UIColor in
+        traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black
     }
 }
