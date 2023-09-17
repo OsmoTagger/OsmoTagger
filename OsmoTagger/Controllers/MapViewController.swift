@@ -24,9 +24,7 @@ class MapViewController: UIViewController {
     let mapButtons = MapButtonsView()
     
     //  Buttons
-    let downloadButton = DownloadButton()
-    // Variable activates the source data loading mode
-    var isDownloadSource = false
+    let downloadButton = UIButton()
     let indicator = DownloadIndicatorView()
     let centerIcon = UIImageView()
     let addNodeButton = UIButton()
@@ -131,6 +129,7 @@ class MapViewController: UIViewController {
     }
     
     func setDidMapMoveClouser() {
+        
         mapView.mapDidMoveBlock = { [weak self] _ in
             guard let self = self else { return }
             // rotate mapButtons.angleButton image
@@ -141,17 +140,9 @@ class MapViewController: UIViewController {
             if self.navController == nil {
                 AppSettings.settings.lastBbox = self.mapView.bbox
             }
-            guard self.isDownloadSource == true else { return }
             let zoom = self.mapView.mapZoomLevel
             let beginLoadZoom = 16.0
-            if zoom > beginLoadZoom {
-                self.downloadButton.circle.backgroundColor = .systemGreen
-                self.checkMapCenter()
-                self.addNodeButton.alpha = 1
-            } else {
-                self.downloadButton.circle.backgroundColor = .systemRed
-                self.addNodeButton.alpha = 0.5
-            }
+            self.addNodeButton.alpha = zoom > beginLoadZoom ? 1 : 0.5
         }
     }
     
@@ -274,34 +265,22 @@ class MapViewController: UIViewController {
                                      downloadButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)])
     }
     
-    func checkMapCenter() {
+    
+    @objc func tapDownloadButton() {
+        downLoadData()
+    }
+    
+    private func downLoadData() {
         Task {
             do {
-                try await mapClient.checkMapCenter(center: mapView.mapGeoCenter)
+                try await mapClient.getSourceBbox(mapCenter: mapView.mapGeoCenter)
             } catch {
-                let message = "Error download data. Lat: \(mapView.mapGeoCenter.lat),lon: \(mapView.mapGeoCenter.lon), bbox size: \(mapClient.defaultBboxSize).\nError: \(error)"
+                let message = error as? String ?? "Error load data"
                 showAction(message: message, addAlerts: [])
             }
         }
     }
     
-    @objc func tapDownloadButton() {
-        isDownloadSource = !isDownloadSource
-        if isDownloadSource {
-            let zoom = mapView.mapZoomLevel
-            let beginLoadZoom = 16.0
-            downloadButton.circle.isHidden = false
-            if zoom > beginLoadZoom {
-                downloadButton.circle.backgroundColor = .systemGreen
-                checkMapCenter()
-            } else {
-                downloadButton.circle.backgroundColor = .systemRed
-            }
-        } else {
-            downloadButton.circle.isHidden = true
-        }
-    }
-        
     func setupSettingsButton() {
         let settingsButton = UIButton()
         settingsButton.layer.cornerRadius = 5
@@ -450,10 +429,7 @@ class MapViewController: UIViewController {
         sender.isActive = !sender.isActive
         if sender.isActive {
             setCenterMap()
-            checkMapCenter()
-            if isDownloadSource == false {
-                tapDownloadButton()
-            }
+            downLoadData()
             UIView.animate(withDuration: 0.3, animations: { [weak self] in
                 guard let self = self else { return }
                 self.addNodeButtonTopConstraint.constant = 310
