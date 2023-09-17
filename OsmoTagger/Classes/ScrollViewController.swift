@@ -38,12 +38,12 @@ class ScrollViewController: SheetViewController {
             NSLayoutConstraint.activate([
                 scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
                 scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-                scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+                scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
                 scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             ])
         }
     
-    @objc private func endEdit() {
+    @objc func endEdit() {
         view.endEditing(true)
     }
     
@@ -68,3 +68,5 @@ class ScrollViewController: SheetViewController {
 extension ScrollViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer) -> Bool { return true }
 }
+
+

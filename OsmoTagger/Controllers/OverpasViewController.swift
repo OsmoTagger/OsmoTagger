@@ -43,6 +43,25 @@ class OverpasViewController: ScrollViewController {
         setElemets()
     }
     
+    override func endEdit() {
+        super.endEdit()
+        var request: String
+        switch AppSettings.settings.overpasRequesType {
+        case .bbox:
+            return
+        case .cityName:
+            guard let town = parameterField.text,
+                  let tag = tagField.text,
+                  town != "",
+                  tag != "" else { return }
+            request = "data=area[name=\"\(town)\"];nwr[\(tag)](area);out center;"
+        case .manualy:
+            return
+        }
+        print(requestLabel.frame)
+        requestLabel.text = request
+    }
+    
     private func setElemets() {
         let infoLabel = UILabel()
         infoLabel.text = "You can download data using the Overpass API. This can be done by specifying the map's bbox, the city name, or by generating the query manually."
@@ -112,7 +131,10 @@ class OverpasViewController: ScrollViewController {
         tagDescriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(tagDescriptionLabel)
         
-        tagField.borderStyle = .roundedRect
+        tagField.layer.cornerRadius = 4
+        tagField.layer.borderColor = UIColor.systemGray.cgColor
+        tagField.layer.borderWidth = 2
+        tagField.autocapitalizationType = .none
         tagField.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(tagField)
         
@@ -128,9 +150,11 @@ class OverpasViewController: ScrollViewController {
         requestLabel.layer.borderWidth = 2
         requestLabel.numberOfLines = 0
         requestLabel.font = .systemFont(ofSize: 16)
-        requestLabel.text = "skdjfh kjsdfh ksdjhf skdf hsjdf hskdfh sk"
+        requestLabel.text = " "
         requestLabel.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(requestLabel)
+        
+        
         
         sendButton.backgroundColor = .systemBlue
         sendButton.setTitle("Send", for: .normal)
@@ -181,6 +205,7 @@ class OverpasViewController: ScrollViewController {
             tagField.topAnchor.constraint(equalTo: tagDescriptionLabel.bottomAnchor, constant: 5),
             tagField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
             tagField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
+            tagField.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
             
             requestDescription.topAnchor.constraint(equalTo: tagField.bottomAnchor, constant: 20),
             requestDescription.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
@@ -189,10 +214,11 @@ class OverpasViewController: ScrollViewController {
             requestLabel.topAnchor.constraint(equalTo: requestDescription.bottomAnchor, constant: 5),
             requestLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
             requestLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
+            requestLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
             
-            sendButton.topAnchor.constraint(equalTo: requestLabel.bottomAnchor, constant: 150),
-            sendButton.widthAnchor.constraint(equalToConstant: 150),
-            sendButton.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            sendButton.topAnchor.constraint(equalTo: requestLabel.bottomAnchor, constant: 20),
+            sendButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            sendButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
             
             scrollView.bottomAnchor.constraint(equalTo: sendButton.bottomAnchor)
         ])
@@ -261,32 +287,20 @@ class OverpasViewController: ScrollViewController {
     
     @objc private func tapSend(_ sender: UIButton) {
         print("taptap")
-        let serverStr = "https://overpass-api.de/api/interpreter?"
-        var request: String
-        switch AppSettings.settings.overpasRequesType {
-        case .bbox:
-            return
-        case .cityName:
-            guard let town = parameterField.text,
-                  let tag = tagField.text else {
-                showAction(message: "Enter paraneters", addAlerts: [])
-                return
-            }
-            request = "data=area[name=\"\(town)\"];nwr[\(tag)](area);out center;"
-        case .manualy:
+        let server = "https://overpass-api.de/api/interpreter?"
+        guard let query = requestLabel.text else {
+            showAction(message: "Check parameters!", addAlerts: [])
             return
         }
-
-        let urlStr = serverStr + request
-        print(urlStr)
-        
-//        Task {
-//            do {
-//                try await overpasClient.getData(urlStr: urlStr)
-//            } catch {
-//                print(error)
-//            }
-//        }
+        let url = server + query
+        print(url)
+        Task {
+            do {
+                try await overpasClient.getData(urlStr: url)
+            } catch {
+                print(error)
+            }
+        }
         
     }
     
@@ -316,7 +330,7 @@ class OverpasViewController: ScrollViewController {
         let latMax = location.lat + diff
         let lonMin = location.lon - diff
         let lonMax = location.lon + diff
-        var text = "nwr(\(latMin),\(lonMin),\(latMax),\(lonMax);out;"
+        let text = "nwr(\(latMin),\(lonMin),\(latMax),\(lonMax);out;"
         parameterField.text = text
     }
     
