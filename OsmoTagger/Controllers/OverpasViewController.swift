@@ -15,11 +15,11 @@ class OverpasViewController: ScrollViewController {
     
     var location: GLMapGeoPoint
     
-    let locationField = UITextField()
+    let typeDescriptionLabel = UILabel()
+    let parameterLabel = UILabel()
+    let parameterField = UITextView()
     let tagField = UITextField()
     let sendButton = UIButton()
-    
-    let typeDescriptionLabel = UILabel()
     
     init(location: GLMapGeoPoint) {
         self.location = location
@@ -77,7 +77,7 @@ class OverpasViewController: ScrollViewController {
         
         typeDescriptionLabel.numberOfLines = 0
         typeDescriptionLabel.font = .systemFont(ofSize: 14)
-        setDescriptionLabelText()
+        setDescriptionLabelsText()
         typeDescriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(typeDescriptionLabel)
         
@@ -90,9 +90,26 @@ class OverpasViewController: ScrollViewController {
         typeHelp.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(typeHelp)
         
-        locationField.borderStyle = .roundedRect
-        locationField.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.addSubview(locationField)
+        parameterLabel.numberOfLines = 0
+        parameterLabel.font = .systemFont(ofSize: 14)
+        parameterLabel.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(parameterLabel)
+        parameterField.font = .systemFont(ofSize: 16)
+        parameterField.layer.cornerRadius = 6
+        parameterField.layer.borderColor = UIColor.systemGray.cgColor
+        parameterField.layer.borderWidth = 2
+        parameterField.translatesAutoresizingMaskIntoConstraints = false
+        if AppSettings.settings.overpasRequesType == .bbox {
+            setBboxType()
+        }
+        scrollView.addSubview(parameterField)
+        
+        let tagDescriptionLabel = UILabel()
+        tagDescriptionLabel.numberOfLines = 0
+        tagDescriptionLabel.font = .systemFont(ofSize: 14)
+        tagDescriptionLabel.text = "Enter a tag=value pair. For example, amenity=cafe."
+        tagDescriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(tagDescriptionLabel)
         
         tagField.borderStyle = .roundedRect
         tagField.translatesAutoresizingMaskIntoConstraints = false
@@ -131,13 +148,22 @@ class OverpasViewController: ScrollViewController {
             typeDescriptionLabel.leadingAnchor.constraint(equalTo: view.centerXAnchor, constant: 10),
             typeDescriptionLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
             
-            locationField.topAnchor.constraint(equalTo: typeLabel.bottomAnchor, constant: 100),
-            locationField.widthAnchor.constraint(equalToConstant: 150),
-            locationField.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            parameterLabel.topAnchor.constraint(equalTo: typeButton.bottomAnchor, constant: 20),
+            parameterLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            parameterLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
             
-            tagField.topAnchor.constraint(equalTo: locationField.bottomAnchor, constant: 50),
-            tagField.widthAnchor.constraint(equalToConstant: 150),
-            tagField.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            parameterField.topAnchor.constraint(equalTo: parameterLabel.bottomAnchor, constant: 5),
+            parameterField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            parameterField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
+            parameterField.heightAnchor.constraint(equalToConstant: 80),
+            
+            tagDescriptionLabel.topAnchor.constraint(equalTo: parameterField.bottomAnchor, constant: 20),
+            tagDescriptionLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            tagDescriptionLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
+            
+            tagField.topAnchor.constraint(equalTo: tagDescriptionLabel.bottomAnchor, constant: 5),
+            tagField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            tagField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
             
             sendButton.topAnchor.constraint(equalTo: tagField.bottomAnchor, constant: 50),
             sendButton.widthAnchor.constraint(equalToConstant: 150),
@@ -147,21 +173,36 @@ class OverpasViewController: ScrollViewController {
         ])
     }
     
-    private func setDescriptionLabelText() {
+    private func setDescriptionLabelsText() {
         let descText: String
+        let parametrDescText: String
         switch AppSettings.settings.overpasRequesType {
         case .bbox:
             descText = "Search around the center of the map + 0.05°"
+            parametrDescText = "To change the bbox, go back to the map screen, shift the center, and return to the current screen."
         case .cityName:
-            descText = "cityName"
+            descText = "Searching for objects in a relation with the entered name."
+            parametrDescText = "Enter the name of the locality. For example, Köln, London, Москва."
         case .manualy:
-            descText = "Manualy"
+            descText = "Fully manual query construction"
+            parametrDescText = "Enter the query text completely in manual mode into this field."
         }
         typeDescriptionLabel.text = descText
+        parameterLabel.text = parametrDescText
     }
     
     private func setTypeButton(button: UIButton) {
         let optionClosure: UIActionHandler = { [weak self, weak button] (action: UIAction) in
+            switch action.title {
+            case "Bbox":
+                self?.setBboxType()
+            case "In the city":
+                self?.setCityNameType()
+            case "Manually":
+                self?.setManualyType()
+            default:
+                return
+            }
             button?.setTitle(action.title, for: .normal)
         }
         var optionsArray = [UIAction]()
@@ -187,9 +228,6 @@ class OverpasViewController: ScrollViewController {
         button.menu = optionsMenu
         button.showsMenuAsPrimaryAction = true
         button.changesSelectionAsPrimaryAction = false
-//        button.layer.cornerRadius = 4
-//        button.layer.borderColor = UIColor.systemGray.cgColor
-//        button.layer.borderWidth = 2
         let image = UIImage(systemName: "chevron.down")?.withTintColor(.buttonColor, renderingMode: .alwaysOriginal)
         button.setImage(image, for: .normal)
         button.setTitleColor(.buttonColor, for: .normal)
@@ -226,6 +264,35 @@ class OverpasViewController: ScrollViewController {
     }
     
     // MARK: User actions
+    
+    private func setBboxType() {
+        AppSettings.settings.overpasRequesType = .bbox
+        setDescriptionLabelsText()
+        parameterField.backgroundColor = .systemGray6
+        parameterField.isUserInteractionEnabled = false
+        let diff = 0.05
+        let latMin = location.lat - diff
+        let latMax = location.lat + diff
+        let lonMin = location.lon - diff
+        let lonMax = location.lon + diff
+        var text = "nwr(\(latMin),\(lonMin),\(latMax),\(lonMax);out;"
+        parameterField.text = text
+    }
+    
+    private func setCityNameType() {
+        AppSettings.settings.overpasRequesType = .cityName
+        setDescriptionLabelsText()
+        parameterField.backgroundColor = .clear
+        parameterField.isUserInteractionEnabled = true
+        parameterField.text = nil
+    }
+    
+    private func setManualyType() {
+        AppSettings.settings.overpasRequesType = .manualy
+        setDescriptionLabelsText()
+        parameterField.backgroundColor = .clear
+        parameterField.isUserInteractionEnabled = true
+    }
     
     @objc private func tapHelp(_ sender: UIBarItem) {
         print("tap")
