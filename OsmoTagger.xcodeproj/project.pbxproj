@@ -79,6 +79,7 @@
 		E3540B152A71DAFE00649564 /* SecreenSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540B142A71DAFE00649564 /* SecreenSettingsCell.swift */; };
 		E3AA63A82A7BBD14008BFBD5 /* ApiKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */; };
 		E3AD20022AB7072E00A92DAA /* OverpasProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AD20012AB7072E00A92DAA /* OverpasProtocol.swift */; };
+		E3AD20042AB766C300A92DAA /* HintViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AD20032AB766C300A92DAA /* HintViewController.swift */; };
 		E3B9A5CD2A463E0400C6839A /* GLMap in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CC2A463E0400C6839A /* GLMap */; };
 		E3B9A5CF2A463E1800C6839A /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CE2A463E1800C6839A /* XMLCoder */; };
 /* End PBXBuildFile section */
@@ -186,6 +187,7 @@
 		E3540B142A71DAFE00649564 /* SecreenSettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecreenSettingsCell.swift; sourceTree = "<group>"; };
 		E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ApiKeys.swift; path = ../../../Downloads/ApiKeys.swift; sourceTree = "<group>"; };
 		E3AD20012AB7072E00A92DAA /* OverpasProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverpasProtocol.swift; sourceTree = "<group>"; };
+		E3AD20032AB766C300A92DAA /* HintViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HintViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -263,6 +265,7 @@
 				2C6F1CC329DD40370091784B /* InfoObjectViewController.swift */,
 				2C450A752A326EFF001D73A9 /* TestViewController.swift */,
 				2042BCEE289C696E0026514E /* MapViewController.swift */,
+				E3AD20032AB766C300A92DAA /* HintViewController.swift */,
 				2CD2E7AB29D30D150042D36E /* MultiSelectViewController.swift */,
 				E33950192AB644EE00C1F888 /* OverpasViewController.swift */,
 				2CCB304129D4553100C8E5E7 /* SelectObjectViewController.swift */,
@@ -578,6 +581,7 @@
 				2CFF98E4299BE44D0045D6B8 /* SavedNodesViewController.swift in Sources */,
 				E3AD20022AB7072E00A92DAA /* OverpasProtocol.swift in Sources */,
 				E3540AF82A71AF2000649564 /* SimpleCell.swift in Sources */,
+				E3AD20042AB766C300A92DAA /* HintViewController.swift in Sources */,
 				E3540B012A71B01300649564 /* NavigationControllers.swift in Sources */,
 				E3540B092A71B26D00649564 /* AnyEnums.swift in Sources */,
 				2C1A361229B0674400AF3BEB /* String.swift in Sources */,
