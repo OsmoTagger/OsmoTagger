@@ -16,13 +16,13 @@ struct EditSectionData {
 //  Structures for Settings controllers
 struct SettingsTableData {
     let name: String?
-    let items: [SettingsCellData]
+    let items: [SimpleCellData]
 }
 
-struct SettingsCellData {
+struct SimpleCellData {
     let icon: String
     let text: String
-    let link: String
+    var link = ""
 }
 
 struct CategoryTableData {

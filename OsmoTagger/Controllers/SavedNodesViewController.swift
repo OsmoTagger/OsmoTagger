@@ -490,6 +490,3 @@ extension SavedNodesViewController: UITextFieldDelegate {
     }
 }
 
-extension SavedNodesViewController: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer) -> Bool { return true }
-}

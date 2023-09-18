@@ -65,6 +65,3 @@ class ScrollViewController: SheetViewController {
     
 }
 
-extension ScrollViewController: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer) -> Bool { return true }
-}

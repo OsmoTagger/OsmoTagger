@@ -523,3 +523,91 @@ class ChangesetCommentView: UIView {
         ])
     }
 }
+
+class OverpasVariantView: UIView {
+    private var icon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    private var label: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.textAlignment = .left
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    private var separator: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemGray6
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    private var chevron: UIImageView = {
+        let imageView = UIImageView()
+        let image = UIImage(systemName: "chevron.right")?.withTintColor(.systemGray, renderingMode: .alwaysOriginal)
+        imageView.image = image
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    
+    var tapClosure: EmptyBlock?
+    
+    convenience init() {
+        self.init(frame: .zero)
+        translatesAutoresizingMaskIntoConstraints = false
+        let tap = UITapGestureRecognizer(target: self, action: #selector(tap))
+        addGestureRecognizer(tap)
+        setupConstrains()
+    }
+    
+    @objc private func tap() {
+        UIView.animate(withDuration: 0.15, animations: { [weak self] in
+            self?.backgroundColor = .systemGray3
+        }, completion: { [weak self] _ in
+            UIView.animate(withDuration: 0.15, animations: { [weak self] in
+                self?.backgroundColor = .systemBackground
+                self?.tapClosure?()
+            })
+        })
+    }
+    
+    private func setupConstrains() {
+        addSubview(icon)
+        addSubview(label)
+        addSubview(chevron)
+        let spacing: CGFloat = 15
+        NSLayoutConstraint.activate([
+            icon.leadingAnchor.constraint(equalTo: leadingAnchor, constant: spacing),
+            icon.widthAnchor.constraint(equalToConstant: 30),
+            icon.heightAnchor.constraint(equalToConstant: 30),
+            icon.centerYAnchor.constraint(equalTo: centerYAnchor),
+            
+            label.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: spacing),
+            label.trailingAnchor.constraint(equalTo: chevron.leadingAnchor, constant: -spacing),
+            label.topAnchor.constraint(equalTo: topAnchor, constant: spacing),
+            label.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -spacing),
+            
+            chevron.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -spacing),
+            chevron.widthAnchor.constraint(equalToConstant: 10),
+            chevron.heightAnchor.constraint(equalToConstant: 18),
+            chevron.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
+    }
+    
+    func configure(iconName: String, text: String, showSeparator: Bool) {
+        // true - separator show, false - separator dont add to view
+        icon.image = UIImage(systemName: iconName)
+        label.text = text
+        if showSeparator {
+            addSubview(separator)
+            NSLayoutConstraint.activate([
+                separator.topAnchor.constraint(equalTo: topAnchor),
+                separator.heightAnchor.constraint(equalToConstant: 2),
+                separator.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
+                separator.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -5)
+            ])
+        }
+    }
+    
+}

@@ -30,9 +30,9 @@ class MainViewController: SheetViewController, UITableViewDelegate, UITableViewD
     
     func fillData() {
         let general = SettingsTableData(name: nil, items: [
-            SettingsCellData(icon: "person.crop.circle", text: "Authorization", link: ""),
-            SettingsCellData(icon: "smartphone.png", text: "Main screen", link: ""),
-            SettingsCellData(icon: "questionmark.circle", text: "Quick guide", link: ""),
+            SimpleCellData(icon: "person.crop.circle", text: "Authorization", link: ""),
+            SimpleCellData(icon: "smartphone.png", text: "Main screen", link: ""),
+            SimpleCellData(icon: "questionmark.circle", text: "Quick guide", link: ""),
         ])
         tableData.append(general)
         
@@ -40,9 +40,9 @@ class MainViewController: SheetViewController, UITableViewDelegate, UITableViewD
         let channelText = "Telegram channel"
         let gitText = "Source code."
         let support = SettingsTableData(name: "Support and development", items: [
-            SettingsCellData(icon: "chatIcon.png", text: telegramText, link: "https://t.me/OsmoTagger_chat"),
-            SettingsCellData(icon: "channelIcon.png", text: channelText, link: "https://t.me/OsmoTagger"),
-            SettingsCellData(icon: "gitIcon.png", text: gitText, link: "https://github.com/OsmoTagger/OsmoTagger"),
+            SimpleCellData(icon: "chatIcon.png", text: telegramText, link: "https://t.me/OsmoTagger_chat"),
+            SimpleCellData(icon: "channelIcon.png", text: channelText, link: "https://t.me/OsmoTagger"),
+            SimpleCellData(icon: "gitIcon.png", text: gitText, link: "https://github.com/OsmoTagger/OsmoTagger"),
         ])
         tableData.append(support)
         let osmText = "Map data (c) Openstreetmap contributors"
@@ -50,15 +50,15 @@ class MainViewController: SheetViewController, UITableViewDelegate, UITableViewD
         let osmiumText = "Data conversion by Osmium"
         let josmText = "Presets and images from JOSM"
         let second = SettingsTableData(name: "Thanks", items: [
-            SettingsCellData(icon: "osmIcon.jpg", text: osmText, link: "https://www.openstreetmap.org/"),
-            SettingsCellData(icon: "globusIcon.png", text: glText, link: "https://globus.software/"),
-            SettingsCellData(icon: "osmiumIcon.png", text: osmiumText, link: "https://osmcode.org/"),
-            SettingsCellData(icon: "josmIcon.png", text: josmText, link: "https://josm.openstreetmap.de/"),
+            SimpleCellData(icon: "osmIcon.jpg", text: osmText, link: "https://www.openstreetmap.org/"),
+            SimpleCellData(icon: "globusIcon.png", text: glText, link: "https://globus.software/"),
+            SimpleCellData(icon: "osmiumIcon.png", text: osmiumText, link: "https://osmcode.org/"),
+            SimpleCellData(icon: "josmIcon.png", text: josmText, link: "https://josm.openstreetmap.de/"),
         ])
         tableData.append(second)
         let licenseText = "GPLv3"
         let third = SettingsTableData(name: "License", items: [
-            SettingsCellData(icon: "gnuIcon.png", text: licenseText, link: "https://www.gnu.org/licenses/gpl-3.0.html"),
+            SimpleCellData(icon: "gnuIcon.png", text: licenseText, link: "https://www.gnu.org/licenses/gpl-3.0.html"),
         ])
         tableData.append(third)
     }

@@ -35,3 +35,7 @@ class SheetViewController: UIViewController {
         navigationController?.dismiss(animated: true)
     }
 }
+
+extension SheetViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer) -> Bool { return true }
+}

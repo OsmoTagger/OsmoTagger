@@ -215,6 +215,3 @@ class AuthViewController: SheetViewController {
     }
 }
 
-extension AuthViewController: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer) -> Bool { return true }
-}
