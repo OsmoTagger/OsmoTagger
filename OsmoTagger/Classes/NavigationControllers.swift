@@ -50,3 +50,13 @@ class CategoryNavigationController: UINavigationController {
         clouser(objectProperties)
     }
 }
+
+class OverpasNavigationController: UINavigationController {
+    var callbackClosure: ((URL) -> Void)?
+    
+    static func present(parent: UIViewController) {
+        let vc = OverpasMainViewController()
+        let navVC = OverpasNavigationController(rootViewController: vc)
+        parent.present(navVC, animated: true)
+    }
+}

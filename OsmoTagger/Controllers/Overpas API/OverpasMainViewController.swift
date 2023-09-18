@@ -7,12 +7,12 @@
 
 import UIKit
 
-class OverpasViewController: UIViewController {
+class OverpasMainViewController: ScrollViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        
+        view.backgroundColor = .red
     }
     
     

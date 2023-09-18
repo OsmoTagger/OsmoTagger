@@ -501,8 +501,7 @@ class MapViewController: UIViewController {
     }
     
     @objc private func tapOverpas() {
-        let navVC = UINavigationController(rootViewController: OverpasViewController())
-        present(navVC, animated: true)
+        OverpasNavigationController.present(parent: self)
     }
     
     //  Test button and its target for debugging convenience.
