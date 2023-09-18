@@ -77,6 +77,11 @@
 		E3AA63A82A7BBD14008BFBD5 /* ApiKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */; };
 		E3AD20102AB8750000A92DAA /* ScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AD200F2AB8750000A92DAA /* ScrollViewController.swift */; };
 		E3AD20132AB8771700A92DAA /* SFSafariViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AD20122AB8771700A92DAA /* SFSafariViewController.swift */; };
+		E3AD20152AB8BCA100A92DAA /* OverpasBboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AD20142AB8BCA100A92DAA /* OverpasBboxViewController.swift */; };
+		E3AD20172AB8BCB800A92DAA /* OverpasRelationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AD20162AB8BCB800A92DAA /* OverpasRelationViewController.swift */; };
+		E3AD20192AB8BCC900A92DAA /* OverpasManualyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AD20182AB8BCC900A92DAA /* OverpasManualyViewController.swift */; };
+		E3AD201B2AB8EB3400A92DAA /* OverpasClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AD201A2AB8EB3400A92DAA /* OverpasClient.swift */; };
+		E3AD201D2AB8EB6E00A92DAA /* OverpasProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AD201C2AB8EB6E00A92DAA /* OverpasProtocol.swift */; };
 		E3B9A5CD2A463E0400C6839A /* GLMap in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CC2A463E0400C6839A /* GLMap */; };
 		E3B9A5CF2A463E1800C6839A /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CE2A463E1800C6839A /* XMLCoder */; };
 /* End PBXBuildFile section */
@@ -182,6 +187,11 @@
 		E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ApiKeys.swift; path = ../../../Downloads/ApiKeys.swift; sourceTree = "<group>"; };
 		E3AD200F2AB8750000A92DAA /* ScrollViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewController.swift; sourceTree = "<group>"; };
 		E3AD20122AB8771700A92DAA /* SFSafariViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSafariViewController.swift; sourceTree = "<group>"; };
+		E3AD20142AB8BCA100A92DAA /* OverpasBboxViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverpasBboxViewController.swift; sourceTree = "<group>"; };
+		E3AD20162AB8BCB800A92DAA /* OverpasRelationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverpasRelationViewController.swift; sourceTree = "<group>"; };
+		E3AD20182AB8BCC900A92DAA /* OverpasManualyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverpasManualyViewController.swift; sourceTree = "<group>"; };
+		E3AD201A2AB8EB3400A92DAA /* OverpasClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverpasClient.swift; sourceTree = "<group>"; };
+		E3AD201C2AB8EB6E00A92DAA /* OverpasProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverpasProtocol.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -331,6 +341,7 @@
 			children = (
 				2C2F972729D53DB100A994C8 /* UpdateSourceDataProtocol.swift */,
 				2CE00A802A253DA5008A6119 /* MapClientProtocol.swift */,
+				E3AD201C2AB8EB6E00A92DAA /* OverpasProtocol.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -430,6 +441,7 @@
 				2CA6A3F829CAB964004233E2 /* Parser.swift */,
 				2C5662BC291275FA00E5B4D5 /* OsmClient.swift */,
 				E34E4AE02A981ECD00D65A92 /* Presets.swift */,
+				E3AD201A2AB8EB3400A92DAA /* OverpasClient.swift */,
 				2C1676ED29A7D50B004DD9D3 /* MapClient.swift */,
 				E3021DAB2A8FFF86000E789A /* MapStyles.swift */,
 				2CA74E95291EE1BD00413930 /* AppSettings.swift */,
@@ -441,6 +453,9 @@
 			isa = PBXGroup;
 			children = (
 				E33950192AB644EE00C1F888 /* OverpasMainViewController.swift */,
+				E3AD20142AB8BCA100A92DAA /* OverpasBboxViewController.swift */,
+				E3AD20162AB8BCB800A92DAA /* OverpasRelationViewController.swift */,
+				E3AD20182AB8BCC900A92DAA /* OverpasManualyViewController.swift */,
 			);
 			path = "Overpas API";
 			sourceTree = "<group>";
@@ -556,6 +571,7 @@
 				2CE00A812A253DA5008A6119 /* MapClientProtocol.swift in Sources */,
 				2CD9133A29AB94F500A4A853 /* EditObjectViewController.swift in Sources */,
 				E339501A2AB644EE00C1F888 /* OverpasMainViewController.swift in Sources */,
+				E3AD20152AB8BCA100A92DAA /* OverpasBboxViewController.swift in Sources */,
 				2CCB304229D4553100C8E5E7 /* SelectObjectViewController.swift in Sources */,
 				2C5662C12912788600E5B4D5 /* OSM structures.swift in Sources */,
 				E3540B032A71B0DF00649564 /* SelectValuesCell.swift in Sources */,
@@ -565,6 +581,7 @@
 				E3540B052A71B1A300649564 /* CustomSafari.swift in Sources */,
 				2CB58A6329ECF01800FD0E59 /* QuickGuideViewController.swift in Sources */,
 				E3540AFE2A71AFB400649564 /* CustomViews.swift in Sources */,
+				E3AD201D2AB8EB6E00A92DAA /* OverpasProtocol.swift in Sources */,
 				E3AD20102AB8750000A92DAA /* ScrollViewController.swift in Sources */,
 				E3540B0B2A71B2D600649564 /* AnyStructs.swift in Sources */,
 				E3540AFC2A71AF7D00649564 /* ItemCell.swift in Sources */,
@@ -582,7 +599,9 @@
 				2C1A361229B0674400AF3BEB /* String.swift in Sources */,
 				2C1676EE29A7D50C004DD9D3 /* MapClient.swift in Sources */,
 				E3540B152A71DAFE00649564 /* SecreenSettingsCell.swift in Sources */,
+				E3AD20192AB8BCC900A92DAA /* OverpasManualyViewController.swift in Sources */,
 				2042BCEF289C696E0026514E /* MapViewController.swift in Sources */,
+				E3AD201B2AB8EB3400A92DAA /* OverpasClient.swift in Sources */,
 				2CA6A3FF29CAB965004233E2 /* Parser.swift in Sources */,
 				2C478A9929E69BCB004E35E1 /* MainViewController.swift in Sources */,
 				2CDEA6D729862C2B00E5219D /* GLMapVectorObject.swift in Sources */,
@@ -594,6 +613,7 @@
 				E3AD20132AB8771700A92DAA /* SFSafariViewController.swift in Sources */,
 				2CA74E96291EE1BD00413930 /* AppSettings.swift in Sources */,
 				2C4EEE822986154300F9AAF9 /* UIViewController.swift in Sources */,
+				E3AD20172AB8BCB800A92DAA /* OverpasRelationViewController.swift in Sources */,
 				2042BCEB289C696E0026514E /* AppDelegate.swift in Sources */,
 				2C2F972829D53DB200A994C8 /* UpdateSourceDataProtocol.swift in Sources */,
 				2CF9E7732A0C9FFC003DB2CC /* UIColor.swift in Sources */,

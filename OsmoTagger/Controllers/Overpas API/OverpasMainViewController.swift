@@ -47,7 +47,8 @@ class OverpasMainViewController: ScrollViewController {
                         text: "Search around the center of the map. The bbox is calculated from the center of your map. To change the bbox, return to the map screen, shift the center. You can adjust the bbox size later.",
                         showSeparator: false)
         cell0.tapClosure = { [weak self] in
-            print("tap")
+            let vc = OverpasBboxViewController()
+            self?.navigationController?.pushViewController(vc, animated: true)
         }
         scrollView.addSubview(cell0)
         
@@ -56,7 +57,8 @@ class OverpasMainViewController: ScrollViewController {
                         text: "Searching for objects in relation with the entered name. If you need a search not related to the relation, and you are proficient in Overpass API, enter the query manually.",
                         showSeparator: true)
         cell1.tapClosure = { [weak self] in
-            print("tap")
+            let vc = OverpasRelationViewController()
+            self?.navigationController?.pushViewController(vc, animated: true)
         }
         scrollView.addSubview(cell1)
         
@@ -65,7 +67,8 @@ class OverpasMainViewController: ScrollViewController {
                         text: "Fully manual query construction",
                         showSeparator: true)
         cell2.tapClosure = { [weak self] in
-            print("tap")
+            let vc = OverpasManualyViewController()
+            self?.navigationController?.pushViewController(vc, animated: true)
         }
         scrollView.addSubview(cell2)
         

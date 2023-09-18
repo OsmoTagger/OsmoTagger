@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import GLMap
 
 //  Custom UINavigationController. It opens controllers for displaying saved objects, selecting an object in the case of tapping on several objects, and a tag editing controller.
 class SheetNavigationController: UINavigationController {
@@ -53,10 +54,12 @@ class CategoryNavigationController: UINavigationController {
 
 class OverpasNavigationController: UINavigationController {
     var callbackClosure: ((URL) -> Void)?
+    var mapCenter: GLMapGeoPoint?
     
-    static func present(parent: UIViewController) {
+    static func present(parent: UIViewController, mapCenter: GLMapGeoPoint) {
         let vc = OverpasMainViewController()
         let navVC = OverpasNavigationController(rootViewController: vc)
+        navVC.mapCenter = mapCenter
         parent.present(navVC, animated: true)
     }
 }

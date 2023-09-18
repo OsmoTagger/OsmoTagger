@@ -84,6 +84,7 @@ class MapViewController: UIViewController {
         // When this closure is called, the object is added to the map and the zoom is adjusted
         setShowVectorObjectClosure()
         mapClient.showSavedObjects()
+        tapOverpas()
     }
     
     // MARK: MapView and layers
@@ -501,7 +502,7 @@ class MapViewController: UIViewController {
     }
     
     @objc private func tapOverpas() {
-        OverpasNavigationController.present(parent: self)
+        OverpasNavigationController.present(parent: self, mapCenter: mapView.mapGeoCenter)
     }
     
     //  Test button and its target for debugging convenience.

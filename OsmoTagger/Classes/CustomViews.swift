@@ -611,3 +611,72 @@ class OverpasVariantView: UIView {
     }
     
 }
+
+class OverpasDownloadView: UIView {
+    private var downloadSizeLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    private var resultLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    private var showButton: UIButton = {
+        var config = UIButton.Configuration.borderedProminent()
+        config.title = "Show on map"
+        config.titlePadding = 4
+        let button = UIButton(configuration: config)
+        button.isHidden = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    convenience init() {
+        self.init(frame: .zero)
+        translatesAutoresizingMaskIntoConstraints = false
+        setupConstrains()
+    }
+    
+    private func setupConstrains() {
+        addSubview(downloadSizeLabel)
+        addSubview(resultLabel)
+        addSubview(showButton)
+        let spacing: CGFloat = 10
+        NSLayoutConstraint.activate([
+            downloadSizeLabel.topAnchor.constraint(equalTo: topAnchor),
+            downloadSizeLabel.leadingAnchor.constraint(lessThanOrEqualTo: leadingAnchor),
+            downloadSizeLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
+            downloadSizeLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            
+            resultLabel.topAnchor.constraint(equalTo: downloadSizeLabel.bottomAnchor, constant: spacing),
+            resultLabel.leadingAnchor.constraint(lessThanOrEqualTo: leadingAnchor),
+            resultLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
+            resultLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            
+            showButton.topAnchor.constraint(equalTo: resultLabel.bottomAnchor, constant: spacing),
+            showButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -spacing),
+            showButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+        ])
+    }
+    
+    func setDownloadSize(size: Int64) {
+        downloadSizeLabel.text = "Download: \(size)"
+    }
+    
+    func setResult(success: Bool, text: String? = nil) {
+        if success {
+            showButton.isHidden = false
+            resultLabel.text = "Data loaded"
+        } else {
+            showButton.isHidden = true
+            if let text {
+                resultLabel.text = "Request failed: \(text)"
+            }
+        }
+    }
+    
+}
