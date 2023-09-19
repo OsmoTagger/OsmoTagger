@@ -502,7 +502,16 @@ class MapViewController: UIViewController {
     }
     
     @objc private func tapOverpas() {
-        OverpasNavigationController.present(parent: self, mapCenter: mapView.mapGeoCenter)
+        let navVC = OverpasNavigationController()
+        navVC.callbackClosure = { [weak self] dataUrl in
+            print("------------")
+            print(dataUrl)
+            let data = try? Data(contentsOf: dataUrl)
+            print(data?.count)
+            self?.mapClient.parseOverpasData(url: dataUrl)
+        }
+        navVC.mapCenter = mapView.mapGeoCenter
+        present(navVC, animated: true)
     }
     
     //  Test button and its target for debugging convenience.

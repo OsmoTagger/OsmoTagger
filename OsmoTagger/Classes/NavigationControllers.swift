@@ -56,10 +56,12 @@ class OverpasNavigationController: UINavigationController {
     var callbackClosure: ((URL) -> Void)?
     var mapCenter: GLMapGeoPoint?
     
-    static func present(parent: UIViewController, mapCenter: GLMapGeoPoint) {
+    init() {
         let vc = OverpasMainViewController()
-        let navVC = OverpasNavigationController(rootViewController: vc)
-        navVC.mapCenter = mapCenter
-        parent.present(navVC, animated: true)
+        super.init(rootViewController: vc)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

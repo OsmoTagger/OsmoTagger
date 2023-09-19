@@ -14,7 +14,6 @@ class OverpasClient: NSObject {
     var downloadCount: Int64 = 0
     
     func getData(urlStr: String) async throws {
-        
         let session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
         guard let urlStr = urlStr.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
               let url = URL(string: urlStr) else { throw "Error generate URL" }
@@ -27,6 +26,8 @@ class OverpasClient: NSObject {
 
 extension OverpasClient: URLSessionDownloadDelegate {
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+        guard let data = try? Data(contentsOf: location) else {return}
+        try? data.write(to: AppSettings.settings.overpasDataURL)
         delegate?.downloadCompleted(with: location)
     }
     

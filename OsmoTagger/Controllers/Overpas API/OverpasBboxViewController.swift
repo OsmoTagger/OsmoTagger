@@ -13,6 +13,7 @@ class OverpasBboxViewController: ScrollViewController {
     var mapCenter: GLMapGeoPoint?
     
     let overpasClient = OverpasClient()
+    var dataUrl: URL?
     
     let tagField = UITextField()
     let bboxField = UITextField()
@@ -20,6 +21,8 @@ class OverpasBboxViewController: ScrollViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        overpasClient.delegate = self
         
         title = "Find in bbox"
         view.backgroundColor = .systemBackground
@@ -76,8 +79,26 @@ class OverpasBboxViewController: ScrollViewController {
         sendButton.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(sendButton)
         
+        downloadView.showClosure = { [weak self] in
+            guard let self = self,
+                  let dataUrl = dataUrl,
+                  let navVC = navigationController as? OverpasNavigationController else {return}
+            print("+++++++")
+            print(dataUrl)
+            let data = try? Data(contentsOf: dataUrl)
+            print(data?.count)
+            navVC.callbackClosure?(dataUrl)
+            navVC.dismiss(animated: true)
+        }
         downloadView.isHidden = true
         scrollView.addSubview(downloadView)
+        
+        let but = UIButton()
+        but.backgroundColor = .systemBlue
+        but.setTitle("AAAAAA", for: .normal)
+        but.addTarget(self, action: #selector(tap), for: .touchUpInside)
+        but.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(but)
         
         let spacing: CGFloat = 10
         NSLayoutConstraint.activate([
@@ -111,12 +132,27 @@ class OverpasBboxViewController: ScrollViewController {
             downloadView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: spacing),
             downloadView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -spacing),
             
-            scrollView.bottomAnchor.constraint(equalTo: downloadView.bottomAnchor)
+            but.topAnchor.constraint(equalTo: downloadView.bottomAnchor, constant: 2 * spacing),
+            but.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            
+            scrollView.bottomAnchor.constraint(equalTo: but.bottomAnchor)
         ])
     }
     
+    @objc private func tap() {
+        if let url = dataUrl {
+            print(url)
+            let data = try? Data(contentsOf: url)
+            print(data?.count)
+        }
+    }
+// https://overpass-api.de/api/interpreter?data=nwr[amenity=cafe](56.10509142344276,40.35436862036586,56.20509142344275,40.454368620365855);out%20center;
+    
+// https://overpass-api.de/api/interpreter?data=nwr[amenity=cafe](56.10506546783101,40.35432201698423,56.205065467831005,40.45432201698422);out center;
     @objc private func tapSend() {
         downloadView.isHidden = false
+        let serverStr = "https://overpass-api.de/api/interpreter?data=nwr"
         guard let bboxStr = bboxField.text,
               let bbox = Double(bboxStr),
               let tag = tagField.text,
@@ -127,16 +163,17 @@ class OverpasBboxViewController: ScrollViewController {
         let lonMin = mapCenter.lon - bbox
         let lonMax = mapCenter.lon + bbox
         let bboxUrl = "(\(latMin),\(lonMin),\(latMax),\(lonMax))"
-        // [railway=rail]({{bbox}});out geom;
-        let query = "[\(tag)]\(bboxUrl)"
-        print(query)
-//        Task {
-//            do {
-//                try await overpasClient.getData(urlStr: <#T##String#>)
-//            } catch {
-//
-//            }
-//        }
+        let tagUrl = "[\(tag)]"
+        let url = serverStr + tagUrl + bboxUrl + ";out geom;[out:json]"
+        print(url)
+        Task {
+            do {
+                try await overpasClient.getData(urlStr: url)
+            } catch {
+                let message = error as? String ?? "Error"
+                downloadView.setResult(success: false, text: message)
+            }
+        }
     }
     
 }
@@ -147,7 +184,13 @@ extension OverpasBboxViewController: OverpasProtocol {
     }
     
     func downloadCompleted(with result: URL) {
-        downloadView.setResult(success: true)
+        dataUrl = result
+        DispatchQueue.main.async {
+            if let navVC = self.navigationController as? OverpasNavigationController { 
+                navVC.callbackClosure?(result)
+            }
+        }
+        
     }
     
     

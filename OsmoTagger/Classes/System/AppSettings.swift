@@ -214,7 +214,10 @@ final class AppSettings: NSObject {
     
     var itemPathes: [[String: String]: ItemPath] = [:]
     
-//    MARK: FILE PATHES
+    // MARK: FILE PATHES
+    
+    // Overpas data file path
+    let overpasDataURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("overpas.data")
     
     // Path to a file that stores modified and created objects
     let savedNodesURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("savedNodes.data")

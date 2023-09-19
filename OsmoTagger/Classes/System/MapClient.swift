@@ -71,12 +71,27 @@ class MapClient {
         try parseData(data: data, latitudeDisplayMin: latitudeDisplayMin, latitudeDisplayMax: latitudeDisplayMax, longitudeDisplayMin: longitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax)
     }
     
-    func parseData(data: Data, latitudeDisplayMin: Double? = nil, latitudeDisplayMax: Double? = nil, longitudeDisplayMin: Double? = nil, longitudeDisplayMax: Double? = nil) throws {
+    func parseOverpasData(url: URL) {
+        do {
+            let data = try Data(contentsOf: AppSettings.settings.overpasDataURL)
+            print("|||||||||||||||||||||||||")
+            print(data.count)
+            let str = String(data: data, encoding: .utf8)
+            print("|||||||||||||||||||||||||")
+            print(str)
+            try showGeoJson(data: data)
+            getNodesFromXML(data: data)
+        } catch {
+            print(error)
+        }
+    }
+    
+    private func parseData(data: Data, latitudeDisplayMin: Double? = nil, latitudeDisplayMax: Double? = nil, longitudeDisplayMin: Double? = nil, longitudeDisplayMax: Double? = nil) throws {
         try showGeoJson(data: data, latitudeDisplayMin: latitudeDisplayMin, latitudeDisplayMax: latitudeDisplayMax, longitudeDisplayMin: longitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax)
         getNodesFromXML(data: data)
     }
     
-    private func showGeoJson(data: Data, latitudeDisplayMin: Double?, latitudeDisplayMax: Double?, longitudeDisplayMin: Double?, longitudeDisplayMax: Double?) throws {
+    private func showGeoJson(data: Data, latitudeDisplayMin: Double? = nil, latitudeDisplayMax: Double? = nil, longitudeDisplayMin: Double? = nil, longitudeDisplayMax: Double? = nil) throws {
         let xmlFileName = ProcessInfo().globallyUniqueString
         let xmlFileURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(xmlFileName + ".osm")
         let jsonFileName = ProcessInfo().globallyUniqueString

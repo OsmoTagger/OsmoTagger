@@ -625,15 +625,18 @@ class OverpasDownloadView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    private var showButton: UIButton = {
+    private lazy var showButton: UIButton = {
         var config = UIButton.Configuration.borderedProminent()
         config.title = "Show on map"
         config.titlePadding = 4
         let button = UIButton(configuration: config)
         button.isHidden = true
+        button.addTarget(self, action: #selector(tapShowButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
+    
+    var showClosure: EmptyBlock?
     
     convenience init() {
         self.init(frame: .zero)
@@ -663,18 +666,28 @@ class OverpasDownloadView: UIView {
         ])
     }
     
+    @objc private func tapShowButton() {
+        showClosure?()
+    }
+    
     func setDownloadSize(size: Int64) {
-        downloadSizeLabel.text = "Download: \(size)"
+        DispatchQueue.main.async { [weak self] in
+            let mb = Double(size) / 1_048_576
+            let mbStr = String(format: "%.3f", mb)
+            self?.downloadSizeLabel.text = "Download: \(mbStr) Mb."
+        }
     }
     
     func setResult(success: Bool, text: String? = nil) {
-        if success {
-            showButton.isHidden = false
-            resultLabel.text = "Data loaded"
-        } else {
-            showButton.isHidden = true
-            if let text {
-                resultLabel.text = "Request failed: \(text)"
+        DispatchQueue.main.async { [weak self] in
+            if success {
+                self?.showButton.isHidden = false
+                self?.resultLabel.text = "Data loaded"
+            } else {
+                self?.showButton.isHidden = true
+                if let text {
+                    self?.resultLabel.text = "Request failed: \(text)"
+                }
             }
         }
     }
