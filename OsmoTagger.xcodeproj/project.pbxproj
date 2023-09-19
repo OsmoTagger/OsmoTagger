@@ -59,6 +59,7 @@
 		E3021DAC2A8FFF86000E789A /* MapStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3021DAB2A8FFF86000E789A /* MapStyles.swift */; };
 		E3021DB82A909249000E789A /* SheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3021DB72A909249000E789A /* SheetViewController.swift */; };
 		E33A71AA2AB9E75D009D9508 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33A71A92AB9E75D009D9508 /* Alert.swift */; };
+		E33A71CC2ABA3580009D9508 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33A71CB2ABA3580009D9508 /* Common.swift */; };
 		E34E4AE12A981ECD00D65A92 /* Presets.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34E4AE02A981ECD00D65A92 /* Presets.swift */; };
 		E3540AF42A71AE2E00649564 /* SavedNodeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540AF32A71AE2E00649564 /* SavedNodeCell.swift */; };
 		E3540AF62A71AE7400649564 /* SelectObjectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540AF52A71AE7400649564 /* SelectObjectCell.swift */; };
@@ -163,6 +164,7 @@
 		E3021DAB2A8FFF86000E789A /* MapStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyles.swift; sourceTree = "<group>"; };
 		E3021DB72A909249000E789A /* SheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetViewController.swift; sourceTree = "<group>"; };
 		E33A71A92AB9E75D009D9508 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
+		E33A71CB2ABA3580009D9508 /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		E34E4AE02A981ECD00D65A92 /* Presets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Presets.swift; sourceTree = "<group>"; };
 		E3540AF32A71AE2E00649564 /* SavedNodeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedNodeCell.swift; sourceTree = "<group>"; };
 		E3540AF52A71AE7400649564 /* SelectObjectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectObjectCell.swift; sourceTree = "<group>"; };
@@ -303,6 +305,7 @@
 				E3540AFF2A71AFD400649564 /* System */,
 				E3540AFD2A71AFB400649564 /* CustomViews.swift */,
 				E3540B042A71B1A300649564 /* CustomSafari.swift */,
+				E33A71CB2ABA3580009D9508 /* Common.swift */,
 				E3540B0C2A71BDA100649564 /* MapButtonsView.swift */,
 				E33A71A92AB9E75D009D9508 /* Alert.swift */,
 				E3021DB72A909249000E789A /* SheetViewController.swift */,
@@ -581,6 +584,7 @@
 				E3540B132A71D1FA00649564 /* ScreenSettingsViewController.swift in Sources */,
 				E3021DAC2A8FFF86000E789A /* MapStyles.swift in Sources */,
 				2CA74E96291EE1BD00413930 /* AppSettings.swift in Sources */,
+				E33A71CC2ABA3580009D9508 /* Common.swift in Sources */,
 				2C4EEE822986154300F9AAF9 /* UIViewController.swift in Sources */,
 				2042BCEB289C696E0026514E /* AppDelegate.swift in Sources */,
 				2C2F972829D53DB200A994C8 /* UpdateSourceDataProtocol.swift in Sources */,
