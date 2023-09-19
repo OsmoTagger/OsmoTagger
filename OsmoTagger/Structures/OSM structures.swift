@@ -112,7 +112,6 @@ struct osmChange: Decodable, Encodable, DynamicNodeEncoding {
             delete.relation[index].changeset = id
         }
     }
-    
 }
 
 struct Modify: Codable {

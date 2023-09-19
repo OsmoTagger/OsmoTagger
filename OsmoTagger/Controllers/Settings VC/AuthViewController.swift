@@ -5,8 +5,8 @@
 //  Created by Arkadiy on 12.04.2023.
 //
 
-import UIKit
 import SafariServices
+import UIKit
 
 //  Authorization ViewController
 class AuthViewController: SheetViewController {
@@ -99,7 +99,7 @@ class AuthViewController: SheetViewController {
     
     @objc private func tapRemove() {
         let link = AppSettings.settings.server + "/oauth2/applications"
-        guard let url = URL(string: link) else {return}
+        guard let url = URL(string: link) else { return }
         let vc = SFSafariViewController(url: url)
         present(vc, animated: true)
     }

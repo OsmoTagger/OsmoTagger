@@ -178,7 +178,7 @@ class InfoObjectViewController: SheetViewController, UITableViewDelegate, UITabl
         for tag in object.tag {
             newProperties[tag.k] = tag.v
         }
-        let properties: [String:String] = newProperties.count == 0 ? object.oldTags : newProperties
+        let properties: [String: String] = newProperties.count == 0 ? object.oldTags : newProperties
         let pathes = PresetClient().getItemsFromTags(properties: properties)
         if let path = pathes.first {
             if let item = PresetClient().getItemFromPath(path: path) {

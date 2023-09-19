@@ -34,7 +34,8 @@ class Alert: UIView {
         alpha = 0.0
     }
     
-    required init?(coder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -51,7 +52,7 @@ class Alert: UIView {
             label.leadingAnchor.constraint(equalTo: circle.trailingAnchor, constant: 10),
             label.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -10),
             label.centerXAnchor.constraint(equalTo: centerXAnchor),
-            label.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10)
+            label.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
         ])
     }
     
@@ -69,26 +70,25 @@ class Alert: UIView {
             alert.circle.isHidden = false
         }
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-        if let window = windowScene.windows.first {
-            window.addSubview(alert)
-            NSLayoutConstraint.activate([
-                alert.topAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor),
-                alert.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
-                alert.widthAnchor.constraint(lessThanOrEqualTo: window.widthAnchor),
-                alert.leadingAnchor.constraint(equalTo: window.safeAreaLayoutGuide.leadingAnchor)
-            ])
+            if let window = windowScene.windows.first {
+                window.addSubview(alert)
+                NSLayoutConstraint.activate([
+                    alert.topAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor),
+                    alert.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
+                    alert.widthAnchor.constraint(lessThanOrEqualTo: window.widthAnchor),
+                    alert.leadingAnchor.constraint(equalTo: window.safeAreaLayoutGuide.leadingAnchor),
+                ])
                         
-            UIView.animate(withDuration: 0.5, animations: { [weak alert] in
-                alert?.alpha = 1
-            }, completion: { [weak alert] _ in
-                UIView.animate(withDuration: 0.5, delay: 7, animations: {
-                    alert?.alpha = 0
+                UIView.animate(withDuration: 0.5, animations: { [weak alert] in
+                    alert?.alpha = 1
                 }, completion: { [weak alert] _ in
-                    alert?.removeFromSuperview()
+                    UIView.animate(withDuration: 0.5, delay: 7, animations: {
+                        alert?.alpha = 0
+                    }, completion: { [weak alert] _ in
+                        alert?.removeFromSuperview()
+                    })
                 })
-            })
+            }
         }
     }
-    }
-    
 }

@@ -331,7 +331,7 @@ class MapViewController: UIViewController {
     func goToSettingsVC() {
         let vc = MainViewController()
         navController = SheetNavigationController(rootViewController: vc)
-        guard let sheetVC = navController?.sheetPresentationController else {return}
+        guard let sheetVC = navController?.sheetPresentationController else { return }
         // open the settings in full-screen mode
         sheetVC.detents = [.large()]
         navController?.dismissClosure = { [weak self] in
