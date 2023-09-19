@@ -58,6 +58,7 @@
 		6CF5D93928FB485F001D2758 /* osmium.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6CF5D93828FB485F001D2758 /* osmium.mm */; };
 		E3021DAC2A8FFF86000E789A /* MapStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3021DAB2A8FFF86000E789A /* MapStyles.swift */; };
 		E3021DB82A909249000E789A /* SheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3021DB72A909249000E789A /* SheetViewController.swift */; };
+		E33A71AA2AB9E75D009D9508 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33A71A92AB9E75D009D9508 /* Alert.swift */; };
 		E34E4AE12A981ECD00D65A92 /* Presets.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34E4AE02A981ECD00D65A92 /* Presets.swift */; };
 		E3540AF42A71AE2E00649564 /* SavedNodeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540AF32A71AE2E00649564 /* SavedNodeCell.swift */; };
 		E3540AF62A71AE7400649564 /* SelectObjectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540AF52A71AE7400649564 /* SelectObjectCell.swift */; };
@@ -161,6 +162,7 @@
 		6CF5D93828FB485F001D2758 /* osmium.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = osmium.mm; sourceTree = "<group>"; };
 		E3021DAB2A8FFF86000E789A /* MapStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyles.swift; sourceTree = "<group>"; };
 		E3021DB72A909249000E789A /* SheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetViewController.swift; sourceTree = "<group>"; };
+		E33A71A92AB9E75D009D9508 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
 		E34E4AE02A981ECD00D65A92 /* Presets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Presets.swift; sourceTree = "<group>"; };
 		E3540AF32A71AE2E00649564 /* SavedNodeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedNodeCell.swift; sourceTree = "<group>"; };
 		E3540AF52A71AE7400649564 /* SelectObjectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectObjectCell.swift; sourceTree = "<group>"; };
@@ -302,6 +304,7 @@
 				E3540AFD2A71AFB400649564 /* CustomViews.swift */,
 				E3540B042A71B1A300649564 /* CustomSafari.swift */,
 				E3540B0C2A71BDA100649564 /* MapButtonsView.swift */,
+				E33A71A92AB9E75D009D9508 /* Alert.swift */,
 				E3021DB72A909249000E789A /* SheetViewController.swift */,
 				E3540B062A71B1DB00649564 /* Buttons.swift */,
 				E3540B002A71B01300649564 /* NavigationControllers.swift */,
@@ -556,6 +559,7 @@
 				2C450A762A326EFF001D73A9 /* TestViewController.swift in Sources */,
 				6C8B010C28FC030B00C9238D /* option_clean.cpp in Sources */,
 				6C8B010D28FC030B00C9238D /* util.cpp in Sources */,
+				E33A71AA2AB9E75D009D9508 /* Alert.swift in Sources */,
 				6C76E75928EC12AE0048C378 /* FastHash.m in Sources */,
 				2CD2E7AC29D30D150042D36E /* MultiSelectViewController.swift in Sources */,
 				6C8B011028FC030B00C9238D /* export_format_json.cpp in Sources */,
