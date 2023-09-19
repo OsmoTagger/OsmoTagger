@@ -20,27 +20,17 @@ class AuthViewController: SheetViewController {
     var signOutButton = UIBarButtonItem()
     var checkButton = UIBarButtonItem()
     
-    deinit {
-        AppSettings.settings.userInfoClouser = nil
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .systemBackground
         
-//      Set buttons
+        // Set buttons
         flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         loginButton = UIBarButtonItem(title: "Login", style: .done, target: self, action: #selector(tapAuthButton))
         signOutButton = UIBarButtonItem(title: "Sign out", style: .plain, target: self, action: #selector(tapSignout))
         checkButton = UIBarButtonItem(title: "Check", style: .plain, target: self, action: #selector(tapCheckButton))
         navigationController?.setToolbarHidden(false, animated: false)
-        
-//      Closure, which is performed upon successful authorization to upload the user's nickname. It is deinitialized when closed.
-        AppSettings.settings.userInfoClouser = { [weak self] userInfo in
-            guard let self = self else { return }
-            self.setUserInfoView(user: userInfo)
-        }
         
         setTitleView()
         updateToolBar()
@@ -175,6 +165,8 @@ class AuthViewController: SheetViewController {
                     self.authResult.update()
                     self.updateToolBar()
                 }
+                let userInfo = try await OsmClient().getUserInfo()
+                setUserInfoView(user: userInfo)
             } catch {
                 let message = error as? String ?? "Error while auth"
                 showAction(message: message, addAlerts: [])
