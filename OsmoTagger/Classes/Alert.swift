@@ -71,24 +71,38 @@ class Alert: UIView {
         }
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
             if let window = windowScene.windows.first {
-                window.addSubview(alert)
-                NSLayoutConstraint.activate([
-                    alert.topAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor),
-                    alert.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
-                    alert.widthAnchor.constraint(lessThanOrEqualTo: window.widthAnchor),
-                    alert.leadingAnchor.constraint(equalTo: window.safeAreaLayoutGuide.leadingAnchor),
-                ])
-                        
-                UIView.animate(withDuration: 0.5, animations: { [weak alert] in
-                    alert?.alpha = 1
-                }, completion: { [weak alert] _ in
-                    UIView.animate(withDuration: 0.5, delay: 7, animations: {
-                        alert?.alpha = 0
+                DispatchQueue.main.async { [weak window] in
+                    guard let window = window else { return }
+                    window.addSubview(alert)
+                    NSLayoutConstraint.activate([
+                        alert.topAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor),
+                        alert.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
+                        alert.widthAnchor.constraint(lessThanOrEqualTo: window.widthAnchor),
+                        alert.leadingAnchor.constraint(equalTo: window.safeAreaLayoutGuide.leadingAnchor),
+                    ])
+                            
+                    UIView.animate(withDuration: 0.5, animations: { [weak alert] in
+                        alert?.alpha = 1
                     }, completion: { [weak alert] _ in
-                        alert?.removeFromSuperview()
+                        UIView.animate(withDuration: 0.5, delay: 7, animations: {
+                            alert?.alpha = 0
+                        }, completion: { [weak alert] _ in
+                            alert?.removeFromSuperview()
+                        })
                     })
-                })
+                }
             }
         }
     }
+    
+    static func showAction(parent: UIViewController, message: String, addAlerts: [UIAlertAction]) {
+        let alert = UIAlertController(title: "", message: message, preferredStyle: .actionSheet)
+        for action in addAlerts {
+            alert.addAction(action)
+        }
+        DispatchQueue.main.async {
+            parent.present(alert, animated: true)
+        }
+    }
+    
 }
