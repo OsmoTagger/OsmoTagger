@@ -148,6 +148,13 @@ final class AppSettings: NSObject {
         set {
             if newValue == nil {
                 userName = nil
+            } else {
+                Task {
+                    let userInfo = try? await OsmClient().getUserInfo()
+                    if let userInfo {
+                        userName = userInfo.user.display_name
+                    }
+                }
             }
             if isDevServer {
                 UserDefaults.standard.set(newValue, forKey: "dev_access_token")

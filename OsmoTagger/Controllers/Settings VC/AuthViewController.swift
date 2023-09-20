@@ -165,11 +165,12 @@ class AuthViewController: SheetViewController {
                     self.authResult.update()
                     self.updateToolBar()
                 }
+                Alert.showAlert("Authentication successful", isBad: false)
                 let userInfo = try await OsmClient().getUserInfo()
                 setUserInfoView(user: userInfo)
             } catch {
                 let message = error as? String ?? "Error while auth"
-                showAction(message: message, addAlerts: [])
+                Alert.showAlert(message)
             }
             self.removeIndicator(indicator: indicator)
         }
@@ -183,7 +184,7 @@ class AuthViewController: SheetViewController {
                 setUserInfoView(user: userInfo)
             } catch {
                 let message = error as? String ?? "Error check user info"
-                showAction(message: message, addAlerts: [])
+                Alert.showAlert(message)
             }
             removeIndicator(indicator: indicator)
         }
@@ -194,6 +195,7 @@ class AuthViewController: SheetViewController {
         authResult.update()
         userView.removeFromSuperview()
         updateToolBar()
+        Alert.showAlert("You have logged out")
     }
     
     func setTitleView() {
