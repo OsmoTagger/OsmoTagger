@@ -58,7 +58,7 @@ class LogsViewController: UIViewController {
         let zipURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("logs.zip")
         do {
             let data = try NSKeyedArchiver.archivedData(withRootObject: AppSettings.settings.logs, requiringSecureCoding: false)
-            try data.write(to: zipURL)
+            try data.write(to: zipURL, options: .atomic)
         } catch {
             Log("Error archived data: \(error)")
             Alert.showAlert("Error archived data: \(error)")
