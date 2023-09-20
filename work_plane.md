@@ -1,5 +1,6 @@
 # ROADMAP
 [ ] Add alerts and logs
+[ ] Adapt for Mac Catalyst
 [ ] Improved preset recognition
 [ ] Simplify the interface
 [ ] Quick view of object tags
