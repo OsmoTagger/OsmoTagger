@@ -15,8 +15,6 @@
 		2042BCF7289C697A0026514E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2042BCF5289C697A0026514E /* LaunchScreen.storyboard */; };
 		2C1676EE29A7D50C004DD9D3 /* MapClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1676ED29A7D50B004DD9D3 /* MapClient.swift */; };
 		2C1A361229B0674400AF3BEB /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1A361129B0674400AF3BEB /* String.swift */; };
-		2C21058929F095C6005A0B46 /* LineTool settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C21058829F095C6005A0B46 /* LineTool settings.swift */; };
-		2C21058D29F098F1005A0B46 /* OSM structures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5662C02912788600E5B4D5 /* OSM structures.swift */; };
 		2C24FA502A0AFA6300C9ACA3 /* circle_location.svg in Resources */ = {isa = PBXBuildFile; fileRef = 2C24FA4F2A0AFA6300C9ACA3 /* circle_location.svg */; };
 		2C27010C2A01AB6100A65363 /* Terms of service.md in Resources */ = {isa = PBXBuildFile; fileRef = 2C27010B2A01AB6000A65363 /* Terms of service.md */; };
 		2C2F972829D53DB200A994C8 /* UpdateSourceDataProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2F972729D53DB100A994C8 /* UpdateSourceDataProtocol.swift */; };
@@ -28,14 +26,7 @@
 		2C5662C12912788600E5B4D5 /* OSM structures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5662C02912788600E5B4D5 /* OSM structures.swift */; };
 		2C6F1CC429DD40380091784B /* InfoObjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6F1CC329DD40370091784B /* InfoObjectViewController.swift */; };
 		2C9DEBD429B526980058CCC2 /* JSOM presets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9DEBD329B526980058CCC2 /* JSOM presets.swift */; };
-		2CA6A3F429CAB640004233E2 /* defaultPresets.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2CA6A3F329CAB63F004233E2 /* defaultPresets.xml */; };
-		2CA6A3FD29CAB965004233E2 /* LineToolsMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA6A3F729CAB964004233E2 /* LineToolsMethods.swift */; };
-		2CA6A3FE29CAB965004233E2 /* LineToolsMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA6A3F729CAB964004233E2 /* LineToolsMethods.swift */; };
 		2CA6A3FF29CAB965004233E2 /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA6A3F829CAB964004233E2 /* Parser.swift */; };
-		2CA6A40229CAB965004233E2 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA6A3F929CAB964004233E2 /* main.swift */; };
-		2CA6A40529CABBC6004233E2 /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = 2CA6A40429CABBC6004233E2 /* XMLCoder */; };
-		2CA6A40829CAC0C7004233E2 /* JSOM presets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9DEBD329B526980058CCC2 /* JSOM presets.swift */; };
-		2CA6A40A29CAC87D004233E2 /* defaultPresets.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2CA6A3F329CAB63F004233E2 /* defaultPresets.xml */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2CA74E96291EE1BD00413930 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA74E95291EE1BD00413930 /* AppSettings.swift */; };
 		2CB58A6329ECF01800FD0E59 /* QuickGuideViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB58A6229ECF01800FD0E59 /* QuickGuideViewController.swift */; };
 		2CCB304229D4553100C8E5E7 /* SelectObjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCB304129D4553100C8E5E7 /* SelectObjectViewController.swift */; };
@@ -76,25 +67,13 @@
 		E3540B0D2A71BDA100649564 /* MapButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540B0C2A71BDA100649564 /* MapButtonsView.swift */; };
 		E3540B132A71D1FA00649564 /* ScreenSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540B122A71D1FA00649564 /* ScreenSettingsViewController.swift */; };
 		E3540B152A71DAFE00649564 /* SecreenSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540B142A71DAFE00649564 /* SecreenSettingsCell.swift */; };
+		E36A67DB2ABB8B3900824794 /* defaultPresets.xml in Resources */ = {isa = PBXBuildFile; fileRef = E36A67DA2ABB8B3900824794 /* defaultPresets.xml */; };
 		E3AA63A82A7BBD14008BFBD5 /* ApiKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */; };
 		E3B9A5CD2A463E0400C6839A /* GLMap in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CC2A463E0400C6839A /* GLMap */; };
 		E3B9A5CF2A463E1800C6839A /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CE2A463E1800C6839A /* XMLCoder */; };
 		E3C1BB232ABAF61B00B4BFD6 /* StretchableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C1BB222ABAF61B00B4BFD6 /* StretchableCell.swift */; };
 		E3C1BB252ABAF9E900B4BFD6 /* LogsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C1BB242ABAF9E900B4BFD6 /* LogsViewController.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		2CA6A3E629CAB373004233E2 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 12;
-			dstPath = "";
-			dstSubfolderSpec = 7;
-			files = (
-				2CA6A40A29CAC87D004233E2 /* defaultPresets.xml in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		2042BCE7289C696E0026514E /* OsmoTagger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OsmoTagger.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -107,7 +86,6 @@
 		2042BCF8289C697A0026514E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2C1676ED29A7D50B004DD9D3 /* MapClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapClient.swift; sourceTree = "<group>"; };
 		2C1A361129B0674400AF3BEB /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
-		2C21058829F095C6005A0B46 /* LineTool settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LineTool settings.swift"; sourceTree = "<group>"; };
 		2C24FA4F2A0AFA6300C9ACA3 /* circle_location.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = circle_location.svg; sourceTree = "<group>"; };
 		2C27010B2A01AB6000A65363 /* Terms of service.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = "Terms of service.md"; sourceTree = "<group>"; };
 		2C2F972729D53DB100A994C8 /* UpdateSourceDataProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSourceDataProtocol.swift; sourceTree = "<group>"; };
@@ -120,14 +98,9 @@
 		2C5D72E72A1B979C00074F23 /* work_plane.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = work_plane.md; sourceTree = "<group>"; };
 		2C6F1CC329DD40370091784B /* InfoObjectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoObjectViewController.swift; sourceTree = "<group>"; };
 		2C9DEBD329B526980058CCC2 /* JSOM presets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSOM presets.swift"; sourceTree = "<group>"; };
-		2CA6A3E829CAB373004233E2 /* LineTool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LineTool; sourceTree = BUILT_PRODUCTS_DIR; };
-		2CA6A3F329CAB63F004233E2 /* defaultPresets.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = defaultPresets.xml; sourceTree = "<group>"; };
-		2CA6A3F729CAB964004233E2 /* LineToolsMethods.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LineToolsMethods.swift; sourceTree = "<group>"; };
 		2CA6A3F829CAB964004233E2 /* Parser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
-		2CA6A3F929CAB964004233E2 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		2CA74E95291EE1BD00413930 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		2CAEF13D29FAD50B00894DED /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		2CAEF13E29FB11D300894DED /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		2CB58A6229ECF01800FD0E59 /* QuickGuideViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickGuideViewController.swift; sourceTree = "<group>"; };
 		2CCB304129D4553100C8E5E7 /* SelectObjectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectObjectViewController.swift; sourceTree = "<group>"; };
 		2CD2E7AB29D30D150042D36E /* MultiSelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSelectViewController.swift; sourceTree = "<group>"; };
@@ -184,6 +157,7 @@
 		E3540B0C2A71BDA100649564 /* MapButtonsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapButtonsView.swift; sourceTree = "<group>"; };
 		E3540B122A71D1FA00649564 /* ScreenSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSettingsViewController.swift; sourceTree = "<group>"; };
 		E3540B142A71DAFE00649564 /* SecreenSettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecreenSettingsCell.swift; sourceTree = "<group>"; };
+		E36A67DA2ABB8B3900824794 /* defaultPresets.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = defaultPresets.xml; sourceTree = "<group>"; };
 		E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ApiKeys.swift; path = ../../../Downloads/ApiKeys.swift; sourceTree = "<group>"; };
 		E3C1BB222ABAF61B00B4BFD6 /* StretchableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StretchableCell.swift; sourceTree = "<group>"; };
 		E3C1BB242ABAF9E900B4BFD6 /* LogsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsViewController.swift; sourceTree = "<group>"; };
@@ -202,21 +176,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2CA6A3E529CAB373004233E2 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2CA6A40529CABBC6004233E2 /* XMLCoder in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		2042BCDE289C696E0026514E = {
 			isa = PBXGroup;
 			children = (
-				2CA6A3F529CAB964004233E2 /* josm parse */,
 				2CAEF13D29FAD50B00894DED /* README.md */,
 				2C5D72E72A1B979C00074F23 /* work_plane.md */,
 				2C27010B2A01AB6000A65363 /* Terms of service.md */,
@@ -230,7 +195,6 @@
 			isa = PBXGroup;
 			children = (
 				2042BCE7289C696E0026514E /* OsmoTagger.app */,
-				2CA6A3E829CAB373004233E2 /* LineTool */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -288,6 +252,7 @@
 		2C24FA4E2A0AFA4700C9ACA3 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E36A67DA2ABB8B3900824794 /* defaultPresets.xml */,
 				2C24FA4F2A0AFA6300C9ACA3 /* circle_location.svg */,
 			);
 			path = Resources;
@@ -339,26 +304,6 @@
 				2CE00A802A253DA5008A6119 /* MapClientProtocol.swift */,
 			);
 			path = Protocols;
-			sourceTree = "<group>";
-		};
-		2CA6A3F529CAB964004233E2 /* josm parse */ = {
-			isa = PBXGroup;
-			children = (
-				2CA6A3F729CAB964004233E2 /* LineToolsMethods.swift */,
-				2CAEF13E29FB11D300894DED /* README.md */,
-				2C21058829F095C6005A0B46 /* LineTool settings.swift */,
-				2CA6A40929CAC765004233E2 /* Resources */,
-				2CA6A3F929CAB964004233E2 /* main.swift */,
-			);
-			path = "josm parse";
-			sourceTree = "<group>";
-		};
-		2CA6A40929CAC765004233E2 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				2CA6A3F329CAB63F004233E2 /* defaultPresets.xml */,
-			);
-			path = Resources;
 			sourceTree = "<group>";
 		};
 		6C76E74928EC11110048C378 /* bridges */ = {
@@ -469,26 +414,6 @@
 			productReference = 2042BCE7289C696E0026514E /* OsmoTagger.app */;
 			productType = "com.apple.product-type.application";
 		};
-		2CA6A3E729CAB373004233E2 /* LineTool */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2CA6A3EC29CAB374004233E2 /* Build configuration list for PBXNativeTarget "LineTool" */;
-			buildPhases = (
-				2CA6A3E429CAB373004233E2 /* Sources */,
-				2CA6A3E529CAB373004233E2 /* Frameworks */,
-				2CA6A3E629CAB373004233E2 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = LineTool;
-			packageProductDependencies = (
-				2CA6A40429CABBC6004233E2 /* XMLCoder */,
-			);
-			productName = LineTool;
-			productReference = 2CA6A3E829CAB373004233E2 /* LineTool */;
-			productType = "com.apple.product-type.tool";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -502,9 +427,6 @@
 					2042BCE6289C696E0026514E = {
 						CreatedOnToolsVersion = 13.2.1;
 						LastSwiftMigration = 1400;
-					};
-					2CA6A3E729CAB373004233E2 = {
-						CreatedOnToolsVersion = 13.2.1;
 					};
 				};
 			};
@@ -526,7 +448,6 @@
 			projectRoot = "";
 			targets = (
 				2042BCE6289C696E0026514E /* OsmoTagger */,
-				2CA6A3E729CAB373004233E2 /* LineTool */,
 			);
 		};
 /* End PBXProject section */
@@ -536,11 +457,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2CA6A3F429CAB640004233E2 /* defaultPresets.xml in Resources */,
 				2042BCF7289C697A0026514E /* LaunchScreen.storyboard in Resources */,
 				2042BCF4289C697A0026514E /* Assets.xcassets in Resources */,
 				2C24FA502A0AFA6300C9ACA3 /* circle_location.svg in Resources */,
 				2C27010C2A01AB6100A65363 /* Terms of service.md in Resources */,
+				E36A67DB2ABB8B3900824794 /* defaultPresets.xml in Resources */,
 				2042BCF2289C696E0026514E /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -606,20 +527,7 @@
 				E3021DB82A909249000E789A /* SheetViewController.swift in Sources */,
 				2C478A9D29E6D558004E35E1 /* AuthViewController.swift in Sources */,
 				2C6F1CC429DD40380091784B /* InfoObjectViewController.swift in Sources */,
-				2CA6A3FD29CAB965004233E2 /* LineToolsMethods.swift in Sources */,
 				2042BCED289C696E0026514E /* SceneDelegate.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2CA6A3E429CAB373004233E2 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2C21058D29F098F1005A0B46 /* OSM structures.swift in Sources */,
-				2C21058929F095C6005A0B46 /* LineTool settings.swift in Sources */,
-				2CA6A40829CAC0C7004233E2 /* JSOM presets.swift in Sources */,
-				2CA6A3FE29CAB965004233E2 /* LineToolsMethods.swift in Sources */,
-				2CA6A40229CAB965004233E2 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -854,34 +762,6 @@
 			};
 			name = Release;
 		};
-		2CA6A3ED29CAB374004233E2 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = H3H3AR5L6H;
-				ENABLE_HARDENED_RUNTIME = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.7;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		2CA6A3EE29CAB374004233E2 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = H3H3AR5L6H;
-				ENABLE_HARDENED_RUNTIME = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.7;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -899,15 +779,6 @@
 			buildConfigurations = (
 				2042BCFC289C697A0026514E /* Debug */,
 				2042BCFD289C697A0026514E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		2CA6A3EC29CAB374004233E2 /* Build configuration list for PBXNativeTarget "LineTool" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2CA6A3ED29CAB374004233E2 /* Debug */,
-				2CA6A3EE29CAB374004233E2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -934,11 +805,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		2CA6A40429CABBC6004233E2 /* XMLCoder */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2C529E3629102F8400F46972 /* XCRemoteSwiftPackageReference "XMLCoder" */;
-			productName = XMLCoder;
-		};
 		E3B9A5CC2A463E0400C6839A /* GLMap */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2CFB66C82A29269D00E474A3 /* XCRemoteSwiftPackageReference "GLMapSwift" */;
