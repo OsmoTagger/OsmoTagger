@@ -68,12 +68,25 @@
 		E3540B132A71D1FA00649564 /* ScreenSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540B122A71D1FA00649564 /* ScreenSettingsViewController.swift */; };
 		E3540B152A71DAFE00649564 /* SecreenSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540B142A71DAFE00649564 /* SecreenSettingsCell.swift */; };
 		E36A67DB2ABB8B3900824794 /* defaultPresets.xml in Resources */ = {isa = PBXBuildFile; fileRef = E36A67DA2ABB8B3900824794 /* defaultPresets.xml */; };
+		E36A67EE2ABB8D6500824794 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36A67ED2ABB8D6500824794 /* main.swift */; };
 		E3AA63A82A7BBD14008BFBD5 /* ApiKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */; };
 		E3B9A5CD2A463E0400C6839A /* GLMap in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CC2A463E0400C6839A /* GLMap */; };
 		E3B9A5CF2A463E1800C6839A /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CE2A463E1800C6839A /* XMLCoder */; };
 		E3C1BB232ABAF61B00B4BFD6 /* StretchableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C1BB222ABAF61B00B4BFD6 /* StretchableCell.swift */; };
 		E3C1BB252ABAF9E900B4BFD6 /* LogsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C1BB242ABAF9E900B4BFD6 /* LogsViewController.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E36A67E92ABB8D6500824794 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		2042BCE7289C696E0026514E /* OsmoTagger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OsmoTagger.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -158,6 +171,8 @@
 		E3540B122A71D1FA00649564 /* ScreenSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSettingsViewController.swift; sourceTree = "<group>"; };
 		E3540B142A71DAFE00649564 /* SecreenSettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecreenSettingsCell.swift; sourceTree = "<group>"; };
 		E36A67DA2ABB8B3900824794 /* defaultPresets.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = defaultPresets.xml; sourceTree = "<group>"; };
+		E36A67EB2ABB8D6500824794 /* Line tools */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Line tools"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E36A67ED2ABB8D6500824794 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ApiKeys.swift; path = ../../../Downloads/ApiKeys.swift; sourceTree = "<group>"; };
 		E3C1BB222ABAF61B00B4BFD6 /* StretchableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StretchableCell.swift; sourceTree = "<group>"; };
 		E3C1BB242ABAF9E900B4BFD6 /* LogsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsViewController.swift; sourceTree = "<group>"; };
@@ -176,6 +191,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E36A67E82ABB8D6500824794 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -186,6 +208,7 @@
 				2C5D72E72A1B979C00074F23 /* work_plane.md */,
 				2C27010B2A01AB6000A65363 /* Terms of service.md */,
 				2042BCE9289C696E0026514E /* OsmoTagger */,
+				E36A67EC2ABB8D6500824794 /* Line tools */,
 				2042BCE8289C696E0026514E /* Products */,
 				6CF514D728FB4B05001D2758 /* Frameworks */,
 			);
@@ -195,6 +218,7 @@
 			isa = PBXGroup;
 			children = (
 				2042BCE7289C696E0026514E /* OsmoTagger.app */,
+				E36A67EB2ABB8D6500824794 /* Line tools */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -390,6 +414,14 @@
 			path = System;
 			sourceTree = "<group>";
 		};
+		E36A67EC2ABB8D6500824794 /* Line tools */ = {
+			isa = PBXGroup;
+			children = (
+				E36A67ED2ABB8D6500824794 /* main.swift */,
+			);
+			path = "Line tools";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -414,6 +446,23 @@
 			productReference = 2042BCE7289C696E0026514E /* OsmoTagger.app */;
 			productType = "com.apple.product-type.application";
 		};
+		E36A67EA2ABB8D6500824794 /* Line tools */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E36A67F12ABB8D6500824794 /* Build configuration list for PBXNativeTarget "Line tools" */;
+			buildPhases = (
+				E36A67E72ABB8D6500824794 /* Sources */,
+				E36A67E82ABB8D6500824794 /* Frameworks */,
+				E36A67E92ABB8D6500824794 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Line tools";
+			productName = "Line tools";
+			productReference = E36A67EB2ABB8D6500824794 /* Line tools */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -421,12 +470,15 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1320;
+				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1320;
 				TargetAttributes = {
 					2042BCE6289C696E0026514E = {
 						CreatedOnToolsVersion = 13.2.1;
 						LastSwiftMigration = 1400;
+					};
+					E36A67EA2ABB8D6500824794 = {
+						CreatedOnToolsVersion = 15.0;
 					};
 				};
 			};
@@ -448,6 +500,7 @@
 			projectRoot = "";
 			targets = (
 				2042BCE6289C696E0026514E /* OsmoTagger */,
+				E36A67EA2ABB8D6500824794 /* Line tools */,
 			);
 		};
 /* End PBXProject section */
@@ -528,6 +581,14 @@
 				2C478A9D29E6D558004E35E1 /* AuthViewController.swift in Sources */,
 				2C6F1CC429DD40380091784B /* InfoObjectViewController.swift in Sources */,
 				2042BCED289C696E0026514E /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E36A67E72ABB8D6500824794 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E36A67EE2ABB8D6500824794 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -762,6 +823,47 @@
 			};
 			name = Release;
 		};
+		E36A67EF2ABB8D6500824794 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = H3H3AR5L6H;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		E36A67F02ABB8D6500824794 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = H3H3AR5L6H;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -779,6 +881,15 @@
 			buildConfigurations = (
 				2042BCFC289C697A0026514E /* Debug */,
 				2042BCFD289C697A0026514E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E36A67F12ABB8D6500824794 /* Build configuration list for PBXNativeTarget "Line tools" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E36A67EF2ABB8D6500824794 /* Debug */,
+				E36A67F02ABB8D6500824794 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
