@@ -48,6 +48,7 @@ class MapClient {
     var defaultBboxSize = 0.004
      
     init() {
+        Log("Is dev server active = \(AppSettings.settings.isDevServer)")
         setAppSettingsClouser()
         // In the background, we start parsing the file with Josm presets.
         loadPresets()
@@ -56,7 +57,11 @@ class MapClient {
     func loadPresets() {
         DispatchQueue.global(qos: .default).async {
             Parser().fillPresetElements()
+            let presetCount = AppSettings.settings.itemPathes.count
+            Log("\(presetCount) presets found")
             Parser().fillChunks()
+            let chunkCount = AppSettings.settings.chunks.count
+            Log("\(chunkCount) chunks found")
         }
     }
     
