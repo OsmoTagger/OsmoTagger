@@ -276,7 +276,7 @@ class MapViewController: UIViewController {
                 try await mapClient.getSourceBbox(mapCenter: mapView.mapGeoCenter)
             } catch {
                 let message = error as? String ?? "Error load data"
-                showAction(message: message, addAlerts: [])
+                Alert.showAlert(message)
             }
         }
     }
@@ -429,7 +429,6 @@ class MapViewController: UIViewController {
         sender.isActive = !sender.isActive
         if sender.isActive {
             setCenterMap()
-            downLoadData()
             UIView.animate(withDuration: 0.3, animations: { [weak self] in
                 guard let self = self else { return }
                 self.addNodeButtonTopConstraint.constant = 310
@@ -470,7 +469,18 @@ class MapViewController: UIViewController {
     
     @objc func tapAddNodeButton() {
         guard mapView.mapZoomLevel > 16 else {
-            showAction(message: "Zoom in for a more accurate location determination!", addAlerts: [])
+            Alert.showAlert("Zoom in for a more accurate location determination!")
+            return
+        }
+        if !mapClient.checkMapcenter(center: mapView.mapGeoCenter) {
+            Alert.showAlert("Load the data before adding points")
+            UIView.animate(withDuration: 0.5, animations: { [weak self] in
+                self?.downloadButton.backgroundColor = .red
+            }, completion: { [weak self] _ in
+                UIView.animate(withDuration: 0.5, delay: 2, options: [.allowUserInteraction], animations: {
+                    self?.downloadButton.backgroundColor = .white
+                })
+            })
             return
         }
         let geoPoint = mapView.makeGeoPoint(fromDisplay: mapView.center)

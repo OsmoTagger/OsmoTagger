@@ -10,7 +10,7 @@ import UIKit
 class Alert: UIView {
     private var circle: UIView = {
         let rv = UIView()
-        rv.layer.cornerRadius = 6
+        rv.layer.cornerRadius = 8
         rv.isHidden = true
         rv.translatesAutoresizingMaskIntoConstraints = false
         return rv
@@ -19,7 +19,7 @@ class Alert: UIView {
     private var label: UILabel = {
         let rv = UILabel()
         rv.numberOfLines = 0
-        rv.font = .systemFont(ofSize: 14)
+        rv.font = .systemFont(ofSize: 16)
         rv.textAlignment = .left
         rv.translatesAutoresizingMaskIntoConstraints = false
         return rv
@@ -44,8 +44,8 @@ class Alert: UIView {
         addSubview(label)
         NSLayoutConstraint.activate([
             circle.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            circle.widthAnchor.constraint(equalToConstant: 12),
-            circle.heightAnchor.constraint(equalToConstant: 12),
+            circle.widthAnchor.constraint(equalToConstant: 16),
+            circle.heightAnchor.constraint(equalToConstant: 16),
             circle.centerYAnchor.constraint(equalTo: label.centerYAnchor),
             
             label.topAnchor.constraint(equalTo: topAnchor, constant: 10),

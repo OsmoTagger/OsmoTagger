@@ -67,6 +67,17 @@ class MapClient {
         }
     }
     
+    func checkMapcenter(center: GLMapGeoPoint) -> Bool {
+        guard let lastCenter = lastCenter else {
+            return false
+        }
+        let longMin = lastCenter.lon - defaultBboxSize
+        let longMax = lastCenter.lon + defaultBboxSize
+        let latMin = lastCenter.lat - defaultBboxSize
+        let latMax = lastCenter.lat + defaultBboxSize
+        return !(center.lon < longMin || center.lon > longMax || center.lat < latMin || center.lat > latMax)
+    }
+    
     // Loading the source data of the map in the bbox
     func getSourceBbox(mapCenter: GLMapGeoPoint) async throws {
         // Run indicator animation in MapViewController
@@ -78,8 +89,8 @@ class MapClient {
         let longitudeDisplayMax = mapCenter.lon + defaultBboxSize
         // Get data from server
         let data = try await OsmClient().downloadOSMData(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMax)
-        lastCenter = mapCenter
         try parseData(data: data, latitudeDisplayMin: latitudeDisplayMin, latitudeDisplayMax: latitudeDisplayMax, longitudeDisplayMin: longitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax)
+        lastCenter = mapCenter
     }
     
     func parseData(data: Data, latitudeDisplayMin: Double? = nil, latitudeDisplayMax: Double? = nil, longitudeDisplayMin: Double? = nil, longitudeDisplayMax: Double? = nil) throws {
