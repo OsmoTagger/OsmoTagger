@@ -14,7 +14,14 @@ class LogsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "App logs"
+        let titleView = SettingsTitleView()
+        titleView.icon.image = UIImage(systemName: "list.bullet.circle")
+        titleView.label.text = "App logs"
+        titleView.addConstraints([
+            titleView.heightAnchor.constraint(equalToConstant: 30),
+        ])
+        navigationItem.titleView = titleView
+        
         view.backgroundColor = .systemBackground
         
         let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)

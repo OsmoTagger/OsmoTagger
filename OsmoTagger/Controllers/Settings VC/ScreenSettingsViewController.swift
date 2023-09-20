@@ -16,8 +16,15 @@ class ScreenSettingsViewController: SheetViewController, UITableViewDelegate, UI
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        let titleView = SettingsTitleView()
+        titleView.icon.image = UIImage(systemName: "iphone.gen1.circle")
+        titleView.label.text = "Main screen"
+        titleView.addConstraints([
+            titleView.heightAnchor.constraint(equalToConstant: 30),
+        ])
+        navigationItem.titleView = titleView
         view.backgroundColor = .systemBackground
-        title = "Main screen"
+        
         fillData()
         setTableView()
     }
