@@ -16,27 +16,28 @@ final class AppSettings: NSObject {
     override init() {
         do {
             let data = try Data(contentsOf: savedNodesURL)
-            savedObjects = try JSONDecoder().decode([Int: OSMAnyObject].self, from: data)
+            self.savedObjects = try JSONDecoder().decode([Int: OSMAnyObject].self, from: data)
         } catch {
-            Log("Error init savedObjects: \(error)")
+            // When initializing AppSettings.settings, we cannot use the Log function. Only after initialization.
+            logs.append("Error init savedObjects: \(error)")
             savedObjects = [:]
         }
         do {
             let data = try Data(contentsOf: deletedNodesURL)
             deletedObjects = try JSONDecoder().decode([Int: OSMAnyObject].self, from: data)
         } catch {
-            Log("Error init deletedObjects: \(error)")
+            logs.append("Error init deletedObjects: \(error)")
             deletedObjects = [:]
         }
         do {
             let data = try Data(contentsOf: logsURL)
-            var logs = try JSONDecoder().decode([String].self, from: data)
-            if logs.count > 100 {
-                logs = Array(logs.prefix(99))
+            var lastLogs = try JSONDecoder().decode([String].self, from: data)
+            if lastLogs.count > 500 {
+                lastLogs = Array(lastLogs.prefix(99))
             }
-            self.logs = logs
+            logs += lastLogs
         } catch {
-            Log("Error init logs: \(error)")
+            logs.append("Error init logs: \(error)")
             logs = []
         }
     }
