@@ -1,3 +1,11 @@
+# ROADMAP
+[ ] Add alerts and logs
+[ ] Improved preset recognition
+[ ] Simplify the interface
+[ ] Quick view of object tags
+[ ] Integrate Overpass API
+[ ] Filter uploaded objects by tags
+
 # 19.07.2023 г.
 [ ] Внести правки после изменения названия:
     - URI в oauth?
