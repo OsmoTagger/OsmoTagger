@@ -32,7 +32,7 @@ final class AppSettings: NSObject {
         do {
             let data = try Data(contentsOf: logsURL)
             var lastLogs = try JSONDecoder().decode([String].self, from: data)
-            if lastLogs.count > 500 {
+            if lastLogs.count > 1000 {
                 lastLogs = Array(lastLogs.prefix(99))
             }
             logs += lastLogs
