@@ -27,7 +27,7 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane beta
 ```
 
-Deploy a OsmoTagger to the Testflight
+
 
 ### screenshots
 
@@ -36,6 +36,14 @@ Deploy a OsmoTagger to the Testflight
 ```
 
 
+
+### register_new_device
+
+```sh
+[bundle exec] fastlane register_new_device
+```
+
+Register new device
 
 ### load_profiles
 
@@ -49,6 +57,35 @@ Deploy a OsmoTagger to the Testflight
 
 ```sh
 [bundle exec] fastlane refresh_profiles
+```
+
+
+
+----
+
+
+## Mac
+
+### mac register_new_device
+
+```sh
+[bundle exec] fastlane mac register_new_device
+```
+
+Register new device
+
+### mac refresh_profiles
+
+```sh
+[bundle exec] fastlane mac refresh_profiles
+```
+
+
+
+### mac load_profiles
+
+```sh
+[bundle exec] fastlane mac load_profiles
 ```
 
 
