@@ -33,6 +33,7 @@ class MainViewController: SheetViewController, UITableViewDelegate, UITableViewD
             SettingsCellData(icon: "person.crop.circle", text: "Authorization", link: ""),
             SettingsCellData(icon: "smartphone.png", text: "Main screen", link: ""),
             SettingsCellData(icon: "questionmark.circle", text: "Quick guide", link: ""),
+            SettingsCellData(icon: "logsIcon", text: "App logs", link: ""),
         ])
         tableData.append(general)
         
@@ -102,21 +103,22 @@ class MainViewController: SheetViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
+        var vc: UIViewController
         switch indexPath.section {
         case 0:
             switch indexPath.row {
             case 0:
-                let vc = AuthViewController()
-                navigationController?.pushViewController(vc, animated: true)
+                vc = AuthViewController()
             case 1:
-                let vc = ScreenSettingsViewController()
-                navigationController?.pushViewController(vc, animated: true)
+                vc = ScreenSettingsViewController()
             case 2:
-                let vc = QuickGuideViewController()
-                navigationController?.pushViewController(vc, animated: true)
+                vc = QuickGuideViewController()
+            case 3:
+                vc = LogsViewController()
             default:
                 return
             }
+            navigationController?.pushViewController(vc, animated: true)
         default:
             let link = tableData[indexPath.section].items[indexPath.row].link
             guard let url = URL(string: link) else {

@@ -79,6 +79,8 @@
 		E3AA63A82A7BBD14008BFBD5 /* ApiKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */; };
 		E3B9A5CD2A463E0400C6839A /* GLMap in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CC2A463E0400C6839A /* GLMap */; };
 		E3B9A5CF2A463E1800C6839A /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CE2A463E1800C6839A /* XMLCoder */; };
+		E3C1BB232ABAF61B00B4BFD6 /* StretchableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C1BB222ABAF61B00B4BFD6 /* StretchableCell.swift */; };
+		E3C1BB252ABAF9E900B4BFD6 /* LogsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C1BB242ABAF9E900B4BFD6 /* LogsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -182,6 +184,8 @@
 		E3540B122A71D1FA00649564 /* ScreenSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSettingsViewController.swift; sourceTree = "<group>"; };
 		E3540B142A71DAFE00649564 /* SecreenSettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecreenSettingsCell.swift; sourceTree = "<group>"; };
 		E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ApiKeys.swift; path = ../../../Downloads/ApiKeys.swift; sourceTree = "<group>"; };
+		E3C1BB222ABAF61B00B4BFD6 /* StretchableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StretchableCell.swift; sourceTree = "<group>"; };
+		E3C1BB242ABAF9E900B4BFD6 /* LogsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -320,6 +324,7 @@
 				2C478A9829E69BCB004E35E1 /* MainViewController.swift */,
 				2CB58A6229ECF01800FD0E59 /* QuickGuideViewController.swift */,
 				E3540B122A71D1FA00649564 /* ScreenSettingsViewController.swift */,
+				E3C1BB242ABAF9E900B4BFD6 /* LogsViewController.swift */,
 				2C478A9C29E6D557004E35E1 /* AuthViewController.swift */,
 			);
 			path = "Settings VC";
@@ -417,6 +422,7 @@
 				E3540B022A71B0DF00649564 /* SelectValuesCell.swift */,
 				E3540AF72A71AF2000649564 /* SimpleCell.swift */,
 				E3540AFB2A71AF7D00649564 /* ItemCell.swift */,
+				E3C1BB222ABAF61B00B4BFD6 /* StretchableCell.swift */,
 				E3540B142A71DAFE00649564 /* SecreenSettingsCell.swift */,
 				E3540AF92A71AF5A00649564 /* CategoryCell.swift */,
 			);
@@ -569,6 +575,7 @@
 				E3540AFA2A71AF5A00649564 /* CategoryCell.swift in Sources */,
 				2CFF98E4299BE44D0045D6B8 /* SavedNodesViewController.swift in Sources */,
 				E3540AF82A71AF2000649564 /* SimpleCell.swift in Sources */,
+				E3C1BB232ABAF61B00B4BFD6 /* StretchableCell.swift in Sources */,
 				E3540B012A71B01300649564 /* NavigationControllers.swift in Sources */,
 				E3540B092A71B26D00649564 /* AnyEnums.swift in Sources */,
 				2C1A361229B0674400AF3BEB /* String.swift in Sources */,
@@ -582,6 +589,7 @@
 				E34E4AE12A981ECD00D65A92 /* Presets.swift in Sources */,
 				2CD4B48429C6DC2B00040018 /* CategoryViewController.swift in Sources */,
 				E3540B132A71D1FA00649564 /* ScreenSettingsViewController.swift in Sources */,
+				E3C1BB252ABAF9E900B4BFD6 /* LogsViewController.swift in Sources */,
 				E3021DAC2A8FFF86000E789A /* MapStyles.swift in Sources */,
 				2CA74E96291EE1BD00413930 /* AppSettings.swift in Sources */,
 				E33A71CC2ABA3580009D9508 /* Common.swift in Sources */,

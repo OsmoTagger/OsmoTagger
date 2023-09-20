@@ -16,7 +16,7 @@ final class AppSettings: NSObject {
     override init() {
         do {
             let data = try Data(contentsOf: savedNodesURL)
-            self.savedObjects = try JSONDecoder().decode([Int: OSMAnyObject].self, from: data)
+            savedObjects = try JSONDecoder().decode([Int: OSMAnyObject].self, from: data)
         } catch {
             // When initializing AppSettings.settings, we cannot use the Log function. Only after initialization.
             logs.append("Error init savedObjects: \(error)")

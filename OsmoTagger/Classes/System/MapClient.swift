@@ -48,6 +48,12 @@ class MapClient {
     var defaultBboxSize = 0.004
      
     init() {
+        Log("--------------")
+        let date = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd-MM-YYYY HH:mm:ss"
+        let dateStr = dateFormatter.string(from: date)
+        Log("App start at \(dateStr)")
         Log("Is dev server active = \(AppSettings.settings.isDevServer)")
         setAppSettingsClouser()
         // In the background, we start parsing the file with Josm presets.
