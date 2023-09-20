@@ -119,8 +119,6 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         if let httpResponse = response as? HTTPURLResponse {
             if httpResponse.statusCode == 200 {
                 return data
-            } else if httpResponse.statusCode == 400 || httpResponse.statusCode == 509 {
-                throw OsmClientErrors.objectLimit
             } else {
                 guard let str = String(data: data, encoding: .utf8) else {
                     throw "Unknown response from server. URL: \(url). Status code: \(httpResponse.statusCode)"
