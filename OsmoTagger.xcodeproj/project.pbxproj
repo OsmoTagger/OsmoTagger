@@ -74,8 +74,9 @@
 		E36A67F82ABB8DEB00824794 /* LineTool settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36A67F72ABB8DEB00824794 /* LineTool settings.swift */; };
 		E36A67F92ABB8E2700824794 /* OSM structures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5662C02912788600E5B4D5 /* OSM structures.swift */; };
 		E36A67FB2ABB8E3C00824794 /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = E36A67FA2ABB8E3C00824794 /* XMLCoder */; };
-		E36A67FE2ABB8E6100824794 /* defaultPresets.xml in Sources */ = {isa = PBXBuildFile; fileRef = E36A67DA2ABB8B3900824794 /* defaultPresets.xml */; };
 		E36A67FF2ABB8E6100824794 /* JSOM presets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9DEBD329B526980058CCC2 /* JSOM presets.swift */; };
+		E36A68002ABB8FC600824794 /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA6A3F829CAB964004233E2 /* Parser.swift */; };
+		E36A68022ABB905F00824794 /* OsmParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36A68012ABB905F00824794 /* OsmParser.swift */; };
 		E3AA63A82A7BBD14008BFBD5 /* ApiKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */; };
 		E3B9A5CD2A463E0400C6839A /* GLMap in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CC2A463E0400C6839A /* GLMap */; };
 		E3B9A5CF2A463E1800C6839A /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CE2A463E1800C6839A /* XMLCoder */; };
@@ -86,9 +87,9 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		E36A67E92ABB8D6500824794 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 8;
+			dstPath = usr/share/man/man1;
+			dstSubfolderSpec = 7;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
@@ -184,6 +185,7 @@
 		E36A67F32ABB8DD300824794 /* PresetRecognition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresetRecognition.swift; sourceTree = "<group>"; };
 		E36A67F52ABB8DDE00824794 /* LineToolsMethods.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LineToolsMethods.swift; sourceTree = "<group>"; };
 		E36A67F72ABB8DEB00824794 /* LineTool settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LineTool settings.swift"; sourceTree = "<group>"; };
+		E36A68012ABB905F00824794 /* OsmParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OsmParser.swift; path = "line tools/OsmParser.swift"; sourceTree = SOURCE_ROOT; };
 		E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ApiKeys.swift; path = ../../../Downloads/ApiKeys.swift; sourceTree = "<group>"; };
 		E3C1BB222ABAF61B00B4BFD6 /* StretchableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StretchableCell.swift; sourceTree = "<group>"; };
 		E3C1BB242ABAF9E900B4BFD6 /* LogsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsViewController.swift; sourceTree = "<group>"; };
@@ -432,6 +434,7 @@
 				E36A67F22ABB8DC100824794 /* README.md */,
 				E36A67F52ABB8DDE00824794 /* LineToolsMethods.swift */,
 				E36A67F72ABB8DEB00824794 /* LineTool settings.swift */,
+				E36A68012ABB905F00824794 /* OsmParser.swift */,
 				E36A67F32ABB8DD300824794 /* PresetRecognition.swift */,
 				E36A67ED2ABB8D6500824794 /* main.swift */,
 			);
@@ -607,13 +610,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E36A67FE2ABB8E6100824794 /* defaultPresets.xml in Sources */,
+				E36A68002ABB8FC600824794 /* Parser.swift in Sources */,
 				E36A67FF2ABB8E6100824794 /* JSOM presets.swift in Sources */,
 				E36A67F92ABB8E2700824794 /* OSM structures.swift in Sources */,
 				E36A67F42ABB8DD300824794 /* PresetRecognition.swift in Sources */,
 				E36A67F82ABB8DEB00824794 /* LineTool settings.swift in Sources */,
 				E36A67F62ABB8DDE00824794 /* LineToolsMethods.swift in Sources */,
 				E36A67EE2ABB8D6500824794 /* main.swift in Sources */,
+				E36A68022ABB905F00824794 /* OsmParser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

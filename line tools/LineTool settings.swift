@@ -10,6 +10,8 @@ import Foundation
 class AppSettings: NSObject {
     static let settings = AppSettings()
     
+    var inputObjects: [Int: Any] = [:]
+    
 //    MARK: PRESETS
 
     var chunks: [String: [ItemElements]] = [:]
