@@ -38,6 +38,16 @@ lane :screenshots do
     overwrite_screenshots: true)
 end
 
+desc "Register new device"
+lane :register_new_device do |options|
+    device_name = prompt(text: "Enter the device name: ")
+    device_udid = prompt(text: "Enter the device UDID: ")
+    device_hash = {}
+    device_hash[device_name] = device_udid
+    register_devices(devices: device_hash)
+  refresh_profiles
+end
+
 lane :load_profiles do
   match(type: "development", readonly: true)
   match(type: "appstore", readonly: true)
@@ -46,4 +56,26 @@ end
 lane :refresh_profiles do
   match(type: "development", force_for_new_devices: true)
   match(type: "appstore")
+end
+
+platform :mac do
+  desc "Register new device"
+  lane :register_new_device do |options|
+      device_name = prompt(text: "Enter the device name: ")
+      device_udid = prompt(text: "Enter the device UDID: ")
+      device_hash = {}
+      device_hash[device_name] = device_udid
+      register_devices(devices: device_hash)
+    refresh_profiles
+  end
+  
+  lane :refresh_profiles do
+    match(type: "development", force_for_new_devices: true)
+    match(type: "appstore")
+  end
+  
+  lane :load_profiles do
+    match(type: "development", readonly: true)
+    match(type: "appstore", readonly: true)
+  end
 end

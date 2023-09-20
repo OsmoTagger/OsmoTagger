@@ -8,3 +8,12 @@ platform 'ios'
 app_identifier [
   "com.globus.osmotagger"
 ]
+
+for_platform :mac do
+  platform 'catalyst'
+  derive_catalyst_app_identifier false
+
+  app_identifier [
+    "com.globus.osmotagger"
+  ]
+end
