@@ -69,6 +69,13 @@
 		E3540B152A71DAFE00649564 /* SecreenSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3540B142A71DAFE00649564 /* SecreenSettingsCell.swift */; };
 		E36A67DB2ABB8B3900824794 /* defaultPresets.xml in Resources */ = {isa = PBXBuildFile; fileRef = E36A67DA2ABB8B3900824794 /* defaultPresets.xml */; };
 		E36A67EE2ABB8D6500824794 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36A67ED2ABB8D6500824794 /* main.swift */; };
+		E36A67F42ABB8DD300824794 /* PresetRecognition.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36A67F32ABB8DD300824794 /* PresetRecognition.swift */; };
+		E36A67F62ABB8DDE00824794 /* LineToolsMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36A67F52ABB8DDE00824794 /* LineToolsMethods.swift */; };
+		E36A67F82ABB8DEB00824794 /* LineTool settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36A67F72ABB8DEB00824794 /* LineTool settings.swift */; };
+		E36A67F92ABB8E2700824794 /* OSM structures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5662C02912788600E5B4D5 /* OSM structures.swift */; };
+		E36A67FB2ABB8E3C00824794 /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = E36A67FA2ABB8E3C00824794 /* XMLCoder */; };
+		E36A67FE2ABB8E6100824794 /* defaultPresets.xml in Sources */ = {isa = PBXBuildFile; fileRef = E36A67DA2ABB8B3900824794 /* defaultPresets.xml */; };
+		E36A67FF2ABB8E6100824794 /* JSOM presets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9DEBD329B526980058CCC2 /* JSOM presets.swift */; };
 		E3AA63A82A7BBD14008BFBD5 /* ApiKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */; };
 		E3B9A5CD2A463E0400C6839A /* GLMap in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CC2A463E0400C6839A /* GLMap */; };
 		E3B9A5CF2A463E1800C6839A /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CE2A463E1800C6839A /* XMLCoder */; };
@@ -173,6 +180,10 @@
 		E36A67DA2ABB8B3900824794 /* defaultPresets.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = defaultPresets.xml; sourceTree = "<group>"; };
 		E36A67EB2ABB8D6500824794 /* Line tools */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Line tools"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E36A67ED2ABB8D6500824794 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		E36A67F22ABB8DC100824794 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		E36A67F32ABB8DD300824794 /* PresetRecognition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresetRecognition.swift; sourceTree = "<group>"; };
+		E36A67F52ABB8DDE00824794 /* LineToolsMethods.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LineToolsMethods.swift; sourceTree = "<group>"; };
+		E36A67F72ABB8DEB00824794 /* LineTool settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LineTool settings.swift"; sourceTree = "<group>"; };
 		E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ApiKeys.swift; path = ../../../Downloads/ApiKeys.swift; sourceTree = "<group>"; };
 		E3C1BB222ABAF61B00B4BFD6 /* StretchableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StretchableCell.swift; sourceTree = "<group>"; };
 		E3C1BB242ABAF9E900B4BFD6 /* LogsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsViewController.swift; sourceTree = "<group>"; };
@@ -195,6 +206,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E36A67FB2ABB8E3C00824794 /* XMLCoder in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -417,6 +429,10 @@
 		E36A67EC2ABB8D6500824794 /* Line tools */ = {
 			isa = PBXGroup;
 			children = (
+				E36A67F22ABB8DC100824794 /* README.md */,
+				E36A67F52ABB8DDE00824794 /* LineToolsMethods.swift */,
+				E36A67F72ABB8DEB00824794 /* LineTool settings.swift */,
+				E36A67F32ABB8DD300824794 /* PresetRecognition.swift */,
 				E36A67ED2ABB8D6500824794 /* main.swift */,
 			);
 			path = "Line tools";
@@ -459,6 +475,9 @@
 			dependencies = (
 			);
 			name = "Line tools";
+			packageProductDependencies = (
+				E36A67FA2ABB8E3C00824794 /* XMLCoder */,
+			);
 			productName = "Line tools";
 			productReference = E36A67EB2ABB8D6500824794 /* Line tools */;
 			productType = "com.apple.product-type.tool";
@@ -588,6 +607,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E36A67FE2ABB8E6100824794 /* defaultPresets.xml in Sources */,
+				E36A67FF2ABB8E6100824794 /* JSOM presets.swift in Sources */,
+				E36A67F92ABB8E2700824794 /* OSM structures.swift in Sources */,
+				E36A67F42ABB8DD300824794 /* PresetRecognition.swift in Sources */,
+				E36A67F82ABB8DEB00824794 /* LineTool settings.swift in Sources */,
+				E36A67F62ABB8DDE00824794 /* LineToolsMethods.swift in Sources */,
 				E36A67EE2ABB8D6500824794 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -916,6 +941,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		E36A67FA2ABB8E3C00824794 /* XMLCoder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C529E3629102F8400F46972 /* XCRemoteSwiftPackageReference "XMLCoder" */;
+			productName = XMLCoder;
+		};
 		E3B9A5CC2A463E0400C6839A /* GLMap */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2CFB66C82A29269D00E474A3 /* XCRemoteSwiftPackageReference "GLMapSwift" */;

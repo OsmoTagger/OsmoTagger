@@ -7,5 +7,10 @@
 
 import Foundation
 
-print("Hello, World!")
+print("HHH")
+
+//let osmFilePath = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!.appendingPathComponent("kaliningrad-latest.osm")
+//
+//let data = try? Data(Data(contentsOf: osmFilePath)
+//print(data?.count)
 
