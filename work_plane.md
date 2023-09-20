@@ -1,5 +1,5 @@
 # ROADMAP
-[ ] Add alerts and logs
+[X] Add alerts and logs
 [ ] Adapt for Mac Catalyst
 [ ] Improved preset recognition
 [ ] Simplify the interface

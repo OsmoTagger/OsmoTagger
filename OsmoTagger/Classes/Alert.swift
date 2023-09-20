@@ -68,21 +68,35 @@ class Alert: UIView {
         }
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
             if let window = windowScene.windows.first {
+                let backView = UIView()
+                backView.translatesAutoresizingMaskIntoConstraints = false
+                backView.backgroundColor = .systemGray5
+                backView.alpha = 0.0
                 window.addSubview(alert)
+                window.addSubview(backView)
                 NSLayoutConstraint.activate([
+                    backView.topAnchor.constraint(equalTo: window.topAnchor),
+                    backView.leadingAnchor.constraint(equalTo: window.leadingAnchor),
+                    backView.trailingAnchor.constraint(equalTo: window.trailingAnchor),
+                    backView.bottomAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor),
+                    
                     alert.topAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor),
                     alert.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
-                    alert.widthAnchor.constraint(lessThanOrEqualTo: window.widthAnchor),
-                    alert.leadingAnchor.constraint(equalTo: window.safeAreaLayoutGuide.leadingAnchor),
+                    alert.widthAnchor.constraint(equalTo: window.widthAnchor),
+                    alert.leadingAnchor.constraint(equalTo: window.leadingAnchor),
+                    alert.trailingAnchor.constraint(equalTo: window.trailingAnchor)
                 ])
 
-                UIView.animate(withDuration: 0.5, animations: { [weak alert] in
+                UIView.animate(withDuration: 0.5, animations: { [weak alert, weak backView] in
                     alert?.alpha = 1
-                }, completion: { [weak alert] _ in
+                    backView?.alpha = 1
+                }, completion: { [weak alert, weak backView] _ in
                     UIView.animate(withDuration: 0.5, delay: 7, animations: {
                         alert?.alpha = 0
-                    }, completion: { [weak alert] _ in
+                        backView?.alpha = 0
+                    }, completion: { [weak alert, weak backView] _ in
                         alert?.removeFromSuperview()
+                        backView?.removeFromSuperview()
                     })
                 })
             }
