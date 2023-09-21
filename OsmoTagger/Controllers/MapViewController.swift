@@ -21,7 +21,7 @@ class MapViewController: UIViewController {
     var navController: SheetNavigationController?
     
     // plus zoom, minus zoom, map angle
-    let mapButtons = MapZoomButtonsView()
+    let mapZoomButtons = MapZoomButtonsView()
     
     //  Buttons
     let downloadButton = UIButton()
@@ -69,7 +69,7 @@ class MapViewController: UIViewController {
         // setTestButton()
         
         // Zoom in and zoom out buttons, map rotation button
-        setMapButtons()
+        setMapZoomButtons()
     }
     
     override func viewDidAppear(_: Bool) {
@@ -135,7 +135,7 @@ class MapViewController: UIViewController {
             // rotate mapButtons.angleButton image
             let angle = CGFloat(self.mapView.mapAngle)
             let radian = angle * .pi / 180
-            mapButtons.angleButton.image.transform = CGAffineTransform(rotationAngle: -radian)
+            mapZoomButtons.angleButton.image.transform = CGAffineTransform(rotationAngle: -radian)
             
             if self.navController == nil {
                 AppSettings.settings.lastBbox = self.mapView.bbox
@@ -196,19 +196,19 @@ class MapViewController: UIViewController {
     // MARK: Set screen elements
 
     // Zoom in and zoom out buttons, map rotation button
-    func setMapButtons() {
-        mapButtons.plusButton.addTarget(self, action: #selector(tapPlusButton), for: .touchUpInside)
-        mapButtons.minusButton.addTarget(self, action: #selector(tapMinusButton), for: .touchUpInside)
+    func setMapZoomButtons() {
+        mapZoomButtons.plusButton.addTarget(self, action: #selector(tapPlusButton), for: .touchUpInside)
+        mapZoomButtons.minusButton.addTarget(self, action: #selector(tapMinusButton), for: .touchUpInside)
         let angleTap = UITapGestureRecognizer()
         angleTap.delegate = self
         angleTap.addTarget(self, action: #selector(tapAngleButton))
-        mapButtons.angleButton.addGestureRecognizer(angleTap)
-        view.addSubview(mapButtons)
+        mapZoomButtons.angleButton.addGestureRecognizer(angleTap)
+        view.addSubview(mapZoomButtons)
         NSLayoutConstraint.activate([
-            mapButtons.heightAnchor.constraint(equalToConstant: 150),
-            mapButtons.widthAnchor.constraint(equalToConstant: 40),
-            mapButtons.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            mapButtons.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 300),
+            mapZoomButtons.heightAnchor.constraint(equalToConstant: 150),
+            mapZoomButtons.widthAnchor.constraint(equalToConstant: 40),
+            mapZoomButtons.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            mapZoomButtons.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 300),
         ])
     }
     
