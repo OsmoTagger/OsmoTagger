@@ -7,7 +7,7 @@
 
 import UIKit
 
-class LogsViewController: UIViewController {
+class LogsViewController: SheetViewController {
     var tableView = UITableView()
     let cellId = "cell"
     
