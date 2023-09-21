@@ -144,7 +144,7 @@ struct Relation: Codable, DynamicNodeEncoding {
     
     let id: Int
     let version: Int
-    var changeset: Int
+    var changeset: Int = 0
     var member: [Member]
     var tag: [Tag]
     
@@ -202,7 +202,7 @@ struct Node: Decodable, Encodable, DynamicNodeEncoding {
     
     var id: Int
     var version: Int
-    var changeset: Int
+    var changeset: Int = 0
     var lat: Double
     var lon: Double
     var tag: [Tag]
@@ -252,7 +252,7 @@ struct Way: Codable, DynamicNodeEncoding {
 
     let id: Int
     let version: Int
-    var changeset: Int
+    var changeset: Int = 0
     var tag: [Tag]
     var nd: [ND]
     enum CodingKeys: String, CodingKey {

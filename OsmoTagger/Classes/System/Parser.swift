@@ -148,33 +148,36 @@ extension OSMXmlParser: XMLParserDelegate {
         if elementName == "node" {
             guard let idString = attributeDict["id"],
                   let versionString = attributeDict["version"],
-                  let changesetString = attributeDict["changeset"],
                   let latString = attributeDict["lat"],
                   let lonString = attributeDict["lon"],
                   let id = Int(idString),
                   let version = Int(versionString),
-                  let changeset = Int(changesetString),
                   let lat = Double(latString),
                   let lon = Double(lonString) else { return }
-            curNode = Node(id: id, version: version, changeset: changeset, lat: lat, lon: lon, tag: [])
+            curNode = Node(id: id, version: version, lat: lat, lon: lon, tag: [])
+            guard let changesetString = attributeDict["changeset"],
+                  let changeset = Int(changesetString) else {return}
+            curNode?.changeset = changeset
         }
         if elementName == "way" {
             guard let idString = attributeDict["id"],
                   let versionString = attributeDict["version"],
-                  let changesetString = attributeDict["changeset"],
                   let id = Int(idString),
-                  let version = Int(versionString),
-                  let changeset = Int(changesetString) else { return }
-            curWay = Way(id: id, version: version, changeset: changeset, tag: [], nd: [])
+                  let version = Int(versionString) else { return }
+            curWay = Way(id: id, version: version, tag: [], nd: [])
+            guard let changesetString = attributeDict["changeset"],
+                  let changeset = Int(changesetString) else {return}
+            curWay?.changeset = changeset
         }
         if elementName == "relation" {
             guard let idString = attributeDict["id"],
                   let versionString = attributeDict["version"],
-                  let changesetString = attributeDict["changeset"],
                   let id = Int(idString),
-                  let version = Int(versionString),
-                  let changeset = Int(changesetString) else { return }
-            curRelation = Relation(id: id, version: version, changeset: changeset, member: [], tag: [])
+                  let version = Int(versionString) else { return }
+            curRelation = Relation(id: id, version: version, member: [], tag: [])
+            guard let changesetString = attributeDict["changeset"],
+                  let changeset = Int(changesetString) else {return}
+            curRelation?.changeset = changeset
         }
         if elementName == "member" {
             guard let type = attributeDict["type"],
@@ -195,6 +198,7 @@ extension OSMXmlParser: XMLParserDelegate {
                 // fill way
                 curWay?.tag.append(tag)
             } else if curNode == nil && curWay == nil && curRelation != nil {
+                // fill relation
                 curRelation?.tag.append(tag)
             }
         }
