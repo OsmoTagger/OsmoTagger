@@ -85,47 +85,58 @@ class Alert: UIView {
         }
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
             if let window = windowScene.windows.first {
-                let backView = UIView()
-                backView.translatesAutoresizingMaskIntoConstraints = false
-                backView.backgroundColor = .systemGray5
-                backView.alpha = 0.0
-                alert.callbackClosure = { [weak backView] in
-                    UIView.animate(withDuration: 0.2, animations: { [weak backView] in
-                        backView?.alpha = 0.0
-                    }, completion: { [weak backView] _ in
-                        backView?.removeFromSuperview()
+                let leadingSafeAreaView = UIView()
+                leadingSafeAreaView.backgroundColor = .systemGray5
+                leadingSafeAreaView.alpha = 0.0
+                leadingSafeAreaView.translatesAutoresizingMaskIntoConstraints = false
+                
+                let topSafeAreaView = UIView()
+                topSafeAreaView.translatesAutoresizingMaskIntoConstraints = false
+                topSafeAreaView.backgroundColor = .systemGray5
+                topSafeAreaView.alpha = 0.0
+                
+                alert.callbackClosure = { [weak topSafeAreaView, weak leadingSafeAreaView] in
+                    UIView.animate(withDuration: 0.2, animations: { [weak topSafeAreaView, weak leadingSafeAreaView] in
+                        topSafeAreaView?.alpha = 0.0
+                        leadingSafeAreaView?.alpha = 0.0
+                    }, completion: { [weak topSafeAreaView, weak leadingSafeAreaView] _ in
+                        topSafeAreaView?.removeFromSuperview()
+                        leadingSafeAreaView?.removeFromSuperview()
                     })
                 }
+                window.addSubview(topSafeAreaView)
+                window.addSubview(leadingSafeAreaView)
                 window.addSubview(alert)
-                window.addSubview(backView)
                 NSLayoutConstraint.activate([
-                    backView.topAnchor.constraint(equalTo: window.topAnchor),
-                    backView.leadingAnchor.constraint(equalTo: window.leadingAnchor),
-                    backView.trailingAnchor.constraint(equalTo: window.trailingAnchor),
-                    backView.bottomAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor),
+                    leadingSafeAreaView.leadingAnchor.constraint(equalTo: window.leadingAnchor),
+                    leadingSafeAreaView.topAnchor.constraint(equalTo: window.topAnchor),
+                    leadingSafeAreaView.trailingAnchor.constraint(equalTo: window.safeAreaLayoutGuide.leadingAnchor),
+                    leadingSafeAreaView.bottomAnchor.constraint(equalTo: alert.bottomAnchor),
+                    
+                    topSafeAreaView.topAnchor.constraint(equalTo: window.topAnchor),
+                    topSafeAreaView.leadingAnchor.constraint(equalTo: window.leadingAnchor),
+                    topSafeAreaView.trailingAnchor.constraint(equalTo: window.trailingAnchor),
+                    topSafeAreaView.bottomAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor),
                     
                     alert.topAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor),
                     alert.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
-                    alert.widthAnchor.constraint(equalTo: window.widthAnchor),
-                    alert.leadingAnchor.constraint(equalTo: window.leadingAnchor),
+                    alert.leadingAnchor.constraint(equalTo: window.safeAreaLayoutGuide.leadingAnchor),
                     alert.trailingAnchor.constraint(equalTo: window.trailingAnchor)
                 ])
-                UIView.animate(withDuration: 0.5, animations: { [weak alert, weak backView] in
+                UIView.animate(withDuration: 0.5, animations: { [weak alert, weak topSafeAreaView, weak leadingSafeAreaView] in
                     alert?.alpha = 1
-                    backView?.alpha = 1
+                    topSafeAreaView?.alpha = 1
+                    leadingSafeAreaView?.alpha = 1
                 })
-                DispatchQueue.main.asyncAfter(deadline: .now() + 7) { [weak alert, weak backView] in
-                    UIView.animate(withDuration: 0.5, animations: { [weak alert, weak backView] in
-                        alert?.alpha = 1
-                        backView?.alpha = 1
-                    }, completion: { [weak alert, weak backView] _ in
-                        UIView.animate(withDuration: 0.5, delay: 7, animations: {
-                            alert?.alpha = 0
-                            backView?.alpha = 0
-                        }, completion: { [weak alert, weak backView] _ in
-                            alert?.removeFromSuperview()
-                            backView?.removeFromSuperview()
-                        })
+                DispatchQueue.main.asyncAfter(deadline: .now() + 7) { [weak alert, weak topSafeAreaView, weak leadingSafeAreaView] in
+                    UIView.animate(withDuration: 0.5, animations: { [weak alert, weak topSafeAreaView, weak leadingSafeAreaView] in
+                        alert?.alpha = 0
+                        topSafeAreaView?.alpha = 0
+                        leadingSafeAreaView?.alpha = 0
+                    }, completion: { [weak alert, weak topSafeAreaView, weak leadingSafeAreaView] _ in
+                        alert?.removeFromSuperview()
+                        topSafeAreaView?.removeFromSuperview()
+                        leadingSafeAreaView?.removeFromSuperview()
                     })
                 }
             }
