@@ -36,7 +36,6 @@
 		2CD9133A29AB94F500A4A853 /* EditObjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD9133929AB94F500A4A853 /* EditObjectViewController.swift */; };
 		2CDEA6D729862C2B00E5219D /* GLMapVectorObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CDEA6D629862C2B00E5219D /* GLMapVectorObject.swift */; };
 		2CE00A812A253DA5008A6119 /* MapClientProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE00A802A253DA5008A6119 /* MapClientProtocol.swift */; };
-		2CF9E7732A0C9FFC003DB2CC /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF9E7722A0C9FFC003DB2CC /* UIColor.swift */; };
 		2CFF98E4299BE44D0045D6B8 /* SavedNodesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFF98E3299BE44D0045D6B8 /* SavedNodesViewController.swift */; };
 		6C76E75928EC12AE0048C378 /* FastHash.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C76E75828EC12AE0048C378 /* FastHash.m */; };
 		6C8B010C28FC030B00C9238D /* option_clean.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C8B00FB28FC030B00C9238D /* option_clean.cpp */; };
@@ -134,7 +133,6 @@
 		2CD9133929AB94F500A4A853 /* EditObjectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditObjectViewController.swift; sourceTree = "<group>"; };
 		2CDEA6D629862C2B00E5219D /* GLMapVectorObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GLMapVectorObject.swift; sourceTree = "<group>"; };
 		2CE00A802A253DA5008A6119 /* MapClientProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapClientProtocol.swift; sourceTree = "<group>"; };
-		2CF9E7722A0C9FFC003DB2CC /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		2CFF98E3299BE44D0045D6B8 /* SavedNodesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedNodesViewController.swift; sourceTree = "<group>"; };
 		6C5D15AE2ABB3957006C4C76 /* OsmoTagger.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OsmoTagger.entitlements; sourceTree = "<group>"; };
 		6C76E74A28EC11510048C378 /* OpenStreetEditor-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OpenStreetEditor-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -304,7 +302,6 @@
 			isa = PBXGroup;
 			children = (
 				2C4EEE812986154300F9AAF9 /* UIViewController.swift */,
-				2CF9E7722A0C9FFC003DB2CC /* UIColor.swift */,
 				2CDEA6D629862C2B00E5219D /* GLMapVectorObject.swift */,
 				2C1A361129B0674400AF3BEB /* String.swift */,
 			);
@@ -598,7 +595,6 @@
 				2C4EEE822986154300F9AAF9 /* UIViewController.swift in Sources */,
 				2042BCEB289C696E0026514E /* AppDelegate.swift in Sources */,
 				2C2F972829D53DB200A994C8 /* UpdateSourceDataProtocol.swift in Sources */,
-				2CF9E7732A0C9FFC003DB2CC /* UIColor.swift in Sources */,
 				E3540B072A71B1DB00649564 /* Buttons.swift in Sources */,
 				6CF5D93928FB485F001D2758 /* osmium.mm in Sources */,
 				6C8B011128FC030B00C9238D /* export_handler.cpp in Sources */,

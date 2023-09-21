@@ -27,9 +27,6 @@ class MapClient {
     //  Highlights objects that fell under the tap, if there was not one object under the tap, but several.
     let tappedDrawble = GLMapVectorLayer(drawOrder: 3)
     
-    // Link to SavedNodesButton on MapViewController to update counter
-    var savedNodeButtonLink: SavedObjectButton?
-    
     // Latest options bbox loading raw map data
     var lastCenter: GLMapGeoPoint?
     // This is the default bbox size for loading OSM raw data. In case of receiving a response from the server "400" - too many objects in the bbox (may occur in regions with a high density of objects) is reduced by 25%
@@ -255,11 +252,5 @@ class MapClient {
         delegate?.removeDrawble(layer: savedDrawable)
         savedDrawable.setVectorObjects(savedObjects, with: MapStyles.savedStyle, completion: nil)
         delegate?.addDrawble(layer: savedDrawable)
-        // Update saveNodesButton counter
-        if let button = savedNodeButtonLink {
-            DispatchQueue.main.async {
-                button.update()
-            }
-        }
     }
 }

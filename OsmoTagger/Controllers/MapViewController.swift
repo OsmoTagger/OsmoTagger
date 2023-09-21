@@ -24,10 +24,10 @@ class MapViewController: UIViewController {
     let mapZoomButtons = MapZoomButtonsView()
     
     //  Buttons
-    let downloadButton = UIButton()
+    let downloadButton = MapButton()
     let indicator = DownloadIndicatorView()
     let centerIcon = UIImageView()
-    let addNodeButton = UIButton()
+    let addNodeButton = MapButton()
     var addNodeButtonTopConstraint = NSLayoutConstraint()
     
     //  Displays the object that was tapped and whose properties are currently being edited (yellow).
@@ -252,13 +252,9 @@ class MapViewController: UIViewController {
     }
     
     func setDownloadButton() {
-        downloadButton.layer.cornerRadius = 5
-        downloadButton.backgroundColor = .white
-        downloadButton.setImage(UIImage(systemName: "square.and.arrow.down.fill")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
+        downloadButton.configure(image: "square.and.arrow.down.fill")
         downloadButton.addTarget(self, action: #selector(tapDownloadButton), for: .touchUpInside)
         view.addSubview(downloadButton)
-        
-        downloadButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([downloadButton.widthAnchor.constraint(equalToConstant: 40),
                                      downloadButton.heightAnchor.constraint(equalToConstant: 40),
                                      downloadButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
@@ -267,10 +263,6 @@ class MapViewController: UIViewController {
     
     
     @objc func tapDownloadButton() {
-        downLoadData()
-    }
-    
-    private func downLoadData() {
         Task {
             do {
                 try await mapClient.getSourceBbox(mapCenter: mapView.mapGeoCenter)
@@ -282,14 +274,10 @@ class MapViewController: UIViewController {
     }
     
     func setupSettingsButton() {
-        let settingsButton = UIButton()
-        settingsButton.layer.cornerRadius = 5
-        settingsButton.backgroundColor = .white
-        settingsButton.setImage(UIImage(systemName: "gearshape")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
+        let settingsButton = MapButton()
+        settingsButton.configure(image: "gearshape")
         settingsButton.addTarget(self, action: #selector(tapSettingsButton), for: .touchUpInside)
         view.addSubview(settingsButton)
-        
-        settingsButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([settingsButton.widthAnchor.constraint(equalToConstant: 40),
                                      settingsButton.heightAnchor.constraint(equalToConstant: 40),
                                      settingsButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 95),
@@ -323,14 +311,10 @@ class MapViewController: UIViewController {
     }
     
     func setupLocationButton() {
-        let locationButton = UIButton()
-        locationButton.layer.cornerRadius = 5
-        locationButton.backgroundColor = .white
-        locationButton.setImage(UIImage(systemName: "location.north.fill")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
+        let locationButton = MapButton()
+        locationButton.configure(image: "location.north.fill")
         locationButton.addTarget(self, action: #selector(mapToLocation), for: .touchUpInside)
         view.addSubview(locationButton)
-        
-        locationButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([locationButton.widthAnchor.constraint(equalToConstant: 40),
                                      locationButton.heightAnchor.constraint(equalToConstant: 40),
                                      locationButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 150),
@@ -349,14 +333,9 @@ class MapViewController: UIViewController {
     //  The button for switching to the controller with created and modified objects.
     func setSavedNodesButton() {
         let savedNodesButton = SavedObjectButton()
-        mapClient.savedNodeButtonLink = savedNodesButton
-        savedNodesButton.layer.cornerRadius = 5
-        savedNodesButton.backgroundColor = .white
-        savedNodesButton.setImage(UIImage(systemName: "square.and.arrow.up.fill"), for: .normal)
-        savedNodesButton.tintColor = .black
+        savedNodesButton.configure(image: "square.and.arrow.up.fill")
         savedNodesButton.addTarget(self, action: #selector(tapSavedNodesButton), for: .touchUpInside)
         view.addSubview(savedNodesButton)
-        savedNodesButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([savedNodesButton.widthAnchor.constraint(equalToConstant: 40),
                                      savedNodesButton.heightAnchor.constraint(equalToConstant: 40),
                                      savedNodesButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 205),
@@ -410,12 +389,8 @@ class MapViewController: UIViewController {
     
     func setDrawButton() {
         let drawButton = DrawButton()
-        drawButton.layer.cornerRadius = 5
-        drawButton.backgroundColor = .white
-        drawButton.setImage(UIImage(systemName: "paintbrush.pointed.fill"), for: .normal)
-        drawButton.tintColor = .black
+        drawButton.configure(image: "paintbrush.pointed.fill")
         drawButton.addTarget(self, action: #selector(tapDrawButton), for: .touchUpInside)
-        drawButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(drawButton)
         NSLayoutConstraint.activate([
             drawButton.widthAnchor.constraint(equalToConstant: 40),
@@ -454,12 +429,9 @@ class MapViewController: UIViewController {
     }
     
     func setAddNodeButton() {
-        addNodeButton.layer.cornerRadius = 5
-        addNodeButton.backgroundColor = .white
-        addNodeButton.setImage(UIImage(named: "addnode"), for: .normal)
+        addNodeButton.configure(image: "addnode")
         addNodeButton.addTarget(self, action: #selector(tapAddNodeButton), for: .touchUpInside)
         view.addSubview(addNodeButton)
-        addNodeButton.translatesAutoresizingMaskIntoConstraints = false
         addNodeButtonTopConstraint = NSLayoutConstraint(item: addNodeButton, attribute: .top, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .top, multiplier: 1, constant: 260)
         NSLayoutConstraint.activate([addNodeButton.widthAnchor.constraint(equalToConstant: 40),
                                      addNodeButton.heightAnchor.constraint(equalToConstant: 40),
@@ -495,13 +467,10 @@ class MapViewController: UIViewController {
     
     //  Test button and its target for debugging convenience.
     func setTestButton() {
-        let testButton = UIButton()
-        testButton.layer.cornerRadius = 5
-        testButton.backgroundColor = .white
-        testButton.setImage(UIImage(systemName: "pencil")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
+        let testButton = MapButton()
+        testButton.configure(image: "pencil")
         testButton.addTarget(self, action: #selector(tapTestButton), for: .touchUpInside)
         view.addSubview(testButton)
-        testButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([testButton.widthAnchor.constraint(equalToConstant: 40),
                                      testButton.heightAnchor.constraint(equalToConstant: 40),
                                      testButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
