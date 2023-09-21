@@ -84,6 +84,7 @@
 		E3B9A5CF2A463E1800C6839A /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CE2A463E1800C6839A /* XMLCoder */; };
 		E3C1BB232ABAF61B00B4BFD6 /* StretchableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C1BB222ABAF61B00B4BFD6 /* StretchableCell.swift */; };
 		E3C1BB252ABAF9E900B4BFD6 /* LogsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C1BB242ABAF9E900B4BFD6 /* LogsViewController.swift */; };
+		E3D2CE672ABC2C4C009789BB /* Presets.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34E4AE02A981ECD00D65A92 /* Presets.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -613,6 +614,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3D2CE672ABC2C4C009789BB /* Presets.swift in Sources */,
 				E3373F4A2ABBA47C0055B329 /* defaultPresets.xml in Sources */,
 				E36A68002ABB8FC600824794 /* Parser.swift in Sources */,
 				E36A67FF2ABB8E6100824794 /* JSOM presets.swift in Sources */,
