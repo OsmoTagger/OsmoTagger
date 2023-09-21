@@ -67,7 +67,7 @@ class SavedObjectButton: MapButton {
     init() {
         super.init(frame: .zero)
         setupConstrains()
-        AppSettings.settings.mapVCClouser = { [weak self] in
+        AppSettings.settings.savedNodesCounterClosure = { [weak self] in
             DispatchQueue.main.async { [weak self] in
                 self?.update()
             }

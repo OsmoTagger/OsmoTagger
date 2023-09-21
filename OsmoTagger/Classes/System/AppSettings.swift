@@ -42,8 +42,10 @@ final class AppSettings: NSObject {
         }
     }
     
+    //  Called when changing savedObjects - to update counter on SavedObjectButton
+    var savedNodesCounterClosure: EmptyBlock?
     //  Called when changing savedObjects - to update the map
-    var mapVCClouser: EmptyBlock?
+    var showSavedObjectClosure: EmptyBlock?
     // Closure that is called in the MapClient class to display or delete a vector object
     var showVectorObjectClosure: ((GLMapVectorObject?) -> Void)?
     
@@ -234,9 +236,8 @@ final class AppSettings: NSObject {
     //  Stores and writes created and modified objects to a file
     var savedObjects: [Int: OSMAnyObject] = [:] {
         didSet {
-            if let clouser = mapVCClouser {
-                clouser()
-            }
+            savedNodesCounterClosure?()
+            showSavedObjectClosure?()
             do {
                 let data = try JSONEncoder().encode(savedObjects)
                 try data.write(to: savedNodesURL, options: .atomic)
@@ -251,9 +252,8 @@ final class AppSettings: NSObject {
     // Objects marked for deletion
     var deletedObjects: [Int: OSMAnyObject] = [:] {
         didSet {
-            if let clouser = mapVCClouser {
-                clouser()
-            }
+            savedNodesCounterClosure?()
+            showSavedObjectClosure?()
             do {
                 let data = try JSONEncoder().encode(deletedObjects)
                 try data.write(to: deletedNodesURL, options: .atomic)

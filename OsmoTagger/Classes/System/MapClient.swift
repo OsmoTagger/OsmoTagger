@@ -58,7 +58,7 @@ class MapClient {
     
     func setAppSettingsClouser() {
         // Every time AppSettings.settings.savedObjects is changed (this is the variable in which the modified or created objects are stored), a closure is called. In this case, when a short circuit is triggered, we update the illumination of saved and created objects.
-        AppSettings.settings.mapVCClouser = { [weak self] in
+        AppSettings.settings.showSavedObjectClosure = { [weak self] in
             guard let self = self else { return }
             self.showSavedObjects()
         }
