@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 // zoom plus, minus, set map angle
-class MapButtonsView: UIView {
+class MapZoomButtonsView: UIView {
     var plusButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 5

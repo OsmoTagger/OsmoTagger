@@ -21,7 +21,7 @@ class MapViewController: UIViewController {
     var navController: SheetNavigationController?
     
     // plus zoom, minus zoom, map angle
-    let mapButtons = MapButtonsView()
+    let mapButtons = MapZoomButtonsView()
     
     //  Buttons
     let downloadButton = UIButton()
