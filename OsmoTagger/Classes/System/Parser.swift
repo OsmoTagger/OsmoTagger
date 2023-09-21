@@ -156,7 +156,7 @@ extension OSMXmlParser: XMLParserDelegate {
                   let lon = Double(lonString) else { return }
             curNode = Node(id: id, version: version, lat: lat, lon: lon, tag: [])
             guard let changesetString = attributeDict["changeset"],
-                  let changeset = Int(changesetString) else {return}
+                  let changeset = Int(changesetString) else { return }
             curNode?.changeset = changeset
         }
         if elementName == "way" {
@@ -166,7 +166,7 @@ extension OSMXmlParser: XMLParserDelegate {
                   let version = Int(versionString) else { return }
             curWay = Way(id: id, version: version, tag: [], nd: [])
             guard let changesetString = attributeDict["changeset"],
-                  let changeset = Int(changesetString) else {return}
+                  let changeset = Int(changesetString) else { return }
             curWay?.changeset = changeset
         }
         if elementName == "relation" {
@@ -176,7 +176,7 @@ extension OSMXmlParser: XMLParserDelegate {
                   let version = Int(versionString) else { return }
             curRelation = Relation(id: id, version: version, member: [], tag: [])
             guard let changesetString = attributeDict["changeset"],
-                  let changeset = Int(changesetString) else {return}
+                  let changeset = Int(changesetString) else { return }
             curRelation?.changeset = changeset
         }
         if elementName == "member" {

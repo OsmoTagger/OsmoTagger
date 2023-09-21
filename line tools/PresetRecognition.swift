@@ -8,5 +8,3 @@
 import Foundation
 
 // This class is created to test the number of recognized object presets
-
-

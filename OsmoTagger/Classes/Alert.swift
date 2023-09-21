@@ -121,7 +121,7 @@ class Alert: UIView {
                     alert.topAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor),
                     alert.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
                     alert.leadingAnchor.constraint(equalTo: window.safeAreaLayoutGuide.leadingAnchor),
-                    alert.trailingAnchor.constraint(equalTo: window.trailingAnchor)
+                    alert.trailingAnchor.constraint(equalTo: window.trailingAnchor),
                 ])
                 UIView.animate(withDuration: 0.5, animations: { [weak alert, weak topSafeAreaView, weak leadingSafeAreaView] in
                     alert?.alpha = 1
@@ -155,5 +155,5 @@ class Alert: UIView {
 }
 
 extension Alert: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool { return true }
+    func gestureRecognizer(_: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer) -> Bool { return true }
 }

@@ -124,7 +124,8 @@ class MapClient {
            let latitudeDisplayMin,
            let latitudeDisplayMax,
            let longitudeDisplayMin,
-           let longitudeDisplayMax {
+           let longitudeDisplayMax
+        {
             let points = GLMapPointArray()
             let pt1 = GLMapPoint(lat: latitudeDisplayMax, lon: longitudeDisplayMin)
             points.add(pt1)

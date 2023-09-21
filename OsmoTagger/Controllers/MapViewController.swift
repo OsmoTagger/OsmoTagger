@@ -129,7 +129,6 @@ class MapViewController: UIViewController {
     }
     
     func setDidMapMoveClouser() {
-        
         mapView.mapDidMoveBlock = { [weak self] _ in
             guard let self = self else { return }
             // rotate mapButtons.angleButton image
@@ -260,7 +259,6 @@ class MapViewController: UIViewController {
                                      downloadButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
                                      downloadButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)])
     }
-    
     
     @objc func tapDownloadButton() {
         Task {
