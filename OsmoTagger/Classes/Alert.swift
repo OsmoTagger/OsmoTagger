@@ -12,6 +12,7 @@ class Alert: UIView {
         let rv = UIView()
         rv.layer.cornerRadius = 8
         rv.isHidden = true
+        rv.isUserInteractionEnabled = true
         rv.translatesAutoresizingMaskIntoConstraints = false
         return rv
     }()
@@ -25,6 +26,8 @@ class Alert: UIView {
         return rv
     }()
     
+    var callbackClosure: EmptyBlock?
+    
     init() {
         super.init(frame: .zero)
         setupConstrains()
@@ -32,11 +35,25 @@ class Alert: UIView {
         translatesAutoresizingMaskIntoConstraints = false
         layer.cornerRadius = 4
         alpha = 0.0
+        
+        let swipeGuest = UISwipeGestureRecognizer(target: self, action: #selector(swipe))
+        swipeGuest.direction = .up
+        swipeGuest.delegate = self
+        addGestureRecognizer(swipeGuest)
     }
     
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    @objc private func swipe() {
+        UIView.animate(withDuration: 0.2, animations: { [weak self] in
+            self?.callbackClosure?()
+            self?.alpha = 0.0
+        }, completion: { [weak self] _ in
+            self?.removeFromSuperview()
+        })
     }
     
     private func setupConstrains() {
@@ -72,6 +89,13 @@ class Alert: UIView {
                 backView.translatesAutoresizingMaskIntoConstraints = false
                 backView.backgroundColor = .systemGray5
                 backView.alpha = 0.0
+                alert.callbackClosure = { [weak backView] in
+                    UIView.animate(withDuration: 0.2, animations: { [weak backView] in
+                        backView?.alpha = 0.0
+                    }, completion: { [weak backView] _ in
+                        backView?.removeFromSuperview()
+                    })
+                }
                 window.addSubview(alert)
                 window.addSubview(backView)
                 NSLayoutConstraint.activate([
@@ -86,19 +110,24 @@ class Alert: UIView {
                     alert.leadingAnchor.constraint(equalTo: window.leadingAnchor),
                     alert.trailingAnchor.constraint(equalTo: window.trailingAnchor)
                 ])
-
                 UIView.animate(withDuration: 0.5, animations: { [weak alert, weak backView] in
                     alert?.alpha = 1
                     backView?.alpha = 1
-                }, completion: { [weak alert, weak backView] _ in
-                    UIView.animate(withDuration: 0.5, delay: 7, animations: {
-                        alert?.alpha = 0
-                        backView?.alpha = 0
-                    }, completion: { [weak alert, weak backView] _ in
-                        alert?.removeFromSuperview()
-                        backView?.removeFromSuperview()
-                    })
                 })
+                DispatchQueue.main.asyncAfter(deadline: .now() + 7) { [weak alert, weak backView] in
+                    UIView.animate(withDuration: 0.5, animations: { [weak alert, weak backView] in
+                        alert?.alpha = 1
+                        backView?.alpha = 1
+                    }, completion: { [weak alert, weak backView] _ in
+                        UIView.animate(withDuration: 0.5, delay: 7, animations: {
+                            alert?.alpha = 0
+                            backView?.alpha = 0
+                        }, completion: { [weak alert, weak backView] _ in
+                            alert?.removeFromSuperview()
+                            backView?.removeFromSuperview()
+                        })
+                    })
+                }
             }
         }
     }
@@ -112,4 +141,8 @@ class Alert: UIView {
             parent.present(alert, animated: true)
         }
     }
+}
+
+extension Alert: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool { return true }
 }
