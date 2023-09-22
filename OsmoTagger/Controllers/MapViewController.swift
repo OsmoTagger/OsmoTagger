@@ -46,6 +46,8 @@ class MapViewController: UIViewController {
         
         mapClient.delegate = self
         
+        setScreenManagerClosures()
+        
         // We run the definition of the geo position and check its resolution for the application in the settings.
         locationManager.startUpdatingLocation()
         chekAuthorization()
@@ -74,6 +76,20 @@ class MapViewController: UIViewController {
         
         // Zoom in and zoom out buttons, map rotation button
         setMapZoomButtons()
+    }
+    
+    private func setScreenManagerClosures() {
+        screenManager.moveUpClosure = { [weak self] in
+            guard let self = self else { return }
+            self.runOpenAnimation()
+        }
+        screenManager.dismissClosure = { [weak self] isSelectedObjectVC in
+            guard let self = self else { return }
+            if isSelectedObjectVC {
+                self.mapView.remove(self.mapClient.tappedDrawble)
+            }
+            self.runCloseAnimation()
+        }
     }
     
     override func viewDidAppear(_: Bool) {
@@ -512,6 +528,14 @@ extension MapViewController: UIGestureRecognizerDelegate {
                 screenManager.openObject(parent: self, object: first)
             }
         default:
+            // Moves the tapped object to the visible part of the map.
+            let centerPoint = mapView.makeGeoPoint(fromDisplay: touchPoint)
+            mapView.animate({ [weak self] animation in
+                guard let self = self else { return }
+                animation.duration = animationDuration
+                animation.transition = .linear
+                self.mapView.mapGeoCenter = centerPoint
+            })
             screenManager.openObjects(parent: self, objects: tapObjects)
         }
     }

@@ -13,6 +13,8 @@ class ScreenManager {
     
     var moveUpClosure: EmptyBlock?
     var moveLeftClosure: EmptyBlock?
+    // true - dismiss SelectObjectVC; false - dismiss any vc
+    var dismissClosure: ((Bool) -> Void)?
     
     // MARK: CHANGESET
     func openChangeset(parent: UIViewController) {
@@ -39,15 +41,15 @@ class ScreenManager {
     }
     
     private func goToSAvedNodesVC(parent: UIViewController) {
-//        runOpenAnimation()
         let savedNodesVC = SavedNodesViewController()
         navController = SheetNavigationController(rootViewController: savedNodesVC)
         navController?.dismissClosure = { [weak self] in
             guard let self = self else { return }
+            self.dismissClosure?(false)
             self.navController = nil
-//            self.runCloseAnimation()
         }
         if navController != nil {
+            moveUpClosure?()
             parent.present(navController!, animated: true)
         }
     }
@@ -111,10 +113,11 @@ class ScreenManager {
         navController = SheetNavigationController(rootViewController: selectVC)
         navController?.dismissClosure = { [weak self] in
             guard let self = self else { return }
-//            self.mapView.remove(self.mapClient.tappedDrawble)
+            self.dismissClosure?(true)
             self.navController = nil
         }
         if navController != nil {
+            moveUpClosure?()
             parent.present(navController!, animated: true, completion: nil)
         }
     }
@@ -182,9 +185,11 @@ class ScreenManager {
         // When the user closes the tag editing controller, the backlight of the tapped object is removed.
         navController?.dismissClosure = { [weak self] in
             guard let self = self else { return }
+            self.dismissClosure?(false)
             self.navController = nil
         }
         if navController != nil {
+            moveUpClosure?()
             parent.present(navController!, animated: true, completion: nil)
         }
     }
