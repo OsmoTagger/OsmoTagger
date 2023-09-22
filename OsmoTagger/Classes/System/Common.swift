@@ -6,8 +6,11 @@
 //
 
 import Foundation
+import UIKit
 
 typealias EmptyBlock = () -> Void
+
+let isPad = UIDevice.current.userInterfaceIdiom == .pad
 
 public func Log(_ log: String) {
     AppSettings.settings.logs.append(log)
