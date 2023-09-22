@@ -103,9 +103,9 @@ class MapViewController: UIViewController {
         view.addSubview(mapView)
         NSLayoutConstraint.activate([
             mapView.topAnchor.constraint(equalTo: view.topAnchor),
-            mapView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            mapView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
         ])
     }
     
@@ -246,7 +246,7 @@ class MapViewController: UIViewController {
             indicator.widthAnchor.constraint(equalToConstant: 20),
             indicator.heightAnchor.constraint(equalToConstant: 20),
             indicator.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            indicator.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -20),
+            indicator.trailingAnchor.constraint(equalTo: mapView.trailingAnchor, constant: -20),
         ])
     }
     
@@ -254,10 +254,12 @@ class MapViewController: UIViewController {
         downloadButton.configure(image: "square.and.arrow.down.fill")
         downloadButton.addTarget(self, action: #selector(tapDownloadButton), for: .touchUpInside)
         view.addSubview(downloadButton)
-        NSLayoutConstraint.activate([downloadButton.widthAnchor.constraint(equalToConstant: 40),
-                                     downloadButton.heightAnchor.constraint(equalToConstant: 40),
-                                     downloadButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
-                                     downloadButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)])
+        NSLayoutConstraint.activate([
+             downloadButton.widthAnchor.constraint(equalToConstant: 40),
+             downloadButton.heightAnchor.constraint(equalToConstant: 40),
+             downloadButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
+             downloadButton.trailingAnchor.constraint(equalTo: mapView.trailingAnchor, constant: -10)
+        ])
     }
     
     @objc func tapDownloadButton() {
@@ -276,10 +278,12 @@ class MapViewController: UIViewController {
         settingsButton.configure(image: "gearshape")
         settingsButton.addTarget(self, action: #selector(tapSettingsButton), for: .touchUpInside)
         view.addSubview(settingsButton)
-        NSLayoutConstraint.activate([settingsButton.widthAnchor.constraint(equalToConstant: 40),
-                                     settingsButton.heightAnchor.constraint(equalToConstant: 40),
-                                     settingsButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 95),
-                                     settingsButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)])
+        NSLayoutConstraint.activate([
+             settingsButton.widthAnchor.constraint(equalToConstant: 40),
+             settingsButton.heightAnchor.constraint(equalToConstant: 40),
+             settingsButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 95),
+             settingsButton.trailingAnchor.constraint(equalTo: mapView.trailingAnchor, constant: -10)
+        ])
     }
     
     @objc func tapSettingsButton() {
@@ -313,10 +317,12 @@ class MapViewController: UIViewController {
         locationButton.configure(image: "location.north.fill")
         locationButton.addTarget(self, action: #selector(mapToLocation), for: .touchUpInside)
         view.addSubview(locationButton)
-        NSLayoutConstraint.activate([locationButton.widthAnchor.constraint(equalToConstant: 40),
-                                     locationButton.heightAnchor.constraint(equalToConstant: 40),
-                                     locationButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 150),
-                                     locationButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)])
+        NSLayoutConstraint.activate([
+             locationButton.widthAnchor.constraint(equalToConstant: 40),
+             locationButton.heightAnchor.constraint(equalToConstant: 40),
+             locationButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 150),
+             locationButton.trailingAnchor.constraint(equalTo: mapView.trailingAnchor, constant: -10)
+        ])
     }
     
     //  Moves the center of the map to the geo position.
@@ -334,10 +340,11 @@ class MapViewController: UIViewController {
         savedNodesButton.configure(image: "square.and.arrow.up.fill")
         savedNodesButton.addTarget(self, action: #selector(tapSavedNodesButton), for: .touchUpInside)
         view.addSubview(savedNodesButton)
-        NSLayoutConstraint.activate([savedNodesButton.widthAnchor.constraint(equalToConstant: 40),
-                                     savedNodesButton.heightAnchor.constraint(equalToConstant: 40),
-                                     savedNodesButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 205),
-                                     savedNodesButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)])
+        NSLayoutConstraint.activate([
+             savedNodesButton.widthAnchor.constraint(equalToConstant: 40),
+             savedNodesButton.heightAnchor.constraint(equalToConstant: 40),
+             savedNodesButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 205),
+             savedNodesButton.trailingAnchor.constraint(equalTo: mapView.trailingAnchor, constant: -10)])
     }
     
     func updateAddNodeButton() {
@@ -394,7 +401,7 @@ class MapViewController: UIViewController {
             drawButton.widthAnchor.constraint(equalToConstant: 40),
             drawButton.heightAnchor.constraint(equalToConstant: 40),
             drawButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 260),
-            drawButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
+            drawButton.trailingAnchor.constraint(equalTo: mapView.trailingAnchor, constant: -10),
         ])
     }
     
@@ -431,10 +438,12 @@ class MapViewController: UIViewController {
         addNodeButton.addTarget(self, action: #selector(tapAddNodeButton), for: .touchUpInside)
         view.addSubview(addNodeButton)
         addNodeButtonTopConstraint = NSLayoutConstraint(item: addNodeButton, attribute: .top, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .top, multiplier: 1, constant: 260)
-        NSLayoutConstraint.activate([addNodeButton.widthAnchor.constraint(equalToConstant: 40),
-                                     addNodeButton.heightAnchor.constraint(equalToConstant: 40),
-                                     addNodeButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
-                                     addNodeButtonTopConstraint])
+        NSLayoutConstraint.activate([
+             addNodeButton.widthAnchor.constraint(equalToConstant: 40),
+             addNodeButton.heightAnchor.constraint(equalToConstant: 40),
+             addNodeButton.trailingAnchor.constraint(equalTo: mapView.trailingAnchor, constant: -10),
+             addNodeButtonTopConstraint
+        ])
     }
     
     @objc func tapAddNodeButton() {
@@ -469,10 +478,11 @@ class MapViewController: UIViewController {
         testButton.configure(image: "pencil")
         testButton.addTarget(self, action: #selector(tapTestButton), for: .touchUpInside)
         view.addSubview(testButton)
-        NSLayoutConstraint.activate([testButton.widthAnchor.constraint(equalToConstant: 40),
-                                     testButton.heightAnchor.constraint(equalToConstant: 40),
-                                     testButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
-                                     testButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)])
+        NSLayoutConstraint.activate([
+             testButton.widthAnchor.constraint(equalToConstant: 40),
+             testButton.heightAnchor.constraint(equalToConstant: 40),
+             testButton.trailingAnchor.constraint(equalTo: mapView.trailingAnchor, constant: -10),
+             testButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)])
     }
     
     @objc func tapTestButton() {}
