@@ -11,8 +11,11 @@ import UIKit
 
 //  RootViewController with mapView
 class MapViewController: UIViewController {
+    
     //  Class for working with MapView. Subsequently, all GLMap entities should be transferred to it.
     let mapClient = MapClient()
+    let screenManager = ScreenManager()
+    
     //  map and location service
     var mapView: GLMapView!
     private let locationManager = CLLocationManager()
@@ -294,29 +297,7 @@ class MapViewController: UIViewController {
     }
     
     @objc func tapSettingsButton() {
-        if navController != nil {
-            navController?.dismiss(animated: true) { [weak self] in
-                guard let self = self else { return }
-                self.goToSettingsVC()
-            }
-        } else {
-            goToSettingsVC()
-        }
-    }
-    
-    func goToSettingsVC() {
-        let vc = MainViewController()
-        navController = SheetNavigationController(rootViewController: vc)
-        guard let sheetVC = navController?.sheetPresentationController else { return }
-        // open the settings in full-screen mode
-        sheetVC.detents = [.large()]
-        navController?.dismissClosure = { [weak self] in
-            guard let self = self else { return }
-            self.navController = nil
-        }
-        if navController != nil {
-            present(navController!, animated: true)
-        }
+        screenManager.openSettings(parent: self)
     }
     
     func setupLocationButton() {
@@ -368,42 +349,13 @@ class MapViewController: UIViewController {
     }
     
     @objc func tapSavedNodesButton() {
-        if let viewControllers = navController?.viewControllers {
-            // navController != nil
-            if viewControllers[0] is SavedNodesViewController {
-                if viewControllers.count == 1 {
-                    return
-                } else {
-                    navController?.setViewControllers([viewControllers[0]], animated: true)
-                }
-            } else {
-                // dismiss and open new navController
-                navController?.dismiss(animated: true, completion: { [weak self] in
-                    guard let self = self else { return }
-                    self.goToSAvedNodesVC()
-                })
-            }
-        } else {
-            // navController = nil, open new navigation controller
-            goToSAvedNodesVC()
+        if AppSettings.settings.savedObjects.count == 0 && AppSettings.settings.deletedObjects.count == 0 {
+            Alert.showAlert("Changeset is empty")
+            return
         }
+        screenManager.openChangeset(parent: self)
     }
-    
-    func goToSAvedNodesVC() {
-        runOpenAnimation()
-        let savedNodesVC = SavedNodesViewController()
-        savedNodesVC.delegate = self
-        navController = SheetNavigationController(rootViewController: savedNodesVC)
-        navController?.dismissClosure = { [weak self] in
-            guard let self = self else { return }
-            self.navController = nil
-            self.runCloseAnimation()
-        }
-        if navController != nil {
-            present(navController!, animated: true, completion: nil)
-        }
-    }
-    
+        
     func setDrawButton() {
         let drawButton = DrawButton()
         drawButton.configure(image: "paintbrush.pointed.fill")
@@ -485,7 +437,7 @@ class MapViewController: UIViewController {
         let id = AppSettings.settings.nextID
         point.setValue(String(id), forKey: "@id")
         let object = OSMAnyObject(type: .node, id: id, version: 0, changeset: 0, lat: geoPoint.lat, lon: geoPoint.lon, tag: [], nd: [], nodes: [:], members: [], vector: point)
-        goToPropertiesVC(object: object)
+        screenManager.openObject(parent: self, object: object)
     }
     
     //  Test button and its target for debugging convenience.
@@ -505,147 +457,6 @@ class MapViewController: UIViewController {
     }
     
     @objc func tapTestButton() {}
-    
-//    MARK: Open objects and screens
-
-    func openObjects(objects: [OSMAnyObject]) {
-        if let viewControllers = navController?.viewControllers {
-            // navController != nil
-            if let selectVC = viewControllers[0] as? SelectObjectViewController {
-                selectVC.objects = objects
-                selectVC.fillData()
-                if viewControllers.count == 1 {
-                    selectVC.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-                } else {
-                    navController?.setViewControllers([viewControllers[0]], animated: true, completion: {
-                        selectVC.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-                    })
-                }
-            } else {
-                navController?.dismiss(animated: true, completion: { [weak self] in
-                    guard let self = self else { return }
-                    self.goToSelectVC(objects: objects)
-                })
-            }
-        } else {
-            // navController = nil, open new
-            goToSelectVC(objects: objects)
-        }
-    }
-    
-    func goToSelectVC(objects: [OSMAnyObject]) {
-        runOpenAnimation()
-        let selectVC = SelectObjectViewController(objects: objects)
-        selectVC.delegate = self
-        navController = SheetNavigationController(rootViewController: selectVC)
-        navController?.dismissClosure = { [weak self] in
-            guard let self = self else { return }
-            self.mapView.remove(self.mapClient.tappedDrawble)
-            self.navController = nil
-            self.runCloseAnimation()
-        }
-        if navController != nil {
-            present(navController!, animated: true, completion: nil)
-        }
-    }
-    
-    func checkObjectInSelectVC(id: Int, objects: [OSMAnyObject]) -> Bool {
-        for object in objects {
-            if object.id == id {
-                return true
-            }
-        }
-        return false
-    }
-    
-    func editVCUpdateObject(viewControllers: [UIViewController], newObject: OSMAnyObject) {
-        for controller in viewControllers {
-            if let infoVC = controller as? InfoObjectViewController {
-                infoVC.object = newObject
-                infoVC.fillData()
-                infoVC.tableView.reloadData()
-            }
-        }
-        for controller in viewControllers {
-            if let editVC = controller as? EditObjectViewController {
-                editVC.updateViewController(newObject: newObject)
-                return
-            }
-        }
-    }
-    
-    func openObject(object: OSMAnyObject) {
-        if let viewControllers = navController?.viewControllers {
-            // navController != nil
-            if let selectVC = viewControllers[0] as? SelectObjectViewController {
-                // selectVC -------------------------------
-                if checkObjectInSelectVC(id: object.id, objects: selectVC.objects) {
-                    if viewControllers.count > 1 {
-                        editVCUpdateObject(viewControllers: viewControllers, newObject: object)
-                    } else {
-                        let editVC = EditObjectViewController(object: object)
-                        navController?.pushViewController(editVC, animated: true)
-                    }
-                } else {
-                    navController?.dismiss(animated: true, completion: { [weak self] in
-                        guard let self = self else { return }
-                        self.goToPropertiesVC(object: object)
-                    })
-                }
-                // selectVC -------------------------------
-            } else if viewControllers[0] is SavedNodesViewController {
-                //  savedVC -------------------------------
-                var savedObjects: [OSMAnyObject] = []
-                for (_, object) in AppSettings.settings.savedObjects {
-                    savedObjects.append(object)
-                }
-                for (_, object) in AppSettings.settings.deletedObjects {
-                    savedObjects.append(object)
-                }
-                if checkObjectInSelectVC(id: object.id, objects: savedObjects) {
-                    if viewControllers.count > 1 {
-                        editVCUpdateObject(viewControllers: viewControllers, newObject: object)
-                    } else {
-                        let editVC = EditObjectViewController(object: object)
-                        navController?.pushViewController(editVC, animated: true)
-                    }
-                } else {
-                    navController?.dismiss(animated: true, completion: { [weak self] in
-                        guard let self = self else { return }
-                        self.goToPropertiesVC(object: object)
-                    })
-                }
-                // savedVC -------------------------------
-            } else if viewControllers[0] is EditObjectViewController {
-                editVCUpdateObject(viewControllers: viewControllers, newObject: object)
-            } else {
-                navController?.dismiss(animated: true, completion: { [weak self] in
-                    guard let self = self else { return }
-                    self.goToPropertiesVC(object: object)
-                })
-            }
-        } else {
-            // navController = nil, open new
-            goToPropertiesVC(object: object)
-        }
-    }
-    
-    //  The method opens the tag editing controller.
-    //  The user can tap on the object on the visible part of the map at the moment when the editing controller is already open. Then the editable object on the controller changes to a new one.
-    func goToPropertiesVC(object: OSMAnyObject) {
-        runOpenAnimation()
-        let editVC = EditObjectViewController(object: object)
-        navController = SheetNavigationController(rootViewController: editVC)
-        // When the user closes the tag editing controller, the backlight of the tapped object is removed.
-        navController?.dismissClosure = { [weak self] in
-            guard let self = self else { return }
-            self.navController = nil
-            self.runCloseAnimation()
-        }
-        if navController != nil {
-            present(navController!, animated: true, completion: nil)
-        }
-    }
 }
 
 // MARK: MapClientProtocol
@@ -698,20 +509,10 @@ extension MapViewController: UIGestureRecognizerDelegate {
             return
         case 1:
             if let first = tapObjects.first {
-                openObject(object: first)
+                screenManager.openObject(parent: self, object: first)
             }
         default:
-            // Moves the tapped object to the visible part of the map.
-            let centerPoint = mapView.makeGeoPoint(fromDisplay: touchPoint)
-            mapView.animate({ animation in
-                animation.duration = animationDuration
-                animation.transition = .linear
-                mapView.mapGeoCenter = centerPoint
-            }, withCompletion: { [weak self] _ in
-                guard let self = self else { return }
-                AppSettings.settings.lastBbox = self.mapView.bbox
-            })
-            openObjects(objects: tapObjects)
+            screenManager.openObjects(parent: self, objects: tapObjects)
         }
     }
 }
