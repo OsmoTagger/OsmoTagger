@@ -13,8 +13,11 @@ class ScreenManager {
     
     var moveUpClosure: EmptyBlock?
     var moveLeftClosure: EmptyBlock?
+    var moveRightClosure: EmptyBlock?
     // true - dismiss SelectObjectVC; false - dismiss any vc
     var dismissClosure: ((Bool) -> Void)?
+    
+    let childWidth: CGFloat = 320
     
     // MARK: CHANGESET
     func openChangeset(parent: UIViewController) {
@@ -219,39 +222,41 @@ class ScreenManager {
         return false
     }
     
-//    func tapTestButton() {
-//        let vc = MainViewController()
-//        let navVC = SheetNavigationController(rootViewController: vc)
-//        let childAnchor = NSLayoutConstraint(item: navVC.view, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1, constant: childWidth)
-//        navVC.view.translatesAutoresizingMaskIntoConstraints = false
-//        navVC.dismissClosure = { [weak navVC, weak self, weak childAnchor] in
-//            UIView.animate(withDuration: 0.2, animations: { [weak self] in
-//                guard let self = self else { return }
-//                self.mapViewTrailingAnchor.constant = 0
-//                childAnchor?.constant = self.childWidth
-//                self.view.layoutIfNeeded()
-//            }, completion: { [weak navVC] _ in
-//                navVC?.willMove(toParent: nil)
-//                navVC?.view.removeFromSuperview()
-//                navVC?.removeFromParent()
-//            })
-//        }
-//        addChild(navVC)
-//        view.addSubview(navVC.view)
-//        navVC.didMove(toParent: self)
-//        NSLayoutConstraint.activate([
-//            navVC.view.topAnchor.constraint(equalTo: view.topAnchor),
-//            childAnchor,
-//            navVC.view.widthAnchor.constraint(equalToConstant: childWidth),
-//            navVC.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-//        ])
-//        view.layoutIfNeeded()
-//        UIView.animate(withDuration: 0.2, animations: { [weak self, weak childAnchor] in
-//            guard let self = self else { return }
-//            childAnchor?.constant = 0
-//            self.mapViewTrailingAnchor.constant = -self.childWidth
-//            self.view.layoutIfNeeded()
-//        })
-//    }
-    
+    func slideViewController(parent: UIViewController) {
+        let vc = MainViewController()
+        let navVC = SheetNavigationController(rootViewController: vc)
+        let childAnchor = NSLayoutConstraint(item: navVC.view, attribute: .trailing, relatedBy: .equal, toItem: parent.view, attribute: .trailing, multiplier: 1, constant: childWidth)
+        navVC.view.translatesAutoresizingMaskIntoConstraints = false
+        navVC.dismissClosure = { [weak navVC, weak self, weak childAnchor, weak parent] in
+            UIView.animate(withDuration: 0.2, animations: { [weak self, weak childAnchor, weak parent] in
+                guard let self = self,
+                      let childAnchor = childAnchor,
+                      let parent = parent else { return }
+                childAnchor.constant = self.childWidth
+                self.moveRightClosure?()
+                parent.view.layoutIfNeeded()
+            }, completion: { [weak navVC] _ in
+                navVC?.willMove(toParent: nil)
+                navVC?.view.removeFromSuperview()
+                navVC?.removeFromParent()
+            })
+        }
+        parent.addChild(navVC)
+        parent.view.addSubview(navVC.view)
+        navVC.didMove(toParent: parent)
+        NSLayoutConstraint.activate([
+            navVC.view.topAnchor.constraint(equalTo: parent.view.topAnchor),
+            childAnchor,
+            navVC.view.widthAnchor.constraint(equalToConstant: childWidth),
+            navVC.view.bottomAnchor.constraint(equalTo: parent.view.bottomAnchor)
+        ])
+        parent.view.layoutIfNeeded()
+        UIView.animate(withDuration: 0.2, animations: { [weak self, weak childAnchor] in
+            guard let self = self else { return }
+            self.moveLeftClosure?()
+            childAnchor?.constant = 0
+            parent.view.layoutIfNeeded()
+        })
+    }
 }
+    
