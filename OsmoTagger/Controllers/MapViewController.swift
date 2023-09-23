@@ -11,7 +11,6 @@ import UIKit
 
 //  RootViewController with mapView
 class MapViewController: UIViewController {
-    
     //  Class for working with MapView. Subsequently, all GLMap entities should be transferred to it.
     let mapClient = MapClient()
     let screenManager = ScreenManager()
@@ -43,20 +42,21 @@ class MapViewController: UIViewController {
     
     override var keyCommands: [UIKeyCommand]? {
         #if targetEnvironment(macCatalyst)
-        let left = UIKeyCommand(input: UIKeyCommand.inputLeftArrow, modifierFlags: [], action: #selector(moveLeft))
-        left.wantsPriorityOverSystemBehavior = true
-        let right = UIKeyCommand(input: UIKeyCommand.inputRightArrow, modifierFlags: [], action: #selector(moveRight))
-        right.wantsPriorityOverSystemBehavior = true
-        let up = UIKeyCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(moveUp))
-        up.wantsPriorityOverSystemBehavior = true
-        let down = UIKeyCommand(input: UIKeyCommand.inputDownArrow, modifierFlags: [], action: #selector(moveDown))
-        down.wantsPriorityOverSystemBehavior = true
-        return [
-            UIKeyCommand(input: "=", modifierFlags: [], action: #selector(tapPlusButton)),
-            UIKeyCommand(input: "-", modifierFlags: [], action: #selector(tapMinusButton)),
-            left, right, up, down ]
+            let left = UIKeyCommand(input: UIKeyCommand.inputLeftArrow, modifierFlags: [], action: #selector(moveLeft))
+            left.wantsPriorityOverSystemBehavior = true
+            let right = UIKeyCommand(input: UIKeyCommand.inputRightArrow, modifierFlags: [], action: #selector(moveRight))
+            right.wantsPriorityOverSystemBehavior = true
+            let up = UIKeyCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(moveUp))
+            up.wantsPriorityOverSystemBehavior = true
+            let down = UIKeyCommand(input: UIKeyCommand.inputDownArrow, modifierFlags: [], action: #selector(moveDown))
+            down.wantsPriorityOverSystemBehavior = true
+            return [
+                UIKeyCommand(input: "=", modifierFlags: [], action: #selector(tapPlusButton)),
+                UIKeyCommand(input: "-", modifierFlags: [], action: #selector(tapMinusButton)),
+                left, right, up, down,
+            ]
         #else
-        return nil
+            return nil
         #endif
     }
     
@@ -93,7 +93,7 @@ class MapViewController: UIViewController {
         setAddNodeButton()
         setDrawButton()
         // The test button in the lower right corner of the screen is often needed during development.
-         setTestButton()
+//         setTestButton()
         
         // Zoom in and zoom out buttons, map rotation button
         setMapZoomButtons()
@@ -111,7 +111,7 @@ class MapViewController: UIViewController {
         setShowVectorObjectClosure()
         mapClient.showSavedObjects()
         #if targetEnvironment(macCatalyst)
-        Alert.showAlert("Use the \"left,\" \"right,\" \"down,\" \"up,\" \"+,\" and \"-\" keys for navigation", isBad: false)
+            Alert.showAlert("Use the \"left,\" \"right,\" \"down,\" \"up,\" \"+,\" and \"-\" keys for navigation", isBad: false)
         #endif
     }
     
@@ -139,7 +139,7 @@ class MapViewController: UIViewController {
             self.mapViewTrailingAnchor.constant = -self.screenManager.childWidth
         }
         screenManager.removeTappedObjectsClosure = { [weak self] in
-            guard let self = self else {return}
+            guard let self = self else { return }
             self.mapView.remove(self.mapClient.tappedDrawble)
         }
     }
@@ -332,7 +332,7 @@ class MapViewController: UIViewController {
             indicator.widthAnchor.constraint(equalToConstant: 20),
             indicator.heightAnchor.constraint(equalToConstant: 20),
             indicator.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            trailingAnchor
+            trailingAnchor,
         ])
         trailingAnchors.append(trailingAnchor)
     }
@@ -343,10 +343,10 @@ class MapViewController: UIViewController {
         view.addSubview(downloadButton)
         let trailingAnchor = NSLayoutConstraint(item: downloadButton, attribute: .trailing, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .trailing, multiplier: 1, constant: -20)
         NSLayoutConstraint.activate([
-             downloadButton.widthAnchor.constraint(equalToConstant: 40),
-             downloadButton.heightAnchor.constraint(equalToConstant: 40),
-             downloadButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
-             trailingAnchor
+            downloadButton.widthAnchor.constraint(equalToConstant: 40),
+            downloadButton.heightAnchor.constraint(equalToConstant: 40),
+            downloadButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
+            trailingAnchor,
         ])
         trailingAnchors.append(trailingAnchor)
     }
@@ -369,10 +369,10 @@ class MapViewController: UIViewController {
         view.addSubview(settingsButton)
         let trailingAnchor = NSLayoutConstraint(item: settingsButton, attribute: .trailing, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .trailing, multiplier: 1, constant: -20)
         NSLayoutConstraint.activate([
-             settingsButton.widthAnchor.constraint(equalToConstant: 40),
-             settingsButton.heightAnchor.constraint(equalToConstant: 40),
-             settingsButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 95),
-             trailingAnchor
+            settingsButton.widthAnchor.constraint(equalToConstant: 40),
+            settingsButton.heightAnchor.constraint(equalToConstant: 40),
+            settingsButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 95),
+            trailingAnchor,
         ])
         trailingAnchors.append(trailingAnchor)
     }
@@ -388,10 +388,10 @@ class MapViewController: UIViewController {
         view.addSubview(locationButton)
         let trailingAnchor = NSLayoutConstraint(item: locationButton, attribute: .trailing, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .trailing, multiplier: 1, constant: -20)
         NSLayoutConstraint.activate([
-             locationButton.widthAnchor.constraint(equalToConstant: 40),
-             locationButton.heightAnchor.constraint(equalToConstant: 40),
-             locationButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 150),
-             trailingAnchor
+            locationButton.widthAnchor.constraint(equalToConstant: 40),
+            locationButton.heightAnchor.constraint(equalToConstant: 40),
+            locationButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 150),
+            trailingAnchor,
         ])
         trailingAnchors.append(trailingAnchor)
     }
@@ -413,10 +413,10 @@ class MapViewController: UIViewController {
         view.addSubview(savedNodesButton)
         let trailingAnchor = NSLayoutConstraint(item: savedNodesButton, attribute: .trailing, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .trailing, multiplier: 1, constant: -20)
         NSLayoutConstraint.activate([
-             savedNodesButton.widthAnchor.constraint(equalToConstant: 40),
-             savedNodesButton.heightAnchor.constraint(equalToConstant: 40),
-             savedNodesButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 205),
-             trailingAnchor
+            savedNodesButton.widthAnchor.constraint(equalToConstant: 40),
+            savedNodesButton.heightAnchor.constraint(equalToConstant: 40),
+            savedNodesButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 205),
+            trailingAnchor,
         ])
         trailingAnchors.append(trailingAnchor)
     }
@@ -447,7 +447,7 @@ class MapViewController: UIViewController {
             drawButton.widthAnchor.constraint(equalToConstant: 40),
             drawButton.heightAnchor.constraint(equalToConstant: 40),
             drawButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 260),
-            trailingAnchor
+            trailingAnchor,
         ])
         trailingAnchors.append(trailingAnchor)
     }
@@ -487,9 +487,9 @@ class MapViewController: UIViewController {
         addNodeButtonTopConstraint = NSLayoutConstraint(item: addNodeButton, attribute: .top, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .top, multiplier: 1, constant: 260)
         let trailingAnchor = NSLayoutConstraint(item: addNodeButton, attribute: .trailing, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .trailing, multiplier: 1, constant: -20)
         NSLayoutConstraint.activate([
-             addNodeButton.widthAnchor.constraint(equalToConstant: 40),
-             addNodeButton.heightAnchor.constraint(equalToConstant: 40),
-             addNodeButtonTopConstraint, trailingAnchor
+            addNodeButton.widthAnchor.constraint(equalToConstant: 40),
+            addNodeButton.heightAnchor.constraint(equalToConstant: 40),
+            addNodeButtonTopConstraint, trailingAnchor,
         ])
         trailingAnchors.append(trailingAnchor)
     }
@@ -528,19 +528,15 @@ class MapViewController: UIViewController {
         view.addSubview(testButton)
         let trailingAnchor = NSLayoutConstraint(item: testButton, attribute: .trailing, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .trailing, multiplier: 1, constant: -20)
         NSLayoutConstraint.activate([
-             testButton.widthAnchor.constraint(equalToConstant: 40),
-             testButton.heightAnchor.constraint(equalToConstant: 40),
-             testButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
-             trailingAnchor
+            testButton.widthAnchor.constraint(equalToConstant: 40),
+            testButton.heightAnchor.constraint(equalToConstant: 40),
+            testButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
+            trailingAnchor,
         ])
         trailingAnchors.append(trailingAnchor)
     }
     
-    @objc func tapTestButton() {
-//        let vc = LogsViewController()
-//        let navVC = SheetNavigationController(rootViewController: vc)
-//        screenManager.slideViewController(parent: self, navVC: navVC)
-    }
+    @objc func tapTestButton() {}
 }
 
 // MARK: MapClientProtocol
@@ -598,12 +594,12 @@ extension MapViewController: UIGestureRecognizerDelegate {
         default:
             // Moves the tapped object to the visible part of the map.
             let centerPoint = mapView.makeGeoPoint(fromDisplay: touchPoint)
-            mapView.animate({ [weak self] animation in
+            mapView.animate { [weak self] animation in
                 guard let self = self else { return }
                 animation.duration = animationDuration
                 animation.transition = .linear
                 self.mapView.mapGeoCenter = centerPoint
-            })
+            }
             screenManager.openSelectObjectVC(parent: self, objects: tapObjects)
         }
     }

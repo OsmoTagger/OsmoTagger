@@ -129,7 +129,7 @@ class Alert: UIView {
                     
                     alert.topAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor),
                     alert.leadingAnchor.constraint(equalTo: window.safeAreaLayoutGuide.leadingAnchor),
-                    alertTrailingAnchor, alertHeightAnchor
+                    alertTrailingAnchor, alertHeightAnchor,
                 ])
                 UIView.animate(withDuration: 0.5, animations: { [weak alert, weak topSafeAreaView, weak leadingSafeAreaView] in
                     alert?.alpha = 1

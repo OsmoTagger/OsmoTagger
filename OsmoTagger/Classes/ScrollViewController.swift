@@ -8,7 +8,6 @@
 import UIKit
 
 class ScrollViewController: SheetViewController {
-    
     let scrollView = UIScrollView()
     
     private var endEditTap = UITapGestureRecognizer()

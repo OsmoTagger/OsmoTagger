@@ -9,7 +9,6 @@ import UIKit
 
 //  The controller of a brief manual for use.
 class QuickGuideViewController: ScrollViewController {
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -109,7 +108,7 @@ class QuickGuideViewController: ScrollViewController {
             label4.leftAnchor.constraint(equalTo: image4.leftAnchor),
             label4.rightAnchor.constraint(equalTo: image4.rightAnchor),
             
-            scrollView.bottomAnchor.constraint(equalTo: label4.bottomAnchor, constant: 20)
+            scrollView.bottomAnchor.constraint(equalTo: label4.bottomAnchor, constant: 20),
         ])
     }
     

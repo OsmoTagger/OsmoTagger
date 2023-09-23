@@ -9,7 +9,6 @@ import UIKit
 
 //  The controller that is called if several objects are detected under the tap to provide a choice.
 class SelectObjectViewController: SheetViewController, UITableViewDelegate, UITableViewDataSource {
-    
     //  Called when the controller is closed, to remove the backlight of the tapped objects.
     var deinitClosure: EmptyBlock?
     
