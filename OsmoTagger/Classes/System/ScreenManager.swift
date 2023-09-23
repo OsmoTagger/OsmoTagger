@@ -121,18 +121,18 @@ class ScreenManager {
         guard let navVC = navController else {return}
         let childAnchor = NSLayoutConstraint(item: navVC.view, attribute: .trailing, relatedBy: .equal, toItem: parent.view, attribute: .trailing, multiplier: 1, constant: childWidth)
         navVC.view.translatesAutoresizingMaskIntoConstraints = false
-        navVC.dismissClosure = { [weak navVC, weak self, weak childAnchor, weak parent] in
+        navVC.tapCloseClosure = { [weak navVC, weak self, weak childAnchor, weak parent] in
             UIView.animate(withDuration: 0.2, animations: { [weak self, weak childAnchor, weak parent] in
                 guard let self = self,
                       let childAnchor = childAnchor,
                       let parent = parent else { return }
+                self.moveRightClosure?()
                 childAnchor.constant = self.childWidth
                 parent.view.layoutIfNeeded()
             }, completion: { [weak self, weak navVC] _ in
                 navVC?.willMove(toParent: nil)
                 navVC?.view.removeFromSuperview()
                 navVC?.removeFromParent()
-                self?.moveRightClosure?()
                 self?.navController = nil
             })
         }
