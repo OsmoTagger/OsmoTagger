@@ -20,7 +20,17 @@ class ScreenManager {
     let childWidth: CGFloat = 320
     
     // MARK: CHANGESET
-    func openChangeset(parent: UIViewController) {
+    func openSavedNodesVC(parent: UIViewController) {
+        if isPad {
+            let vc = SavedNodesViewController()
+            let newChildVC = SheetNavigationController(rootViewController: vc)
+            checkBeforeSlideVC(parent: parent, newChild: newChildVC)
+        } else {
+            checkBeforePresentSavedNodesVC(parent: parent)
+        }
+    }
+    
+    func checkBeforePresentSavedNodesVC(parent: UIViewController) {
         if let viewControllers = navController?.viewControllers {
             // navController != nil
             if viewControllers[0] is SavedNodesViewController {
@@ -34,16 +44,16 @@ class ScreenManager {
                 navController?.dismiss(animated: true, completion: { [weak self, weak parent] in
                     guard let self = self,
                           let parent = parent else { return }
-                    self.goToSAvedNodesVC(parent: parent)
+                    self.presentSavedNodesVC(parent: parent)
                 })
             }
         } else {
             // navController = nil, open new navigation controller
-            goToSAvedNodesVC(parent: parent)
+            presentSavedNodesVC(parent: parent)
         }
     }
     
-    private func goToSAvedNodesVC(parent: UIViewController) {
+    private func presentSavedNodesVC(parent: UIViewController) {
         let savedNodesVC = SavedNodesViewController()
         navController = SheetNavigationController(rootViewController: savedNodesVC)
         navController?.dismissClosure = { [weak self] in
@@ -59,6 +69,16 @@ class ScreenManager {
     
     // MARK: SETTINGS
     func openSettings(parent: UIViewController) {
+        if isPad {
+            let vc = MainViewController()
+            let newChildVC = SheetNavigationController(rootViewController: vc)
+            checkBeforeSlideVC(parent: parent, newChild: newChildVC)
+        } else {
+            presentSettingsVC(parent: parent)
+        }
+    }
+        
+    private func presentSettingsVC(parent: UIViewController) {
         if navController != nil {
             navController?.dismiss(animated: true) { [weak self, weak parent] in
                 guard let self = self,
@@ -86,7 +106,30 @@ class ScreenManager {
     }
     
     // MARK: SELECT OBJECT VC
-    func openObjects(parent: UIViewController, objects: [OSMAnyObject]) {
+    func openSelectObjectVC(parent: UIViewController, objects: [OSMAnyObject]) {
+        if isPad {
+            if let navVC = parent.children.first as? SheetNavigationController,
+               let selectVC = navVC.viewControllers.first as? SelectObjectViewController {
+                selectVC.objects = objects
+                selectVC.fillData()
+                if navVC.viewControllers.count == 1 {
+                    selectVC.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+                } else {
+                    navVC.setViewControllers([navVC.viewControllers[0]], animated: true, completion: {
+                        selectVC.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+                    })
+                }
+            } else {
+                let vc = SelectObjectViewController(objects: objects)
+                let newChild = SheetNavigationController(rootViewController: vc)
+                checkBeforeSlideVC(parent: parent, newChild: newChild)
+            }
+        } else {
+            checkBeforePresentSelectObjectVC(parent: parent, objects: objects)
+        }
+    }
+    
+    private func checkBeforePresentSelectObjectVC(parent: UIViewController, objects: [OSMAnyObject]) {
         if let viewControllers = navController?.viewControllers {
             // navController != nil
             if let selectVC = viewControllers[0] as? SelectObjectViewController {
@@ -102,16 +145,16 @@ class ScreenManager {
             } else {
                 navController?.dismiss(animated: true, completion: { [weak self] in
                     guard let self = self else { return }
-                    self.goToSelectVC(parent: parent, objects: objects)
+                    self.presenSelectObgectVC(parent: parent, objects: objects)
                 })
             }
         } else {
             // navController = nil, open new
-            goToSelectVC(parent: parent, objects: objects)
+            presenSelectObgectVC(parent: parent, objects: objects)
         }
     }
     
-    private func goToSelectVC(parent: UIViewController, objects: [OSMAnyObject]) {
+    private func presenSelectObgectVC(parent: UIViewController, objects: [OSMAnyObject]) {
         let selectVC = SelectObjectViewController(objects: objects)
         navController = SheetNavigationController(rootViewController: selectVC)
         navController?.dismissClosure = { [weak self] in
@@ -126,7 +169,17 @@ class ScreenManager {
     }
     
     // MARK: EDIT OBJECT VC
-    func openObject(parent: UIViewController, object: OSMAnyObject) {
+    func editObject(parent: UIViewController, object: OSMAnyObject) {
+        if isPad {
+            let vc = EditObjectViewController(object: object)
+            let newChild = SheetNavigationController(rootViewController: vc)
+            checkBeforeSlideVC(parent: parent, newChild: newChild)
+        } else {
+            checkBeforePresentEditObjectVC(parent: parent, object: object)
+        }
+    }
+    
+    private func checkBeforePresentEditObjectVC(parent: UIViewController, object: OSMAnyObject) {
         if let viewControllers = navController?.viewControllers {
             // navController != nil
             if let selectVC = viewControllers[0] as? SelectObjectViewController {
@@ -222,9 +275,21 @@ class ScreenManager {
         return false
     }
     
-    func slideViewController(parent: UIViewController) {
-        let vc = MainViewController()
-        let navVC = SheetNavigationController(rootViewController: vc)
+    // MARK: SLIDE VC
+    
+    private func checkBeforeSlideVC(parent: UIViewController, newChild: SheetNavigationController) {
+        if parent.children.count == 0 {
+            slideViewController(parent: parent, navVC: newChild)
+        } else {
+            let oldChild = parent.children.first!
+            oldChild.willMove(toParent: nil)
+            oldChild.view.removeFromSuperview()
+            oldChild.removeFromParent()
+            slideViewController(parent: parent, navVC: newChild)
+        }
+    }
+    
+    func slideViewController(parent: UIViewController, navVC: SheetNavigationController) {
         let childAnchor = NSLayoutConstraint(item: navVC.view, attribute: .trailing, relatedBy: .equal, toItem: parent.view, attribute: .trailing, multiplier: 1, constant: childWidth)
         navVC.view.translatesAutoresizingMaskIntoConstraints = false
         navVC.dismissClosure = { [weak navVC, weak self, weak childAnchor, weak parent] in

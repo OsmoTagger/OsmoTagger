@@ -368,7 +368,7 @@ class MapViewController: UIViewController {
             Alert.showAlert("Changeset is empty")
             return
         }
-        screenManager.openChangeset(parent: self)
+        screenManager.openSavedNodesVC(parent: self)
     }
         
     func setDrawButton() {
@@ -448,7 +448,7 @@ class MapViewController: UIViewController {
         let id = AppSettings.settings.nextID
         point.setValue(String(id), forKey: "@id")
         let object = OSMAnyObject(type: .node, id: id, version: 0, changeset: 0, lat: geoPoint.lat, lon: geoPoint.lon, tag: [], nd: [], nodes: [:], members: [], vector: point)
-        screenManager.openObject(parent: self, object: object)
+        screenManager.editObject(parent: self, object: object)
     }
     
     //  Test button and its target for debugging convenience.
@@ -466,7 +466,9 @@ class MapViewController: UIViewController {
     }
     
     @objc func tapTestButton() {
-        screenManager.slideViewController(parent: self)
+        let vc = LogsViewController()
+        let navVC = SheetNavigationController(rootViewController: vc)
+        screenManager.slideViewController(parent: self, navVC: navVC)
     }
 }
 
@@ -520,7 +522,7 @@ extension MapViewController: UIGestureRecognizerDelegate {
             return
         case 1:
             if let first = tapObjects.first {
-                screenManager.openObject(parent: self, object: first)
+                screenManager.editObject(parent: self, object: first)
             }
         default:
             // Moves the tapped object to the visible part of the map.
@@ -531,7 +533,7 @@ extension MapViewController: UIGestureRecognizerDelegate {
                 animation.transition = .linear
                 self.mapView.mapGeoCenter = centerPoint
             })
-            screenManager.openObjects(parent: self, objects: tapObjects)
+            screenManager.openSelectObjectVC(parent: self, objects: tapObjects)
         }
     }
 }
