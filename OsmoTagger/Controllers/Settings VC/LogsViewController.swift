@@ -96,4 +96,11 @@ extension LogsViewController: UITableViewDelegate, UITableViewDataSource {
         cell.configure(log)
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let log = AppSettings.settings.logs[indexPath.row]
+        let pasteboard = UIPasteboard.general
+        pasteboard.string = log
+        Alert.showAlert("Value copied", isBad: false)
+    }
 }
