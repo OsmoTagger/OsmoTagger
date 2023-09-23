@@ -107,6 +107,15 @@ class Alert: UIView {
                 window.addSubview(topSafeAreaView)
                 window.addSubview(leadingSafeAreaView)
                 window.addSubview(alert)
+                let alertTrailingAnchor: NSLayoutConstraint
+                let alertHeightAnchor: NSLayoutConstraint
+                if isPad {
+                    alertTrailingAnchor = NSLayoutConstraint(item: alert, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 400)
+                    alertHeightAnchor = NSLayoutConstraint(item: alert, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 100)
+                } else {
+                    alertTrailingAnchor = NSLayoutConstraint(item: alert, attribute: .trailing, relatedBy: .equal, toItem: window, attribute: .trailing, multiplier: 1, constant: 0)
+                    alertHeightAnchor = NSLayoutConstraint(item: alert, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 40)
+                }
                 NSLayoutConstraint.activate([
                     leadingSafeAreaView.leadingAnchor.constraint(equalTo: window.leadingAnchor),
                     leadingSafeAreaView.topAnchor.constraint(equalTo: window.topAnchor),
@@ -119,9 +128,8 @@ class Alert: UIView {
                     topSafeAreaView.bottomAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor),
                     
                     alert.topAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor),
-                    alert.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
                     alert.leadingAnchor.constraint(equalTo: window.safeAreaLayoutGuide.leadingAnchor),
-                    alert.trailingAnchor.constraint(equalTo: window.trailingAnchor),
+                    alertTrailingAnchor, alertHeightAnchor
                 ])
                 UIView.animate(withDuration: 0.5, animations: { [weak alert, weak topSafeAreaView, weak leadingSafeAreaView] in
                     alert?.alpha = 1
