@@ -31,7 +31,7 @@ class StretchableCell: UITableViewCell {
         NSLayoutConstraint.activate([
             label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: spacing),
             label.topAnchor.constraint(equalTo: contentView.topAnchor, constant: spacing),
-            label.trailingAnchor.constraint(greaterThanOrEqualTo: contentView.trailingAnchor, constant: -spacing),
+            label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -spacing),
             label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -spacing),
             label.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
         ])
