@@ -406,7 +406,11 @@ class SavedNodesViewController: SheetViewController, UITableViewDelegate, UITabl
                 }
                 Alert.showAlert("Changes have been sent successfully", isBad: false)
                 if AppSettings.settings.savedObjects.count == 0 && AppSettings.settings.deletedObjects.count == 0 {
-                    self.dismiss(animated: true)
+                    if let navVC = navigationController as? SheetNavigationController, isPad {
+                        navVC.tapCloseClosure?()
+                    } else {
+                        self.dismiss(animated: true)
+                    }
                 }
             } catch {
                 let message = error as? String ?? "Data sending error"
