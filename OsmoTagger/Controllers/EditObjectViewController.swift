@@ -13,11 +13,7 @@ class EditObjectViewController: SheetViewController {
     //  Called when the object is completely deleted from the server. Used only on SavedNodesVC.
     var deleteObjectClosure: ((Int) -> Void)?
     
-    var object: OSMAnyObject {
-        didSet {
-            AppSettings.settings.editableObject = object.vector
-        }
-    }
+    var object: OSMAnyObject
 
     var newProperties: [String: String] = [:] {
         didSet {
@@ -44,7 +40,6 @@ class EditObjectViewController: SheetViewController {
         super.init()
         fillNewProperties()
         fillData()
-        AppSettings.settings.editableObject = object.vector
     }
     
     deinit {
@@ -63,6 +58,13 @@ class EditObjectViewController: SheetViewController {
         // If the point is newly created and no tags are specified, the preset selection controller is called.
         if object.tag.count == 0 {
             tapTitleButton()
+        }
+        
+        // If we open EditObjectVC when EditObjectVC was previously open, then upon its deinitialization, the edited object will be reset to nil. To achieve this, we perform a delayed check and update it
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+            if AppSettings.settings.editableObject == nil {
+                AppSettings.settings.editableObject = self?.object.vector
+            }
         }
         
         setRightBarItems()
@@ -376,6 +378,7 @@ class EditObjectViewController: SheetViewController {
         fillData()
         setToolBar()
         tableView.reloadData()
+        AppSettings.settings.editableObject = newObject.vector
     }
     
     @objc func tapDiscard() {

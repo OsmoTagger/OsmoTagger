@@ -97,20 +97,24 @@ class MapViewController: UIViewController {
             guard let self = self else { return }
             self.runOpenAnimation()
         }
-        screenManager.dismissClosure = { [weak self] isSelectedObjectVC in
+        screenManager.moveDownClosure = { [weak self] in
             guard let self = self else { return }
-            if isSelectedObjectVC {
-                self.mapView.remove(self.mapClient.tappedDrawble)
-            }
             self.runCloseAnimation()
+        }
+        screenManager.moveRightClosure = { [weak self] in
+            guard let self = self else { return }
+            self.mapViewTrailingAnchor.constant = 0
+            UIView.animate(withDuration: 0.2, animations: { [weak self] in
+                self?.view.layoutIfNeeded()
+            })
         }
         screenManager.moveLeftClosure = { [weak self] in
             guard let self = self else { return }
             self.mapViewTrailingAnchor.constant = -self.screenManager.childWidth
         }
-        screenManager.moveRightClosure = { [weak self] in
-            guard let self = self else { return }
-            self.mapViewTrailingAnchor.constant = 0
+        screenManager.removeTappedObjectsClosure = { [weak self] in
+            guard let self = self else {return}
+            self.mapView.remove(self.mapClient.tappedDrawble)
         }
     }
     
@@ -466,9 +470,9 @@ class MapViewController: UIViewController {
     }
     
     @objc func tapTestButton() {
-        let vc = LogsViewController()
-        let navVC = SheetNavigationController(rootViewController: vc)
-        screenManager.slideViewController(parent: self, navVC: navVC)
+//        let vc = LogsViewController()
+//        let navVC = SheetNavigationController(rootViewController: vc)
+//        screenManager.slideViewController(parent: self, navVC: navVC)
     }
 }
 

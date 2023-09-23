@@ -53,9 +53,7 @@ final class AppSettings: NSObject {
     // When opening EditObjectVC, a vector object is written, and through a variable is passed to mapClient, which adds and deletes the object
     var editableObject: GLMapVectorObject? {
         didSet {
-            if let closure = showVectorObjectClosure {
-                closure(editableObject)
-            }
+            showVectorObjectClosure?(editableObject)
         }
     }
     
@@ -78,7 +76,7 @@ final class AppSettings: NSObject {
             }
         }
         set {
-            let newBbox = newValue ?? GLMapBBox(origin: GLMapPoint(x: 0, y: 0), size: GLMapPoint(x: 0, y: 0))
+            let newBbox = newValue ?? GLMapBBox.empty
             UserDefaults.standard.set(newBbox.origin.x, forKey: "bboxOrX")
             UserDefaults.standard.set(newBbox.origin.y, forKey: "bboxOrY")
             UserDefaults.standard.set(newBbox.size.x, forKey: "bboxSizeX")

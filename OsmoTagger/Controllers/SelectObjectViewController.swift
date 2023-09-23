@@ -9,10 +9,9 @@ import UIKit
 
 //  The controller that is called if several objects are detected under the tap to provide a choice.
 class SelectObjectViewController: SheetViewController, UITableViewDelegate, UITableViewDataSource {
-    weak var delegate: UpdateSourceDataProtocol?
     
     //  Called when the controller is closed, to remove the backlight of the tapped objects.
-    var callbackClosure: EmptyBlock?
+    var deinitClosure: EmptyBlock?
     
     var objects: [OSMAnyObject]
     
@@ -30,6 +29,10 @@ class SelectObjectViewController: SheetViewController, UITableViewDelegate, UITa
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        deinitClosure?()
+    }
+    
     override func viewDidLoad() {
         fillData()
         setTableView()
@@ -37,11 +40,6 @@ class SelectObjectViewController: SheetViewController, UITableViewDelegate, UITa
     
     override func viewWillAppear(_: Bool) {
         navigationController?.setToolbarHidden(true, animated: true)
-    }
-    
-    override func viewDidDisappear(_: Bool) {
-        guard let clouser = callbackClosure else { return }
-        clouser()
     }
     
     func fillData() {
