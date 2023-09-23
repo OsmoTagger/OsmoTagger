@@ -111,7 +111,7 @@ class MapViewController: UIViewController {
         setShowVectorObjectClosure()
         mapClient.showSavedObjects()
         #if targetEnvironment(macCatalyst)
-            Alert.showAlert("Use the \"left,\" \"right,\" \"down,\" \"up,\" \"+,\" and \"-\" keys for navigation", isBad: false)
+            Alert.showAlert("Use the left, right, down, up, +, and - keys for navigation", isBad: false)
         #endif
     }
     
