@@ -21,8 +21,6 @@ class EditObjectViewController: SheetViewController {
         }
     }
     
-    //  A variable necessary for a quick transition to the desired category if the preset of the object is defined. It is not reset to zero, even if you delete the preset tags, all the same, when tapping on the titleView, the transition is made to the last category.
-    var titlePath: ItemPath?
     //  A variable that is equal to the path of the defined preset. It is reset to zero if the tags are deleted and the preset is not defined. It is necessary to highlight the active preset when switching to CategoryVC to select a new preset.
     var activePath: ItemPath?
     
@@ -294,7 +292,7 @@ class EditObjectViewController: SheetViewController {
             navigationItem.titleView = nil
             return
         }
-        titlePath = path
+        
         let titleView = EditTitleView()
         titleView.icon.image = UIImage(named: iconName)
         titleView.label.text = item.name
@@ -319,7 +317,7 @@ class EditObjectViewController: SheetViewController {
             self.fillData()
             self.tableView.reloadData()
         }
-        if let path = titlePath {
+        if let path = activePath {
             let vc0 = CategoryViewController(categoryName: nil, groupName: nil, lastPreset: activePath, elementType: object.type)
             navVC.viewControllers.append(vc0)
             let vc1 = CategoryViewController(categoryName: path.category, groupName: nil, lastPreset: activePath, elementType: object.type)
