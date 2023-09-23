@@ -33,8 +33,7 @@ class SheetViewController: UIViewController {
     }
     
     @objc private func tapCloseButton() {
-        if isPad {
-            guard let sheetNavVC = navigationController as? SheetNavigationController else {return}
+        if isPad, let sheetNavVC = navigationController as? SheetNavigationController {
             sheetNavVC.dismissClosure?()
         } else {
             navigationController?.dismiss(animated: true)
