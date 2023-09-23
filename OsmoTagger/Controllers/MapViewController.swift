@@ -38,7 +38,26 @@ class MapViewController: UIViewController {
     //  Displays the object that was tapped and whose properties are currently being edited (yellow).
     var editDrawble = GLMapVectorLayer(drawOrder: 4)
     
-    let animationDuration = 0.3
+    private let animationDuration = 0.3
+    
+    override var keyCommands: [UIKeyCommand]? {
+        #if targetEnvironment(macCatalyst)
+        let left = UIKeyCommand(input: UIKeyCommand.inputLeftArrow, modifierFlags: [], action: #selector(moveLeft))
+        left.wantsPriorityOverSystemBehavior = true
+        let right = UIKeyCommand(input: UIKeyCommand.inputRightArrow, modifierFlags: [], action: #selector(moveRight))
+        right.wantsPriorityOverSystemBehavior = true
+        let up = UIKeyCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(moveUp))
+        up.wantsPriorityOverSystemBehavior = true
+        let down = UIKeyCommand(input: UIKeyCommand.inputDownArrow, modifierFlags: [], action: #selector(moveDown))
+        down.wantsPriorityOverSystemBehavior = true
+        return [
+            UIKeyCommand(input: "=", modifierFlags: [], action: #selector(tapPlusButton)),
+            UIKeyCommand(input: "-", modifierFlags: [], action: #selector(tapMinusButton)),
+            left, right, up, down ]
+        #else
+        return nil
+        #endif
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -90,6 +109,9 @@ class MapViewController: UIViewController {
         // When this closure is called, the object is added to the map and the zoom is adjusted
         setShowVectorObjectClosure()
         mapClient.showSavedObjects()
+        #if targetEnvironment(macCatalyst)
+        Alert.showAlert("Use the \"left,\" \"right,\" \"down,\" \"up,\" \"+,\" and \"-\" keys for navigation", isBad: false)
+        #endif
     }
     
     private func setScreenManagerClosures() {
@@ -266,6 +288,32 @@ class MapViewController: UIViewController {
             guard let self = self else { return }
             animation.duration = animationDuration
             self.mapView.mapAngle = 0
+        }
+    }
+    
+    @objc private func moveLeft() {
+        moveMap(CGPoint(x: 40, y: 0))
+    }
+    
+    @objc private func moveRight() {
+        moveMap(CGPoint(x: -40, y: 0))
+    }
+    
+    @objc private func moveUp() {
+        moveMap(CGPoint(x: 0, y: 40))
+    }
+    
+    @objc private func moveDown() {
+        moveMap(CGPoint(x: 0, y: -40))
+    }
+    
+    private func moveMap(_ delta: CGPoint) {
+        var center = mapView.makeDisplayPoint(from: mapView.mapCenter)
+        center.x -= delta.x
+        center.y -= delta.y
+        mapView.animate { anim in
+            anim.transition = .easeOut
+            mapView.mapCenter = mapView.makeMapPoint(fromDisplay: center)
         }
     }
     
