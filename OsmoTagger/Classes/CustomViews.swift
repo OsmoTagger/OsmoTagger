@@ -355,6 +355,7 @@ class AddTagManuallyView: UIView {
         addSubview(valueField)
         addSubview(toolbar)
         addSubview(messageLabel)
+        let labelMinHeight: CGFloat = isPad ? 80: 40
         NSLayoutConstraint.activate([
             toolbar.bottomAnchor.constraint(equalTo: bottomAnchor),
             toolbar.leftAnchor.constraint(equalTo: leftAnchor),
@@ -363,9 +364,11 @@ class AddTagManuallyView: UIView {
             keyField.leftAnchor.constraint(equalTo: leftAnchor, constant: 15),
             keyField.rightAnchor.constraint(equalTo: rightAnchor, constant: -15),
             keyField.bottomAnchor.constraint(equalTo: valueField.topAnchor, constant: -20),
+            keyField.heightAnchor.constraint(greaterThanOrEqualToConstant: labelMinHeight),
             valueField.leftAnchor.constraint(equalTo: leftAnchor, constant: 15),
             valueField.rightAnchor.constraint(equalTo: rightAnchor, constant: -15),
             valueField.bottomAnchor.constraint(equalTo: toolbar.topAnchor, constant: -20),
+            valueField.heightAnchor.constraint(greaterThanOrEqualToConstant: labelMinHeight),
             messageLabel.bottomAnchor.constraint(equalTo: keyField.topAnchor, constant: -20),
             messageLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 15),
             messageLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -15),
