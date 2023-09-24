@@ -156,8 +156,12 @@ class Alert: UIView {
     
     static func showAction(parent: UIViewController, message: String, addAlerts: [UIAlertAction]) {
         let alert = UIAlertController(title: "", message: message, preferredStyle: .actionSheet)
-        for action in addAlerts {
-            alert.addAction(action)
+        if addAlerts.isEmpty {
+            alert.addAction(UIAlertAction(title: "Ok", style: .default))
+        } else {
+            for action in addAlerts {
+                alert.addAction(action)
+            }
         }
         DispatchQueue.main.async {
             parent.present(alert, animated: true)

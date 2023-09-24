@@ -85,7 +85,6 @@ class ItemTagsViewController: SheetViewController {
         }
         addViewBottomConstraint = NSLayoutConstraint(item: addTagView, attribute: .bottom, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .bottom, multiplier: 1, constant: 0)
         addTagView.isHidden = true
-        addTagView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(addTagView)
         NSLayoutConstraint.activate([
             addTagView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),

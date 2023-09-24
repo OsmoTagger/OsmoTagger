@@ -348,6 +348,7 @@ class AddTagManuallyView: UIView {
         setupConstrains()
         backgroundColor = .systemBackground
         alpha = 0.95
+        translatesAutoresizingMaskIntoConstraints = false
     }
     
     func setupConstrains() {

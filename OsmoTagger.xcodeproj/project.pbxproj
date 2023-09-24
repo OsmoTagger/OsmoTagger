@@ -51,6 +51,7 @@
 		E3021DB82A909249000E789A /* SheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3021DB72A909249000E789A /* SheetViewController.swift */; };
 		E336A0C82ABFCD93003E8890 /* EditCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E336A0C72ABFCD93003E8890 /* EditCell.swift */; };
 		E336A0CA2ABFDB72003E8890 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E336A0C92ABFDB72003E8890 /* UIColor.swift */; };
+		E336A0CC2AC03D4B003E8890 /* EnterTagViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E336A0CB2AC03D4B003E8890 /* EnterTagViewController.swift */; };
 		E3373F4A2ABBA47C0055B329 /* defaultPresets.xml in Sources */ = {isa = PBXBuildFile; fileRef = E36A67DA2ABB8B3900824794 /* defaultPresets.xml */; };
 		E3373F4B2ABBA5110055B329 /* defaultPresets.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = E36A67DA2ABB8B3900824794 /* defaultPresets.xml */; };
 		E33A71AA2AB9E75D009D9508 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33A71A92AB9E75D009D9508 /* Alert.swift */; };
@@ -168,6 +169,7 @@
 		E3021DB72A909249000E789A /* SheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetViewController.swift; sourceTree = "<group>"; };
 		E336A0C72ABFCD93003E8890 /* EditCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCell.swift; sourceTree = "<group>"; };
 		E336A0C92ABFDB72003E8890 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
+		E336A0CB2AC03D4B003E8890 /* EnterTagViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterTagViewController.swift; sourceTree = "<group>"; };
 		E33A71A92AB9E75D009D9508 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
 		E33A71CB2ABA3580009D9508 /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		E34E4AE02A981ECD00D65A92 /* Presets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Presets.swift; sourceTree = "<group>"; };
@@ -278,6 +280,7 @@
 				2CCB304129D4553100C8E5E7 /* SelectObjectViewController.swift */,
 				2CD4B48329C6DC2B00040018 /* CategoryViewController.swift */,
 				2CD4B48529C7475100040018 /* ItemTagsViewController.swift */,
+				E336A0CB2AC03D4B003E8890 /* EnterTagViewController.swift */,
 				2C58545829DBFC3200401786 /* Settings VC */,
 			);
 			path = Controllers;
@@ -608,6 +611,7 @@
 				2C4EEE822986154300F9AAF9 /* UIViewController.swift in Sources */,
 				2042BCEB289C696E0026514E /* AppDelegate.swift in Sources */,
 				2C2F972829D53DB200A994C8 /* UpdateSourceDataProtocol.swift in Sources */,
+				E336A0CC2AC03D4B003E8890 /* EnterTagViewController.swift in Sources */,
 				E3540B072A71B1DB00649564 /* Buttons.swift in Sources */,
 				6CF5D93928FB485F001D2758 /* osmium.mm in Sources */,
 				6C8B011128FC030B00C9238D /* export_handler.cpp in Sources */,
