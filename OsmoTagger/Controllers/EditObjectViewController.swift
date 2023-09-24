@@ -161,7 +161,7 @@ class EditObjectViewController: SheetViewController {
             // If id > 0, then the previously created object is being edited. If the new tags differ from the original ones, the object is stored in memory, if they are equal, then it is deleted from memory, because there are no changes.
             if NSDictionary(dictionary: object.oldTags).isEqual(to: newProperties) || newProperties.count == 0 || AppSettings.settings.deletedObjects[object.id] != nil {
                 AppSettings.settings.savedObjects.removeValue(forKey: object.id)
-            } else if !NSDictionary(dictionary: object.oldTags).isEqual(to: newProperties) && newProperties.count > 0 && AppSettings.settings.deletedObjects[object.id] != nil {
+            } else if !NSDictionary(dictionary: object.oldTags).isEqual(to: newProperties) && newProperties.count > 0 && AppSettings.settings.deletedObjects[object.id] == nil {
                 var newObject = object
                 let tags = generateTags(properties: newProperties)
                 newObject.tag = tags
