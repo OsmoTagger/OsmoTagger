@@ -9,11 +9,34 @@ import Foundation
 import XMLCoder
 
 //  Stores the path to the preset for a quick transition to it
-struct ItemPath: Codable, Equatable {
+struct ItemPath: Codable, Equatable, Hashable, Comparable {
     var category: String
     var group: String?
     var item: String
+    
+    // Реализуем метод для сравнения экземпляров ItemPath
+    static func < (lhs: ItemPath, rhs: ItemPath) -> Bool {
+        // Сначала сравниваем по category
+        if lhs.category != rhs.category {
+            return lhs.category < rhs.category
+        }
+        
+        // Затем по group (если есть)
+        if let lhsGroup = lhs.group, let rhsGroup = rhs.group {
+            if lhsGroup != rhsGroup {
+                return lhsGroup < rhsGroup
+            }
+        } else if lhs.group != nil {
+            return true // lhs имеет group, а rhs нет
+        } else if rhs.group != nil {
+            return false // rhs имеет group, а lhs нет
+        }
+        
+        // Наконец, сравниваем по item
+        return lhs.item < rhs.item
+    }
 }
+
 
 //  The whole preset. The updateItem method is called when parsing a file to fill presets with elements (tags)
 struct Presets: Codable {
@@ -131,6 +154,7 @@ enum ItemElements: Codable, Hashable {
     case presetLink(presetName: String)
     case multiselect(key: String, values: [String], text: String)
     case label(text: String)
+    case item(path: ItemPath)
 }
 
 //  Directly preset

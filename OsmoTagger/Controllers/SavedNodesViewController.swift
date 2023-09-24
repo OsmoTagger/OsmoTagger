@@ -50,12 +50,12 @@ class SavedNodesViewController: SheetViewController, UITableViewDelegate, UITabl
     }
     
     override func viewWillAppear(_: Bool) {
+        navigationController?.setToolbarHidden(false, animated: false)
         fillData()
         tableView.reloadData()
     }
     
     func createToolBar() {
-        navigationController?.setToolbarHidden(false, animated: false)
         let checkAll = UIImageView(image: UIImage(systemName: "checkmark.square"))
         let checkAllTap = UITapGestureRecognizer(target: self, action: #selector(tapCheckAll))
         checkAll.addGestureRecognizer(checkAllTap)

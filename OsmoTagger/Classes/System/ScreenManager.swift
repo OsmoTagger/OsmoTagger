@@ -76,13 +76,6 @@ class ScreenManager {
            let _ = viewControllers[0] as? EditObjectViewController
         {
             for controller in viewControllers {
-                if let infoVC = controller as? InfoObjectViewController {
-                    infoVC.object = object
-                    infoVC.fillData()
-                    infoVC.tableView.reloadData()
-                }
-            }
-            for controller in viewControllers {
                 if let editVC = controller as? EditObjectViewController {
                     editVC.updateViewController(newObject: object)
                 }

@@ -482,7 +482,7 @@ extension ItemTagsViewController: UITableViewDataSource, UITableViewDelegate {
         var tagKey: String?
         let data = item.elements[indexPath.row]
         switch data {
-        case .link(_), .label(_), .presetLink(_), .reference:
+        case .link(_), .label(_), .presetLink(_), .reference, .item(_):
             return nil
         case let .key(key, _):
             tagKey = key
