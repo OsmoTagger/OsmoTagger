@@ -409,6 +409,21 @@ class AddTagManuallyView: UIView {
         }
         addTagView.keyField.text = key
         addTagView.valueField.text = value
+        #if targetEnvironment(macCatalyst)
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let topViewController = scene.windows.first?.rootViewController else {return}
+        var curVC = topViewController
+        while let presentedViewController = curVC.presentedViewController {
+            curVC = presentedViewController
+        }
+        curVC.view.addSubview(addTagView)
+        NSLayoutConstraint.activate([
+            addTagView.leadingAnchor.constraint(equalTo: curVC.view.leadingAnchor),
+            addTagView.topAnchor.constraint(equalTo: curVC.view.topAnchor),
+            addTagView.trailingAnchor.constraint(equalTo: curVC.view.trailingAnchor),
+            addTagView.bottomAnchor.constraint(equalTo: curVC.view.bottomAnchor)
+        ])
+        #else
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first else {return}
         window.addSubview(addTagView)
@@ -420,6 +435,7 @@ class AddTagManuallyView: UIView {
             addTagView.trailingAnchor.constraint(equalTo: window.trailingAnchor),
             constraint
         ])
+        #endif
     }
 }
 
