@@ -96,7 +96,7 @@ class EditObjectViewController: SheetViewController {
             case "Select preset":
                 self.showAllPresets()
             case "Add tag manually":
-                self.enterTag(key: nil, value: nil)
+                self.addNewTag()
             case "Discard changes":
                 self.tapDiscard()
             case "Delete object":
@@ -330,26 +330,12 @@ class EditObjectViewController: SheetViewController {
         self.tableView.reloadData()
     }
     
-    @objc private func enterTag(key: String?, value: String?) {
-        if isPad {
-            let vc = EnterTagViewController(key: key, value: value)
-            let navVC = CategoryNavigationController(rootViewController: vc)
-            navVC.callbackClosure = { [weak self] tag in
-                self?.newProperties.merge(tag, uniquingKeysWith: { _, new in new })
-                self?.fillData()
-                self?.tableView.reloadData()
-            }
-            present(navVC, animated: true)
-        } else {
-            addTagView.keyField.text = key
-            addTagView.valueField.text = value
-            addTagView.isHidden = false
-            if key == nil {
-                addTagView.keyField.becomeFirstResponder()
-            } else {
-                addTagView.valueField.becomeFirstResponder()
-            }
-        }
+    @objc private func addNewTag() {
+        addTagView.keyField.text = nil
+        addTagView.keyField.isUserInteractionEnabled = true
+        addTagView.valueField.text = nil
+        addTagView.isHidden = false
+        addTagView.keyField.becomeFirstResponder()
     }
     
     // Generating an array of tags [Tag] from a dictionary with tags.
@@ -399,6 +385,7 @@ class EditObjectViewController: SheetViewController {
         }
         addViewBottomConstraint = NSLayoutConstraint(item: addTagView, attribute: .bottom, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .bottom, multiplier: 1, constant: 0)
         addTagView.isHidden = true
+        addTagView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(addTagView)
         NSLayoutConstraint.activate([
             addTagView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -449,7 +436,11 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
         let data = tableData[indexPath.section].items[indexPath.row]
         switch data {
         case let .key(key, value):
-            enterTag(key: key, value: value)
+            addTagView.keyField.text = key
+            addTagView.keyField.isUserInteractionEnabled = true
+            addTagView.valueField.text = value
+            addTagView.isHidden = false
+            addTagView.valueField.becomeFirstResponder()
         case let .item(path):
             guard let item = PresetClient().getItemFromPath(path: path) else { return }
             let itemVC = ItemTagsViewController(item: item)
