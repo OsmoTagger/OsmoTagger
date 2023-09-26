@@ -26,12 +26,10 @@ class EditObjectViewController: SheetViewController {
 
     var tableView = UITableView()
     var cellId = "cell"
-
-    //  The view that is displayed when manually entering text.
-    var addTagView = AddTagManuallyView()
-    var addViewBottomConstraint = NSLayoutConstraint()
     
     var iconTypeBar = UIBarButtonItem()
+    
+    var addTagCallback: TagBlock?
     
     init(object: OSMAnyObject) {
         self.object = object
@@ -65,26 +63,36 @@ class EditObjectViewController: SheetViewController {
             }
         }
         
+        addTagCallback = { [weak self] addedTag in
+            guard let self = self else { return }
+            self.view.endEditing(true)
+            for (key, value) in addedTag {
+                if key == "" || value == "" {
+                    let text = """
+                    Key or value cannot be empty!
+                    Key = "\(key)"
+                    Value = "\(value)"
+                    """
+                    self.showAction(message: text, addAlerts: [])
+                    return
+                }
+            }
+            self.newProperties.merge(addedTag, uniquingKeysWith: { _, new in new })
+            self.fillData()
+            self.tableView.reloadData()
+        }
+        
         setIconType()
         setMenuButton()
         setTableView()
-        setEnterTagManuallyView()
     }
     
     override func viewWillAppear(_: Bool) {
         navigationController?.setToolbarHidden(true, animated: true)
-        // Notifications about calling and hiding the keyboard.
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     override func viewDidAppear(_: Bool) {
         AppSettings.settings.editableObject = object.vector
-    }
-    
-    override func viewDidDisappear(_: Bool) {
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     private func setMenuButton() {
@@ -184,7 +192,7 @@ class EditObjectViewController: SheetViewController {
     func fillData() {
         tableData = []
         // We define a list of presets that fall under the object tags and use the first one in the array.
-        var pathes = PresetClient().getItemsFromTags(properties: newProperties)
+        let pathes = PresetClient().getItemsFromTags(properties: newProperties)
         if pathes.count > 0 {
             // If presets are detected.
             var presetsSet: Set<ItemPath> = []
@@ -331,11 +339,8 @@ class EditObjectViewController: SheetViewController {
     }
     
     @objc private func addNewTag() {
-        addTagView.keyField.text = nil
-        addTagView.keyField.isUserInteractionEnabled = true
-        addTagView.valueField.text = nil
-        addTagView.isHidden = false
-        addTagView.keyField.becomeFirstResponder()
+        guard let callback = addTagCallback else {return}
+        AddTagManuallyView.showAddTagView(key: nil, value: nil, callback: callback)
     }
     
     // Generating an array of tags [Tag] from a dictionary with tags.
@@ -362,51 +367,6 @@ class EditObjectViewController: SheetViewController {
                                      tableView.leftAnchor.constraint(equalTo: view.leftAnchor)])
     }
     
-    func setEnterTagManuallyView() {
-        // When the tag is entered manually, addView.callbackClosure is triggered, which passes the entered tag=value pair. The table data is updated.
-        addTagView.callbackClosure = { [weak self] addedTag in
-            guard let self = self else { return }
-            self.addTagView.isHidden = true
-            self.view.endEditing(true)
-            for (key, value) in addedTag {
-                if key == "" || value == "" {
-                    let text = """
-                    Key or value cannot be empty!
-                    Key = "\(key)"
-                    Value = "\(value)"
-                    """
-                    self.showAction(message: text, addAlerts: [])
-                    return
-                }
-            }
-            self.newProperties.merge(addedTag, uniquingKeysWith: { _, new in new })
-            self.fillData()
-            self.tableView.reloadData()
-        }
-        addViewBottomConstraint = NSLayoutConstraint(item: addTagView, attribute: .bottom, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .bottom, multiplier: 1, constant: 0)
-        addTagView.isHidden = true
-        addTagView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(addTagView)
-        NSLayoutConstraint.activate([
-            addTagView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            addTagView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            addTagView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            addViewBottomConstraint,
-        ])
-    }
-    
-    // Updating the view when the keyboard appears.
-    @objc func keyboardWillShow(notification: NSNotification) {
-        guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-        if keyboardSize.height > 0 {
-            addViewBottomConstraint.constant = -keyboardSize.height + view.safeAreaInsets.bottom
-        }
-    }
-    
-    // Updating the view when hiding the keyboard.
-    @objc func keyboardWillHide(notification _: NSNotification) {
-        addViewBottomConstraint.constant = 0
-    }
 }
 
 extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
@@ -436,11 +396,8 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
         let data = tableData[indexPath.section].items[indexPath.row]
         switch data {
         case let .key(key, value):
-            addTagView.keyField.text = key
-            addTagView.keyField.isUserInteractionEnabled = true
-            addTagView.valueField.text = value
-            addTagView.isHidden = false
-            addTagView.valueField.becomeFirstResponder()
+            guard let callback = addTagCallback else {return}
+            AddTagManuallyView.showAddTagView(key: key, value: value, callback: callback)
         case let .item(path):
             guard let item = PresetClient().getItemFromPath(path: path) else { return }
             let itemVC = ItemTagsViewController(item: item)

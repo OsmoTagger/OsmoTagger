@@ -305,73 +305,120 @@ class AddTagManuallyView: UIView {
         field.placeholder = "Enter value"
         return field
     }()
-
-    lazy var toolbar: UIStackView = {
-        let stack = UIStackView()
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        
-        let cancelButton = UIButton()
-        cancelButton.setTitle("Cancel", for: .normal)
-        cancelButton.setTitleColor(.systemBlue, for: .normal)
-        cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
-        cancelButton.translatesAutoresizingMaskIntoConstraints = false
-
-        let enterButton = UIButton()
-        enterButton.setTitle("Enter", for: .normal)
-        enterButton.setTitleColor(.systemBlue, for: .normal)
-        enterButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
-        enterButton.translatesAutoresizingMaskIntoConstraints = false
-
-        stack.addArrangedSubview(cancelButton)
-        stack.addArrangedSubview(enterButton)
-        stack.distribution = .fillEqually
-        stack.backgroundColor = .systemGray5
-        return stack
+    private lazy var cancelButton: UIButton = {
+        let rv = UIButton(configuration: .borderedProminent())
+        rv.setTitle("Cancel", for: .normal)
+        rv.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
+        rv.translatesAutoresizingMaskIntoConstraints = false
+        return rv
+    }()
+    private lazy var enterButton: UIButton = {
+        let rv = UIButton(configuration: .borderedProminent())
+        rv.setTitle("Enter", for: .normal)
+        rv.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        rv.translatesAutoresizingMaskIntoConstraints = false
+        return rv
     }()
     
-    @objc func doneButtonTapped() {
-        guard let clouser = callbackClosure,
-              let key = keyField.text,
+    @objc private func doneButtonTapped() {
+        guard let key = keyField.text,
               let value = valueField.text else { return }
-        clouser([key: value])
+        addTagClosure([key: value])
+        dismissClosure?()
     }
     
-    @objc func cancelButtonTapped() {
-        guard let clouser = callbackClosure else { return }
-        clouser([:])
+    @objc private func cancelButtonTapped() {
+        addTagClosure([:])
+        dismissClosure?()
     }
     
-    var callbackClosure: (([String: String]) -> Void)?
+    var addTagClosure: TagBlock
+    var dismissClosure: EmptyBlock?
+    var bottomConstraint: NSLayoutConstraint?
     
-    convenience init() {
-        self.init(frame: .zero)
+    init(callback: @escaping TagBlock) {
+        self.addTagClosure = callback
+        super.init(frame: .zero)
         setupConstrains()
-        backgroundColor = .systemBackground
+        backgroundColor = .systemGray4
         alpha = 0.95
+        translatesAutoresizingMaskIntoConstraints = false
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow),
+                                               name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide),
+                                               name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc private func keyboardWillShow(notification: NSNotification) {
+        guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
+              keyboardSize.height > 0 else {return}
+        let bottomInsent = window?.safeAreaInsets.bottom ?? 0
+        bottomConstraint?.constant = -keyboardSize.height + bottomInsent
+    }
+    
+    @objc private func keyboardWillHide() {
+        bottomConstraint?.constant = 0
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     func setupConstrains() {
+        addSubview(messageLabel)
         addSubview(keyField)
         addSubview(valueField)
-        addSubview(toolbar)
-        addSubview(messageLabel)
+        addSubview(cancelButton)
+        addSubview(enterButton)
         let labelMinHeight: CGFloat = isPad ? 80: 40
+        let spacing: CGFloat = 15
         NSLayoutConstraint.activate([
-            toolbar.bottomAnchor.constraint(equalTo: bottomAnchor),
-            toolbar.leftAnchor.constraint(equalTo: leftAnchor),
-            toolbar.rightAnchor.constraint(equalTo: rightAnchor),
-            toolbar.heightAnchor.constraint(equalToConstant: 50),
-            keyField.leftAnchor.constraint(equalTo: leftAnchor, constant: 15),
-            keyField.rightAnchor.constraint(equalTo: rightAnchor, constant: -15),
-            keyField.bottomAnchor.constraint(equalTo: valueField.topAnchor, constant: -20),
+            cancelButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: spacing),
+            cancelButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -spacing),
+            cancelButton.trailingAnchor.constraint(equalTo: centerXAnchor, constant: -spacing),
+            cancelButton.heightAnchor.constraint(equalToConstant: 40),
+            
+            enterButton.leadingAnchor.constraint(equalTo: centerXAnchor, constant: spacing),
+            enterButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -spacing),
+            enterButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -spacing),
+            enterButton.heightAnchor.constraint(equalToConstant: 40),
+            
+            keyField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: spacing),
+            keyField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -spacing),
+            keyField.bottomAnchor.constraint(equalTo: valueField.topAnchor, constant: -spacing),
             keyField.heightAnchor.constraint(greaterThanOrEqualToConstant: labelMinHeight),
-            valueField.leftAnchor.constraint(equalTo: leftAnchor, constant: 15),
-            valueField.rightAnchor.constraint(equalTo: rightAnchor, constant: -15),
-            valueField.bottomAnchor.constraint(equalTo: toolbar.topAnchor, constant: -20),
+            valueField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: spacing),
+            valueField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -spacing),
+            valueField.bottomAnchor.constraint(equalTo: cancelButton.topAnchor, constant: -spacing),
             valueField.heightAnchor.constraint(greaterThanOrEqualToConstant: labelMinHeight),
-            messageLabel.bottomAnchor.constraint(equalTo: keyField.topAnchor, constant: -20),
-            messageLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 15),
-            messageLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -15),
+            messageLabel.bottomAnchor.constraint(equalTo: keyField.topAnchor, constant: -spacing),
+            messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: spacing),
+            messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -spacing),
+        ])
+    }
+    
+    static func showAddTagView(key: String?, value: String?, callback: @escaping TagBlock) {
+        let addTagView = AddTagManuallyView(callback: callback)
+        addTagView.dismissClosure = { [weak addTagView] in
+            addTagView?.removeFromSuperview()
+        }
+        addTagView.keyField.text = key
+        addTagView.valueField.text = value
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first else {return}
+        window.addSubview(addTagView)
+        let constraint = addTagView.bottomAnchor.constraint(equalTo: window.safeAreaLayoutGuide.bottomAnchor)
+        addTagView.bottomConstraint = constraint
+        NSLayoutConstraint.activate([
+            addTagView.topAnchor.constraint(equalTo: window.topAnchor),
+            addTagView.leadingAnchor.constraint(equalTo: window.leadingAnchor),
+            addTagView.trailingAnchor.constraint(equalTo: window.trailingAnchor),
+            constraint
         ])
     }
 }

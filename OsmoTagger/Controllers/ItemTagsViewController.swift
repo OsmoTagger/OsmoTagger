@@ -19,9 +19,7 @@ class ItemTagsViewController: SheetViewController {
     var iconTypes: [UIBarButtonItem] = []
     var doneButtonForBar = UIBarButtonItem()
     
-    //  The view that is displayed when manually entering text.
-    var addTagView = AddTagManuallyView()
-    var addViewBottomConstraint = NSLayoutConstraint()
+    var addTagCallback: TagBlock?
     
     init(item: Item) {
         self.item = item
@@ -38,35 +36,11 @@ class ItemTagsViewController: SheetViewController {
         view.backgroundColor = .systemBackground
         title = item.name
         prepareElements()
-                
-//      Set RightBarItems
-        doneButtonForBar = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(tapDoneButton))
-        iconTypes = [doneButtonForBar]
-        addIconTypes()
-        rightButtons = iconTypes
         
-        setTableView()
-        setEnterTagManuallyView()
-    }
-    
-    override func viewWillAppear(_: Bool) {
-        // Notifications when calling and hiding the keyboard.
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
-    override func viewDidDisappear(_: Bool) {
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
-    func setEnterTagManuallyView() {
-        //  When the tag is entered manually, addView.callbackClosure is triggered, which passes the entered tag=value pair. The table data is updated.
-        addTagView.callbackClosure = { [weak self] addedTag in
+        addTagCallback = { [weak self] addedTag in
             guard let self = self else { return }
             self.navigationController?.setToolbarHidden(false, animated: true)
             self.view.endEditing(true)
-            self.addTagView.isHidden = true
             for (key, value) in addedTag {
                 if key == "" || value == "" {
                     let text = """
@@ -83,18 +57,16 @@ class ItemTagsViewController: SheetViewController {
             }
             self.tableView.reloadData()
         }
-        addViewBottomConstraint = NSLayoutConstraint(item: addTagView, attribute: .bottom, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .bottom, multiplier: 1, constant: 0)
-        addTagView.isHidden = true
-        addTagView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(addTagView)
-        NSLayoutConstraint.activate([
-            addTagView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            addTagView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            addTagView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            addViewBottomConstraint,
-        ])
+        
+//      Set RightBarItems
+        doneButtonForBar = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(tapDoneButton))
+        iconTypes = [doneButtonForBar]
+        addIconTypes()
+        rightButtons = iconTypes
+        
+        setTableView()
     }
-    
+        
     //  The preset stores "chunks" - duplicate sets of tags as elements. In defaultpresets.xml they are taken out separately from Josm. The method extracts tags from the "chunk" and adds preset elements to the array.
     //  The method also transfers references to other presets to the end of the array.
     func prepareElements() {
@@ -173,18 +145,6 @@ class ItemTagsViewController: SheetViewController {
                                      tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)])
     }
     
-    @objc func tapKeyBoard(_ sender: SelectButton) {
-        guard let key = sender.key else { return }
-        navigationController?.setToolbarHidden(true, animated: true)
-        addTagView.keyField.text = key
-        addTagView.keyField.isUserInteractionEnabled = false
-        if let navController = navigationController as? CategoryNavigationController {
-            addTagView.valueField.text = navController.objectProperties[key]
-        }
-        addTagView.isHidden = false
-        addTagView.valueField.becomeFirstResponder()
-    }
-    
     @objc func tapCheckBox(sender: CheckBox) {
         guard let navController = navigationController as? CategoryNavigationController,
               let cell = tableView.cellForRow(at: sender.indexPath) as? ItemCell else { return }
@@ -214,16 +174,9 @@ class ItemTagsViewController: SheetViewController {
         tableView.reloadData()
     }
     
-    //  View offset when calling and hiding the keyboard.
-    @objc func keyboardWillShow(notification: NSNotification) {
-        guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-        if keyboardSize.height > 0 {
-            addViewBottomConstraint.constant = -keyboardSize.height + view.safeAreaInsets.bottom
-        }
-    }
-
-    @objc func keyboardWillHide(notification _: NSNotification) {
-        addViewBottomConstraint.constant = 0
+    @objc private func addNewTag(key: String?, value: String?) {
+        guard let callback = addTagCallback else {return}
+        AddTagManuallyView.showAddTagView(key: nil, value: nil, callback: callback)
     }
 }
 
@@ -263,11 +216,7 @@ extension ItemTagsViewController: UITableViewDataSource, UITableViewDelegate {
             }
             navigationController?.pushViewController(vc, animated: true)
         case let .text(_, key):
-            addTagView.keyField.text = key
-            addTagView.keyField.isUserInteractionEnabled = false
-            addTagView.valueField.text = navController.objectProperties[key]
-            addTagView.isHidden = false
-            addTagView.valueField.becomeFirstResponder()
+            addNewTag(key: key, value: nil)
         case let .check(key, _, valueOn):
             let defValue = valueOn ?? "yes"
             if navController.objectProperties[key] == nil {
@@ -362,11 +311,8 @@ extension ItemTagsViewController: UITableViewDataSource, UITableViewDelegate {
             cell.button.selectClosure = { [weak self] newValue in
                 guard let self = self else { return }
                 if newValue == "Custom value" {
-                    self.addTagView.keyField.text = key
-                    self.addTagView.keyField.isUserInteractionEnabled = false
-                    self.addTagView.valueField.text = navController.objectProperties[key]
-                    self.addTagView.isHidden = false
-                    self.addTagView.valueField.becomeFirstResponder()
+                    // TODO: 
+                    self.addNewTag(key: nil, value: nil)
                 } else {
                     navController.objectProperties[key] = newValue
                     cell.valueLabel.text = newValue
