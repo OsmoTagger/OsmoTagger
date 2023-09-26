@@ -369,7 +369,7 @@ class AddTagManuallyView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupConstrains() {
+    private func setupConstrains() {
         addSubview(messageLabel)
         addSubview(keyField)
         addSubview(valueField)
