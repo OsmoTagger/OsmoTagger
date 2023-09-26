@@ -34,6 +34,7 @@ class EditObjectViewController: SheetViewController {
     init(object: OSMAnyObject) {
         self.object = object
         super.init()
+        AppSettings.settings.editableObject = object.vector
         fillNewProperties()
         fillData()
     }
@@ -89,10 +90,6 @@ class EditObjectViewController: SheetViewController {
     
     override func viewWillAppear(_: Bool) {
         navigationController?.setToolbarHidden(true, animated: true)
-    }
-    
-    override func viewDidAppear(_: Bool) {
-        AppSettings.settings.editableObject = object.vector
     }
     
     private func setMenuButton() {
