@@ -409,6 +409,12 @@ class AddTagManuallyView: UIView {
         }
         addTagView.keyField.text = key
         addTagView.valueField.text = value
+        if key == nil {
+            addTagView.keyField.becomeFirstResponder()
+        } else {
+            addTagView.keyField.isUserInteractionEnabled = false
+            addTagView.valueField.becomeFirstResponder()
+        }
         #if targetEnvironment(macCatalyst)
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let topViewController = scene.windows.first?.rootViewController else {return}
