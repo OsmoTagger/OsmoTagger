@@ -305,6 +305,7 @@ class AddTagManuallyView: UIView {
         field.placeholder = "Enter value"
         return field
     }()
+
     private lazy var cancelButton: UIButton = {
         let rv = UIButton(configuration: .borderedProminent())
         rv.setTitle("Cancel", for: .normal)
@@ -312,6 +313,7 @@ class AddTagManuallyView: UIView {
         rv.translatesAutoresizingMaskIntoConstraints = false
         return rv
     }()
+
     private lazy var enterButton: UIButton = {
         let rv = UIButton(configuration: .borderedProminent())
         rv.setTitle("Enter", for: .normal)
@@ -337,7 +339,7 @@ class AddTagManuallyView: UIView {
     var bottomConstraint: NSLayoutConstraint?
     
     init(callback: @escaping TagBlock) {
-        self.addTagClosure = callback
+        addTagClosure = callback
         super.init(frame: .zero)
         setupConstrains()
         backgroundColor = .systemGray4
@@ -356,7 +358,7 @@ class AddTagManuallyView: UIView {
     
     @objc private func keyboardWillShow(notification: NSNotification) {
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
-              keyboardSize.height > 0 else {return}
+              keyboardSize.height > 0 else { return }
         let bottomInsent = window?.safeAreaInsets.bottom ?? 0
         bottomConstraint?.constant = -keyboardSize.height + bottomInsent
     }
@@ -365,7 +367,8 @@ class AddTagManuallyView: UIView {
         bottomConstraint?.constant = 0
     }
     
-    required init?(coder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -375,7 +378,7 @@ class AddTagManuallyView: UIView {
         addSubview(valueField)
         addSubview(cancelButton)
         addSubview(enterButton)
-        let labelMinHeight: CGFloat = isPad ? 80: 40
+        let labelMinHeight: CGFloat = isPad ? 80 : 40
         let spacing: CGFloat = 15
         NSLayoutConstraint.activate([
             cancelButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: spacing),
@@ -416,31 +419,31 @@ class AddTagManuallyView: UIView {
             addTagView.valueField.becomeFirstResponder()
         }
         #if targetEnvironment(macCatalyst)
-        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let topViewController = scene.windows.first?.rootViewController else {return}
-        var curVC = topViewController
-        while let presentedViewController = curVC.presentedViewController {
-            curVC = presentedViewController
-        }
-        curVC.view.addSubview(addTagView)
-        NSLayoutConstraint.activate([
-            addTagView.leadingAnchor.constraint(equalTo: curVC.view.leadingAnchor),
-            addTagView.topAnchor.constraint(equalTo: curVC.view.topAnchor),
-            addTagView.trailingAnchor.constraint(equalTo: curVC.view.trailingAnchor),
-            addTagView.bottomAnchor.constraint(equalTo: curVC.view.bottomAnchor)
-        ])
+            guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  let topViewController = scene.windows.first?.rootViewController else { return }
+            var curVC = topViewController
+            while let presentedViewController = curVC.presentedViewController {
+                curVC = presentedViewController
+            }
+            curVC.view.addSubview(addTagView)
+            NSLayoutConstraint.activate([
+                addTagView.leadingAnchor.constraint(equalTo: curVC.view.leadingAnchor),
+                addTagView.topAnchor.constraint(equalTo: curVC.view.topAnchor),
+                addTagView.trailingAnchor.constraint(equalTo: curVC.view.trailingAnchor),
+                addTagView.bottomAnchor.constraint(equalTo: curVC.view.bottomAnchor),
+            ])
         #else
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = windowScene.windows.first else {return}
-        window.addSubview(addTagView)
-        let constraint = addTagView.bottomAnchor.constraint(equalTo: window.safeAreaLayoutGuide.bottomAnchor)
-        addTagView.bottomConstraint = constraint
-        NSLayoutConstraint.activate([
-            addTagView.topAnchor.constraint(equalTo: window.topAnchor),
-            addTagView.leadingAnchor.constraint(equalTo: window.leadingAnchor),
-            addTagView.trailingAnchor.constraint(equalTo: window.trailingAnchor),
-            constraint
-        ])
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  let window = windowScene.windows.first else { return }
+            window.addSubview(addTagView)
+            let constraint = addTagView.bottomAnchor.constraint(equalTo: window.safeAreaLayoutGuide.bottomAnchor)
+            addTagView.bottomConstraint = constraint
+            NSLayoutConstraint.activate([
+                addTagView.topAnchor.constraint(equalTo: window.topAnchor),
+                addTagView.leadingAnchor.constraint(equalTo: window.leadingAnchor),
+                addTagView.trailingAnchor.constraint(equalTo: window.trailingAnchor),
+                constraint,
+            ])
         #endif
     }
 }

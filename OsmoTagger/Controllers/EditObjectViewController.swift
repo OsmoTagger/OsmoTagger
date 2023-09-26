@@ -10,7 +10,6 @@ import UIKit
 
 //  Object tag editing controller.
 class EditObjectViewController: SheetViewController {
-    
     var object: OSMAnyObject
 
     var newProperties: [String: String] = [:] {
@@ -196,13 +195,13 @@ class EditObjectViewController: SheetViewController {
             for path in pathes {
                 presetsSet.insert(path)
                 guard let item = PresetClient().getItemFromPath(path: path),
-                      let itemPath = item.path else {continue}
+                      let itemPath = item.path else { continue }
                 presetsSet.insert(itemPath)
                 for element in item.elements {
                     switch element {
                     case let .presetLink(presetName):
                         guard let item = PresetClient().getItemFromName(name: presetName),
-                              let itemPath = item.path else {continue}
+                              let itemPath = item.path else { continue }
                         presetsSet.insert(itemPath)
                     default:
                         continue
@@ -328,15 +327,15 @@ class EditObjectViewController: SheetViewController {
     @objc private func tapDiscard() {
         AppSettings.settings.savedObjects.removeValue(forKey: object.id)
         AppSettings.settings.deletedObjects.removeValue(forKey: object.id)
-        let tags = generateTags(properties: self.object.oldTags)
-        self.object.tag = tags
-        self.newProperties = self.object.oldTags
-        self.fillData()
-        self.tableView.reloadData()
+        let tags = generateTags(properties: object.oldTags)
+        object.tag = tags
+        newProperties = object.oldTags
+        fillData()
+        tableView.reloadData()
     }
     
     @objc private func addNewTag() {
-        guard let callback = addTagCallback else {return}
+        guard let callback = addTagCallback else { return }
         AddTagManuallyView.showAddTagView(key: nil, value: nil, callback: callback)
     }
     
@@ -363,7 +362,6 @@ class EditObjectViewController: SheetViewController {
                                      tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
                                      tableView.leftAnchor.constraint(equalTo: view.leftAnchor)])
     }
-    
 }
 
 extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
@@ -389,11 +387,11 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         let data = tableData[indexPath.section].items[indexPath.row]
         switch data {
         case let .key(key, value):
-            guard let callback = addTagCallback else {return}
+            guard let callback = addTagCallback else { return }
             AddTagManuallyView.showAddTagView(key: key, value: value, callback: callback)
         case let .item(path):
             guard let item = PresetClient().getItemFromPath(path: path) else { return }
@@ -414,7 +412,7 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
     
     // Deleting a previously entered tag.
     func tableView(_: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        guard tableData[indexPath.section].name == "Filled tags" else {return nil}
+        guard tableData[indexPath.section].name == "Filled tags" else { return nil }
         var tagKey: String?
         let data = tableData[indexPath.section].items[indexPath.row]
         switch data {

@@ -174,8 +174,8 @@ class ItemTagsViewController: SheetViewController {
         tableView.reloadData()
     }
     
-    @objc private func addNewTag(key: String?, value: String?) {
-        guard let callback = addTagCallback else {return}
+    @objc private func addNewTag(key _: String?, value _: String?) {
+        guard let callback = addTagCallback else { return }
         AddTagManuallyView.showAddTagView(key: nil, value: nil, callback: callback)
     }
 }
@@ -311,7 +311,7 @@ extension ItemTagsViewController: UITableViewDataSource, UITableViewDelegate {
             cell.button.selectClosure = { [weak self] newValue in
                 guard let self = self else { return }
                 if newValue == "Custom value" {
-                    // TODO: 
+                    // TODO:
                     self.addNewTag(key: nil, value: nil)
                 } else {
                     navController.objectProperties[key] = newValue
@@ -428,7 +428,7 @@ extension ItemTagsViewController: UITableViewDataSource, UITableViewDelegate {
         var tagKey: String?
         let data = item.elements[indexPath.row]
         switch data {
-        case .link(_), .label(_), .presetLink(_), .reference, .item(_):
+        case .link(_), .label(_), .presetLink(_), .reference, .item:
             return nil
         case let .key(key, _):
             tagKey = key

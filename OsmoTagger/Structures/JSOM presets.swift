@@ -37,7 +37,6 @@ struct ItemPath: Codable, Equatable, Hashable, Comparable {
     }
 }
 
-
 //  The whole preset. The updateItem method is called when parsing a file to fill presets with elements (tags)
 struct Presets: Codable {
     var category: [Category]

@@ -14,18 +14,21 @@ class EditCell: UITableViewCell {
         rv.translatesAutoresizingMaskIntoConstraints = false
         return rv
     }()
+
     var keyLabel: UILabel = {
         let rv = UILabel()
         rv.numberOfLines = 0
         rv.translatesAutoresizingMaskIntoConstraints = false
         return rv
     }()
+
     var valueLabel: UILabel = {
         let rv = UILabel()
         rv.numberOfLines = 0
         rv.translatesAutoresizingMaskIntoConstraints = false
         return rv
     }()
+
     var titleLabel: UILabel = {
         let rv = UILabel()
         rv.numberOfLines = 0
@@ -76,7 +79,7 @@ class EditCell: UITableViewCell {
     func configure(data: ItemElements) {
         switch data {
         case let .item(path):
-            guard let item = PresetClient().getItemFromPath(path: path) else {return}
+            guard let item = PresetClient().getItemFromPath(path: path) else { return }
             if let iconName = item.icon {
                 icon.isHidden = false
                 icon.backView.backgroundColor = .white
@@ -112,5 +115,4 @@ class EditCell: UITableViewCell {
         titleLabel.text = nil
         accessoryType = .none
     }
-    
 }
