@@ -388,13 +388,13 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
         }
         let data = tableData[indexPath.section].items[indexPath.row]
         switch data {
-        case .key(_, _):
+        case .key:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: keyValueID, for: indexPath) as? KeyValueEditCell else {
                 return cellFail
             }
             cell.configure(data: data)
             return cell
-        case .item(_):
+        case .item:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: simpleCellID, for: indexPath) as? SimpleCell else {
                 return cellFail
             }

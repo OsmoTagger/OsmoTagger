@@ -54,7 +54,7 @@ class SimpleCell: UITableViewCell {
     func configureForEditObject(data: ItemElements) {
         switch data {
         case let .item(path):
-            guard let item = PresetClient().getItemFromPath(path: path) else {return}
+            guard let item = PresetClient().getItemFromPath(path: path) else { return }
             if let iconName = item.icon {
                 icon.isHidden = false
                 icon.icon.image = UIImage(named: iconName)
