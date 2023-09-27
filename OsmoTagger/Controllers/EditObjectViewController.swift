@@ -355,7 +355,7 @@ class EditObjectViewController: SheetViewController {
         tableView.estimatedRowHeight = 50
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(KeyValueCell.self, forCellReuseIdentifier: keyValueID)
+        tableView.register(KeyValueEditCell.self, forCellReuseIdentifier: keyValueID)
         tableView.register(SimpleCell.self, forCellReuseIdentifier: simpleCellID)
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -383,13 +383,13 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellFail = UITableViewCell()
         cellFail.backgroundColor = .red
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: keyValueID, for: indexPath) as? KeyValueCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: keyValueID, for: indexPath) as? KeyValueEditCell else {
             return cellFail
         }
         let data = tableData[indexPath.section].items[indexPath.row]
         switch data {
         case .key(_, _):
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: keyValueID, for: indexPath) as? KeyValueCell else {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: keyValueID, for: indexPath) as? KeyValueEditCell else {
                 return cellFail
             }
             cell.configure(data: data)

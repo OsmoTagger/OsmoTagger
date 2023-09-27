@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class KeyValueCell: UITableViewCell {
+class KeyValueEditCell: UITableViewCell {
     var icon: UIImageView = {
         let rv = UIImageView()
         rv.image = UIImage(systemName: "tag")
