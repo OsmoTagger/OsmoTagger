@@ -51,6 +51,24 @@ class SimpleCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func configureForEditObject(data: ItemElements) {
+        switch data {
+        case let .item(path):
+            guard let item = PresetClient().getItemFromPath(path: path) else {return}
+            if let iconName = item.icon {
+                icon.isHidden = false
+                icon.icon.image = UIImage(named: iconName)
+                icon.backView.backgroundColor = .white
+            } else {
+                icon.isHidden = true
+            }
+            label.text = item.name
+            accessoryType = .disclosureIndicator
+        default:
+            return
+        }
+    }
+    
     override func prepareForReuse() {
         icon.icon.image = nil
         icon.backView.backgroundColor = .white

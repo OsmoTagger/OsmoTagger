@@ -24,7 +24,8 @@ class EditObjectViewController: SheetViewController {
     var tableData: [EditSectionData] = []
 
     var tableView = UITableView()
-    var cellId = "cell"
+    let keyValueID = "keyValue"
+    let simpleCellID = "simpleCell"
     
     var iconTypeBar = UIBarButtonItem()
     
@@ -354,7 +355,8 @@ class EditObjectViewController: SheetViewController {
         tableView.estimatedRowHeight = 50
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(EditCell.self, forCellReuseIdentifier: cellId)
+        tableView.register(KeyValueCell.self, forCellReuseIdentifier: keyValueID)
+        tableView.register(SimpleCell.self, forCellReuseIdentifier: simpleCellID)
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -379,12 +381,28 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
     
     // Creating a cell. See enum ItemElements, which presets consist of.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? EditCell else {
-            return UITableViewCell()
+        let cellFail = UITableViewCell()
+        cellFail.backgroundColor = .red
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: keyValueID, for: indexPath) as? KeyValueCell else {
+            return cellFail
         }
         let data = tableData[indexPath.section].items[indexPath.row]
-        cell.configure(data: data)
-        return cell
+        switch data {
+        case .key(_, _):
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: keyValueID, for: indexPath) as? KeyValueCell else {
+                return cellFail
+            }
+            cell.configure(data: data)
+            return cell
+        case .item(_):
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: simpleCellID, for: indexPath) as? SimpleCell else {
+                return cellFail
+            }
+            cell.configureForEditObject(data: data)
+            return cell
+        default:
+            return cellFail
+        }
     }
     
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {

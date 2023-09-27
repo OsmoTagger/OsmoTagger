@@ -49,7 +49,7 @@
 		E301D2E22ABE2A1F00C86D33 /* ScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E301D2E12ABE2A1F00C86D33 /* ScrollViewController.swift */; };
 		E3021DAC2A8FFF86000E789A /* MapStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3021DAB2A8FFF86000E789A /* MapStyles.swift */; };
 		E3021DB82A909249000E789A /* SheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3021DB72A909249000E789A /* SheetViewController.swift */; };
-		E336A0C82ABFCD93003E8890 /* EditCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E336A0C72ABFCD93003E8890 /* EditCell.swift */; };
+		E336A0C82ABFCD93003E8890 /* KeyValueCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E336A0C72ABFCD93003E8890 /* KeyValueCell.swift */; };
 		E336A0CA2ABFDB72003E8890 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E336A0C92ABFDB72003E8890 /* UIColor.swift */; };
 		E3373F4A2ABBA47C0055B329 /* defaultPresets.xml in Sources */ = {isa = PBXBuildFile; fileRef = E36A67DA2ABB8B3900824794 /* defaultPresets.xml */; };
 		E3373F4B2ABBA5110055B329 /* defaultPresets.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = E36A67DA2ABB8B3900824794 /* defaultPresets.xml */; };
@@ -166,7 +166,7 @@
 		E301D2E12ABE2A1F00C86D33 /* ScrollViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewController.swift; sourceTree = "<group>"; };
 		E3021DAB2A8FFF86000E789A /* MapStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyles.swift; sourceTree = "<group>"; };
 		E3021DB72A909249000E789A /* SheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetViewController.swift; sourceTree = "<group>"; };
-		E336A0C72ABFCD93003E8890 /* EditCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCell.swift; sourceTree = "<group>"; };
+		E336A0C72ABFCD93003E8890 /* KeyValueCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValueCell.swift; sourceTree = "<group>"; };
 		E336A0C92ABFDB72003E8890 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		E33A71A92AB9E75D009D9508 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
 		E33A71CB2ABA3580009D9508 /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
@@ -415,7 +415,7 @@
 				E3540B022A71B0DF00649564 /* SelectValuesCell.swift */,
 				E3540AF72A71AF2000649564 /* SimpleCell.swift */,
 				E3540AFB2A71AF7D00649564 /* ItemCell.swift */,
-				E336A0C72ABFCD93003E8890 /* EditCell.swift */,
+				E336A0C72ABFCD93003E8890 /* KeyValueCell.swift */,
 				E3C1BB222ABAF61B00B4BFD6 /* StretchableCell.swift */,
 				E3540B142A71DAFE00649564 /* SecreenSettingsCell.swift */,
 				E3540AF92A71AF5A00649564 /* CategoryCell.swift */,
@@ -570,7 +570,7 @@
 				2C9DEBD429B526980058CCC2 /* JSOM presets.swift in Sources */,
 				E3540B052A71B1A300649564 /* CustomSafari.swift in Sources */,
 				2CB58A6329ECF01800FD0E59 /* QuickGuideViewController.swift in Sources */,
-				E336A0C82ABFCD93003E8890 /* EditCell.swift in Sources */,
+				E336A0C82ABFCD93003E8890 /* KeyValueCell.swift in Sources */,
 				E3540AFE2A71AFB400649564 /* CustomViews.swift in Sources */,
 				E3540B0B2A71B2D600649564 /* AnyStructs.swift in Sources */,
 				E3540AFC2A71AF7D00649564 /* ItemCell.swift in Sources */,
