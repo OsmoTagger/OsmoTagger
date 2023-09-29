@@ -109,12 +109,15 @@ class Alert: UIView {
                 window.addSubview(alert)
                 let alertTrailingAnchor: NSLayoutConstraint
                 let alertHeightAnchor: NSLayoutConstraint
+                let trailingTopSafeAreaViewAnchor: NSLayoutConstraint
                 if isPad {
                     alertTrailingAnchor = NSLayoutConstraint(item: alert, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 400)
                     alertHeightAnchor = NSLayoutConstraint(item: alert, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 100)
+                    trailingTopSafeAreaViewAnchor = NSLayoutConstraint(item: topSafeAreaView, attribute: .trailing, relatedBy: .equal, toItem: alert, attribute: .trailing, multiplier: 1, constant: 0)
                 } else {
                     alertTrailingAnchor = NSLayoutConstraint(item: alert, attribute: .trailing, relatedBy: .equal, toItem: window, attribute: .trailing, multiplier: 1, constant: 0)
                     alertHeightAnchor = NSLayoutConstraint(item: alert, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 40)
+                    trailingTopSafeAreaViewAnchor = NSLayoutConstraint(item: topSafeAreaView, attribute: .trailing, relatedBy: .equal, toItem: window, attribute: .trailing, multiplier: 1, constant: 0)
                 }
                 NSLayoutConstraint.activate([
                     leadingSafeAreaView.leadingAnchor.constraint(equalTo: window.leadingAnchor),
@@ -124,7 +127,7 @@ class Alert: UIView {
                     
                     topSafeAreaView.topAnchor.constraint(equalTo: window.topAnchor),
                     topSafeAreaView.leadingAnchor.constraint(equalTo: window.leadingAnchor),
-                    topSafeAreaView.trailingAnchor.constraint(equalTo: window.trailingAnchor),
+                    trailingTopSafeAreaViewAnchor,
                     topSafeAreaView.bottomAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor),
                     
                     alert.topAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor),
@@ -153,8 +156,12 @@ class Alert: UIView {
     
     static func showAction(parent: UIViewController, message: String, addAlerts: [UIAlertAction]) {
         let alert = UIAlertController(title: "", message: message, preferredStyle: .actionSheet)
-        for action in addAlerts {
-            alert.addAction(action)
+        if addAlerts.isEmpty {
+            alert.addAction(UIAlertAction(title: "Ok", style: .default))
+        } else {
+            for action in addAlerts {
+                alert.addAction(action)
+            }
         }
         DispatchQueue.main.async {
             parent.present(alert, animated: true)

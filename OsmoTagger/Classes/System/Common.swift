@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 
 typealias EmptyBlock = () -> Void
+typealias TagBlock = ([String: String]) -> Void
 
 let isPad = UIDevice.current.userInterfaceIdiom == .pad
 

@@ -24,7 +24,6 @@
 		2C4EEE822986154300F9AAF9 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4EEE812986154300F9AAF9 /* UIViewController.swift */; };
 		2C5662BD291275FA00E5B4D5 /* OsmClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5662BC291275FA00E5B4D5 /* OsmClient.swift */; };
 		2C5662C12912788600E5B4D5 /* OSM structures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5662C02912788600E5B4D5 /* OSM structures.swift */; };
-		2C6F1CC429DD40380091784B /* InfoObjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6F1CC329DD40370091784B /* InfoObjectViewController.swift */; };
 		2C9DEBD429B526980058CCC2 /* JSOM presets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9DEBD329B526980058CCC2 /* JSOM presets.swift */; };
 		2CA6A3FF29CAB965004233E2 /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA6A3F829CAB964004233E2 /* Parser.swift */; };
 		2CA74E96291EE1BD00413930 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA74E95291EE1BD00413930 /* AppSettings.swift */; };
@@ -50,6 +49,8 @@
 		E301D2E22ABE2A1F00C86D33 /* ScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E301D2E12ABE2A1F00C86D33 /* ScrollViewController.swift */; };
 		E3021DAC2A8FFF86000E789A /* MapStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3021DAB2A8FFF86000E789A /* MapStyles.swift */; };
 		E3021DB82A909249000E789A /* SheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3021DB72A909249000E789A /* SheetViewController.swift */; };
+		E336A0C82ABFCD93003E8890 /* KeyValueEditCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E336A0C72ABFCD93003E8890 /* KeyValueEditCell.swift */; };
+		E336A0CA2ABFDB72003E8890 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E336A0C92ABFDB72003E8890 /* UIColor.swift */; };
 		E3373F4A2ABBA47C0055B329 /* defaultPresets.xml in Sources */ = {isa = PBXBuildFile; fileRef = E36A67DA2ABB8B3900824794 /* defaultPresets.xml */; };
 		E3373F4B2ABBA5110055B329 /* defaultPresets.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = E36A67DA2ABB8B3900824794 /* defaultPresets.xml */; };
 		E33A71AA2AB9E75D009D9508 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33A71A92AB9E75D009D9508 /* Alert.swift */; };
@@ -122,7 +123,6 @@
 		2C5662BC291275FA00E5B4D5 /* OsmClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OsmClient.swift; sourceTree = "<group>"; };
 		2C5662C02912788600E5B4D5 /* OSM structures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OSM structures.swift"; sourceTree = "<group>"; };
 		2C5D72E72A1B979C00074F23 /* work_plane.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = work_plane.md; sourceTree = "<group>"; };
-		2C6F1CC329DD40370091784B /* InfoObjectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoObjectViewController.swift; sourceTree = "<group>"; };
 		2C9DEBD329B526980058CCC2 /* JSOM presets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSOM presets.swift"; sourceTree = "<group>"; };
 		2CA6A3F829CAB964004233E2 /* Parser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
 		2CA74E95291EE1BD00413930 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
@@ -166,6 +166,8 @@
 		E301D2E12ABE2A1F00C86D33 /* ScrollViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewController.swift; sourceTree = "<group>"; };
 		E3021DAB2A8FFF86000E789A /* MapStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyles.swift; sourceTree = "<group>"; };
 		E3021DB72A909249000E789A /* SheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetViewController.swift; sourceTree = "<group>"; };
+		E336A0C72ABFCD93003E8890 /* KeyValueEditCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValueEditCell.swift; sourceTree = "<group>"; };
+		E336A0C92ABFDB72003E8890 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		E33A71A92AB9E75D009D9508 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
 		E33A71CB2ABA3580009D9508 /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		E34E4AE02A981ECD00D65A92 /* Presets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Presets.swift; sourceTree = "<group>"; };
@@ -270,7 +272,6 @@
 			children = (
 				2CFF98E3299BE44D0045D6B8 /* SavedNodesViewController.swift */,
 				2CD9133929AB94F500A4A853 /* EditObjectViewController.swift */,
-				2C6F1CC329DD40370091784B /* InfoObjectViewController.swift */,
 				2C450A752A326EFF001D73A9 /* TestViewController.swift */,
 				2042BCEE289C696E0026514E /* MapViewController.swift */,
 				2CD2E7AB29D30D150042D36E /* MultiSelectViewController.swift */,
@@ -307,6 +308,7 @@
 			children = (
 				2C4EEE812986154300F9AAF9 /* UIViewController.swift */,
 				2CDEA6D629862C2B00E5219D /* GLMapVectorObject.swift */,
+				E336A0C92ABFDB72003E8890 /* UIColor.swift */,
 				2C1A361129B0674400AF3BEB /* String.swift */,
 			);
 			path = Extensions;
@@ -413,6 +415,7 @@
 				E3540B022A71B0DF00649564 /* SelectValuesCell.swift */,
 				E3540AF72A71AF2000649564 /* SimpleCell.swift */,
 				E3540AFB2A71AF7D00649564 /* ItemCell.swift */,
+				E336A0C72ABFCD93003E8890 /* KeyValueEditCell.swift */,
 				E3C1BB222ABAF61B00B4BFD6 /* StretchableCell.swift */,
 				E3540B142A71DAFE00649564 /* SecreenSettingsCell.swift */,
 				E3540AF92A71AF5A00649564 /* CategoryCell.swift */,
@@ -567,6 +570,7 @@
 				2C9DEBD429B526980058CCC2 /* JSOM presets.swift in Sources */,
 				E3540B052A71B1A300649564 /* CustomSafari.swift in Sources */,
 				2CB58A6329ECF01800FD0E59 /* QuickGuideViewController.swift in Sources */,
+				E336A0C82ABFCD93003E8890 /* KeyValueEditCell.swift in Sources */,
 				E3540AFE2A71AFB400649564 /* CustomViews.swift in Sources */,
 				E3540B0B2A71B2D600649564 /* AnyStructs.swift in Sources */,
 				E3540AFC2A71AF7D00649564 /* ItemCell.swift in Sources */,
@@ -600,6 +604,7 @@
 				E3021DAC2A8FFF86000E789A /* MapStyles.swift in Sources */,
 				2CA74E96291EE1BD00413930 /* AppSettings.swift in Sources */,
 				E33A71CC2ABA3580009D9508 /* Common.swift in Sources */,
+				E336A0CA2ABFDB72003E8890 /* UIColor.swift in Sources */,
 				2C4EEE822986154300F9AAF9 /* UIViewController.swift in Sources */,
 				2042BCEB289C696E0026514E /* AppDelegate.swift in Sources */,
 				2C2F972829D53DB200A994C8 /* UpdateSourceDataProtocol.swift in Sources */,
@@ -609,7 +614,6 @@
 				E3540B0D2A71BDA100649564 /* MapZoomButtonsView.swift in Sources */,
 				E3021DB82A909249000E789A /* SheetViewController.swift in Sources */,
 				2C478A9D29E6D558004E35E1 /* AuthViewController.swift in Sources */,
-				2C6F1CC429DD40380091784B /* InfoObjectViewController.swift in Sources */,
 				2042BCED289C696E0026514E /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
