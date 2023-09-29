@@ -17,7 +17,6 @@ class ItemTagsViewController: SheetViewController {
     var cellId = "cell"
     
     var iconTypes: [UIBarButtonItem] = []
-    var doneButtonForBar = UIBarButtonItem()
     
     var addTagCallback: TagBlock?
     
@@ -58,9 +57,7 @@ class ItemTagsViewController: SheetViewController {
             self.tableView.reloadData()
         }
         
-//      Set RightBarItems
-        doneButtonForBar = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(tapDoneButton))
-        iconTypes = [doneButtonForBar]
+        // Set RightBarItems
         addIconTypes()
         rightButtons = iconTypes
         
@@ -123,12 +120,8 @@ class ItemTagsViewController: SheetViewController {
             }
             iconType.image = UIImage(named: iconName)
             let iconTypeForBar = UIBarButtonItem(customView: iconType)
-            iconTypes.insert(iconTypeForBar, at: 1)
+            iconTypes.insert(iconTypeForBar, at: 0)
         }
-    }
-    
-    @objc func tapDoneButton() {
-        navigationController?.dismiss(animated: true, completion: nil)
     }
     
     func setTableView() {
