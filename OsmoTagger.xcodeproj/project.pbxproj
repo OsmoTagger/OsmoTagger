@@ -85,6 +85,7 @@
 		E3B6F81C2ACB6A1A0017C4AE /* OverpassViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B6F81B2ACB6A1A0017C4AE /* OverpassViewController.swift */; };
 		E3B6F81E2ACB7AD90017C4AE /* OverpasClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B6F81D2ACB7AD90017C4AE /* OverpasClient.swift */; };
 		E3B6F8202ACB7B920017C4AE /* OverpasProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B6F81F2ACB7B920017C4AE /* OverpasProtocol.swift */; };
+		E3B6F8222ACB8A910017C4AE /* OverpassParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B6F8212ACB8A910017C4AE /* OverpassParser.swift */; };
 		E3B9A5CD2A463E0400C6839A /* GLMap in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CC2A463E0400C6839A /* GLMap */; };
 		E3B9A5CF2A463E1800C6839A /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CE2A463E1800C6839A /* XMLCoder */; };
 		E3C1BB232ABAF61B00B4BFD6 /* StretchableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C1BB222ABAF61B00B4BFD6 /* StretchableCell.swift */; };
@@ -201,6 +202,7 @@
 		E3B6F81B2ACB6A1A0017C4AE /* OverpassViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverpassViewController.swift; sourceTree = "<group>"; };
 		E3B6F81D2ACB7AD90017C4AE /* OverpasClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverpasClient.swift; sourceTree = "<group>"; };
 		E3B6F81F2ACB7B920017C4AE /* OverpasProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverpasProtocol.swift; sourceTree = "<group>"; };
+		E3B6F8212ACB8A910017C4AE /* OverpassParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverpassParser.swift; sourceTree = "<group>"; };
 		E3C1BB222ABAF61B00B4BFD6 /* StretchableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StretchableCell.swift; sourceTree = "<group>"; };
 		E3C1BB242ABAF9E900B4BFD6 /* LogsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -435,6 +437,7 @@
 			isa = PBXGroup;
 			children = (
 				2CA6A3F829CAB964004233E2 /* Parser.swift */,
+				E3B6F8212ACB8A910017C4AE /* OverpassParser.swift */,
 				2C5662BC291275FA00E5B4D5 /* OsmClient.swift */,
 				E34E4AE02A981ECD00D65A92 /* Presets.swift */,
 				E3B6F81D2ACB7AD90017C4AE /* OverpasClient.swift */,
@@ -600,6 +603,7 @@
 				2C1A361229B0674400AF3BEB /* String.swift in Sources */,
 				2C1676EE29A7D50C004DD9D3 /* MapClient.swift in Sources */,
 				E3540B152A71DAFE00649564 /* SecreenSettingsCell.swift in Sources */,
+				E3B6F8222ACB8A910017C4AE /* OverpassParser.swift in Sources */,
 				2042BCEF289C696E0026514E /* MapViewController.swift in Sources */,
 				2CA6A3FF29CAB965004233E2 /* Parser.swift in Sources */,
 				2C478A9929E69BCB004E35E1 /* MainViewController.swift in Sources */,

@@ -69,17 +69,17 @@ class MapClient {
     }
     
     private func parseOverpassData() {
-        defer {
-            delegate?.endDownload()
-        }
-        
-        delegate?.startDownload()
         guard let data = try? Data(contentsOf: AppSettings.settings.overpasDataURL) else {
             Alert.showAlert("Error read overpass data")
             return
         }
-        let str = String(data: data, encoding: .utf8)
-        print(str)
+        delegate?.startDownload()
+        let parser = XMLParser(data: data)
+        let delegate = OverpassParser()
+        parser.delegate = delegate
+        parser.parse()
+        
+        self.delegate?.endDownload()
     }
     
     func checkMapcenter(center: GLMapGeoPoint) -> Bool {
