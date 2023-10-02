@@ -14,8 +14,9 @@ class OverpasClient: NSObject {
     var downloadCount: Int64 = 0
     
     func getData(urlStr: String) async throws {
+        let str = "https://overpass-api.de/api/interpreter?data=" + urlStr
         let session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
-        guard let urlStr = urlStr.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+        guard let urlStr = str.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
               let url = URL(string: urlStr) else { throw "Error generate URL" }
         let request = URLRequest(url: url)
         let task = session.downloadTask(with: request)

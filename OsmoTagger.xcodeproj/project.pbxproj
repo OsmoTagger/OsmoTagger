@@ -84,6 +84,7 @@
 		E3AA63A82A7BBD14008BFBD5 /* ApiKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */; };
 		E3B6F81C2ACB6A1A0017C4AE /* OverpassViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B6F81B2ACB6A1A0017C4AE /* OverpassViewController.swift */; };
 		E3B6F81E2ACB7AD90017C4AE /* OverpasClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B6F81D2ACB7AD90017C4AE /* OverpasClient.swift */; };
+		E3B6F8202ACB7B920017C4AE /* OverpasProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B6F81F2ACB7B920017C4AE /* OverpasProtocol.swift */; };
 		E3B9A5CD2A463E0400C6839A /* GLMap in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CC2A463E0400C6839A /* GLMap */; };
 		E3B9A5CF2A463E1800C6839A /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CE2A463E1800C6839A /* XMLCoder */; };
 		E3C1BB232ABAF61B00B4BFD6 /* StretchableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C1BB222ABAF61B00B4BFD6 /* StretchableCell.swift */; };
@@ -199,6 +200,7 @@
 		E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ApiKeys.swift; path = ../../../Downloads/ApiKeys.swift; sourceTree = "<group>"; };
 		E3B6F81B2ACB6A1A0017C4AE /* OverpassViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverpassViewController.swift; sourceTree = "<group>"; };
 		E3B6F81D2ACB7AD90017C4AE /* OverpasClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverpasClient.swift; sourceTree = "<group>"; };
+		E3B6F81F2ACB7B920017C4AE /* OverpasProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverpasProtocol.swift; sourceTree = "<group>"; };
 		E3C1BB222ABAF61B00B4BFD6 /* StretchableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StretchableCell.swift; sourceTree = "<group>"; };
 		E3C1BB242ABAF9E900B4BFD6 /* LogsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -352,6 +354,7 @@
 			isa = PBXGroup;
 			children = (
 				2C2F972729D53DB100A994C8 /* UpdateSourceDataProtocol.swift */,
+				E3B6F81F2ACB7B920017C4AE /* OverpasProtocol.swift */,
 				2CE00A802A253DA5008A6119 /* MapClientProtocol.swift */,
 			);
 			path = Protocols;
@@ -610,6 +613,7 @@
 				E3C1BB252ABAF9E900B4BFD6 /* LogsViewController.swift in Sources */,
 				E3021DAC2A8FFF86000E789A /* MapStyles.swift in Sources */,
 				2CA74E96291EE1BD00413930 /* AppSettings.swift in Sources */,
+				E3B6F8202ACB7B920017C4AE /* OverpasProtocol.swift in Sources */,
 				E33A71CC2ABA3580009D9508 /* Common.swift in Sources */,
 				E336A0CA2ABFDB72003E8890 /* UIColor.swift in Sources */,
 				E3B6F81C2ACB6A1A0017C4AE /* OverpassViewController.swift in Sources */,

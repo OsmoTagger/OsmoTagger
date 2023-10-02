@@ -33,7 +33,7 @@ final class AppSettings: NSObject {
             let data = try Data(contentsOf: logsURL)
             var lastLogs = try JSONDecoder().decode([String].self, from: data)
             if lastLogs.count > 1000 {
-                lastLogs = Array(lastLogs.prefix(99))
+                lastLogs = Array(lastLogs.prefix(999))
             }
             logs += lastLogs
         } catch {
@@ -278,6 +278,14 @@ final class AppSettings: NSObject {
     }
     
     // MARK: OVERPASS API
+    var overpassClosure: EmptyBlock?
     let overpasDataURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("overpass.data")
-    
+    var lastOverpassRequest: String? {
+        get {
+            return UserDefaults.standard.string(forKey: "lastOverpassRequest")
+        }
+        set {
+            UserDefaults.standard.setValue(newValue, forKey: "lastOverpassRequest")
+        }
+    }
 }

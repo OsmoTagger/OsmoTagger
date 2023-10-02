@@ -11,6 +11,8 @@ import UIKit
 class OverpassViewController: ScrollViewController {
     private let spacing: CGFloat = 10
     
+    let overpassClient = OverpasClient()
+    
     let indicator = UIActivityIndicatorView()
     
     let field = UITextView()
@@ -22,6 +24,8 @@ class OverpassViewController: ScrollViewController {
 
         title = "Overpass API"
         view.backgroundColor = .systemBackground
+        
+        overpassClient.delegate = self
         
         setRightButtons()
         setTextView()
@@ -39,10 +43,24 @@ class OverpassViewController: ScrollViewController {
         present(vc, animated: true)
     }
     
+// https://overpass-api.de/api/interpreter?data=
+// nwr[shop=convenience](55.992802,40.319054,56.006167,40.343992);out center;
     @objc private func tapSend() {
         guard let request = field.text, request != "" else {
             Alert.showAlert("Enter request")
             return
+        }
+        indicator.startAnimating()
+        Task {
+            do {
+                try await overpassClient.getData(urlStr: request)
+                AppSettings.settings.lastOverpassRequest = request
+                stopAnimating()
+            } catch {
+                let message = error as? String ?? "Error get data"
+                Alert.showAlert(message)
+                stopAnimating()
+            }
         }
     }
     
@@ -116,6 +134,7 @@ class OverpassViewController: ScrollViewController {
     }
     
     private func setTextView() {
+        field.text = AppSettings.settings.lastOverpassRequest
         field.layer.borderColor = UIColor.systemGray.cgColor
         field.layer.borderWidth = 2
         field.layer.cornerRadius = 4
@@ -134,4 +153,33 @@ class OverpassViewController: ScrollViewController {
 
 extension OverpassViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer) -> Bool { return true }
+}
+
+// MARK: OverpasProtocol
+extension OverpassViewController: OverpasProtocol {
+    func downloadProgress(_ loaded: Int64) {
+        let mb = Double(loaded) / 1_048_576
+        let mbStr = String(format: "%.3f", mb)
+        setLabelText(text: "Download: \(mbStr) Mb.")
+    }
+    
+    func downloadCompleted(with result: URL) {
+        guard let data = try? Data(contentsOf: result) else {
+            setLabelText(text: "Error reading data")
+            return
+        }
+        try? data.write(to: AppSettings.settings.overpasDataURL, options: .atomic)
+        setLabelText(text: "Data has been successfully loaded")
+    }
+    private func setLabelText(text: String) {
+        DispatchQueue.main.async { [weak self] in
+            self?.label.text = text
+        }
+    }
+    
+    private func stopAnimating() {
+        DispatchQueue.main.async { [weak self] in
+            self?.indicator.stopAnimating()
+        }
+    }
 }
