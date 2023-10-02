@@ -50,12 +50,12 @@ class SavedNodesViewController: SheetViewController, UITableViewDelegate, UITabl
     }
     
     override func viewWillAppear(_: Bool) {
+        navigationController?.setToolbarHidden(false, animated: false)
         fillData()
         tableView.reloadData()
     }
     
     func createToolBar() {
-        navigationController?.setToolbarHidden(false, animated: false)
         let checkAll = UIImageView(image: UIImage(systemName: "checkmark.square"))
         let checkAllTap = UITapGestureRecognizer(target: self, action: #selector(tapCheckAll))
         checkAll.addGestureRecognizer(checkAllTap)
@@ -404,14 +404,17 @@ class SavedNodesViewController: SheetViewController, UITableViewDelegate, UITabl
                     self.enterCommentView.field.text = nil
                     AppSettings.settings.changeSetComment = nil
                 }
-                let alert0 = UIAlertAction(title: "Ok", style: .default, handler: { _ in
-                    if AppSettings.settings.savedObjects.count == 0, AppSettings.settings.deletedObjects.count == 0 {
+                Alert.showAlert("Changes have been sent successfully", isBad: false)
+                if AppSettings.settings.savedObjects.count == 0 && AppSettings.settings.deletedObjects.count == 0 {
+                    if let navVC = navigationController as? SheetNavigationController, isPad {
+                        navVC.tapCloseClosure?()
+                    } else {
                         self.dismiss(animated: true)
                     }
-                })
-                showAction(message: "Changes have been sent successfully", addAlerts: [alert0])
+                }
             } catch {
                 let message = error as? String ?? "Data sending error"
+                Log("Error send objects: \(message)")
                 removeIndicator(indicator: indicator)
                 showAction(message: message, addAlerts: [])
             }

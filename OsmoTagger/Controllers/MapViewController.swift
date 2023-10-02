@@ -13,29 +13,52 @@ import UIKit
 class MapViewController: UIViewController {
     //  Class for working with MapView. Subsequently, all GLMap entities should be transferred to it.
     let mapClient = MapClient()
+    let screenManager = ScreenManager()
+    
     //  map and location service
     var mapView: GLMapView!
+    var mapViewTrailingAnchor = NSLayoutConstraint()
+    var trailingAnchors: [NSLayoutConstraint] = []
+    
     private let locationManager = CLLocationManager()
     
     //  The variable in which the reference to the open UINavigationController is stored. When initializing any controller, there is a check for nil, for example, in the goToSAvedNodesVC() method.
     var navController: SheetNavigationController?
     
     // plus zoom, minus zoom, map angle
-    let mapButtons = MapButtonsView()
+    let mapZoomButtons = MapZoomButtonsView()
     
     //  Buttons
-    let downloadButton = DownloadButton()
-    // Variable activates the source data loading mode
-    var isDownloadSource = false
+    let downloadButton = MapButton()
     let indicator = DownloadIndicatorView()
     let centerIcon = UIImageView()
-    let addNodeButton = UIButton()
+    let addNodeButton = MapButton()
     var addNodeButtonTopConstraint = NSLayoutConstraint()
     
     //  Displays the object that was tapped and whose properties are currently being edited (yellow).
     var editDrawble = GLMapVectorLayer(drawOrder: 4)
     
-    let animationDuration = 0.3
+    private let animationDuration = 0.3
+    
+    override var keyCommands: [UIKeyCommand]? {
+        #if targetEnvironment(macCatalyst)
+            let left = UIKeyCommand(input: UIKeyCommand.inputLeftArrow, modifierFlags: [], action: #selector(moveLeft))
+            left.wantsPriorityOverSystemBehavior = true
+            let right = UIKeyCommand(input: UIKeyCommand.inputRightArrow, modifierFlags: [], action: #selector(moveRight))
+            right.wantsPriorityOverSystemBehavior = true
+            let up = UIKeyCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(moveUp))
+            up.wantsPriorityOverSystemBehavior = true
+            let down = UIKeyCommand(input: UIKeyCommand.inputDownArrow, modifierFlags: [], action: #selector(moveDown))
+            down.wantsPriorityOverSystemBehavior = true
+            return [
+                UIKeyCommand(input: "=", modifierFlags: [], action: #selector(tapPlusButton)),
+                UIKeyCommand(input: "-", modifierFlags: [], action: #selector(tapMinusButton)),
+                left, right, up, down,
+            ]
+        #else
+            return nil
+        #endif
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +66,8 @@ class MapViewController: UIViewController {
         setMapView()
         
         mapClient.delegate = self
+        
+        setScreenManagerClosures()
         
         // We run the definition of the geo position and check its resolution for the application in the settings.
         locationManager.startUpdatingLocation()
@@ -68,10 +93,10 @@ class MapViewController: UIViewController {
         setAddNodeButton()
         setDrawButton()
         // The test button in the lower right corner of the screen is often needed during development.
-        // setTestButton()
+//         setTestButton()
         
         // Zoom in and zoom out buttons, map rotation button
-        setMapButtons()
+        setMapZoomButtons()
     }
     
     override func viewDidAppear(_: Bool) {
@@ -85,6 +110,38 @@ class MapViewController: UIViewController {
         // When this closure is called, the object is added to the map and the zoom is adjusted
         setShowVectorObjectClosure()
         mapClient.showSavedObjects()
+        #if targetEnvironment(macCatalyst)
+            Alert.showAlert("Use the left, right, down, up, +, and - keys for navigation", isBad: false)
+        #endif
+    }
+    
+    private func setScreenManagerClosures() {
+        screenManager.moveUpClosure = { [weak self] in
+            guard let self = self else { return }
+            self.runOpenAnimation()
+        }
+        screenManager.moveDownClosure = { [weak self] in
+            guard let self = self else { return }
+            self.runCloseAnimation()
+        }
+        screenManager.moveRightClosure = { [weak self] in
+            guard let self = self else { return }
+            self.mapViewTrailingAnchor.constant = 0
+            for anchor in self.trailingAnchors {
+                anchor.constant += self.screenManager.childWidth
+            }
+        }
+        screenManager.moveLeftClosure = { [weak self] in
+            guard let self = self else { return }
+            for anchor in self.trailingAnchors {
+                anchor.constant -= self.screenManager.childWidth
+            }
+            self.mapViewTrailingAnchor.constant = -self.screenManager.childWidth
+        }
+        screenManager.removeTappedObjectsClosure = { [weak self] in
+            guard let self = self else { return }
+            self.mapView.remove(self.mapClient.tappedDrawble)
+        }
     }
     
     // MARK: MapView and layers
@@ -103,11 +160,12 @@ class MapViewController: UIViewController {
         GLMapManager.shared.tileDownloadingAllowed = true
         mapView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(mapView)
+        mapViewTrailingAnchor = NSLayoutConstraint(item: mapView!, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1, constant: 0)
         NSLayoutConstraint.activate([
             mapView.topAnchor.constraint(equalTo: view.topAnchor),
-            mapView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            mapViewTrailingAnchor,
             mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            mapView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
         ])
     }
     
@@ -136,22 +194,14 @@ class MapViewController: UIViewController {
             // rotate mapButtons.angleButton image
             let angle = CGFloat(self.mapView.mapAngle)
             let radian = angle * .pi / 180
-            mapButtons.angleButton.image.transform = CGAffineTransform(rotationAngle: -radian)
+            mapZoomButtons.angleButton.image.transform = CGAffineTransform(rotationAngle: -radian)
             
             if self.navController == nil {
                 AppSettings.settings.lastBbox = self.mapView.bbox
             }
-            guard self.isDownloadSource == true else { return }
             let zoom = self.mapView.mapZoomLevel
             let beginLoadZoom = 16.0
-            if zoom > beginLoadZoom {
-                self.downloadButton.circle.backgroundColor = .systemGreen
-                self.checkMapCenter()
-                self.addNodeButton.alpha = 1
-            } else {
-                self.downloadButton.circle.backgroundColor = .systemRed
-                self.addNodeButton.alpha = 0.5
-            }
+            self.addNodeButton.alpha = zoom > beginLoadZoom ? 1 : 0.5
         }
     }
     
@@ -205,19 +255,19 @@ class MapViewController: UIViewController {
     // MARK: Set screen elements
 
     // Zoom in and zoom out buttons, map rotation button
-    func setMapButtons() {
-        mapButtons.plusButton.addTarget(self, action: #selector(tapPlusButton), for: .touchUpInside)
-        mapButtons.minusButton.addTarget(self, action: #selector(tapMinusButton), for: .touchUpInside)
+    func setMapZoomButtons() {
+        mapZoomButtons.plusButton.addTarget(self, action: #selector(tapPlusButton), for: .touchUpInside)
+        mapZoomButtons.minusButton.addTarget(self, action: #selector(tapMinusButton), for: .touchUpInside)
         let angleTap = UITapGestureRecognizer()
         angleTap.delegate = self
         angleTap.addTarget(self, action: #selector(tapAngleButton))
-        mapButtons.angleButton.addGestureRecognizer(angleTap)
-        view.addSubview(mapButtons)
+        mapZoomButtons.angleButton.addGestureRecognizer(angleTap)
+        view.addSubview(mapZoomButtons)
         NSLayoutConstraint.activate([
-            mapButtons.heightAnchor.constraint(equalToConstant: 150),
-            mapButtons.widthAnchor.constraint(equalToConstant: 40),
-            mapButtons.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            mapButtons.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 300),
+            mapZoomButtons.heightAnchor.constraint(equalToConstant: 150),
+            mapZoomButtons.widthAnchor.constraint(equalToConstant: 40),
+            mapZoomButtons.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            mapZoomButtons.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 300),
         ])
     }
     
@@ -245,117 +295,105 @@ class MapViewController: UIViewController {
         }
     }
     
-    //  The indicator that appears in place of the data download button.
+    @objc private func moveLeft() {
+        moveMap(CGPoint(x: 40, y: 0))
+    }
+    
+    @objc private func moveRight() {
+        moveMap(CGPoint(x: -40, y: 0))
+    }
+    
+    @objc private func moveUp() {
+        moveMap(CGPoint(x: 0, y: 40))
+    }
+    
+    @objc private func moveDown() {
+        moveMap(CGPoint(x: 0, y: -40))
+    }
+    
+    private func moveMap(_ delta: CGPoint) {
+        var center = mapView.makeDisplayPoint(from: mapView.mapCenter)
+        center.x -= delta.x
+        center.y -= delta.y
+        mapView.animate { anim in
+            anim.transition = .easeOut
+            mapView.mapCenter = mapView.makeMapPoint(fromDisplay: center)
+        }
+    }
+    
+    // The indicator that appears in place of the data download button.
     func setLoadIndicator() {
         indicator.isUserInteractionEnabled = false
         indicator.stopAnimating()
-        view.addSubview(indicator)
-        
         indicator.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(indicator)
+        let trailingAnchor = NSLayoutConstraint(item: indicator, attribute: .trailing, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .trailing, multiplier: 1, constant: -20)
         NSLayoutConstraint.activate([
             indicator.widthAnchor.constraint(equalToConstant: 20),
             indicator.heightAnchor.constraint(equalToConstant: 20),
             indicator.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            indicator.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -20),
+            trailingAnchor,
         ])
+        trailingAnchors.append(trailingAnchor)
     }
     
     func setDownloadButton() {
-        downloadButton.layer.cornerRadius = 5
-        downloadButton.backgroundColor = .white
-        downloadButton.setImage(UIImage(systemName: "square.and.arrow.down.fill")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
+        downloadButton.configure(image: "square.and.arrow.down.fill")
         downloadButton.addTarget(self, action: #selector(tapDownloadButton), for: .touchUpInside)
         view.addSubview(downloadButton)
-        
-        downloadButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([downloadButton.widthAnchor.constraint(equalToConstant: 40),
-                                     downloadButton.heightAnchor.constraint(equalToConstant: 40),
-                                     downloadButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
-                                     downloadButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)])
-    }
-    
-    func checkMapCenter() {
-        Task {
-            do {
-                try await mapClient.checkMapCenter(center: mapView.mapGeoCenter)
-            } catch {
-                let message = "Error download data. Lat: \(mapView.mapGeoCenter.lat),lon: \(mapView.mapGeoCenter.lon), bbox size: \(mapClient.defaultBboxSize).\nError: \(error)"
-                showAction(message: message, addAlerts: [])
-            }
-        }
+        let trailingAnchor = NSLayoutConstraint(item: downloadButton, attribute: .trailing, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .trailing, multiplier: 1, constant: -20)
+        NSLayoutConstraint.activate([
+            downloadButton.widthAnchor.constraint(equalToConstant: 40),
+            downloadButton.heightAnchor.constraint(equalToConstant: 40),
+            downloadButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
+            trailingAnchor,
+        ])
+        trailingAnchors.append(trailingAnchor)
     }
     
     @objc func tapDownloadButton() {
-        isDownloadSource = !isDownloadSource
-        if isDownloadSource {
-            let zoom = mapView.mapZoomLevel
-            let beginLoadZoom = 16.0
-            downloadButton.circle.isHidden = false
-            if zoom > beginLoadZoom {
-                downloadButton.circle.backgroundColor = .systemGreen
-                checkMapCenter()
-            } else {
-                downloadButton.circle.backgroundColor = .systemRed
+        Task {
+            do {
+                try await mapClient.getSourceBbox(mapCenter: mapView.mapGeoCenter)
+            } catch {
+                let message = error as? String ?? "Error load data"
+                Alert.showAlert(message)
             }
-        } else {
-            downloadButton.circle.isHidden = true
         }
     }
-        
+    
     func setupSettingsButton() {
-        let settingsButton = UIButton()
-        settingsButton.layer.cornerRadius = 5
-        settingsButton.backgroundColor = .white
-        settingsButton.setImage(UIImage(systemName: "gearshape")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
+        let settingsButton = MapButton()
+        settingsButton.configure(image: "gearshape")
         settingsButton.addTarget(self, action: #selector(tapSettingsButton), for: .touchUpInside)
         view.addSubview(settingsButton)
-        
-        settingsButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([settingsButton.widthAnchor.constraint(equalToConstant: 40),
-                                     settingsButton.heightAnchor.constraint(equalToConstant: 40),
-                                     settingsButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 95),
-                                     settingsButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)])
+        let trailingAnchor = NSLayoutConstraint(item: settingsButton, attribute: .trailing, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .trailing, multiplier: 1, constant: -20)
+        NSLayoutConstraint.activate([
+            settingsButton.widthAnchor.constraint(equalToConstant: 40),
+            settingsButton.heightAnchor.constraint(equalToConstant: 40),
+            settingsButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 95),
+            trailingAnchor,
+        ])
+        trailingAnchors.append(trailingAnchor)
     }
     
     @objc func tapSettingsButton() {
-        if navController != nil {
-            navController?.dismiss(animated: true) { [weak self] in
-                guard let self = self else { return }
-                self.goToSettingsVC()
-            }
-        } else {
-            goToSettingsVC()
-        }
-    }
-    
-    func goToSettingsVC() {
-        let vc = MainViewController()
-        navController = SheetNavigationController(rootViewController: vc)
-        guard let sheetVC = navController?.sheetPresentationController else {return}
-        // open the settings in full-screen mode
-        sheetVC.detents = [.large()]
-        navController?.dismissClosure = { [weak self] in
-            guard let self = self else { return }
-            self.navController = nil
-        }
-        if navController != nil {
-            present(navController!, animated: true)
-        }
+        screenManager.openSettings(parent: self)
     }
     
     func setupLocationButton() {
-        let locationButton = UIButton()
-        locationButton.layer.cornerRadius = 5
-        locationButton.backgroundColor = .white
-        locationButton.setImage(UIImage(systemName: "location.north.fill")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
+        let locationButton = MapButton()
+        locationButton.configure(image: "location.north.fill")
         locationButton.addTarget(self, action: #selector(mapToLocation), for: .touchUpInside)
         view.addSubview(locationButton)
-        
-        locationButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([locationButton.widthAnchor.constraint(equalToConstant: 40),
-                                     locationButton.heightAnchor.constraint(equalToConstant: 40),
-                                     locationButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 150),
-                                     locationButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)])
+        let trailingAnchor = NSLayoutConstraint(item: locationButton, attribute: .trailing, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .trailing, multiplier: 1, constant: -20)
+        NSLayoutConstraint.activate([
+            locationButton.widthAnchor.constraint(equalToConstant: 40),
+            locationButton.heightAnchor.constraint(equalToConstant: 40),
+            locationButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 150),
+            trailingAnchor,
+        ])
+        trailingAnchors.append(trailingAnchor)
     }
     
     //  Moves the center of the map to the geo position.
@@ -370,18 +408,17 @@ class MapViewController: UIViewController {
     //  The button for switching to the controller with created and modified objects.
     func setSavedNodesButton() {
         let savedNodesButton = SavedObjectButton()
-        mapClient.savedNodeButtonLink = savedNodesButton
-        savedNodesButton.layer.cornerRadius = 5
-        savedNodesButton.backgroundColor = .white
-        savedNodesButton.setImage(UIImage(systemName: "square.and.arrow.up.fill"), for: .normal)
-        savedNodesButton.tintColor = .black
+        savedNodesButton.configure(image: "square.and.arrow.up.fill")
         savedNodesButton.addTarget(self, action: #selector(tapSavedNodesButton), for: .touchUpInside)
         view.addSubview(savedNodesButton)
-        savedNodesButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([savedNodesButton.widthAnchor.constraint(equalToConstant: 40),
-                                     savedNodesButton.heightAnchor.constraint(equalToConstant: 40),
-                                     savedNodesButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 205),
-                                     savedNodesButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)])
+        let trailingAnchor = NSLayoutConstraint(item: savedNodesButton, attribute: .trailing, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .trailing, multiplier: 1, constant: -20)
+        NSLayoutConstraint.activate([
+            savedNodesButton.widthAnchor.constraint(equalToConstant: 40),
+            savedNodesButton.heightAnchor.constraint(equalToConstant: 40),
+            savedNodesButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 205),
+            trailingAnchor,
+        ])
+        trailingAnchors.append(trailingAnchor)
     }
     
     func updateAddNodeButton() {
@@ -393,67 +430,32 @@ class MapViewController: UIViewController {
     }
     
     @objc func tapSavedNodesButton() {
-        if let viewControllers = navController?.viewControllers {
-            // navController != nil
-            if viewControllers[0] is SavedNodesViewController {
-                if viewControllers.count == 1 {
-                    return
-                } else {
-                    navController?.setViewControllers([viewControllers[0]], animated: true)
-                }
-            } else {
-                // dismiss and open new navController
-                navController?.dismiss(animated: true, completion: { [weak self] in
-                    guard let self = self else { return }
-                    self.goToSAvedNodesVC()
-                })
-            }
-        } else {
-            // navController = nil, open new navigation controller
-            goToSAvedNodesVC()
+        if AppSettings.settings.savedObjects.count == 0 && AppSettings.settings.deletedObjects.count == 0 {
+            Alert.showAlert("Changeset is empty")
+            return
         }
+        screenManager.openSavedNodesVC(parent: self)
     }
-    
-    func goToSAvedNodesVC() {
-        runOpenAnimation()
-        let savedNodesVC = SavedNodesViewController()
-        savedNodesVC.delegate = self
-        navController = SheetNavigationController(rootViewController: savedNodesVC)
-        navController?.dismissClosure = { [weak self] in
-            guard let self = self else { return }
-            self.navController = nil
-            self.runCloseAnimation()
-        }
-        if navController != nil {
-            present(navController!, animated: true, completion: nil)
-        }
-    }
-    
+        
     func setDrawButton() {
         let drawButton = DrawButton()
-        drawButton.layer.cornerRadius = 5
-        drawButton.backgroundColor = .white
-        drawButton.setImage(UIImage(systemName: "paintbrush.pointed.fill"), for: .normal)
-        drawButton.tintColor = .black
+        drawButton.configure(image: "paintbrush.pointed.fill")
         drawButton.addTarget(self, action: #selector(tapDrawButton), for: .touchUpInside)
-        drawButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(drawButton)
+        let trailingAnchor = NSLayoutConstraint(item: drawButton, attribute: .trailing, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .trailing, multiplier: 1, constant: -20)
         NSLayoutConstraint.activate([
             drawButton.widthAnchor.constraint(equalToConstant: 40),
             drawButton.heightAnchor.constraint(equalToConstant: 40),
             drawButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 260),
-            drawButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
+            trailingAnchor,
         ])
+        trailingAnchors.append(trailingAnchor)
     }
     
     @objc func tapDrawButton(_ sender: DrawButton) {
         sender.isActive = !sender.isActive
         if sender.isActive {
             setCenterMap()
-            checkMapCenter()
-            if isDownloadSource == false {
-                tapDownloadButton()
-            }
             UIView.animate(withDuration: 0.3, animations: { [weak self] in
                 guard let self = self else { return }
                 self.addNodeButtonTopConstraint.constant = 310
@@ -479,22 +481,33 @@ class MapViewController: UIViewController {
     }
     
     func setAddNodeButton() {
-        addNodeButton.layer.cornerRadius = 5
-        addNodeButton.backgroundColor = .white
-        addNodeButton.setImage(UIImage(named: "addnode"), for: .normal)
+        addNodeButton.configure(image: "addnode")
         addNodeButton.addTarget(self, action: #selector(tapAddNodeButton), for: .touchUpInside)
         view.addSubview(addNodeButton)
-        addNodeButton.translatesAutoresizingMaskIntoConstraints = false
         addNodeButtonTopConstraint = NSLayoutConstraint(item: addNodeButton, attribute: .top, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .top, multiplier: 1, constant: 260)
-        NSLayoutConstraint.activate([addNodeButton.widthAnchor.constraint(equalToConstant: 40),
-                                     addNodeButton.heightAnchor.constraint(equalToConstant: 40),
-                                     addNodeButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
-                                     addNodeButtonTopConstraint])
+        let trailingAnchor = NSLayoutConstraint(item: addNodeButton, attribute: .trailing, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .trailing, multiplier: 1, constant: -20)
+        NSLayoutConstraint.activate([
+            addNodeButton.widthAnchor.constraint(equalToConstant: 40),
+            addNodeButton.heightAnchor.constraint(equalToConstant: 40),
+            addNodeButtonTopConstraint, trailingAnchor,
+        ])
+        trailingAnchors.append(trailingAnchor)
     }
     
     @objc func tapAddNodeButton() {
         guard mapView.mapZoomLevel > 16 else {
-            showAction(message: "Zoom in for a more accurate location determination!", addAlerts: [])
+            Alert.showAlert("Zoom in for a more accurate location determination!")
+            return
+        }
+        if !mapClient.checkMapcenter(center: mapView.mapGeoCenter) {
+            Alert.showAlert("Load the data before adding points")
+            UIView.animate(withDuration: 0.5, animations: { [weak self] in
+                self?.downloadButton.backgroundColor = .red
+            }, completion: { [weak self] _ in
+                UIView.animate(withDuration: 0.5, delay: 2, options: [.allowUserInteraction], animations: {
+                    self?.downloadButton.backgroundColor = .white
+                })
+            })
             return
         }
         let geoPoint = mapView.makeGeoPoint(fromDisplay: mapView.center)
@@ -504,166 +517,26 @@ class MapViewController: UIViewController {
         let id = AppSettings.settings.nextID
         point.setValue(String(id), forKey: "@id")
         let object = OSMAnyObject(type: .node, id: id, version: 0, changeset: 0, lat: geoPoint.lat, lon: geoPoint.lon, tag: [], nd: [], nodes: [:], members: [], vector: point)
-        goToPropertiesVC(object: object)
+        screenManager.editObject(parent: self, object: object)
     }
     
     //  Test button and its target for debugging convenience.
     func setTestButton() {
-        let testButton = UIButton()
-        testButton.layer.cornerRadius = 5
-        testButton.backgroundColor = .white
-        testButton.setImage(UIImage(systemName: "pencil")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
+        let testButton = MapButton()
+        testButton.configure(image: "pencil")
         testButton.addTarget(self, action: #selector(tapTestButton), for: .touchUpInside)
         view.addSubview(testButton)
-        testButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([testButton.widthAnchor.constraint(equalToConstant: 40),
-                                     testButton.heightAnchor.constraint(equalToConstant: 40),
-                                     testButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
-                                     testButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)])
+        let trailingAnchor = NSLayoutConstraint(item: testButton, attribute: .trailing, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .trailing, multiplier: 1, constant: -20)
+        NSLayoutConstraint.activate([
+            testButton.widthAnchor.constraint(equalToConstant: 40),
+            testButton.heightAnchor.constraint(equalToConstant: 40),
+            testButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
+            trailingAnchor,
+        ])
+        trailingAnchors.append(trailingAnchor)
     }
     
     @objc func tapTestButton() {}
-    
-//    MARK: Open objects and screens
-
-    func openObjects(objects: [OSMAnyObject]) {
-        if let viewControllers = navController?.viewControllers {
-            // navController != nil
-            if let selectVC = viewControllers[0] as? SelectObjectViewController {
-                selectVC.objects = objects
-                selectVC.fillData()
-                if viewControllers.count == 1 {
-                    selectVC.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-                } else {
-                    navController?.setViewControllers([viewControllers[0]], animated: true, completion: {
-                        selectVC.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-                    })
-                }
-            } else {
-                navController?.dismiss(animated: true, completion: { [weak self] in
-                    guard let self = self else { return }
-                    self.goToSelectVC(objects: objects)
-                })
-            }
-        } else {
-            // navController = nil, open new
-            goToSelectVC(objects: objects)
-        }
-    }
-    
-    func goToSelectVC(objects: [OSMAnyObject]) {
-        runOpenAnimation()
-        let selectVC = SelectObjectViewController(objects: objects)
-        selectVC.delegate = self
-        navController = SheetNavigationController(rootViewController: selectVC)
-        navController?.dismissClosure = { [weak self] in
-            guard let self = self else { return }
-            self.mapView.remove(self.mapClient.tappedDrawble)
-            self.navController = nil
-            self.runCloseAnimation()
-        }
-        if navController != nil {
-            present(navController!, animated: true, completion: nil)
-        }
-    }
-    
-    func checkObjectInSelectVC(id: Int, objects: [OSMAnyObject]) -> Bool {
-        for object in objects {
-            if object.id == id {
-                return true
-            }
-        }
-        return false
-    }
-    
-    func editVCUpdateObject(viewControllers: [UIViewController], newObject: OSMAnyObject) {
-        for controller in viewControllers {
-            if let infoVC = controller as? InfoObjectViewController {
-                infoVC.object = newObject
-                infoVC.fillData()
-                infoVC.tableView.reloadData()
-            }
-        }
-        for controller in viewControllers {
-            if let editVC = controller as? EditObjectViewController {
-                editVC.updateViewController(newObject: newObject)
-                return
-            }
-        }
-    }
-    
-    func openObject(object: OSMAnyObject) {
-        if let viewControllers = navController?.viewControllers {
-            // navController != nil
-            if let selectVC = viewControllers[0] as? SelectObjectViewController {
-                // selectVC -------------------------------
-                if checkObjectInSelectVC(id: object.id, objects: selectVC.objects) {
-                    if viewControllers.count > 1 {
-                        editVCUpdateObject(viewControllers: viewControllers, newObject: object)
-                    } else {
-                        let editVC = EditObjectViewController(object: object)
-                        navController?.pushViewController(editVC, animated: true)
-                    }
-                } else {
-                    navController?.dismiss(animated: true, completion: { [weak self] in
-                        guard let self = self else { return }
-                        self.goToPropertiesVC(object: object)
-                    })
-                }
-                // selectVC -------------------------------
-            } else if viewControllers[0] is SavedNodesViewController {
-                //  savedVC -------------------------------
-                var savedObjects: [OSMAnyObject] = []
-                for (_, object) in AppSettings.settings.savedObjects {
-                    savedObjects.append(object)
-                }
-                for (_, object) in AppSettings.settings.deletedObjects {
-                    savedObjects.append(object)
-                }
-                if checkObjectInSelectVC(id: object.id, objects: savedObjects) {
-                    if viewControllers.count > 1 {
-                        editVCUpdateObject(viewControllers: viewControllers, newObject: object)
-                    } else {
-                        let editVC = EditObjectViewController(object: object)
-                        navController?.pushViewController(editVC, animated: true)
-                    }
-                } else {
-                    navController?.dismiss(animated: true, completion: { [weak self] in
-                        guard let self = self else { return }
-                        self.goToPropertiesVC(object: object)
-                    })
-                }
-                // savedVC -------------------------------
-            } else if viewControllers[0] is EditObjectViewController {
-                editVCUpdateObject(viewControllers: viewControllers, newObject: object)
-            } else {
-                navController?.dismiss(animated: true, completion: { [weak self] in
-                    guard let self = self else { return }
-                    self.goToPropertiesVC(object: object)
-                })
-            }
-        } else {
-            // navController = nil, open new
-            goToPropertiesVC(object: object)
-        }
-    }
-    
-    //  The method opens the tag editing controller.
-    //  The user can tap on the object on the visible part of the map at the moment when the editing controller is already open. Then the editable object on the controller changes to a new one.
-    func goToPropertiesVC(object: OSMAnyObject) {
-        runOpenAnimation()
-        let editVC = EditObjectViewController(object: object)
-        navController = SheetNavigationController(rootViewController: editVC)
-        // When the user closes the tag editing controller, the backlight of the tapped object is removed.
-        navController?.dismissClosure = { [weak self] in
-            guard let self = self else { return }
-            self.navController = nil
-            self.runCloseAnimation()
-        }
-        if navController != nil {
-            present(navController!, animated: true, completion: nil)
-        }
-    }
 }
 
 // MARK: MapClientProtocol
@@ -716,20 +589,18 @@ extension MapViewController: UIGestureRecognizerDelegate {
             return
         case 1:
             if let first = tapObjects.first {
-                openObject(object: first)
+                screenManager.editObject(parent: self, object: first)
             }
         default:
             // Moves the tapped object to the visible part of the map.
             let centerPoint = mapView.makeGeoPoint(fromDisplay: touchPoint)
-            mapView.animate({ animation in
+            mapView.animate { [weak self] animation in
+                guard let self = self else { return }
                 animation.duration = animationDuration
                 animation.transition = .linear
-                mapView.mapGeoCenter = centerPoint
-            }, withCompletion: { [weak self] _ in
-                guard let self = self else { return }
-                AppSettings.settings.lastBbox = self.mapView.bbox
-            })
-            openObjects(objects: tapObjects)
+                self.mapView.mapGeoCenter = centerPoint
+            }
+            screenManager.openSelectObjectVC(parent: self, objects: tapObjects)
         }
     }
 }

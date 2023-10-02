@@ -27,11 +27,16 @@ class SheetViewController: UIViewController {
         navigationItem.rightBarButtonItems = [closeButton]
     }
     
-    required init?(coder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     @objc private func tapCloseButton() {
-        navigationController?.dismiss(animated: true)
+        if isPad, let sheetNavVC = navigationController as? SheetNavigationController {
+            sheetNavVC.tapCloseClosure?()
+        } else {
+            navigationController?.dismiss(animated: true)
+        }
     }
 }

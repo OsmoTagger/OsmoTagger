@@ -8,8 +8,23 @@
 import Foundation
 import UIKit
 
+class MapButton: UIButton {
+    func configure(image: String) {
+        var icon: UIImage?
+        icon = UIImage(systemName: image)
+        if icon == nil {
+            icon = UIImage(named: image)
+        }
+        tintColor = .black
+        setImage(icon, for: .normal)
+        layer.cornerRadius = 5
+        translatesAutoresizingMaskIntoConstraints = false
+        backgroundColor = .white
+    }
+}
+
 // DrawButton on MapViewController
-class DrawButton: UIButton {
+class DrawButton: MapButton {
     var isActive = false {
         didSet {
             if isActive {
@@ -21,40 +36,8 @@ class DrawButton: UIButton {
     }
 }
 
-// Custom button for download button on the map
-class DownloadButton: UIButton {
-    let circle: UIView = {
-        let view = UIView()
-        view.layer.cornerRadius = 6
-        view.isHidden = true
-        view.backgroundColor = .systemGreen
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
-    init() {
-        super.init(frame: .zero)
-        setupConstrains()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setupConstrains() {
-        addSubview(circle)
-        NSLayoutConstraint.activate([
-            circle.widthAnchor.constraint(equalToConstant: 12),
-            circle.heightAnchor.constraint(equalToConstant: 12),
-            circle.centerXAnchor.constraint(equalTo: rightAnchor, constant: -8),
-            circle.centerYAnchor.constraint(equalTo: topAnchor, constant: 8),
-        ])
-    }
-}
-
 //  Custom button for switching to the controller of saved objects
-class SavedObjectButton: UIButton {
+class SavedObjectButton: MapButton {
     private let circle: UIView = {
         let view = UIView()
         let counts = AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count
@@ -84,6 +67,11 @@ class SavedObjectButton: UIButton {
     init() {
         super.init(frame: .zero)
         setupConstrains()
+        AppSettings.settings.savedNodesCounterClosure = { [weak self] in
+            DispatchQueue.main.async { [weak self] in
+                self?.update()
+            }
+        }
     }
 
     @available(*, unavailable)
@@ -105,7 +93,7 @@ class SavedObjectButton: UIButton {
     }
     
     // Method update count and of saved, created and deleted objects
-    func update() {
+    private func update() {
         let counts = AppSettings.settings.savedObjects.count + AppSettings.settings.deletedObjects.count
         guard lastCount != counts else { return }
         if lastCount == 0 {

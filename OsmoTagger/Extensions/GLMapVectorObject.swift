@@ -16,9 +16,21 @@ extension GLMapVectorObject {
               let double = Double(str) else { return nil }
         return Int(double)
     }
+    
+    func getType() -> GLMapVectorObjectType {
+        if self is GLMapVectorPoint || self is GLMapVectorLine {
+            return .simple
+        } else if let polygon = self as? GLMapVectorPolygon {
+            let line = polygon.buildOutline() // GLMapVectorLine
+            return .polygon(line: line)
+        } else {
+            return .unknown
+        }
+    }
 }
 
 enum GLMapVectorObjectType {
     case simple
     case polygon(line: GLMapVectorLine)
+    case unknown
 }

@@ -11,6 +11,7 @@ import UIKit
 //  Custom UINavigationController. It opens controllers for displaying saved objects, selecting an object in the case of tapping on several objects, and a tag editing controller.
 class SheetNavigationController: UINavigationController {
     var dismissClosure: EmptyBlock?
+    var tapCloseClosure: EmptyBlock?
     
     override func viewDidDisappear(_: Bool) {
         guard let closure = dismissClosure else { return }

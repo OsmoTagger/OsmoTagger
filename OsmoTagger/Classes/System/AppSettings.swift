@@ -8,8 +8,6 @@
 import GLMap
 import UIKit
 
-typealias EmptyBlock = () -> Void
-
 //  Singleton for storing app settings
 final class AppSettings: NSObject {
     static let settings = AppSettings()
@@ -20,20 +18,34 @@ final class AppSettings: NSObject {
             let data = try Data(contentsOf: savedNodesURL)
             savedObjects = try JSONDecoder().decode([Int: OSMAnyObject].self, from: data)
         } catch {
+            // When initializing AppSettings.settings, we cannot use the Log function. Only after initialization.
+            logs.append("Error init savedObjects: \(error)")
             savedObjects = [:]
         }
         do {
             let data = try Data(contentsOf: deletedNodesURL)
             deletedObjects = try JSONDecoder().decode([Int: OSMAnyObject].self, from: data)
         } catch {
+            logs.append("Error init deletedObjects: \(error)")
             deletedObjects = [:]
+        }
+        do {
+            let data = try Data(contentsOf: logsURL)
+            var lastLogs = try JSONDecoder().decode([String].self, from: data)
+            if lastLogs.count > 1000 {
+                lastLogs = Array(lastLogs.prefix(99))
+            }
+            logs += lastLogs
+        } catch {
+            logs.append("Error init logs: \(error)")
+            logs = []
         }
     }
     
+    //  Called when changing savedObjects - to update counter on SavedObjectButton
+    var savedNodesCounterClosure: EmptyBlock?
     //  Called when changing savedObjects - to update the map
-    var mapVCClouser: EmptyBlock?
-    //  It is called in case of writing a token upon successful authorization, for uploading user data.
-    var userInfoClouser: ((OSMUserInfo) -> Void)?
+    var showSavedObjectClosure: EmptyBlock?
     // Closure that is called in the MapClient class to display or delete a vector object
     var showVectorObjectClosure: ((GLMapVectorObject?) -> Void)?
     
@@ -41,9 +53,7 @@ final class AppSettings: NSObject {
     // When opening EditObjectVC, a vector object is written, and through a variable is passed to mapClient, which adds and deletes the object
     var editableObject: GLMapVectorObject? {
         didSet {
-            if let closure = showVectorObjectClosure {
-                closure(editableObject)
-            }
+            showVectorObjectClosure?(editableObject)
         }
     }
     
@@ -66,7 +76,7 @@ final class AppSettings: NSObject {
             }
         }
         set {
-            let newBbox = newValue ?? GLMapBBox(origin: GLMapPoint(x: 0, y: 0), size: GLMapPoint(x: 0, y: 0))
+            let newBbox = newValue ?? GLMapBBox.empty
             UserDefaults.standard.set(newBbox.origin.x, forKey: "bboxOrX")
             UserDefaults.standard.set(newBbox.origin.y, forKey: "bboxOrY")
             UserDefaults.standard.set(newBbox.size.x, forKey: "bboxSizeX")
@@ -138,22 +148,18 @@ final class AppSettings: NSObject {
         set {
             if newValue == nil {
                 userName = nil
+            } else {
+                Task {
+                    let userInfo = try? await OsmClient().getUserInfo()
+                    if let userInfo {
+                        userName = userInfo.user.display_name
+                    }
+                }
             }
             if isDevServer {
                 UserDefaults.standard.set(newValue, forKey: "dev_access_token")
             } else {
                 UserDefaults.standard.set(newValue, forKey: "access_token")
-            }
-//          When saving the token, it loads the user's data
-            Task {
-                do {
-                    let userInfo = try await OsmClient().getUserInfo()
-                    if let clouser = userInfoClouser {
-                        clouser(userInfo)
-                    }
-                } catch {
-                    print(error)
-                }
             }
         }
     }
@@ -206,7 +212,7 @@ final class AppSettings: NSObject {
     // the variable in which the comment is written, which the user assigns to changeset. Used on EditVC, SavedNodesVC and OsmClient
     var changeSetComment: String?
     
-//    MARK: PRESETS
+    // MARK: PRESETS
 
     var chunks: [String: [ItemElements]] = [:]
     
@@ -214,7 +220,7 @@ final class AppSettings: NSObject {
     
     var itemPathes: [[String: String]: ItemPath] = [:]
     
-//    MARK: FILE PATHES
+    // MARK: FILE PATHES
     
     // Path to a file that stores modified and created objects
     let savedNodesURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("savedNodes.data")
@@ -228,14 +234,15 @@ final class AppSettings: NSObject {
     //  Stores and writes created and modified objects to a file
     var savedObjects: [Int: OSMAnyObject] = [:] {
         didSet {
-            if let clouser = mapVCClouser {
-                clouser()
-            }
+            savedNodesCounterClosure?()
+            showSavedObjectClosure?()
             do {
                 let data = try JSONEncoder().encode(savedObjects)
                 try data.write(to: savedNodesURL, options: .atomic)
             } catch {
-                print("Error while write saved objects: ", error)
+                let text = "Error while write saved objects: \(error)"
+                Alert.showAlert(text)
+                Log(text)
             }
         }
     }
@@ -243,14 +250,29 @@ final class AppSettings: NSObject {
     // Objects marked for deletion
     var deletedObjects: [Int: OSMAnyObject] = [:] {
         didSet {
-            if let clouser = mapVCClouser {
-                clouser()
-            }
+            savedNodesCounterClosure?()
+            showSavedObjectClosure?()
             do {
                 let data = try JSONEncoder().encode(deletedObjects)
                 try data.write(to: deletedNodesURL, options: .atomic)
             } catch {
-                print("Error while write saved objects: ", error)
+                let text = "Error while write saved objects: \(error)"
+                Log(text)
+                Alert.showAlert(text)
+            }
+        }
+    }
+    
+    // MARK: LOGS
+
+    private let logsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("logs.data")
+    var logs: [String] = [] {
+        didSet {
+            do {
+                let data = try JSONEncoder().encode(logs)
+                try data.write(to: logsURL, options: .atomic)
+            } catch {
+                Alert.showAlert("Error write logs: \(error)")
             }
         }
     }

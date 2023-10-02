@@ -9,7 +9,6 @@ import Foundation
 
 // Class for searching presets.
 class PresetClient {
-    
     //  The structure of Josm presets looks like this: category - group or preset - preset (Item).
     //  The method is used to get a preset from the category name, the group, and the preset itself.
     func getItemFromPath(path: ItemPath) -> Item? {
@@ -66,5 +65,4 @@ class PresetClient {
         }
         return pathes
     }
-    
 }

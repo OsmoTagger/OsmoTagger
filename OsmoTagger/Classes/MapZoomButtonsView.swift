@@ -9,23 +9,17 @@ import Foundation
 import UIKit
 
 // zoom plus, minus, set map angle
-class MapButtonsView: UIView {
-    var plusButton: UIButton = {
-        let button = UIButton()
-        button.layer.cornerRadius = 5
-        button.backgroundColor = .white
-        button.setImage(UIImage(systemName: "plus")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
+class MapZoomButtonsView: UIView {
+    var plusButton: MapButton = {
+        let rv = MapButton()
+        rv.configure(image: "plus")
+        return rv
     }()
     
-    var minusButton: UIButton = {
-        let button = UIButton()
-        button.layer.cornerRadius = 5
-        button.backgroundColor = .white
-        button.setImage(UIImage(systemName: "minus")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
+    var minusButton: MapButton = {
+        let rv = MapButton()
+        rv.configure(image: "minus")
+        return rv
     }()
     
     var angleButton: AngleButton = {
