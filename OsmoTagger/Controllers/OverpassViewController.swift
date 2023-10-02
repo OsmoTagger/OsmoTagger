@@ -40,7 +40,7 @@ class OverpassViewController: ScrollViewController {
     
     private func setLabels() {
         let infoLabel = UILabel()
-        infoLabel.text = "The Overpass API allows you to retrieve OpenStreetMap data with specific tags or within a particular region." + "The Overpass API allows you to retrieve OpenStreetMap data with specific tags or within a particular region." + "The Overpass API allows you to retrieve OpenStreetMap data with specific tags or within a particular region." + "The Overpass API allows you to retrieve OpenStreetMap data with specific tags or within a particular region." + "The Overpass API allows you to retrieve OpenStreetMap data with specific tags or within a particular region."
+        infoLabel.text = "The Overpass API allows you to retrieve OpenStreetMap data with specific tags or within a particular region."
         infoLabel.numberOfLines = 0
         infoLabel.font = .systemFont(ofSize: 14)
         infoLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -113,7 +113,7 @@ class OverpassViewController: ScrollViewController {
         scrollView.addSubview(field)
         NSLayoutConstraint.activate([
             field.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: spacing),
-            field.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: spacing),
+            field.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: spacing),
             field.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -spacing),
             field.heightAnchor.constraint(equalToConstant: 80)
         ])
