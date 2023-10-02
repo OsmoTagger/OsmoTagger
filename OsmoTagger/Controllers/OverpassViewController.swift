@@ -39,7 +39,12 @@ class OverpassViewController: ScrollViewController {
         present(vc, animated: true)
     }
     
-    @objc private func tapSend() {}
+    @objc private func tapSend() {
+        guard let request = field.text, request != "" else {
+            Alert.showAlert("Enter request")
+            return
+        }
+    }
     
     // MARK: ELEMENTS
     
