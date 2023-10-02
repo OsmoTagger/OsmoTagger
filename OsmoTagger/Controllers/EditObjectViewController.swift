@@ -383,9 +383,6 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellFail = UITableViewCell()
         cellFail.backgroundColor = .red
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: keyValueID, for: indexPath) as? KeyValueEditCell else {
-            return cellFail
-        }
         let data = tableData[indexPath.section].items[indexPath.row]
         switch data {
         case .key:
