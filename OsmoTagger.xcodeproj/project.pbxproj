@@ -82,6 +82,7 @@
 		E36A68002ABB8FC600824794 /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA6A3F829CAB964004233E2 /* Parser.swift */; };
 		E36A68022ABB905F00824794 /* OsmParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36A68012ABB905F00824794 /* OsmParser.swift */; };
 		E3AA63A82A7BBD14008BFBD5 /* ApiKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */; };
+		E3B6F81C2ACB6A1A0017C4AE /* OverpassViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B6F81B2ACB6A1A0017C4AE /* OverpassViewController.swift */; };
 		E3B9A5CD2A463E0400C6839A /* GLMap in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CC2A463E0400C6839A /* GLMap */; };
 		E3B9A5CF2A463E1800C6839A /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = E3B9A5CE2A463E1800C6839A /* XMLCoder */; };
 		E3C1BB232ABAF61B00B4BFD6 /* StretchableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C1BB222ABAF61B00B4BFD6 /* StretchableCell.swift */; };
@@ -195,6 +196,7 @@
 		E36A67F72ABB8DEB00824794 /* LineTool settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LineTool settings.swift"; sourceTree = "<group>"; };
 		E36A68012ABB905F00824794 /* OsmParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OsmParser.swift; path = "line tools/OsmParser.swift"; sourceTree = SOURCE_ROOT; };
 		E3AA63A72A7BBD14008BFBD5 /* ApiKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ApiKeys.swift; path = ../../../Downloads/ApiKeys.swift; sourceTree = "<group>"; };
+		E3B6F81B2ACB6A1A0017C4AE /* OverpassViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverpassViewController.swift; sourceTree = "<group>"; };
 		E3C1BB222ABAF61B00B4BFD6 /* StretchableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StretchableCell.swift; sourceTree = "<group>"; };
 		E3C1BB242ABAF9E900B4BFD6 /* LogsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -277,6 +279,7 @@
 				2CD2E7AB29D30D150042D36E /* MultiSelectViewController.swift */,
 				2CCB304129D4553100C8E5E7 /* SelectObjectViewController.swift */,
 				2CD4B48329C6DC2B00040018 /* CategoryViewController.swift */,
+				E3B6F81B2ACB6A1A0017C4AE /* OverpassViewController.swift */,
 				2CD4B48529C7475100040018 /* ItemTagsViewController.swift */,
 				2C58545829DBFC3200401786 /* Settings VC */,
 			);
@@ -605,6 +608,7 @@
 				2CA74E96291EE1BD00413930 /* AppSettings.swift in Sources */,
 				E33A71CC2ABA3580009D9508 /* Common.swift in Sources */,
 				E336A0CA2ABFDB72003E8890 /* UIColor.swift in Sources */,
+				E3B6F81C2ACB6A1A0017C4AE /* OverpassViewController.swift in Sources */,
 				2C4EEE822986154300F9AAF9 /* UIViewController.swift in Sources */,
 				2042BCEB289C696E0026514E /* AppDelegate.swift in Sources */,
 				2C2F972829D53DB200A994C8 /* UpdateSourceDataProtocol.swift in Sources */,

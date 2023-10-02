@@ -86,6 +86,13 @@ class ScreenManager {
         }
     }
     
+    // MARK: OVERPASS VC
+    
+    func openOverpass(parent: UIViewController) {
+        let vc = OverpassViewController()
+        openViewController(parent: parent, newVC: vc)
+    }
+    
     // MARK: OPEN VC
     
     private func openViewController(parent: UIViewController, newVC: UIViewController) {

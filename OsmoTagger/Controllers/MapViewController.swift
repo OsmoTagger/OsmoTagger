@@ -92,6 +92,7 @@ class MapViewController: UIViewController {
         setSavedNodesButton()
         setAddNodeButton()
         setDrawButton()
+        setOverpasApiButton()
         // The test button in the lower right corner of the screen is often needed during development.
 //         setTestButton()
         
@@ -492,6 +493,25 @@ class MapViewController: UIViewController {
             addNodeButtonTopConstraint, trailingAnchor,
         ])
         trailingAnchors.append(trailingAnchor)
+    }
+    
+    private func setOverpasApiButton() {
+        let button = MapButton()
+        button.configure(image: "overpas-logo")
+        button.addTarget(self, action: #selector(tapOverpasButton), for: .touchUpInside)
+        view.addSubview(button)
+        let trailingAnchor = NSLayoutConstraint(item: button, attribute: .trailing, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .trailing, multiplier: 1, constant: -20)
+        NSLayoutConstraint.activate([
+            button.widthAnchor.constraint(equalToConstant: 40),
+            button.heightAnchor.constraint(equalToConstant: 40),
+            button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
+            trailingAnchor,
+        ])
+        trailingAnchors.append(trailingAnchor)
+    }
+    
+    @objc private func tapOverpasButton() {
+        screenManager.openOverpass(parent: self)
     }
     
     @objc func tapAddNodeButton() {
