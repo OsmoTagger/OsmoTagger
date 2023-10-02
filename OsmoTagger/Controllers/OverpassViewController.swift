@@ -5,10 +5,10 @@
 //  Created by Аркадий Торвальдс on 03.10.2023.
 //
 
+import SafariServices
 import UIKit
 
 class OverpassViewController: ScrollViewController {
-    
     private let spacing: CGFloat = 10
     
     let indicator = UIActivityIndicatorView()
@@ -33,8 +33,13 @@ class OverpassViewController: ScrollViewController {
     // MARK: ACTIONS
     
     @objc private func tapHelp() {
-        print("tap")
+        let str = "https://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
+        guard let url = URL(string: str) else { return }
+        let vc = SFSafariViewController(url: url)
+        present(vc, animated: true)
     }
+    
+    @objc private func tapSend() {}
     
     // MARK: ELEMENTS
     
@@ -70,25 +75,25 @@ class OverpassViewController: ScrollViewController {
             helpLabel.topAnchor.constraint(equalTo: infoLabel.bottomAnchor, constant: spacing),
             helpLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -spacing),
             
-            scrollView.bottomAnchor.constraint(equalTo: helpLabel.bottomAnchor)
+            scrollView.bottomAnchor.constraint(equalTo: helpLabel.bottomAnchor),
         ])
     }
     
     private func setButtons() {
         sendButton.setTitle("Send", for: .normal)
+        sendButton.addTarget(self, action: #selector(tapSend), for: .touchUpInside)
         sendButton.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(sendButton)
         NSLayoutConstraint.activate([
             sendButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: spacing),
             sendButton.topAnchor.constraint(equalTo: label.bottomAnchor, constant: spacing * 2),
             sendButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -spacing),
-            sendButton.heightAnchor.constraint(equalToConstant: 40)
+            sendButton.heightAnchor.constraint(equalToConstant: 40),
         ])
     }
     
     private func setRightButtons() {
         indicator.style = .medium
-        indicator.startAnimating()
         indicator.translatesAutoresizingMaskIntoConstraints = false
         let barIndicator = UIBarButtonItem(customView: indicator)
         rightButtons = [barIndicator]
@@ -115,13 +120,13 @@ class OverpassViewController: ScrollViewController {
             field.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: spacing),
             field.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: spacing),
             field.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -spacing),
-            field.heightAnchor.constraint(equalToConstant: 80)
+            field.heightAnchor.constraint(equalToConstant: 80),
         ])
     }
-    
 }
 
 // MARK: UIGestureRecognizerDelegate
+
 extension OverpassViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer) -> Bool { return true }
 }
