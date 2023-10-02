@@ -55,6 +55,7 @@ class OverpassViewController: ScrollViewController {
             do {
                 try await overpassClient.getData(urlStr: request)
                 AppSettings.settings.lastOverpassRequest = request
+                AppSettings.settings.overpassClosure?()
                 stopAnimating()
             } catch {
                 let message = error as? String ?? "Error get data"
@@ -171,6 +172,7 @@ extension OverpassViewController: OverpasProtocol {
         try? data.write(to: AppSettings.settings.overpasDataURL, options: .atomic)
         setLabelText(text: "Data has been successfully loaded")
     }
+    
     private func setLabelText(text: String) {
         DispatchQueue.main.async { [weak self] in
             self?.label.text = text

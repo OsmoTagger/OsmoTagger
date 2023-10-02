@@ -328,7 +328,7 @@ class MapViewController: UIViewController {
         indicator.stopAnimating()
         indicator.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(indicator)
-        let trailingAnchor = NSLayoutConstraint(item: indicator, attribute: .trailing, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .trailing, multiplier: 1, constant: -20)
+        let trailingAnchor = NSLayoutConstraint(item: indicator, attribute: .trailing, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .trailing, multiplier: 1, constant: -30)
         NSLayoutConstraint.activate([
             indicator.widthAnchor.constraint(equalToConstant: 20),
             indicator.heightAnchor.constraint(equalToConstant: 20),

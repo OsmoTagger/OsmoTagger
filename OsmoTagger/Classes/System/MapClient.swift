@@ -62,6 +62,24 @@ class MapClient {
             guard let self = self else { return }
             self.showSavedObjects()
         }
+        
+        AppSettings.settings.overpassClosure = { [weak self] in
+            self?.parseOverpassData()
+        }
+    }
+    
+    private func parseOverpassData() {
+        defer {
+            delegate?.endDownload()
+        }
+        
+        delegate?.startDownload()
+        guard let data = try? Data(contentsOf: AppSettings.settings.overpasDataURL) else {
+            Alert.showAlert("Error read overpass data")
+            return
+        }
+        let str = String(data: data, encoding: .utf8)
+        print(str)
     }
     
     func checkMapcenter(center: GLMapGeoPoint) -> Bool {
