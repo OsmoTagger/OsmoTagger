@@ -278,6 +278,7 @@ final class AppSettings: NSObject {
     }
     
     // MARK: OVERPASS API
+
     var overpassClosure: EmptyBlock?
     let overpasDataURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("overpass.data")
     var lastOverpassRequest: String? {

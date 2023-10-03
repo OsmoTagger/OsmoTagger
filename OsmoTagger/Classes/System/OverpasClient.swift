@@ -8,7 +8,6 @@
 import Foundation
 
 class OverpasClient: NSObject {
-    
     weak var delegate: OverpasProtocol?
     
     var downloadCount: Int64 = 0
@@ -22,19 +21,17 @@ class OverpasClient: NSObject {
         let task = session.downloadTask(with: request)
         task.resume()
     }
-    
 }
 
 extension OverpasClient: URLSessionDownloadDelegate {
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        guard let data = try? Data(contentsOf: location) else {return}
+    func urlSession(_: URLSession, downloadTask _: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+        guard let data = try? Data(contentsOf: location) else { return }
         try? data.write(to: AppSettings.settings.overpasDataURL)
         delegate?.downloadCompleted(with: location)
     }
     
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+    func urlSession(_: URLSession, downloadTask _: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten _: Int64, totalBytesExpectedToWrite _: Int64) {
         downloadCount += bytesWritten
         delegate?.downloadProgress(downloadCount)
     }
-    
 }

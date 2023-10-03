@@ -97,12 +97,12 @@ struct MapStyles {
         }
     """
     private static let overpass = """
-                                node {
-                                    icon-image: "poi_circle_small.svg";
-                                    icon-scale: 2;
-                                    icon-tint: orange;
-                                }
-                                """
+    node {
+        icon-image: "poi_circle_small.svg";
+        icon-scale: 2;
+        icon-tint: orange;
+    }
+    """
     
     static let sourceStyle = GLMapVectorCascadeStyle.createStyle(source)!
     

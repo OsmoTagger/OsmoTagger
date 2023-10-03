@@ -15,7 +15,6 @@ class OverpassParser: NSObject {
 }
 
 extension OverpassParser: XMLParserDelegate {
-    
     func parser(_: XMLParser, didStartElement elementName: String, namespaceURI _: String?, qualifiedName _: String?, attributes attributeDict: [String: String] = [:]) {
         switch elementName {
         case "node":
@@ -23,7 +22,7 @@ extension OverpassParser: XMLParserDelegate {
                   let lonStr = attributeDict["lon"],
                   let lat = Double(latStr),
                   let lon = Double(lonStr),
-                  let idStr = attributeDict["id"] else {return}
+                  let idStr = attributeDict["id"] else { return }
             let glPoint = GLMapPoint(lat: lat, lon: lon)
             lastObject = GLMapVectorPoint(glPoint)
             lastObject?.setValue(idStr, forKey: "@id")
@@ -34,13 +33,13 @@ extension OverpassParser: XMLParserDelegate {
                   let lat = Double(latStr),
                   let lonStr = attributeDict["lon"],
                   let lon = Double(lonStr),
-                  let lastID = lastID else {return}
+                  let lastID = lastID else { return }
             let glPoint = GLMapPoint(lat: lat, lon: lon)
             lastObject = GLMapVectorPoint(glPoint)
             lastObject?.setValue(lastID, forKey: "@id")
         case "tag":
             guard let key = attributeDict["k"],
-                  let value = attributeDict["v"] else {return}
+                  let value = attributeDict["v"] else { return }
             lastObject?.setValue(key, forKey: value)
         default:
             return
@@ -50,7 +49,7 @@ extension OverpassParser: XMLParserDelegate {
     func parser(_: XMLParser, didEndElement: String, namespaceURI _: String?, qualifiedName _: String?) {
         switch didEndElement {
         case "node", "way":
-            guard let lastObject = lastObject else {return}
+            guard let lastObject = lastObject else { return }
             objects.add(lastObject)
             self.lastObject = nil
             lastID = nil
@@ -58,5 +57,4 @@ extension OverpassParser: XMLParserDelegate {
             return
         }
     }
-    
 }

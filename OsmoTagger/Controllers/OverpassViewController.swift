@@ -43,8 +43,8 @@ class OverpassViewController: ScrollViewController {
         present(vc, animated: true)
     }
     
-// https://overpass-api.de/api/interpreter?data=
-// nwr[shop=convenience](55.992802,40.319054,56.006167,40.343992);out center;
+    // https://overpass-api.de/api/interpreter?data=
+    // nwr[shop=convenience](55.992802,40.319054,56.006167,40.343992);out center;
     @objc private func tapSend() {
         guard let request = field.text, request != "" else {
             Alert.showAlert("Enter request")
@@ -157,6 +157,7 @@ extension OverpassViewController: UIGestureRecognizerDelegate {
 }
 
 // MARK: OverpasProtocol
+
 extension OverpassViewController: OverpasProtocol {
     func downloadProgress(_ loaded: Int64) {
         let mb = Double(loaded) / 1_048_576
