@@ -79,7 +79,7 @@ class MapClient {
         parser.delegate = delegate
         parser.parse()
         tapObjects = delegate.objects
-        sourceDrawble.setVectorObjects(delegate.objects, with: MapStyles.sourceStyle, completion: nil)
+        sourceDrawble.setVectorObjects(delegate.objects, with: MapStyles.overpassStyle, completion: nil)
         self.delegate?.addDrawble(layer: sourceDrawble)
         self.delegate?.endDownload()
     }

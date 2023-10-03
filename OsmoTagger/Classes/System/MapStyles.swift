@@ -96,6 +96,13 @@ struct MapStyles {
             |z17- {width:3pt;}
         }
     """
+    private static let overpass = """
+                                node {
+                                    icon-image: "poi_circle_small.svg";
+                                    icon-scale: 2;
+                                    icon-tint: orange;
+                                }
+                                """
     
     static let sourceStyle = GLMapVectorCascadeStyle.createStyle(source)!
     
@@ -107,4 +114,6 @@ struct MapStyles {
     
     //  Highlights objects that fell under the tap, if there was not one object under the tap, but several.
     static let tappedStyle = GLMapVectorCascadeStyle.createStyle(tapped)!
+    
+    static let overpassStyle = GLMapVectorCascadeStyle.createStyle(overpass)!
 }
