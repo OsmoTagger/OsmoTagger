@@ -288,7 +288,7 @@ extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
                 guard let path = data.path,
                       let item = PresetClient().getItemFromPath(path: path)
                 else {
-                    showAction(message: "Coudn't find item in presets: \(data.path), \(searchController.searchBar.text)", addAlerts: [])
+                    showAction(message: "Coudn't find item in presets: \(data.path?.item ?? "string"), \(searchController.searchBar.text)", addAlerts: [])
                     return
                 }
                 let vc = ItemTagsViewController(item: item)

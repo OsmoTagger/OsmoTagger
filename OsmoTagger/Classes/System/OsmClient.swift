@@ -74,7 +74,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         }
     }
 
-    @Sendable func getAccessToken(code: String) async throws -> String {
+    func getAccessToken(code: String) async throws -> String {
         guard let url = URL(string: "\(AppSettings.settings.authServer)/oauth2/token") else {
             throw "Error generate auth URL for get access token. Code: \(code)"
         }
