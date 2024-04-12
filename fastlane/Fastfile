@@ -15,6 +15,12 @@
 
 default_platform(:ios)
 
+app_store_connect_api_key(
+  key_id: "87927C7L6W",
+  issuer_id: "69a6de6f-0433-47e3-e053-5b8c7c11a4d1",
+  key_filepath: "./fastlane/secretKey.p8",
+)
+
 lane :metadata do
   deliver(metadata_path: "fastlane/meta",
     skip_metadata: false)

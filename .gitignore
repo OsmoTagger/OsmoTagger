@@ -3,3 +3,4 @@ OSM editor.xcodeproj/project.xcworkspace/xcuserdata
 xcuserdata
 ApiKeys.swift
 fastlane/report.xml
+fastlane/secretKey.p8
