@@ -1,5 +1,5 @@
 //
-//  VespucciPreset.swift
+//  JSOM presets.swift
 //  OSM editor
 //
 //  Created by Arkadiy on 05.03.2023.

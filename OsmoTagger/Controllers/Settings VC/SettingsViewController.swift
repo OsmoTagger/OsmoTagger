@@ -1,5 +1,5 @@
 //
-//  MainViewController.swift
+//  SettingsViewController.swift
 //  OSM editor
 //
 //  Created by Arkadiy on 12.04.2023.

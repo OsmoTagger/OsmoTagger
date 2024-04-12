@@ -45,7 +45,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
     }
     
-    func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+    func scene(_: UIScene, continue userActivity: NSUserActivity) {
         if let url = userActivity.webpageURL, url.lastPathComponent == "oauth2" {
             OsmClient.client.resumeFlow(url: url, error: nil)
         }

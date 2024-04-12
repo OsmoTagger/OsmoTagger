@@ -1,5 +1,5 @@
 //
-//  SelectObjectViewController.swift
+//  MultiSelectViewController.swift
 //  OSM editor
 //
 //  Created by Arkadiy on 28.03.2023.

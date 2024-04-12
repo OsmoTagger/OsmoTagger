@@ -1,5 +1,5 @@
 //
-//  Methods.swift
+//  LineToolsMethods.swift
 //  josm parse
 //
 //  Created by Arkadiy on 19.03.2023.

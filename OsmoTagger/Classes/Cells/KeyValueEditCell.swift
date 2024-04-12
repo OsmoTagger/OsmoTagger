@@ -1,5 +1,5 @@
 //
-//  EditCell.swift
+//  KeyValueEditCell.swift
 //  OsmoTagger
 //
 //  Created by Аркадий Торвальдс on 24.09.2023.

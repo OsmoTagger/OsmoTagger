@@ -1,5 +1,5 @@
 //
-//  StretchableCellTableViewCell.swift
+//  StretchableCell.swift
 //  OsmoTagger
 //
 //  Created by Аркадий Торвальдс on 20.09.2023.

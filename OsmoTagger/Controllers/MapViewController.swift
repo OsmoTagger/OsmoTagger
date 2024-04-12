@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  MapViewController.swift
 //  OSM editor
 //
 //  Created by Аркадий Торвальдс on 04.08.2022.

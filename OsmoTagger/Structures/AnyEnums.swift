@@ -1,5 +1,5 @@
 //
-//  Enums.swift
+//  AnyEnums.swift
 //  OpenStreetEditor
 //
 //  Created by Аркадий Торвальдс on 26.07.2023.

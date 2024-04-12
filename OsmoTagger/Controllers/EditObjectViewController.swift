@@ -1,5 +1,5 @@
 //
-//  PropViewController.swift
+//  EditObjectViewController.swift
 //  OSM editor
 //
 //  Created by Arkadiy on 26.02.2023.

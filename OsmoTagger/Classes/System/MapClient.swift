@@ -1,5 +1,5 @@
 //
-//  Map.swift
+//  MapClient.swift
 //  OSM editor
 //
 //  Created by Arkadiy on 23.02.2023.

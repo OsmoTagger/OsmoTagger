@@ -9,7 +9,7 @@ import Foundation
 import GLMap
 
 // Help - https://gurumaps.app/docs/mapcss/
-struct MapStyles {
+enum MapStyles {
     //  Displays the loaded OSM data.
     private static let source = """
     node {

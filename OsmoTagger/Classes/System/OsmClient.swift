@@ -19,9 +19,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
     var callback: AuthCallback?
     let redirectUrl = "https://osmotagger.github.io/oauth2/"
     
-    private override init() {
-        
-    }
+    override private init() {}
     
     // MARK: OAuth 2.0
     
@@ -125,7 +123,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
             URLQueryItem(name: "scope", value: "read_prefs write_api"),
             URLQueryItem(name: "nonce", value: nonce),
             URLQueryItem(name: "redirect_uri", value: redirectUrl),
-            URLQueryItem(name: "response_type", value: "code")
+            URLQueryItem(name: "response_type", value: "code"),
         ]
         guard let url = urlComponents.url else {
             handler(AuthResult.error("Can't create url"))
@@ -198,7 +196,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
             "code": code,
             "redirect_uri": redirectUrl,
             "client_secret": AppSettings.settings.clientSecret,
-            "client_id": AppSettings.settings.clienID
+            "client_id": AppSettings.settings.clienID,
         ]
 
         var request = URLRequest(url: authURL)
