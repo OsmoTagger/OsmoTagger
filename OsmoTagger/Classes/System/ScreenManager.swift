@@ -28,7 +28,7 @@ class ScreenManager {
     // MARK: SETTINGS
 
     func openSettings(parent: UIViewController) {
-        let vc = MainViewController()
+        let vc = SettingsViewController()
         openViewController(parent: parent, newVC: vc)
     }
     

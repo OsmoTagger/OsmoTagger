@@ -361,8 +361,8 @@ class EditObjectViewController: SheetViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
                                      tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-                                     tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
-                                     tableView.leftAnchor.constraint(equalTo: view.leftAnchor)])
+                                     tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                                     tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor)])
     }
 }
 
@@ -383,9 +383,6 @@ extension EditObjectViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellFail = UITableViewCell()
         cellFail.backgroundColor = .red
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: keyValueID, for: indexPath) as? KeyValueEditCell else {
-            return cellFail
-        }
         let data = tableData[indexPath.section].items[indexPath.row]
         switch data {
         case .key:

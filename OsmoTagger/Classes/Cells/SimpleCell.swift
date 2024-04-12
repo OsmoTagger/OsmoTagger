@@ -31,10 +31,10 @@ class SimpleCell: UITableViewCell {
         NSLayoutConstraint.activate([
             icon.widthAnchor.constraint(equalToConstant: 44),
             icon.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            icon.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            label.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 4),
+            icon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            label.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 4),
             label.topAnchor.constraint(equalTo: contentView.topAnchor),
-            label.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50),
+            label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -50),
             label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             label.heightAnchor.constraint(greaterThanOrEqualToConstant: 44),
         ])

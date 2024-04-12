@@ -19,7 +19,7 @@
 		2C27010C2A01AB6100A65363 /* Terms of service.md in Resources */ = {isa = PBXBuildFile; fileRef = 2C27010B2A01AB6000A65363 /* Terms of service.md */; };
 		2C2F972829D53DB200A994C8 /* UpdateSourceDataProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2F972729D53DB100A994C8 /* UpdateSourceDataProtocol.swift */; };
 		2C450A762A326EFF001D73A9 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C450A752A326EFF001D73A9 /* TestViewController.swift */; };
-		2C478A9929E69BCB004E35E1 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C478A9829E69BCB004E35E1 /* MainViewController.swift */; };
+		2C478A9929E69BCB004E35E1 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C478A9829E69BCB004E35E1 /* SettingsViewController.swift */; };
 		2C478A9D29E6D558004E35E1 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C478A9C29E6D557004E35E1 /* AuthViewController.swift */; };
 		2C4EEE822986154300F9AAF9 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4EEE812986154300F9AAF9 /* UIViewController.swift */; };
 		2C5662BD291275FA00E5B4D5 /* OsmClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5662BC291275FA00E5B4D5 /* OsmClient.swift */; };
@@ -117,7 +117,7 @@
 		2C27010B2A01AB6000A65363 /* Terms of service.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = "Terms of service.md"; sourceTree = "<group>"; };
 		2C2F972729D53DB100A994C8 /* UpdateSourceDataProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSourceDataProtocol.swift; sourceTree = "<group>"; };
 		2C450A752A326EFF001D73A9 /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
-		2C478A9829E69BCB004E35E1 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		2C478A9829E69BCB004E35E1 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		2C478A9C29E6D557004E35E1 /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
 		2C4EEE812986154300F9AAF9 /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		2C5662BC291275FA00E5B4D5 /* OsmClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OsmClient.swift; sourceTree = "<group>"; };
@@ -334,7 +334,7 @@
 		2C58545829DBFC3200401786 /* Settings VC */ = {
 			isa = PBXGroup;
 			children = (
-				2C478A9829E69BCB004E35E1 /* MainViewController.swift */,
+				2C478A9829E69BCB004E35E1 /* SettingsViewController.swift */,
 				2CB58A6229ECF01800FD0E59 /* QuickGuideViewController.swift */,
 				E3540B122A71D1FA00649564 /* ScreenSettingsViewController.swift */,
 				E3C1BB242ABAF9E900B4BFD6 /* LogsViewController.swift */,
@@ -503,7 +503,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1320;
+				LastUpgradeCheck = 1530;
 				TargetAttributes = {
 					2042BCE6289C696E0026514E = {
 						CreatedOnToolsVersion = 13.2.1;
@@ -593,7 +593,7 @@
 				E3540B152A71DAFE00649564 /* SecreenSettingsCell.swift in Sources */,
 				2042BCEF289C696E0026514E /* MapViewController.swift in Sources */,
 				2CA6A3FF29CAB965004233E2 /* Parser.swift in Sources */,
-				2C478A9929E69BCB004E35E1 /* MainViewController.swift in Sources */,
+				2C478A9929E69BCB004E35E1 /* SettingsViewController.swift in Sources */,
 				2CDEA6D729862C2B00E5219D /* GLMapVectorObject.swift in Sources */,
 				E3540AF42A71AE2E00649564 /* SavedNodeCell.swift in Sources */,
 				E34E4AE12A981ECD00D65A92 /* Presets.swift in Sources */,
@@ -805,7 +805,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.globus.osmotagger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development com.globus.osmotagger";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development com.globus.osmotagger 1712847536";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "match Development com.globus.osmotagger catalyst";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
@@ -854,7 +854,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.globus.osmotagger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development com.globus.osmotagger";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development com.globus.osmotagger 1712847536";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "match Development com.globus.osmotagger catalyst";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
@@ -874,6 +874,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = H3H3AR5L6H;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -895,6 +896,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = H3H3AR5L6H;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -952,8 +954,9 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GLMap/GLMapSwift";
 			requirement = {
-				branch = snapshot;
-				kind = branch;
+				kind = versionRange;
+				maximumVersion = 2.0.0;
+				minimumVersion = 1.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

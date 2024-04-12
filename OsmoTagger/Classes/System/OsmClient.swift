@@ -12,28 +12,36 @@ import XMLCoder
 
 // Class for working with the OSM API.  Later it is necessary to get rid of singleton
 class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
-    let session = URLSession.shared
+    static var client = OsmClient()
+    
+    var session: ASWebAuthenticationSession?
+    typealias AuthCallback = (AuthResult) -> Void
+    var callback: AuthCallback?
+    let redirectUrl = "https://osmotagger.github.io/oauth2/"
+    
+    private override init() {
+        
+    }
     
     // MARK: OAuth 2.0
     
     //  The authorization verification method, and in case of its absence, the authorization is launched
     func checkAuth() async throws {
         if AppSettings.settings.token == nil {
-            let url = try await authSessionStartAsync()
-            let code = try getCode(url: url)
+            let code = try await authSessionStartAsync()
             let token = try await getAccessToken(code: code)
             AppSettings.settings.token = token
         }
     }
     
     //  The method starts ASWebAuthenticationSession in async
-    func authSessionStartAsync() async throws -> URL {
+    func authSessionStartAsync() async throws -> String {
         return try await withCheckedThrowingContinuation { continuation in
             authSessionStart(handler: { result in
-                if let result = result {
-                    continuation.resume(returning: result)
-                } else {
-                    continuation.resume(with: .failure("Error get callback URL"))
+                if case let .success(token) = result {
+                    continuation.resume(returning: token)
+                } else if case let .error(err) = result {
+                    continuation.resume(with: .failure(err))
                 }
             })
         }
@@ -54,38 +62,152 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         }
     }
     
-    func authSessionStart(handler: @escaping (URL?) -> Void) {
-        guard let authURL = URL(string: "\(AppSettings.settings.authServer)/oauth2/authorize?client_id=\(AppSettings.settings.clienID)&redirect_uri=osmotagger:/&response_type=code&scope=read_prefs%20write_api") else {
-            handler(nil)
-            return
+    public enum AuthResult {
+        case success(_ code: String)
+        case error(_ error: Error)
+    }
+    
+    func encodeBase64urlNoPadding(data: Data) -> String {
+        var base64string = data.base64EncodedString()
+
+        // converts base64 to base64url
+        base64string = base64string.replacingOccurrences(of: "+", with: "-")
+        base64string = base64string.replacingOccurrences(of: "/", with: "_")
+        // strips padding
+        base64string = base64string.replacingOccurrences(of: "=", with: "")
+        return base64string
+    }
+
+    func base64UrlDecode(_ value: String) -> Data? {
+        var base64 = value
+            .replacingOccurrences(of: "-", with: "+")
+            .replacingOccurrences(of: "_", with: "/")
+        let length = Double(base64.lengthOfBytes(using: String.Encoding.utf8))
+        let requiredLength = 4 * ceil(length / 4.0)
+        let paddingLength = requiredLength - length
+        if paddingLength > 0 {
+            let padding = "".padding(toLength: Int(paddingLength), withPad: "=", startingAt: 0)
+            base64 += padding
         }
-        let scheme = "osmotagger"
-        let authSession = ASWebAuthenticationSession(url: authURL, callbackURLScheme: scheme) { callbackURL, error in
-            if error != nil {
-                handler(nil)
-            } else if let callbackURL = callbackURL {
-                handler(callbackURL)
+        return Data(base64Encoded: base64, options: .ignoreUnknownCharacters)
+    }
+    
+    func randomURLSafeString(size: Int) -> String? {
+        var data = Data(count: size)
+        let result = data.withUnsafeMutableBytes { rawPointer -> Int32 in
+            if let address = rawPointer.bindMemory(to: UInt8.self).baseAddress {
+                return SecRandomCopyBytes(kSecRandomDefault, size, address)
+            } else {
+                return errSecMemoryError
             }
         }
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            authSession.presentationContextProvider = self
-            authSession.start()
+        if result == errSecSuccess {
+            return encodeBase64urlNoPadding(data: data)
+        } else {
+            print("Problem generating random bytes")
+            return nil
         }
     }
 
-    func getAccessToken(code: String) async throws -> String {
-        guard let url = URL(string: "\(AppSettings.settings.authServer)/oauth2/token") else {
-            throw "Error generate auth URL for get access token. Code: \(code)"
+    func generateNonce() -> String? {
+        return randomURLSafeString(size: 32)
+    }
+    
+    func authSessionStart(handler: @escaping (AuthResult) -> Void) {
+        callback = handler
+        
+        guard var urlComponents = URLComponents(string: AppSettings.settings.authServer + "/oauth2/authorize"), let nonce = generateNonce() else {
+            handler(AuthResult.error("Can't create url components"))
+            return
         }
-        let stringBody = "grant_type=authorization_code&code=\(code)&redirect_uri=osmotagger:/&client_secret=\(AppSettings.settings.clientSecret)&client_id=\(AppSettings.settings.clienID)"
-        let dataBody = stringBody.data(using: .utf8)
-        var request = URLRequest(url: url)
-        request.httpBody = dataBody
+        urlComponents.queryItems = [
+            URLQueryItem(name: "client_id", value: AppSettings.settings.clienID),
+            URLQueryItem(name: "scope", value: "read_prefs write_api"),
+            URLQueryItem(name: "nonce", value: nonce),
+            URLQueryItem(name: "redirect_uri", value: redirectUrl),
+            URLQueryItem(name: "response_type", value: "code")
+        ]
+        guard let url = urlComponents.url else {
+            handler(AuthResult.error("Can't create url"))
+            return
+        }
+        
+        let session = ASWebAuthenticationSession(url: url, callbackURLScheme: "https") { [weak self] url, err in
+            self?.session = nil
+            self?.resumeFlow(url: url, error: err)
+        }
+        session.presentationContextProvider = self
+        
+        self.session = session
+
+        DispatchQueue.main.async {
+            session.start()
+        }
+    }
+    
+    private func callbackOnce(_ result: AuthResult) {
+        if let callback {
+            self.callback = nil
+            // ASWebAuth вызывает делегата на фоновом потоке
+            DispatchQueue.main.async {
+                callback(result)
+            }
+        }
+    }
+    
+    // OpenStreetMap don't support custom schema in redirect url. So we have to use Universal Links to handle redirects. Universal Link is handled inside SceneDelegate and returned there
+    func resumeFlow(url: URL?, error: Error?) {
+        // Close auth session window
+        if let session {
+            session.cancel()
+        }
+        
+        if let error {
+            callbackOnce(AuthResult.error(error))
+            return
+        }
+        guard let url, let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
+            callbackOnce(AuthResult.error("Can't find auth response"))
+            return
+        }
+        
+        var code: String?
+
+        if let items = components.queryItems {
+            for item in items where item.name == "code" {
+                code = item.value
+                break
+            }
+        }
+
+        guard let code else {
+            callbackOnce(AuthResult.error("Can't find token in auth response"))
+            return
+        }
+
+        callbackOnce(AuthResult.success(code))
+    }
+    
+    func getAccessToken(code: String) async throws -> String {
+        guard let authURL = URL(string: AppSettings.settings.authServer + "/oauth2/token") else {
+            throw "Can't generate auth URL to get access token. Code: \(code)"
+        }
+        
+        let parameters: [String: String] = [
+            "grant_type": "authorization_code",
+            "code": code,
+            "redirect_uri": redirectUrl,
+            "client_secret": AppSettings.settings.clientSecret,
+            "client_id": AppSettings.settings.clienID
+        ]
+
+        var request = URLRequest(url: authURL)
         request.httpMethod = "POST"
+        request.httpBody = parameters.percentEncoded()
         request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        
         do {
-            let (data, response) = try await session.data(for: request)
+            let (data, response) = try await URLSession.shared.data(for: request)
             if let httpRespone = response as? HTTPURLResponse {
                 if httpRespone.statusCode == 200 {
                     do {
@@ -115,7 +237,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         guard let url = URL(string: "\(AppSettings.settings.server)/api/0.6/map?bbox=\(longitudeDisplayMin),\(latitudeDisplayMin),\(longitudeDisplayMax),\(latitudeDisplayMax)") else {
             throw "Error generate URL for download data. Server: \(AppSettings.settings.server), Bbox: \(longitudeDisplayMin),\(latitudeDisplayMin),\(longitudeDisplayMax),\(latitudeDisplayMax)"
         }
-        let (data, response) = try await session.data(from: url)
+        let (data, response) = try await URLSession.shared.data(from: url)
         if let httpResponse = response as? HTTPURLResponse {
             if httpResponse.statusCode == 200 {
                 return data
@@ -177,7 +299,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         request.httpMethod = "PUT"
         request.httpBody = requestData
         do {
-            let (data, response) = try await session.data(for: request)
+            let (data, response) = try await URLSession.shared.data(for: request)
             guard let str = String(data: data, encoding: .utf8) else {
                 throw "Error decode data while open changeset"
             }
@@ -220,7 +342,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.httpBody = requestData
         do {
-            let (data, response) = try await session.data(for: request)
+            let (data, response) = try await URLSession.shared.data(for: request)
             if let httpResponse = response as? HTTPURLResponse {
                 switch httpResponse.statusCode {
                 case 200:
@@ -249,7 +371,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        _ = try? await session.data(for: request)
+        _ = try? await URLSession.shared.data(for: request)
     }
     
     //  Get user information
@@ -262,7 +384,7 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        let (data, response) = try await session.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
         if let httpResponse = response as? HTTPURLResponse {
             switch httpResponse.statusCode {
             case 200:
@@ -286,4 +408,24 @@ class OsmClient: NSObject, ASWebAuthenticationPresentationContextProviding {
     func presentationAnchor(for _: ASWebAuthenticationSession) -> ASPresentationAnchor {
         return ASPresentationAnchor()
     }
+}
+
+extension Dictionary {
+    func percentEncoded() -> Data? {
+        return map { key, value in
+            let escapedKey = "\(key)".addingPercentEncoding(withAllowedCharacters: .urlQueryValueAllowed) ?? ""
+            let escapedValue = "\(value)".addingPercentEncoding(withAllowedCharacters: .urlQueryValueAllowed) ?? ""
+            return escapedKey + "=" + escapedValue
+        }
+        .joined(separator: "&")
+        .data(using: .utf8)
+    }
+}
+
+extension CharacterSet {
+    static let urlQueryValueAllowed: CharacterSet = {
+        var allowed = CharacterSet.urlQueryAllowed
+        allowed.remove(charactersIn: "&+=")
+        return allowed
+    }()
 }

@@ -1,12 +1,13 @@
 {
+  "originHash" : "9bc3126c0d5bcc2899f2d13931d1e27f2f9356c59249dc9af3ad7cf3dffcaa9e",
   "pins" : [
     {
       "identity" : "glmapswift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/GLMap/GLMapSwift",
       "state" : {
-        "branch" : "snapshot",
-        "revision" : "611ad610727d712d5495877f127149f980acf7a5"
+        "revision" : "5430c824a937e9e09994395bfc8df89577a576f1",
+        "version" : "1.7.5"
       }
     },
     {
@@ -19,5 +20,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

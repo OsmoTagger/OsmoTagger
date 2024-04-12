@@ -5,11 +5,10 @@
 //  Created by Arkadiy on 12.04.2023.
 //
 
-import SafariServices
 import UIKit
 
 //  The main settings controller.
-class MainViewController: SheetViewController, UITableViewDelegate, UITableViewDataSource {
+class SettingsViewController: SheetViewController, UITableViewDelegate, UITableViewDataSource {
     var tableView = UITableView()
     var cellId = "cell"
     var tableData: [SettingsTableData] = []
@@ -37,12 +36,8 @@ class MainViewController: SheetViewController, UITableViewDelegate, UITableViewD
         ])
         tableData.append(general)
         
-        let telegramText = "Support and development chat"
-        let channelText = "Telegram channel"
-        let gitText = "Source code."
+        let gitText = "Join us at GitHub"
         let support = SettingsTableData(name: "Support and development", items: [
-            SettingsCellData(icon: "chatIcon.png", text: telegramText, link: "https://t.me/OsmoTagger_chat"),
-            SettingsCellData(icon: "channelIcon.png", text: channelText, link: "https://t.me/OsmoTagger"),
             SettingsCellData(icon: "gitIcon.png", text: gitText, link: "https://github.com/OsmoTagger/OsmoTagger"),
         ])
         tableData.append(support)
@@ -84,8 +79,8 @@ class MainViewController: SheetViewController, UITableViewDelegate, UITableViewD
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 25),
-            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
@@ -125,8 +120,7 @@ class MainViewController: SheetViewController, UITableViewDelegate, UITableViewD
                 showAction(message: "Error create url: \(link)", addAlerts: [])
                 return
             }
-            let svc = SFSafariViewController(url: url)
-            present(svc, animated: true, completion: nil)
+            UIApplication.shared.open(url)
         }
     }
         

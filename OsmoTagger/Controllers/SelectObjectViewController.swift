@@ -76,9 +76,9 @@ class SelectObjectViewController: SheetViewController, UITableViewDelegate, UITa
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
         ])
     }
     

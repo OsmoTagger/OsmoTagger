@@ -31,7 +31,7 @@ class RightIconView: UIView {
         addSubview(backView)
         addSubview(icon)
         NSLayoutConstraint.activate([
-            backView.leftAnchor.constraint(equalTo: leftAnchor, constant: 5),
+            backView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
             backView.widthAnchor.constraint(equalToConstant: 38),
             backView.heightAnchor.constraint(equalToConstant: 38),
             backView.centerYAnchor.constraint(equalTo: centerYAnchor),
@@ -67,7 +67,7 @@ class IconView: UIView {
         let iconWidth = icon.image?.size.width ?? 25
         let iconHeight = icon.image?.size.height ?? 25
         NSLayoutConstraint.activate([
-            backView.leftAnchor.constraint(equalTo: leftAnchor, constant: 5),
+            backView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
             backView.widthAnchor.constraint(equalToConstant: 38),
             backView.heightAnchor.constraint(equalToConstant: 38),
             backView.centerYAnchor.constraint(equalTo: centerYAnchor),
@@ -185,26 +185,26 @@ class UserInfoView: UIView {
         addSubview(timeLabel)
         NSLayoutConstraint.activate([
             idIcon.topAnchor.constraint(equalTo: topAnchor),
-            idIcon.leftAnchor.constraint(equalTo: leftAnchor, constant: 7),
+            idIcon.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 7),
             idIcon.widthAnchor.constraint(equalToConstant: 24),
             idIcon.heightAnchor.constraint(equalToConstant: 24),
-            idLabel.leftAnchor.constraint(equalTo: idIcon.rightAnchor, constant: 5),
+            idLabel.leadingAnchor.constraint(equalTo: idIcon.trailingAnchor, constant: 5),
             idLabel.centerYAnchor.constraint(equalTo: idIcon.centerYAnchor),
-            idLabel.rightAnchor.constraint(equalTo: rightAnchor),
+            idLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             nickIcon.topAnchor.constraint(equalTo: idIcon.bottomAnchor, constant: 5),
-            nickIcon.leftAnchor.constraint(equalTo: leftAnchor, constant: 7),
+            nickIcon.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 7),
             nickIcon.widthAnchor.constraint(equalToConstant: 24),
             nickIcon.heightAnchor.constraint(equalToConstant: 24),
-            nickLabel.leftAnchor.constraint(equalTo: nickIcon.rightAnchor, constant: 5),
+            nickLabel.leadingAnchor.constraint(equalTo: nickIcon.trailingAnchor, constant: 5),
             nickLabel.centerYAnchor.constraint(equalTo: nickIcon.centerYAnchor),
-            nickLabel.rightAnchor.constraint(equalTo: rightAnchor),
+            nickLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             timeIcon.topAnchor.constraint(equalTo: nickIcon.bottomAnchor, constant: 5),
-            timeIcon.leftAnchor.constraint(equalTo: leftAnchor, constant: 7),
+            timeIcon.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 7),
             timeIcon.widthAnchor.constraint(equalToConstant: 24),
             timeIcon.heightAnchor.constraint(equalToConstant: 24),
-            timeLabel.leftAnchor.constraint(equalTo: timeIcon.rightAnchor, constant: 5),
+            timeLabel.leadingAnchor.constraint(equalTo: timeIcon.trailingAnchor, constant: 5),
             timeLabel.centerYAnchor.constraint(equalTo: timeIcon.centerYAnchor),
-            timeLabel.rightAnchor.constraint(equalTo: rightAnchor),
+            timeLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
         ])
     }
 }
@@ -237,14 +237,14 @@ class AuthResultView: UIView {
         addSubview(icon)
         addSubview(label)
         NSLayoutConstraint.activate([
-            icon.leftAnchor.constraint(equalTo: leftAnchor, constant: 7),
+            icon.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 7),
             icon.centerYAnchor.constraint(equalTo: centerYAnchor),
             icon.heightAnchor.constraint(equalToConstant: 24),
             icon.widthAnchor.constraint(equalToConstant: 24),
-            label.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 5),
+            label.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 5),
             label.topAnchor.constraint(equalTo: topAnchor),
             label.bottomAnchor.constraint(equalTo: bottomAnchor),
-            label.rightAnchor.constraint(equalTo: rightAnchor),
+            label.trailingAnchor.constraint(equalTo: trailingAnchor),
         ])
     }
     
@@ -258,13 +258,13 @@ class AuthResultView: UIView {
         }
         if AppSettings.settings.token == nil {
             icon.image = UIImage(named: "cancel")
-            label.text = "Authorization on \(server) failed"
+            label.text = "You are not authorized"
         } else {
             icon.image = UIImage(named: "success")
             if let login = AppSettings.settings.userName {
                 label.text = "You are logged in to the \(server) as \(login)"
             } else {
-                label.text = "Authorization on \(server) success"
+                label.text = "You are authorized on \(server)"
             }
         }
     }
@@ -483,18 +483,18 @@ class EditTitleView: UIView {
         let iconSize = CGFloat(18)
         let listIconSize = CGFloat(18)
         NSLayoutConstraint.activate([
-            icon.leftAnchor.constraint(equalTo: leftAnchor, constant: 7),
+            icon.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 7),
             icon.centerYAnchor.constraint(equalTo: centerYAnchor),
             icon.heightAnchor.constraint(equalToConstant: iconSize),
             icon.widthAnchor.constraint(equalToConstant: iconSize),
-            listIcon.rightAnchor.constraint(equalTo: rightAnchor, constant: -7),
+            listIcon.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -7),
             listIcon.heightAnchor.constraint(equalToConstant: listIconSize),
             listIcon.widthAnchor.constraint(equalToConstant: listIconSize),
             listIcon.centerYAnchor.constraint(equalTo: centerYAnchor),
-            label.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 5),
+            label.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 5),
             label.topAnchor.constraint(equalTo: topAnchor),
             label.bottomAnchor.constraint(equalTo: bottomAnchor),
-            label.rightAnchor.constraint(equalTo: listIcon.leftAnchor, constant: -7),
+            label.trailingAnchor.constraint(equalTo: listIcon.leadingAnchor, constant: -7),
         ])
     }
 }
@@ -525,14 +525,14 @@ class SettingsTitleView: UIView {
         addSubview(label)
         let iconSize = CGFloat(18)
         NSLayoutConstraint.activate([
-            icon.leftAnchor.constraint(equalTo: leftAnchor, constant: 7),
+            icon.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 7),
             icon.centerYAnchor.constraint(equalTo: centerYAnchor),
             icon.heightAnchor.constraint(equalToConstant: iconSize),
             icon.widthAnchor.constraint(equalToConstant: iconSize),
-            label.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 5),
+            label.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 5),
             label.topAnchor.constraint(equalTo: topAnchor),
             label.bottomAnchor.constraint(equalTo: bottomAnchor),
-            label.rightAnchor.constraint(equalTo: rightAnchor, constant: -7),
+            label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -7),
         ])
     }
 }

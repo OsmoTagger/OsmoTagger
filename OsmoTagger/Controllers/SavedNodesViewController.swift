@@ -386,7 +386,7 @@ class SavedNodesViewController: SheetViewController, UITableViewDelegate, UITabl
         let capturedDeletedObjects = deletedObjects
         Task {
             do {
-                try await OsmClient().sendObjects(sendObjs: capturedSavedObjects, deleteObjs: capturedDeletedObjects)
+                try await OsmClient.client.sendObjects(sendObjs: capturedSavedObjects, deleteObjs: capturedDeletedObjects)
                 for object in capturedSavedObjects {
                     AppSettings.settings.savedObjects.removeValue(forKey: object.id)
                 }
@@ -465,8 +465,8 @@ class SavedNodesViewController: SheetViewController, UITableViewDelegate, UITabl
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
     }

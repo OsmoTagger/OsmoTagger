@@ -49,22 +49,22 @@ class CategoryCell: UITableViewCell {
         contentView.addSubview(smallLabel)
         contentView.addSubview(pathLabel)
         NSLayoutConstraint.activate([
-            icon.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            icon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             icon.topAnchor.constraint(equalTo: contentView.topAnchor),
             icon.widthAnchor.constraint(equalTo: contentView.heightAnchor),
             icon.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            bigLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
-            bigLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50),
+            bigLabel.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 10),
+            bigLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -50),
             bigLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             bigLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            smallLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
+            smallLabel.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 10),
             smallLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             smallLabel.bottomAnchor.constraint(equalTo: contentView.centerYAnchor, constant: 10),
-            smallLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50),
-            pathLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10),
+            smallLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -50),
+            pathLabel.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 10),
             pathLabel.topAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -3),
             pathLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            pathLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50),
+            pathLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -50),
         ])
     }
     

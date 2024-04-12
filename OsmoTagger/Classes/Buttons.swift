@@ -85,7 +85,7 @@ class SavedObjectButton: MapButton {
         NSLayoutConstraint.activate([
             circle.widthAnchor.constraint(equalToConstant: 18),
             circle.heightAnchor.constraint(equalToConstant: 18),
-            circle.centerXAnchor.constraint(equalTo: rightAnchor, constant: -3),
+            circle.centerXAnchor.constraint(equalTo: trailingAnchor, constant: -3),
             circle.centerYAnchor.constraint(equalTo: topAnchor, constant: 3),
             label.centerXAnchor.constraint(equalTo: circle.centerXAnchor),
             label.centerYAnchor.constraint(equalTo: circle.centerYAnchor),

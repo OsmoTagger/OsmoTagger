@@ -85,7 +85,7 @@ class MapClient {
         let longitudeDisplayMin = mapCenter.lon - defaultBboxSize
         let longitudeDisplayMax = mapCenter.lon + defaultBboxSize
         // Get data from server
-        let data = try await OsmClient().downloadOSMData(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMax)
+        let data = try await OsmClient.client.downloadOSMData(longitudeDisplayMin: longitudeDisplayMin, latitudeDisplayMin: latitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax, latitudeDisplayMax: latitudeDisplayMax)
         try parseData(data: data, latitudeDisplayMin: latitudeDisplayMin, latitudeDisplayMax: latitudeDisplayMax, longitudeDisplayMin: longitudeDisplayMin, longitudeDisplayMax: longitudeDisplayMax)
         lastCenter = mapCenter
     }

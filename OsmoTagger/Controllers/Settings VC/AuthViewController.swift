@@ -10,7 +10,7 @@ import UIKit
 
 //  Authorization ViewController
 class AuthViewController: SheetViewController {
-    let removeLabel = UILabel()
+    let topLabel = UILabel()
     let toggle = UISwitch()
     let authResult = AuthResultView()
     let userView = UserInfoView()
@@ -55,43 +55,20 @@ class AuthViewController: SheetViewController {
         let text = """
         OsmoTagger uses OAuth 2.0 authentication, and does not have access to a login and password for authorization on the server openstreetmap.org.
         """
-        let label = UILabel()
-        label.text = text
-        label.textAlignment = .center
-        label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(label)
+        topLabel.text = text
+        topLabel.textAlignment = .center
+        topLabel.numberOfLines = 0
+        topLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(topLabel)
         
-        let removeText = "Remove OsmoTagger from authorized OAuth 2.0 applications"
-        let underlineAttribute = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue]
-        let underlinedText = NSAttributedString(string: removeText, attributes: underlineAttribute)
-        removeLabel.isUserInteractionEnabled = true
-        removeLabel.textAlignment = .center
-        removeLabel.numberOfLines = 0
-        removeLabel.attributedText = underlinedText
-        removeLabel.textColor = .systemBlue
-        let removeTap = UITapGestureRecognizer(target: self, action: #selector(tapRemove))
-        removeTap.delegate = self
-        removeLabel.addGestureRecognizer(removeTap)
-        
-        removeLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(removeLabel)
-        NSLayoutConstraint.activate([
-            label.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 30),
-            label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -30),
-            
-            removeLabel.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 10),
-            removeLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 30),
-            removeLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -30),
-        ])
-    }
+        let guide = view.safeAreaLayoutGuide
     
-    @objc private func tapRemove() {
-        let link = AppSettings.settings.server + "/oauth2/applications"
-        guard let url = URL(string: link) else { return }
-        let vc = SFSafariViewController(url: url)
-        present(vc, animated: true)
+        NSLayoutConstraint.activate([
+            topLabel.topAnchor.constraint(equalTo: guide.topAnchor),
+            topLabel.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 30),
+            topLabel.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -30),
+//            topLabel.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -30),
+        ])
     }
     
     func setServerTogle() {
@@ -113,11 +90,11 @@ class AuthViewController: SheetViewController {
         rightLable.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([toggle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                                     toggle.topAnchor.constraint(equalTo: removeLabel.bottomAnchor, constant: 25),
+                                     toggle.topAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 25),
                                      rightLable.centerYAnchor.constraint(equalTo: toggle.centerYAnchor),
-                                     rightLable.leftAnchor.constraint(equalTo: toggle.rightAnchor, constant: 5),
+                                     rightLable.leadingAnchor.constraint(equalTo: toggle.trailingAnchor, constant: 5),
                                      leftLable.centerYAnchor.constraint(equalTo: toggle.centerYAnchor),
-                                     leftLable.rightAnchor.constraint(equalTo: toggle.leftAnchor, constant: -5)])
+                                     leftLable.trailingAnchor.constraint(equalTo: toggle.leadingAnchor, constant: -5)])
     }
     
     func setAuthResult() {
@@ -125,8 +102,8 @@ class AuthViewController: SheetViewController {
         NSLayoutConstraint.activate([
             authResult.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             authResult.topAnchor.constraint(equalTo: toggle.bottomAnchor, constant: 25),
-            authResult.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 25),
-            authResult.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -25),
+            authResult.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 25),
+            authResult.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -25),
         ])
     }
     
@@ -142,7 +119,7 @@ class AuthViewController: SheetViewController {
             NSLayoutConstraint.activate([
                 self.userView.topAnchor.constraint(equalTo: self.authResult.bottomAnchor, constant: 25),
                 self.userView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-                self.userView.leftAnchor.constraint(equalTo: self.authResult.leftAnchor),
+                self.userView.leadingAnchor.constraint(equalTo: self.authResult.leadingAnchor),
             ])
         }
     }
@@ -159,14 +136,14 @@ class AuthViewController: SheetViewController {
         let indicator = showIndicator()
         Task {
             do {
-                try await OsmClient().checkAuth()
+                try await OsmClient.client.checkAuth()
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
                     self.authResult.update()
                     self.updateToolBar()
                 }
                 Alert.showAlert("Authentication successful", isBad: false)
-                let userInfo = try await OsmClient().getUserInfo()
+                let userInfo = try await OsmClient.client.getUserInfo()
                 setUserInfoView(user: userInfo)
             } catch {
                 let message = error as? String ?? "Error while auth"
@@ -180,7 +157,7 @@ class AuthViewController: SheetViewController {
         Task {
             let indicator = showIndicator()
             do {
-                let userInfo = try await OsmClient().getUserInfo()
+                let userInfo = try await OsmClient.client.getUserInfo()
                 setUserInfoView(user: userInfo)
             } catch {
                 let message = error as? String ?? "Error check user info"

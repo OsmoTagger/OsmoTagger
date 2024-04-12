@@ -150,7 +150,7 @@ final class AppSettings: NSObject {
                 userName = nil
             } else {
                 Task {
-                    let userInfo = try? await OsmClient().getUserInfo()
+                    let userInfo = try? await OsmClient.client.getUserInfo()
                     if let userInfo {
                         userName = userInfo.user.display_name
                     }

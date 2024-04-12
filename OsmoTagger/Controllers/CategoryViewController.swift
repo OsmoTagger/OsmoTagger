@@ -107,8 +107,8 @@ class CategoryViewController: SheetViewController {
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableViewBottomConstraint,
         ])
@@ -288,7 +288,7 @@ extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
                 guard let path = data.path,
                       let item = PresetClient().getItemFromPath(path: path)
                 else {
-                    showAction(message: "Coudn't find item in presets: \(data.path?.item ?? "string"), \(searchController.searchBar.text)", addAlerts: [])
+                    showAction(message: "Coudn't find item in presets: \(data.path?.item ?? "string"), \(searchController.searchBar.text ?? "")", addAlerts: [])
                     return
                 }
                 let vc = ItemTagsViewController(item: item)

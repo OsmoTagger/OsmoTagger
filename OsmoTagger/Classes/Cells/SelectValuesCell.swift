@@ -29,13 +29,13 @@ class SelectValuesCell: UITableViewCell {
         contentView.addSubview(label)
         contentView.addSubview(checkBox)
         NSLayoutConstraint.activate([
-            checkBox.rightAnchor.constraint(equalTo: rightAnchor),
+            checkBox.trailingAnchor.constraint(equalTo: trailingAnchor),
             checkBox.widthAnchor.constraint(equalToConstant: 50),
             checkBox.heightAnchor.constraint(equalTo: heightAnchor),
             checkBox.centerYAnchor.constraint(equalTo: centerYAnchor),
-            label.rightAnchor.constraint(equalTo: checkBox.leftAnchor),
+            label.trailingAnchor.constraint(equalTo: checkBox.leadingAnchor),
             label.bottomAnchor.constraint(equalTo: bottomAnchor),
-            label.leftAnchor.constraint(equalTo: leftAnchor, constant: 10),
+            label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             label.topAnchor.constraint(equalTo: topAnchor),
         ])
     }

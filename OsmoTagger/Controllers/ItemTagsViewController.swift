@@ -132,8 +132,8 @@ class ItemTagsViewController: SheetViewController {
         tableView.register(ItemCell.self, forCellReuseIdentifier: cellId)
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
-                                     tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
+        NSLayoutConstraint.activate([tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                                     tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                                      tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
                                      tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)])
     }
